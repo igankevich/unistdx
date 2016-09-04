@@ -1,0 +1,4 @@
+#!/bin/sh
+
+prefix=unistd++-0.1
+git archive --format=tar.gz --output=${prefix}.tar.gz --prefix=$prefix/ HEAD
