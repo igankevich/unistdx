@@ -112,6 +112,11 @@ namespace sys {
 			set_flag(F_SETFL, get_flags(F_GETFL) | rhs);
 		}
 
+		void
+		unsetf(flag_type rhs) {
+			set_flag(F_SETFL, get_flags(F_GETFL) & ~rhs);
+		}
+
 		#ifdef F_SETNOSIGPIPE
 		void
 		setf(pipe_flag rhs) {
