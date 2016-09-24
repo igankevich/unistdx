@@ -245,23 +245,51 @@ namespace sys {
 
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
 	struct basic_ifdstream: public std::basic_istream<Ch> {
+
 		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
 		typedef std::basic_istream<Ch,Tr> istream_type;
+		typedef typename fildesbuf_type::fd_type fd_type;
+
 		explicit basic_ifdstream(Fd&& fd): istream_type(nullptr),
 			_fildesbuf(std::move(fd), 512, 0) { this->init(&_fildesbuf); }
+
+		const fd_type&
+		fd() const {
+			return _fildesbuf.fd();
+		}
+
+		fd_type&
+		fd() {
+			return _fildesbuf.fd();
+		}
+
 	private:
 		fildesbuf_type _fildesbuf;
 	};
 
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
 	struct basic_ofdstream: public std::basic_ostream<Ch> {
+
 		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
 		typedef std::basic_ostream<Ch,Tr> ostream_type;
+		typedef typename fildesbuf_type::fd_type fd_type;
+
 		explicit basic_ofdstream(Fd&& fd): ostream_type(nullptr),
 			_fildesbuf(std::move(fd), 0, 512) { this->init(&_fildesbuf); }
+
+		const fd_type&
+		fd() const {
+			return _fildesbuf.fd();
+		}
+
+		fd_type&
+		fd() {
+			return _fildesbuf.fd();
+		}
 	private:
 		fildesbuf_type _fildesbuf;
 	};
+
 
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
 	struct basic_fdstream: public std::basic_iostream<Ch> {

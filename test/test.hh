@@ -19,8 +19,6 @@
 #include <stdx/random.hh>
 #include <stdx/iterator.hh>
 
-#include <stdx/network_format.hh>
-
 #include "color.hh"
 #include "demangle.hh"
 
@@ -242,18 +240,6 @@ namespace test {
 			cnt1,
 			cnt2,
 			[] (const value_type& rhs) { return rhs; },
-			text,
-			std::forward<Args>(args)...
-		);
-	}
-
-	template<class Container1, class Container2, class ... Args>
-	void compare_bytes(const Container1& cnt1, const Container2& cnt2, const char* text, Args&& ... args) {
-		typedef typename Container1::value_type value_type;
-		do_compare(
-			cnt1,
-			cnt2,
-			stdx::make_bytes<value_type>,
 			text,
 			std::forward<Args>(args)...
 		);
