@@ -1,8 +1,7 @@
 prefix=/usr
-exec_prefix=/usr
-libdir=/usr/lib64
-includedir=/usr/include/unistd++
+includedir=${prefix}/include
 
 Name: unistd++
 Description: C++ wrappers for libc
 Version: 0.1
+Cflags: -I${includedir}/unistd++
