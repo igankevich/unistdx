@@ -1,5 +1,5 @@
 project(
-	'unistd++',
+	'unistdx',
 	'cpp',
 	version: '0.2',
 	meson_version: '>=0.31',
