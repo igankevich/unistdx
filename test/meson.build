@@ -54,6 +54,15 @@ test(
 	)
 )
 
+test(
+	'sys::users',
+	executable(
+		'users-test',
+		sources: 'users_test.cc',
+		include_directories: srcdir,
+	)
+)
+
 executable(
 	'posix-compliance',
 	sources: 'posix_test.cc',
