@@ -477,7 +477,9 @@ namespace sys {
 		int
 		do_poll(int timeout_millis) {
 
-			timeout_millis = std::max(timeout_millis, 0);
+			if (timeout_millis != no_timeout) {
+				timeout_millis = std::max(timeout_millis, 0);
+			}
 
 			remove_fds_if(std::logical_not<poll_event>());
 			insert_pending_specials();
