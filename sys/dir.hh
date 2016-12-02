@@ -229,14 +229,16 @@ namespace sys {
 		directory&
 		operator>>(direntry& rhs) {
 			if (good()) {
-				dirent_type* result = nullptr;
-				int ret = ::readdir_r(_dir, &rhs, &result);
-				if (ret == -1) {
-					_errc = std::errc(errno);
-					_state = state(_state | failbit);
-				}
+				direntry* result = static_cast<direntry*>(::readdir(_dir));
 				if (!result) {
-					_state = state(_state | eofbit);
+					if (errno) {
+						_errc = std::errc(errno);
+						_state = state(_state | failbit);
+					} else {
+						_state = state(_state | eofbit);
+					}
+				} else {
+					rhs = *result;
 				}
 			}
 			return *this;
