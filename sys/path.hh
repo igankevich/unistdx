@@ -114,6 +114,8 @@ namespace sys {
 
 	struct canonical_path: public path {
 
+		canonical_path() = default;
+
 		canonical_path(path&& rhs):
 		path(canonicalise(std::forward<path>(rhs)))
 		{}
