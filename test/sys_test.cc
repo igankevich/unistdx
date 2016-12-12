@@ -66,9 +66,19 @@ test_file_stat() {
 	assert(!stat.exists());
 }
 
+void
+test_canonical_path() {
+	sys::canonical_path dir1(".");
+	sys::canonical_path dir2("..");
+	dir1 = std::move(dir1.dirname());
+	assert(dir1 == dir2);
+}
+
 int main() {
 	test_dirent_iterator();
 	test_argstream();
 	test_dirname_basename();
+	test_file_stat();
+	test_canonical_path();
 	return 0;
 }

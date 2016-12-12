@@ -139,6 +139,12 @@ namespace sys {
 		path(canonicalise(path(std::forward<T>(rhs))))
 		{}
 
+		canonical_path&
+		operator=(canonical_path&&) = default;
+
+		canonical_path&
+		operator=(const canonical_path&) = default;
+
 		static path
 		canonicalise(path&& rhs) {
 			std::unique_ptr<char[]> ptr(new char[PATH_MAX]);
@@ -158,12 +164,12 @@ namespace sys {
 				: path(std::move(_path.substr(pos+1)));
 		}
 
-		path
+		canonical_path
 		dirname() const {
 			const size_t pos = _path.find_last_of(path::separator);
 			return (pos == std::string::npos)
-				? path(*this)
-				: path(std::move(_path.substr(0, pos)));
+				? *this
+				: canonical_path(std::move(_path.substr(0, pos)));
 		}
 
 		bool
