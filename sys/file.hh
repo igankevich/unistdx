@@ -252,9 +252,14 @@ namespace sys {
 			return this->st_gid;
 		}
 
+		bool
+		exists() const noexcept {
+			return this->st_ino != 0;
+		}
+
 		void
 		update(const char* filename) {
-			bits::check(
+			bits::check_if_not<std::errc::no_such_file_or_directory>(
 				::stat(filename, this),
 				__FILE__, __LINE__, __func__
 			);

@@ -58,6 +58,14 @@ test_dirname_basename() {
 	test::equal(sys::canonical_path(cwd.dirname(), cwd.basename()), cwd, "bad dirname/basename");
 }
 
+void
+test_file_stat() {
+	sys::canonical_path cwd(".");
+	sys::path non_existent_file(cwd, "asdasdasd");
+	sys::file_stat stat(non_existent_file);
+	assert(!stat.exists());
+}
+
 int main() {
 	test_dirent_iterator();
 	test_argstream();
