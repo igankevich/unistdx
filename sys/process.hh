@@ -101,6 +101,27 @@ namespace sys {
 			);
 		}
 
+		template<class ... Args>
+		int
+		execute_command(const Args& ... args) {
+			sys::argstream str;
+			str.append(args...);
+			assert(str.argc() == sizeof...(Args));
+			char** argv = str.argv();
+			return bits::check(
+				::execvp(argv[0], argv),
+				__FILE__, __LINE__, __func__
+			);
+		}
+
+		int
+		execute_command(char* const argv[]) {
+			return bits::check(
+				::execvp(argv[0], argv),
+				__FILE__, __LINE__, __func__
+			);
+		}
+
 		void
 		send(signal sig) {
 			bits::check(

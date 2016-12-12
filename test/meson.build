@@ -46,6 +46,15 @@ test(
 )
 
 test(
+	'sys::process',
+	executable(
+		'process-test',
+		sources: 'process_test.cc',
+		include_directories: srcdir,
+	)
+)
+
+test(
 	'sys::fildesbuf',
 	executable(
 		'buffer-test',
