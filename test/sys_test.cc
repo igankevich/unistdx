@@ -53,12 +53,6 @@ test_argstream() {
 }
 
 void
-test_dirname_basename() {
-	sys::canonical_path cwd(".");
-	test::equal(sys::canonical_path(cwd.dirname(), cwd.basename()), cwd, "bad dirname/basename");
-}
-
-void
 test_file_stat() {
 	sys::canonical_path cwd(".");
 	sys::path non_existent_file(cwd, "asdasdasd");
@@ -67,18 +61,34 @@ test_file_stat() {
 }
 
 void
-test_canonical_path() {
+test_canonical_path_1() {
 	sys::canonical_path dir1(".");
 	sys::canonical_path dir2("..");
 	dir1 = std::move(dir1.dirname());
 	assert(dir1 == dir2);
 }
 
+void
+test_canonical_path_2() {
+	sys::canonical_path dir1("/tmp");
+	sys::canonical_path dir2("/");
+	test::equal(dir1.dirname(), dir2, "bad dirname");
+	test::equal(dir2.dirname(), dir2, "bad dirname");
+	test::equal(dir2.basename(), dir2, "bad basename");
+}
+
+void
+test_canonical_path_3() {
+	sys::canonical_path cwd(".");
+	test::equal(sys::canonical_path(cwd.dirname(), cwd.basename()), cwd, "bad dirname/basename");
+}
+
 int main() {
 	test_dirent_iterator();
 	test_argstream();
-	test_dirname_basename();
 	test_file_stat();
-	test_canonical_path();
+	test_canonical_path_1();
+	test_canonical_path_2();
+	test_canonical_path_3();
 	return 0;
 }

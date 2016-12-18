@@ -92,8 +92,15 @@ namespace sys {
 		path&
 		operator=(const path&) = default;
 
-		bool operator==(const path&) = delete;
-		bool operator!=(const path&) = delete;
+		bool
+		operator==(const path& rhs) const noexcept {
+			return _path == rhs._path;
+		}
+
+		bool
+		operator!=(const path& rhs) const noexcept {
+			return !operator==(rhs);
+		}
 
 		friend struct const_path;
 
@@ -159,17 +166,23 @@ namespace sys {
 		path
 		basename() const {
 			const size_t pos = _path.find_last_of(path::separator);
-			return (pos == std::string::npos)
+			return
+				(pos == std::string::npos)
 				? path(*this)
+				: (pos == 0)
+				? path("/")
 				: path(std::move(_path.substr(pos+1)));
 		}
 
 		canonical_path
 		dirname() const {
 			const size_t pos = _path.find_last_of(path::separator);
-			return (pos == std::string::npos)
+			return
+				(pos == std::string::npos)
 				? *this
-				: canonical_path(std::move(_path.substr(0, pos)));
+				: (pos == 0)
+				? canonical_path("/", 0)
+				: canonical_path(std::move(_path.substr(0, pos)), 0);
 		}
 
 		bool
@@ -182,6 +195,17 @@ namespace sys {
 			return !operator==(rhs);
 		}
 
+	private:
+
+		explicit
+		canonical_path(const char* str, int):
+		path(str)
+		{}
+
+		explicit
+		canonical_path(std::string&& str, int):
+		path(std::forward<std::string>(str))
+		{}
 
 	};
 
