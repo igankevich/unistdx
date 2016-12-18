@@ -46,7 +46,6 @@ namespace sys {
 	struct path {
 
 		#if defined(_WIN64) || defined(_WIN32)
-		// The only thing I know about windows...
 		static const char separator = '\\';
 		#else
 		static const char separator = '/';
@@ -99,6 +98,26 @@ namespace sys {
 
 		bool
 		operator!=(const path& rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		bool
+		operator==(const char* rhs) const noexcept {
+			return _path == rhs;
+		}
+
+		bool
+		operator!=(const char* rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		bool
+		operator==(const std::string& rhs) const noexcept {
+			return _path == rhs;
+		}
+
+		bool
+		operator!=(const std::string& rhs) const noexcept {
 			return !operator==(rhs);
 		}
 
@@ -183,16 +202,6 @@ namespace sys {
 				: (pos == 0)
 				? canonical_path("/", 0)
 				: canonical_path(std::move(_path.substr(0, pos)), 0);
-		}
-
-		bool
-		operator==(const canonical_path& rhs) const noexcept {
-			return _path == rhs._path;
-		}
-
-		bool
-		operator!=(const canonical_path& rhs) const noexcept {
-			return !operator==(rhs);
 		}
 
 	private:
