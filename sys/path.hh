@@ -140,6 +140,8 @@ namespace sys {
 
 	struct canonical_path: public path {
 
+		friend struct std::hash<canonical_path>;
+
 		canonical_path() = default;
 
 		canonical_path(path&& rhs):
@@ -215,6 +217,36 @@ namespace sys {
 		canonical_path(std::string&& str, int):
 		path(std::forward<std::string>(str))
 		{}
+
+	};
+
+}
+
+namespace std {
+
+	template<>
+	struct hash<sys::canonical_path> {
+
+		typedef size_t result_type;
+		typedef sys::canonical_path argument_type;
+
+		size_t
+		operator()(const sys::canonical_path& rhs) const noexcept {
+			return std::hash<std::string>()(rhs._path);
+		}
+
+	};
+
+	template<>
+	struct hash<sys::path> {
+
+		typedef size_t result_type;
+		typedef sys::path argument_type;
+
+		size_t
+		operator()(const sys::path& rhs) const noexcept {
+			return std::hash<std::string>()(rhs._path);
+		}
 
 	};
 
