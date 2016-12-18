@@ -45,6 +45,9 @@ namespace sys {
 
 	struct path {
 
+		friend struct const_path;
+		friend struct std::hash<path>;
+
 		#if defined(_WIN64) || defined(_WIN32)
 		static const char separator = '\\';
 		#else
@@ -120,8 +123,6 @@ namespace sys {
 		operator!=(const std::string& rhs) const noexcept {
 			return !operator==(rhs);
 		}
-
-		friend struct const_path;
 
 		friend std::ostream&
 		operator<<(std::ostream& out, const path& rhs) {
