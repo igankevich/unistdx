@@ -65,7 +65,7 @@ test_canonical_path_1() {
 	sys::canonical_path dir1(".");
 	sys::canonical_path dir2("..");
 	dir1 = std::move(dir1.dirname());
-	assert(dir1 == dir2);
+	test::equal(dir1, dir2, "bad operator=");
 }
 
 void
@@ -84,6 +84,13 @@ test_canonical_path_3() {
 }
 
 void
+test_canonical_path_4() {
+	sys::canonical_path root("/");
+	sys::canonical_path tmp;
+	sys::canonical_path nonexistent(root, "non-existent-directory");
+}
+
+void
 test_path_1() {
 	test::equal(sys::path("/"), sys::path("/"), "bad operator==");
 	test::equal(sys::path("/"), std::string("/"), "bad operator==");
@@ -98,5 +105,6 @@ int main() {
 	test_canonical_path_1();
 	test_canonical_path_2();
 	test_canonical_path_3();
+	test_canonical_path_4();
 	return 0;
 }

@@ -154,6 +154,11 @@ namespace sys {
 		path(canonicalise(path(std::forward<A>(dir), std::forward<B>(filename))))
 		{}
 
+		template<class B>
+		canonical_path(canonical_path dir, B&& filename):
+		path(std::move(dir), std::forward<B>(filename))
+		{}
+
 		canonical_path(canonical_path&& rhs):
 		path(std::forward<path>(rhs))
 		{}
