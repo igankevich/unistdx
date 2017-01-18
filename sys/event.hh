@@ -257,7 +257,7 @@ namespace sys {
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
 			using namespace std::chrono;
 			stdx::unlock_guard<Lock> unlock(lock);
-			int ret = do_poll(duration_cast<milliseconds>(dur));
+			int ret = do_poll(static_cast<int>(duration_cast<milliseconds>(dur).count()));
 			return ret == 0 ? std::cv_status::timeout : std::cv_status::no_timeout;
 		}
 
