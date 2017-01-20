@@ -275,13 +275,13 @@ namespace sys {
 		template<class Lock, class Duration>
 		std::cv_status
 		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
-			return wait_for(lock, tp-clock_type::now());
+			return wait_for(lock, std::max(clock_type::duration::zero(), tp-clock_type::now()));
 		}
 
 		template<class Lock, class Duration, class Pred>
 		bool
 		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
-			return wait_for(lock, tp-clock_type::now(), pred);
+			return wait_for(lock, std::max(clock_type::duration::zero(), tp-clock_type::now()), pred);
 		}
 
 		template<class Lock, class Clock, class Duration>
