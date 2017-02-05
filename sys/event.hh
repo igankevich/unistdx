@@ -201,6 +201,7 @@ namespace sys {
 		typedef std::vector<handler_type> handlers_type;
 		typedef events_type::size_type size_type;
 		typedef std::chrono::system_clock clock_type;
+		typedef typename handlers_type::const_iterator const_iterator;
 
 		inline
 		event_poller():
@@ -357,6 +358,16 @@ namespace sys {
 		inline void
 		for_each_pipe_fd(Func func) {
 			std::for_each(pipes_begin(), pipes_end(), func);
+		}
+
+		inline const_iterator
+		begin() const noexcept {
+			return _handlers.begin();
+		}
+
+		inline const_iterator
+		end() const noexcept {
+			return _handlers.end();
 		}
 
 	private:
