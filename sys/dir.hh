@@ -100,6 +100,20 @@ namespace sys {
 
 	};
 
+	sys::file_type
+	get_file_type(const path& dirname, const direntry& entry) {
+		return entry.has_type()
+			? entry.type()
+			: sys::file_stat(path(dirname, entry.name())).type();
+	}
+
+	sys::file_type
+	get_file_type(const pathentry& rhs) {
+	   	return rhs.has_type()
+			? rhs.type()
+			: sys::file_stat(rhs.getpath()).type();
+	}
+
 	struct file: public file_stat, public path {
 
 		file() = default;

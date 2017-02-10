@@ -1,3 +1,4 @@
+#include <fstream>
 #include <stdx/debug.hh>
 
 #include <sys/dir.hh>
@@ -97,6 +98,50 @@ test_path_1() {
 	test::equal(sys::path("/"), "/", "bad operator==");
 }
 
+void
+test_get_file_type_1() {
+	const char* filename = __func__;
+	std::ofstream(filename) << "hello world";
+	sys::path cwd(".");
+	sys::directory dir(cwd);
+	sys::dirent_iterator end;
+	auto result = std::find_if(
+		sys::dirent_iterator(dir),
+		end,
+		[&filename] (const sys::direntry& rhs) {
+			return std::strcmp(rhs.name(), filename) == 0;
+		}
+	);
+	assert(result != end);
+	test::equal(
+		sys::get_file_type(cwd, *result),
+		sys::file_type::regular,
+		"bad get_file_type(..., direntry)"
+	);
+}
+
+void
+test_get_file_type_2() {
+	const char* filename = __func__;
+	std::ofstream(filename) << "hello world";
+	sys::path cwd(".");
+	sys::dirtree dir(cwd);
+	sys::dirtree_iterator<sys::pathentry> end;
+	auto result = std::find_if(
+		sys::dirtree_iterator<sys::pathentry>(dir),
+		end,
+		[&filename] (const sys::pathentry& rhs) {
+			return std::strcmp(rhs.name(), filename) == 0;
+		}
+	);
+	assert(result != end);
+	test::equal(
+		sys::get_file_type(*result),
+		sys::file_type::regular,
+		"bad get_file_type(pathentry)"
+	);
+}
+
 int main() {
 	test_dirent_iterator();
 	test_argstream();
@@ -106,5 +151,7 @@ int main() {
 	test_canonical_path_2();
 	test_canonical_path_3();
 	test_canonical_path_4();
+	test_get_file_type_1();
+	test_get_file_type_2();
 	return 0;
 }
