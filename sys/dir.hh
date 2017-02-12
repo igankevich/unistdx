@@ -1,11 +1,12 @@
 #ifndef SYS_DIR_HH
 #define SYS_DIR_HH
 
-#include <dirent.h>
+#include <algorithm>
 #include <cstring>
-#include <system_error>
-#include <queue>
+#include <dirent.h>
 #include <fstream>
+#include <queue>
+#include <system_error>
 
 #include <sys/bits/check.hh>
 #include <sys/bits/basic_istream_iterator.hh>
@@ -445,6 +446,16 @@ namespace sys {
 				rhs,
 				path(_dirpath, _trans(rhs))
 			);
+			return *this;
+		}
+
+		template<class FilePred>
+		basic_odirectory<FilePred>&
+		operator<<(basic_directory<FilePred>& rhs) {
+			pathentry ent;
+			while (rhs >> ent) {
+				*this << ent;
+			}
 			return *this;
 		}
 
