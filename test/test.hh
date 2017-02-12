@@ -221,7 +221,7 @@ namespace test {
 	void do_compare(const Container1& cnt1, const Container2& cnt2, Func format, const char* text, Args&& ... args) {
 		auto pair = std::mismatch(cnt1.begin(), cnt1.end(), cnt2.begin());
 		if (pair.first != cnt1.end()) {
-			auto pos = pair.first - cnt1.begin();
+			auto pos = std::distance(cnt1.begin(), pair.first);
 			std::stringstream msg;
 			msg << "ERROR: " << text;
 			msg << '\n';

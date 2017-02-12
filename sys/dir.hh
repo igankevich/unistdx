@@ -232,10 +232,11 @@ namespace sys {
 
 	struct directory: public basic_dirstream {
 
-		template<class Path>
+		directory() = default;
+
 		explicit
-		directory(Path&& path) {
-			open(std::forward<Path>(path));
+		directory(const path& path) {
+			open(path);
 		}
 
 		directory(directory&& rhs):
@@ -247,12 +248,11 @@ namespace sys {
 			close();
 		}
 
-		template<class Path>
 		void
-		open(Path&& path) {
+		open(const path& p) {
 			close();
 			_dir = bits::check(
-				::opendir(const_path(path)),
+				::opendir(p),
 				__FILE__, __LINE__, __func__
 			);
 			_errc = std::errc(errno);
@@ -265,6 +265,7 @@ namespace sys {
 					::closedir(_dir),
 					__FILE__, __LINE__, __func__
 				);
+				_dir = nullptr;
 			}
 		}
 
@@ -294,14 +295,24 @@ namespace sys {
 
 	struct dirtree: public directory {
 
-		template<class Path>
+		dirtree() = default;
+
 		explicit
-		dirtree(Path starting_point):
+		dirtree(const path& starting_point):
 		directory(starting_point)
 		{ _dirs.emplace(starting_point); }
 
+		void
+		open(const path& p) {
+			while (!_dirs.empty()) {
+				_dirs.pop();
+			}
+			directory::open(p);
+			_dirs.emplace(p);
+		}
+
 		const path&
-		current_path() const noexcept {
+		current_dir() const noexcept {
 			return _dirs.front();
 		}
 
@@ -309,7 +320,7 @@ namespace sys {
 		operator>>(direntry& rhs) {
 			read_direntry(rhs);
 			if (good()) {
-				path p(current_path(), rhs.name());
+				path p(current_dir(), rhs.name());
 				if (determine_file_type(rhs, p) == file_type::directory) {
 					_dirs.push(p);
 				}
@@ -321,7 +332,7 @@ namespace sys {
 		operator>>(pathentry& rhs) {
 			read_direntry(rhs);
 			if (good()) {
-				rhs.setdir(current_path());
+				rhs.setdir(current_dir());
 				path p(std::move(rhs.getpath()));
 				if (determine_file_type(rhs, p) == file_type::directory) {
 					_dirs.push(p);
@@ -335,7 +346,7 @@ namespace sys {
 			direntry ent;
 			read_direntry(ent);
 			if (good()) {
-				rhs.setpath(path(current_path(), ent.name()));
+				rhs.setpath(path(current_dir(), ent.name()));
 				if (rhs.is_directory()) {
 					_dirs.push(rhs);
 				}
@@ -359,7 +370,7 @@ namespace sys {
 						_state = state(_state | eofbit);
 					} else {
 						clear();
-						open(_dirs.front());
+						directory::open(_dirs.front());
 					}
 				}
 			}
@@ -374,7 +385,7 @@ namespace sys {
 
 	};
 
-	typedef basic_istream_iterator<directory, direntry> dirent_iterator;
+	typedef basic_istream_iterator<directory, direntry> directory_iterator;
 
 	template<class T>
 	using dirtree_iterator = basic_istream_iterator<dirtree, T>;

@@ -91,6 +91,11 @@ namespace sys {
 			return _path.data();
 		}
 
+		const std::string&
+		to_string() const noexcept {
+			return _path;
+		}
+
 		path&
 		operator=(const path&) = default;
 
