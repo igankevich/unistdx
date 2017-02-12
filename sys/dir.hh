@@ -5,10 +5,11 @@
 #include <cstring>
 #include <system_error>
 #include <queue>
-#include <type_traits>
+#include <fstream>
 
 #include <sys/bits/check.hh>
 #include <sys/bits/basic_istream_iterator.hh>
+#include <sys/bits/basic_ostream_iterator.hh>
 
 #include "path.hh"
 #include "file.hh"
@@ -168,15 +169,22 @@ namespace sys {
 		file(file&&) = default;
 
 		file(const path& dirname, const direntry& ent):
-		path(path(dirname, ent.name())),
+		path(dirname, ent.name()),
 		file_stat(const_path(*this))
 		{}
 
 		bool
 		is_hidden() const noexcept {
+			return name()[0] == '.';
+		}
+
+		const char*
+		name() const noexcept {
 			const std::string& filepath = path::to_string();
 			const size_t pos = filepath.find_last_of(path::separator);
-			return pos != std::string::npos && filepath[pos+1] == '.';
+			return pos == std::string::npos
+				? filepath.data()
+				: (filepath.data() + pos + 1);
 		}
 
 		friend std::ostream&
@@ -281,6 +289,8 @@ namespace sys {
 		_dir(rhs._dir)
 		{ rhs._dir = nullptr; }
 
+		basic_directory(const basic_directory&) = delete;
+
 		~basic_directory() {
 			close();
 		}
@@ -372,6 +382,85 @@ namespace sys {
 					}
 				}
 			}
+		}
+
+	};
+
+	template<class Trans>
+	class basic_odirectory {
+
+	public:
+		typedef Trans transform;
+
+	private:
+		path _dirpath;
+		transform _trans;
+
+	public:
+		basic_odirectory() = default;
+
+		basic_odirectory(const path& dir):
+		_dirpath(dir)
+		{}
+
+		basic_odirectory(basic_odirectory&&) = default;
+		basic_odirectory(const basic_odirectory&) = delete;
+
+		void
+		open(const path& dir) {
+			_dirpath = dir;
+		}
+
+		explicit
+		operator bool() const noexcept {
+			return true;
+		}
+
+		bool
+		operator!() const noexcept {
+			return !operator bool();
+		}
+
+		basic_odirectory&
+		operator<<(const direntry& rhs) {
+			copy_file(
+				rhs.name(),
+				path(_dirpath, _trans(rhs))
+			);
+			return *this;
+		}
+
+		basic_odirectory&
+		operator<<(const pathentry& rhs) {
+			copy_file(
+				rhs.getpath(),
+				path(_dirpath, _trans(rhs))
+			);
+			return *this;
+		}
+
+		basic_odirectory&
+		operator<<(const file& rhs) {
+			copy_file(
+				rhs,
+				path(_dirpath, _trans(rhs))
+			);
+			return *this;
+		}
+
+	private:
+		void
+		copy_file(const path& src, const path& dest) {
+			std::ofstream(dest) << std::ifstream(src).rdbuf();
+		}
+	};
+
+	struct copy_verbatim {
+
+		template<class Ent>
+		inline sys::path
+		operator()(const Ent& rhs) const noexcept {
+			return sys::path(rhs.name());
 		}
 
 	};
@@ -488,11 +577,17 @@ namespace sys {
 	};
 
 	typedef basic_directory<ignore_hidden_files> directory;
+	typedef basic_odirectory<copy_verbatim> odirectory;
 	typedef basic_dirtree<ignore_hidden_files, ignore_hidden_dirs> dirtree;
 
-	typedef basic_istream_iterator<directory, direntry> directory_iterator;
+	template<class T>
+	using idirectory_iterator = basic_istream_iterator<directory, T>;
+	template<class T>
+	using odirectory_iterator = basic_ostream_iterator<odirectory, T>;
 	template<class T>
 	using dirtree_iterator = basic_istream_iterator<dirtree, T>;
+
+	typedef idirectory_iterator<direntry> directory_iterator;
 
 }
 

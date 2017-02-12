@@ -14,7 +14,6 @@ namespace test {
 	template<class It>
 	void
 	generate_files(sys::path subdir, It first, It last) {
-		::mkdir(subdir, 0755);
 		std::ofstream str;
 		while (first != last) {
 			str.open(sys::path(subdir, *first));
@@ -30,15 +29,28 @@ namespace test {
 
 	public:
 
+		explicit
+		tmpdir(const char* dirname):
+		tmpdir(sys::path(dirname))
+		{ mkdir(); }
+
+		explicit
+		tmpdir(sys::path dirname):
+		_dirname(dirname)
+		{ mkdir(); }
+
 		template<class It>
 		tmpdir(const char* dirname, It first, It last):
 		tmpdir(sys::path(dirname), first, last)
-		{}
+		{ mkdir(); }
 
 		template<class It>
 		tmpdir(sys::path dirname, It first, It last):
 		_dirname(dirname)
-		{ generate_files(_dirname, first, last); }
+		{
+			mkdir();
+			generate_files(_dirname, first, last);
+		}
 
 		~tmpdir() {
 			std::stringstream cmd;
@@ -56,7 +68,7 @@ namespace test {
 		void
 		list() {
 			std::stringstream cmd;
-			cmd << "find " << __func__;
+			cmd << "find " << name();
 			std::system(cmd.str().data());
 		}
 
@@ -67,6 +79,13 @@ namespace test {
 		const sys::path&
 		name() const noexcept {
 			return _dirname;
+		}
+
+	private:
+
+		void
+		mkdir() {
+			::mkdir(_dirname, 0755);
 		}
 
 	};
@@ -120,6 +139,44 @@ test_file_list(const test::tmpdir& tdir, const std::vector<std::string>& files) 
 	test::compare(files_actual, files_orig, msg.str().data());
 }
 
+template<
+	class IStream = sys::directory,
+	class OStream = sys::odirectory,
+	class Iterator = sys::directory_iterator
+>
+void
+test_file_copy(const test::tmpdir& tdir, const std::vector<std::string>& files) {
+	IStream dir(tdir);
+	test::tmpdir otdir(__func__);
+	OStream odir(otdir);
+	std::copy(
+		sys::idirectory_iterator<sys::pathentry>(dir),
+		sys::idirectory_iterator<sys::pathentry>(),
+		sys::odirectory_iterator<sys::pathentry>(odir)
+	);
+	std::set<sys::direntry> orig;
+	{
+		IStream idir1(tdir);
+		std::copy(
+			sys::idirectory_iterator<sys::direntry>(idir1),
+			sys::idirectory_iterator<sys::direntry>(),
+			std::inserter(orig, orig.end())
+		);
+	}
+	std::set<sys::direntry> copied;
+	{
+		IStream idir2(otdir);
+		std::copy(
+			sys::idirectory_iterator<sys::direntry>(idir2),
+			sys::idirectory_iterator<sys::direntry>(),
+			std::inserter(copied, copied.end())
+		);
+	}
+	std::stringstream msg;
+	msg << "bad file copy from " << tdir.name() << " to " << otdir.name();
+	test::compare(copied, orig, msg.str().data());
+}
+
 void
 test_directory() {
 	std::vector<std::string> files{"a", "b", "c"};
@@ -134,6 +191,7 @@ test_directory_iterator() {
 	test::tmpdir tdir(__func__, files.begin(), files.end());
 	test_file_count(tdir, files);
 	test_file_list(tdir, files);
+	test_file_copy(tdir, files);
 }
 
 void
