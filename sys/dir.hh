@@ -61,6 +61,21 @@ namespace sys {
 			return !std::strcmp(name(), parent_dir);
 		}
 
+		bool
+		operator==(const direntry& rhs) const noexcept {
+			return std::strcmp(name(), rhs.name()) == 0;
+		}
+
+		bool
+		operator!=(const direntry& rhs) const noexcept {
+			return std::strcmp(name(), rhs.name()) != 0;
+		}
+
+		bool
+		operator<(const direntry& rhs) const noexcept {
+			return std::strcmp(name(), rhs.name()) < 0;
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const direntry& rhs) {
 			return out << rhs.name();
@@ -87,6 +102,21 @@ namespace sys {
 		path
 		getpath() const {
 			return path(_dirname, name());
+		}
+
+		bool
+		operator<(const pathentry& rhs) const noexcept {
+			return _dirname < rhs._dirname;
+		}
+
+		bool
+		operator==(const pathentry& rhs) const noexcept {
+			return _dirname == rhs._dirname;
+		}
+
+		bool
+		operator!=(const pathentry& rhs) const noexcept {
+			return !operator==(rhs);
 		}
 
 		friend std::ostream&
