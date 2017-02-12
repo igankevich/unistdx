@@ -251,7 +251,10 @@ namespace sys {
 		void
 		open(Path&& path) {
 			close();
-			_dir = ::opendir(const_path(path));
+			_dir = bits::check(
+				::opendir(const_path(path)),
+				__FILE__, __LINE__, __func__
+			);
 			_errc = std::errc(errno);
 		}
 
@@ -275,7 +278,7 @@ namespace sys {
 			if (good()) {
 				direntry* result = static_cast<direntry*>(::readdir(_dir));
 				if (!result) {
-					if (errno) {
+					if (std::errc(errno) == std::errc::bad_file_descriptor) {
 						_errc = std::errc(errno);
 						_state = state(_state | failbit);
 					} else {
@@ -349,17 +352,22 @@ namespace sys {
 
 		void
 		read_direntry(direntry& rhs) {
-			do {
-				while (!eof() && directory::operator>>(rhs).eof()) {
+			bool success = false;
+			while (!success && !eof()) {
+				if (directory::operator>>(rhs)) {
+					if (!rhs.is_working_dir() && !rhs.is_parent_dir()) {
+						success = true;
+					}
+				} else {
 					_dirs.pop();
 					if (_dirs.empty()) {
-						_state = eofbit;
+						_state = state(_state | eofbit);
 					} else {
 						clear();
 						open(_dirs.front());
 					}
 				}
-			} while (good() && (rhs.is_working_dir() || rhs.is_parent_dir()));
+			}
 		}
 
 		static file_type
