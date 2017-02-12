@@ -278,12 +278,7 @@ namespace sys {
 			if (good()) {
 				direntry* result = static_cast<direntry*>(::readdir(_dir));
 				if (!result) {
-					if (std::errc(errno) == std::errc::bad_file_descriptor) {
-						_errc = std::errc(errno);
-						_state = state(_state | failbit);
-					} else {
-						_state = state(_state | eofbit);
-					}
+					_state = state(_state | eofbit);
 				} else {
 					rhs = *result;
 				}
