@@ -96,22 +96,6 @@ template<class Stream = sys::directory, class Iterator = sys::directory_iterator
 void
 test_file_count(const test::tmpdir& tdir, const std::vector<std::string>& files) {
 	Stream dir(tdir);
-	size_t cnt = std::count_if(
-		Iterator(dir),
-		Iterator(),
-		[] (const sys::direntry& ent) {
-			return !ent.is_working_dir() && !ent.is_parent_dir();
-		}
-	);
-	std::stringstream msg;
-	msg << "bad file count in " << tdir.name();
-	test::equal(cnt, files.size(), msg.str());
-}
-
-template<class Stream = sys::directory, class Iterator = sys::directory_iterator>
-void
-test_total_file_count(const test::tmpdir& tdir, const std::vector<std::string>& files) {
-	Stream dir(tdir);
 	size_t cnt = std::distance(Iterator(dir), Iterator());
 	std::stringstream msg;
 	msg << "bad total file count in " << tdir.name();
@@ -147,13 +131,9 @@ test_directory() {
 void
 test_directory_iterator() {
 	std::vector<std::string> files{"a", "b", "c"};
-	std::vector<std::string> all_files(files);
-	all_files.emplace_back(".");
-	all_files.emplace_back("..");
 	test::tmpdir tdir(__func__, files.begin(), files.end());
 	test_file_count(tdir, files);
-	test_total_file_count(tdir, all_files);
-	test_file_list(tdir, all_files);
+	test_file_list(tdir, files);
 }
 
 void
@@ -191,7 +171,6 @@ test_dirtree_iterator() {
 	all_files.emplace_back("h");
 	typedef sys::dirtree_iterator<sys::direntry> direntry_iterator;
 	test_file_count<sys::dirtree, direntry_iterator>(tdir, all_files);
-	test_total_file_count<sys::dirtree, direntry_iterator>(tdir, all_files);
 	test_file_list<sys::dirtree, direntry_iterator>(tdir, all_files);
 }
 
