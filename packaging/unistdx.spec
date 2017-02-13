@@ -63,6 +63,7 @@ sys/system.hh \
 $RPM_BUILD_ROOT/%{_includedir}/unistdx/sys
 install -m 644 \
 sys/bits/basic_istream_iterator.hh \
+sys/bits/basic_ostream_iterator.hh \
 sys/bits/bit_count.hh \
 sys/bits/check.hh \
 sys/bits/endpoint_parse.hh \
@@ -108,6 +109,7 @@ install -m 644 packaging/unistdx.pc $RPM_BUILD_ROOT/%{_libdir}/pkgconfig
 %{_includedir}/unistdx/sys/subnet_iterator.hh
 %{_includedir}/unistdx/sys/system.hh
 %{_includedir}/unistdx/sys/bits/basic_istream_iterator.hh
+%{_includedir}/unistdx/sys/bits/basic_ostream_iterator.hh
 %{_includedir}/unistdx/sys/bits/bit_count.hh
 %{_includedir}/unistdx/sys/bits/check.hh
 %{_includedir}/unistdx/sys/bits/endpoint_parse.hh
