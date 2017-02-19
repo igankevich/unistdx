@@ -29,7 +29,15 @@ namespace sys {
 			_rawargs.push_back(nullptr);
 		}
 
-		basic_argbuf(basic_argbuf&&) = default;
+		basic_argbuf(basic_argbuf&& rhs):
+		_args(std::move(rhs._args)),
+		_rawargs(std::move(rhs._rawargs))
+		{
+			for	(size_t i=0; i<_args.size(); ++i) {
+				_rawargs[i] = _args[i].data();
+			}
+		}
+
 		basic_argbuf(const basic_argbuf&) = delete;
 
 		~basic_argbuf() = default;
@@ -102,7 +110,7 @@ namespace sys {
 		{ this->init(&_argbuf); }
 
 		argstream(argstream&& rhs):
-		std::ostream(std::move(rhs)),
+		std::ostream(),
 		_argbuf(std::move(rhs._argbuf))
 		{ this->init(&_argbuf); }
 
