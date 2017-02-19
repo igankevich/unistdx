@@ -259,21 +259,9 @@ namespace sys {
 namespace stdx {
 
 	template<>
-	struct streambuf_traits<sys::socket> {
-
-		typedef void char_type;
-
-		static std::streamsize
-		write(sys::socket& sink, const char_type* s, std::streamsize n) {
-			return sink.write(s, n);
-		}
-
-		static std::streamsize
-		read(sys::socket& src, char_type* s, std::streamsize n) {
-			return src.read(s, n);
-		}
-
-	};
+	struct streambuf_traits<sys::socket>:
+	public sys::fildes_streambuf_traits<sys::socket>
+   	{};
 
 }
 

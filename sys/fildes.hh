@@ -3,6 +3,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/ioctl.h>
 
 #include <vector>
 
@@ -197,26 +198,48 @@ namespace sys {
 
 	static_assert(sizeof(fildes) == sizeof(fd_type), "bad fd size");
 
+	template<class T>
+	struct fildes_streambuf_traits {
+
+		typedef void char_type;
+
+		static std::streamsize
+		write(T& sink, const char_type* s, std::streamsize n) {
+			return sink.write(s, n);
+		}
+
+		static std::streamsize
+		read(T& src, char_type* s, std::streamsize n) {
+			return src.read(s, n);
+		}
+
+		static bool
+		is_blocking(const T& rhs) {
+			try {
+				return !bool(rhs.flags() & T::non_blocking);
+			} catch (sys::bits::bad_call& err) {
+				return false;
+			}
+		}
+
+		static std::streamsize
+		in_avail(T& rhs) {
+			int nread;
+			if (::ioctl(rhs.get_fd(), FIONREAD, &nread) < 0) {
+				nread = 0;
+			}
+			return nread;
+		}
+
+	};
 }
 
 namespace stdx {
 
 	template<>
-	struct streambuf_traits<sys::fildes> {
-
-		typedef void char_type;
-
-		static std::streamsize
-		write(sys::fildes& sink, const char_type* s, std::streamsize n) {
-			return sink.write(s, n);
-		}
-
-		static std::streamsize
-		read(sys::fildes& src, char_type* s, std::streamsize n) {
-			return src.read(s, n);
-		}
-
-	};
+	struct streambuf_traits<sys::fildes>:
+	public sys::fildes_streambuf_traits<sys::fildes>
+	{};
 
 }
 
