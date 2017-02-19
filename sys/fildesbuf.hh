@@ -84,8 +84,12 @@ namespace sys {
 		int
 		sync() override {
 			int ret = 0;
-			ret |= do_flush()==-1 ? -1 : 0;
-			ret |= do_fill()==-1 ? -1 : 0;
+			if (has_pbuf()) {
+				ret |= do_flush()==-1 ? -1 : 0;
+			}
+			if (has_gbuf()) {
+				ret |= do_fill()==-1 ? -1 : 0;
+			}
 			return ret;
 		}
 
@@ -168,6 +172,7 @@ namespace sys {
 		std::streamsize
 		do_fill_blocking() {
 			const std::streamsize navail = streambuf_traits_type::in_avail(_fd);
+			std::clog << "navail = " << navail << std::endl;
 			std::streamsize n = 0;
 			if (navail > 0) {
 				// enlarge the buffer if needed
@@ -240,6 +245,11 @@ namespace sys {
 			);
 		}
 
+		bool
+		has_gbuf() const noexcept {
+			return !_gbuf.empty();
+		}
+
 		void
 		ggrow() {
 			_gbuf.resize(_gbuf.size() * 2);
@@ -254,6 +264,11 @@ namespace sys {
 		char_type*
 		plast() noexcept {
 			return _pbuf.data() + _pbuf.size();
+		}
+
+		bool
+		has_pbuf() const noexcept {
+			return !_pbuf.empty();
 		}
 
 		void
