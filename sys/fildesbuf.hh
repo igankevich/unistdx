@@ -172,7 +172,6 @@ namespace sys {
 		std::streamsize
 		do_fill_blocking() {
 			const std::streamsize navail = streambuf_traits_type::in_avail(_fd);
-			std::clog << "navail = " << navail << std::endl;
 			std::streamsize n = 0;
 			if (navail > 0) {
 				// enlarge the buffer if needed
