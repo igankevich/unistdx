@@ -68,6 +68,16 @@ namespace sys {
 			stdx::append_payload(*_buf, *rhs._buf);
 		}
 
+		explicit
+		operator bool() const noexcept {
+			return true;
+		}
+
+		bool
+		operator!() const noexcept {
+			return !operator bool();
+		}
+
 		basic_packetstream& operator<<(bool rhs) { return write(rhs ? char(1) : char(0)); }
 		basic_packetstream& operator<<(char rhs) { return write(rhs); }
 		basic_packetstream& operator<<(int8_t rhs)  { return write(rhs); }
