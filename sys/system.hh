@@ -3,15 +3,16 @@
 
 #include <unistd.h>
 #include <thread>
+#include <cstdlib>
 
 #if defined(PAGESIZE)
-	#define FACTORY_SYSCONF_PAGE_SIZE PAGESIZE
+	#define UNISTDX_SYSCONF_PAGE_SIZE PAGESIZE
 #elif defined(PAGE_SIZE)
-	#define FACTORY_SYSCONF_PAGE_SIZE PAGE_SIZE
+	#define UNISTDX_SYSCONF_PAGE_SIZE PAGE_SIZE
 #elif defined(_SC_PAGESIZE)
-	#define FACTORY_SYSCONF_PAGE_SIZE _SC_PAGESIZE
+	#define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGESIZE
 #elif defined(_SC_PAGE_SIZE)
-	#define FACTORY_SYSCONF_PAGE_SIZE _SC_PAGE_SIZE
+	#define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGE_SIZE
 #endif
 
 /// POSIX and Linux system call wrappers.
@@ -21,8 +22,8 @@ namespace sys {
 
 	size_type
 	page_size() noexcept {
-		#if defined(FACTORY_SYSCONF_PAGE_SIZE)
-		long result = ::sysconf(FACTORY_SYSCONF_PAGE_SIZE);
+		#if defined(UNISTDX_SYSCONF_PAGE_SIZE)
+		long result = ::sysconf(UNISTDX_SYSCONF_PAGE_SIZE);
 		return result < 1 ? 4096 : result;
 		#else
 		return 4096;
@@ -31,10 +32,21 @@ namespace sys {
 
 	unsigned
 	thread_concurrency() noexcept {
-		#if defined(FACTORY_SINGLE_THREAD)
+		#if defined(UNISTDX_SINGLE_THREAD)
 		return 1u;
 		#else
-		return std::thread::hardware_concurrency();
+		unsigned concurrency = 0u;
+		const char* cc = std::getenv("UNISTDX_CONCURRENCY");
+		if (cc) {
+			concurrency = std::atoi(cc);
+		}
+		if (concurrency <= 1u) {
+			concurrency = std::thread::hardware_concurrency();
+		}
+		if (concurrency <= 1u) {
+			concurrency = 1u;
+		}
+		return concurrency;
 		#endif
 	}
 
