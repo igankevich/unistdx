@@ -46,8 +46,7 @@ namespace sys {
 		basic_fildesbuf(fd_type&& fd): basic_fildesbuf(std::move(fd), 512, 512) {}
 
 		basic_fildesbuf(fd_type&& fd, size_type gbufsize, size_type pbufsize):
-		_fd(std::move(fd)), _gbuf(gbufsize), _pbuf(pbufsize),
-		_blocking(streambuf_traits_type::is_blocking(_fd))
+		_fd(std::move(fd)), _gbuf(gbufsize), _pbuf(pbufsize)
 		{
 			char_type* end = _gbuf.data();
 			setg(end, end, end);
@@ -158,37 +157,6 @@ namespace sys {
 
 		std::streamsize
 		do_fill() {
-			std::streamsize ret;
-			if (_blocking) {
-				ret = do_fill_blocking();
-			} else {
-				ret = do_fill_non_blocking();
-			}
-			return ret;
-		}
-
-
-		/// Read only the number of available bytes.
-		std::streamsize
-		do_fill_blocking() {
-			const std::streamsize navail = streambuf_traits_type::in_avail(_fd);
-			std::streamsize n = 0;
-			if (navail > 0) {
-				// enlarge the buffer if needed
-				while (navail > glast() - egptr()) {
-					ggrow();
-				}
-				n = streambuf_traits_type::read(_fd, egptr(), navail);
-				if (n > 0) {
-					setg(eback(), gptr(), egptr() + n);
-				}
-			}
-			return n;
-		}
-
-		/// Read all bytes.
-		std::streamsize
-		do_fill_non_blocking() {
 			// TODO 2016-03-09 this is not optimal solution,
 			// but i don't know a better alternative
 			const std::streamsize old_egptr_offset = egptr() - eback();
@@ -292,7 +260,6 @@ namespace sys {
 		fd_type _fd;
 		std::vector<char_type> _gbuf;
 		std::vector<char_type> _pbuf;
-		bool _blocking = false;
 	};
 
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>

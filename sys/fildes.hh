@@ -3,7 +3,9 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#if defined(UNISTDX_HAS_SYS_IOCTL_H) && defined(__linux__)
 #include <sys/ioctl.h>
+#endif
 
 #include <vector>
 
@@ -224,11 +226,17 @@ namespace sys {
 
 		static std::streamsize
 		in_avail(T& rhs) {
+			#if defined(UNISTDX_HAS_SYS_IOCTL_H) && \
+				defined(__linux__) && \
+				defined(FIONREAD)
 			int nread;
 			if (::ioctl(rhs.get_fd(), FIONREAD, &nread) < 0) {
 				nread = 0;
 			}
 			return nread;
+			#else
+			return 0;
+			#endif
 		}
 
 	};

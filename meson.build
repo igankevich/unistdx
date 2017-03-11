@@ -16,5 +16,8 @@ testdir = include_directories('test')
 cpp = meson.get_compiler('cpp')
 libpthread = cpp.find_library('pthread')
 libstdx = dependency('stdx')
+if cpp.has_header('sys/ioctl.h')
+	add_global_arguments('-DUNISTDX_HAS_SYS_IOCTL_H', language: 'cpp')
+endif
 
 subdir('test')
