@@ -223,7 +223,6 @@ namespace sys {
 
 		void
 		clear() noexcept {
-			_errc = std::errc(0);
 			_state = goodbit;
 		}
 
@@ -252,14 +251,13 @@ namespace sys {
 			return _state;
 		}
 
-		std::errc
-		error_code() const noexcept {
-			return _errc;
+		void
+		setstate(state rhs) noexcept {
+			_state = state(_state | rhs);
 		}
 
 	protected:
 
-		std::errc _errc = std::errc(0);
 		state _state = goodbit;
 
 	};
@@ -300,20 +298,18 @@ namespace sys {
 		open(const path& p) {
 			close();
 			_dirpath = p;
-			_dir = bits::check(
-				::opendir(p),
-				__FILE__, __LINE__, __func__
-			);
-			_errc = std::errc(errno);
+			_dir = ::opendir(p);
+			if (!_dir) {
+				setstate(failbit);
+			}
 		}
 
 		void
 		close() {
 			if (_dir) {
-				bits::check(
-					::closedir(_dir),
-					__FILE__, __LINE__, __func__
-				);
+				if (-1 == ::closedir(_dir)) {
+					setstate(failbit);
+				}
 				_dir = nullptr;
 			}
 		}
@@ -356,7 +352,7 @@ namespace sys {
 				while (!success && !eof()) {
 					const direntry* result = static_cast<direntry*>(::readdir(_dir));
 					if (!result) {
-						_state = state(_state | eofbit);
+						setstate(eofbit);
 					} else {
 						rhs = Entry(_dirpath, *result);
 						if (_filepred(rhs)) {
@@ -374,7 +370,7 @@ namespace sys {
 				while (!success && !eof()) {
 					const direntry* result = static_cast<direntry*>(::readdir(_dir));
 					if (!result) {
-						_state = state(_state | eofbit);
+						setstate(eofbit);
 					} else {
 						if (_filepred(*result)) {
 							rhs = *result;
@@ -516,6 +512,7 @@ namespace sys {
 		using typename basic_dirstream::state;
 		using basic_dirstream::eofbit;
 		using basic_dirstream::clear;
+		using basic_dirstream::setstate;
 		typedef DirPred dir_pred;
 
 		basic_dirtree() = default;
@@ -573,7 +570,7 @@ namespace sys {
 				} else {
 					_dirs.pop();
 					if (_dirs.empty()) {
-						_state = state(_state | eofbit);
+						setstate(eofbit);
 					} else {
 						clear();
 						directory::open(_dirs.front());
