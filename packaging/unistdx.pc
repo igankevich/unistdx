@@ -1,7 +1,0 @@
-prefix=/usr
-includedir=${prefix}/include
-
-Name: unistdx
-Description: C++ wrappers for libc
-Version: 0.1
-Cflags: -I${includedir}/unistdx
