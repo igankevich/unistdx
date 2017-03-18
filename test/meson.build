@@ -83,7 +83,7 @@ test(
 	executable(
 		'system-test',
 		sources: 'system_test.cc',
-		dependencies: gtest,
+		dependencies: [gtest, unistdx],
 		include_directories: srcdir,
 	)
 )

@@ -18,4 +18,5 @@ libpthread = cpp.find_library('pthread')
 libstdx = dependency('stdx')
 gtest = dependency('gtest', main: true)
 
+subdir('sys')
 subdir('test')
