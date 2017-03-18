@@ -35,18 +35,18 @@ namespace sys {
 		#if defined(UNISTDX_SINGLE_THREAD)
 		return 1u;
 		#else
-		unsigned concurrency = 0u;
+		int concurrency = 0;
 		const char* cc = std::getenv("UNISTDX_CONCURRENCY");
 		if (cc) {
 			concurrency = std::atoi(cc);
 		}
-		if (concurrency <= 1u) {
+		if (concurrency < 1) {
 			concurrency = std::thread::hardware_concurrency();
 		}
-		if (concurrency <= 1u) {
-			concurrency = 1u;
+		if (concurrency < 1) {
+			concurrency = 1;
 		}
-		return concurrency;
+		return static_cast<unsigned>(concurrency);
 		#endif
 	}
 

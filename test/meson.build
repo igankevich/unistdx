@@ -77,3 +77,13 @@ executable(
 	sources: 'posix_test.cc',
 	include_directories: srcdir,
 )
+
+test(
+	'system-test',
+	executable(
+		'system-test',
+		sources: 'system_test.cc',
+		dependencies: gtest,
+		include_directories: srcdir,
+	)
+)
