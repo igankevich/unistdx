@@ -87,3 +87,13 @@ test(
 		include_directories: srcdir,
 	)
 )
+
+test(
+	'file-mutex-test',
+	executable(
+		'file-mutex-test',
+		sources: 'file_mutex_test.cc',
+		dependencies: [gtest, unistdx],
+		include_directories: srcdir,
+	)
+)

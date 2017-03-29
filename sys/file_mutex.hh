@@ -7,12 +7,35 @@
 #include <fcntl.h>
 
 #include <stdexcept>
+#include <cstring>
 
 #include "fildes.hh"
 
 namespace sys {
 
-	template<class LockType>
+	enum file_lock_type: short {
+		read_lock = F_RDLCK,
+		write_lock = F_WRLCK
+	};
+
+	namespace bits {
+
+		template<short LockType>
+		struct lock_type_to_mode;
+
+		template<>
+		struct lock_type_to_mode<read_lock> {
+			constexpr static const int value = O_RDONLY;
+		};
+
+		template<>
+		struct lock_type_to_mode<write_lock> {
+			constexpr static const int value = O_WRONLY;
+		};
+
+	}
+
+	template<short LockType>
 	class file_mutex: public fildes {
 
 		struct flock_wrapper: public ::flock {
@@ -22,6 +45,8 @@ namespace sys {
 				this->l_whence = SEEK_SET;
 			}
 		};
+
+		typedef typename bits::lock_type_to_mode<LockType> open_mode;
 
 	public:
 		inline void
@@ -43,7 +68,7 @@ namespace sys {
 			int ret = ::fcntl(this->_fd, F_SETLK, &lk);
 			bool result = true;
 			if (ret == -1) {
-				if (errno == EACCESS || errno == EAGAIN) {
+				if (errno == EACCES || errno == EAGAIN) {
 					result = false;
 				} else {
 					throw std::runtime_error("bad file lock");
@@ -63,7 +88,9 @@ namespace sys {
 		open(const char* filename, mode_type mode) {
 			this->_fd = ::open(
 				filename,
-				::sys::fildes::create | ::sys::fildes::close_on_exec | O_RDWR,
+				::sys::fildes::create
+					| ::sys::fildes::close_on_exec
+					| open_mode::value,
 				mode
 			);
 			check_fd();
