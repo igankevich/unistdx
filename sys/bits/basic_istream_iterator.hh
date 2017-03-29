@@ -30,6 +30,11 @@ namespace sys {
 
 		basic_istream_iterator(const basic_istream_iterator&) = default;
 
+		basic_istream_iterator(basic_istream_iterator&& rhs):
+		_stream(rhs._stream),
+		_value(std::move(rhs._value))
+		{ rhs._stream = nullptr; }
+
 		inline basic_istream_iterator&
 		operator=(const basic_istream_iterator&) = default;
 

@@ -324,6 +324,11 @@ namespace sys {
 			return _filepred;
 		}
 
+		const path&
+		getpath() const noexcept {
+			return _dirpath;
+		}
+
 		basic_directory&
 		operator>>(direntry& rhs) {
 			read_direntry(rhs);
