@@ -217,6 +217,11 @@ namespace sys {
 				: canonical_path(std::move(_path.substr(0, pos)), 0);
 		}
 
+		bool
+		is_relative_to(const sys::canonical_path& root) {
+			return _path.find(root._path) == std::string::size_type(0);
+		}
+
 	private:
 
 		explicit

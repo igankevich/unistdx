@@ -71,6 +71,11 @@ namespace sys {
 		}
 
 		bool
+		is_directory() const noexcept {
+			return type() == file_type::directory;
+		}
+
+		bool
 		operator==(const direntry& rhs) const noexcept {
 			return std::strcmp(name(), rhs.name()) == 0;
 		}
@@ -320,8 +325,13 @@ namespace sys {
 		}
 
 		const filepred_type&
-		file_pred() const noexcept {
+		getfilepred() const noexcept {
 			return _filepred;
+		}
+
+		void
+		setfilepred(filepred_type rhs) {
+			_filepred = rhs;
 		}
 
 		const path&
@@ -518,7 +528,7 @@ namespace sys {
 		using basic_dirstream::eofbit;
 		using basic_dirstream::clear;
 		using basic_dirstream::setstate;
-		typedef DirPred dir_pred;
+		typedef DirPred dirpred_type;
 
 		basic_dirtree() = default;
 
@@ -539,6 +549,16 @@ namespace sys {
 		const path&
 		current_dir() const noexcept {
 			return _dirs.front();
+		}
+
+		const dirpred_type&
+		getdirpred() const noexcept {
+			return _dirpred;
+		}
+
+		void
+		setdirpred(dirpred_type rhs) {
+			_dirpred = rhs;
 		}
 
 		basic_dirtree&
@@ -585,7 +605,7 @@ namespace sys {
 		}
 
 		std::queue<sys::path> _dirs;
-		dir_pred _dirpred;
+		dirpred_type _dirpred;
 
 	};
 
