@@ -1,4 +1,5 @@
 libunistdx_src = [
+	'signal.cc',
 	'system.cc'
 ]
 
