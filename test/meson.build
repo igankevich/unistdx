@@ -40,7 +40,7 @@ test(
 	'sys::file, sys::direntry, sys::path',
 	executable(
 		'sys-test',
-		sources: 'sys_test.cc',
+		sources: libunistdx_src + ['sys_test.cc'],
 		include_directories: srcdir,
 	)
 )

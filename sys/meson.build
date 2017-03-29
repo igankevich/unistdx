@@ -1,18 +1,21 @@
-libunistdx_src = [
+libunistdx_src = files(
 	'signal.cc',
-	'system.cc'
-]
+	'system.cc',
+	'file.cc'
+)
 
 libunistdx_shared = shared_library(
 	'unistdx',
 	sources: libunistdx_src,
-	install: true
+	install: true,
+	include_directories: srcdir
 )
 
 libunistdx_static = static_library(
 	'unistdx',
 	sources: libunistdx_src,
-	install: true
+	install: true,
+	include_directories: srcdir
 )
 
 unistdx = declare_dependency(

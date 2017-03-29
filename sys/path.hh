@@ -14,31 +14,35 @@ namespace sys {
 
 	struct const_path {
 
-		constexpr
+		constexpr inline
 		const_path(const char* rhs) noexcept:
 		_str(rhs)
 		{}
 
+		inline
 		const_path(const std::string& rhs) noexcept:
 		_str(rhs.data())
 		{}
 
 		const_path(const path&) noexcept;
 
+		inline
 		operator const char*() const noexcept {
 			return _str;
 		}
 
+		inline
 		bool operator==(const const_path&) = delete;
+
+		inline
 		bool operator!=(const const_path&) = delete;
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const const_path& rhs) {
 			return out << rhs._str;
 		}
 
 	private:
-
 		const char* _str;
 
 	};

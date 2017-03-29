@@ -26,20 +26,9 @@ namespace sys {
 	};
 
 	char
-	to_char(file_type rhs) noexcept {
-		switch (rhs) {
-			case file_type::regular: return '-';
-			case file_type::directory: return 'd';
-			case file_type::block_device: return 'b';
-			case file_type::character_device: return 'c';
-			case file_type::pipe: return 'p';
-			case file_type::socket: return 's';
-			case file_type::symbolic_link: return 'l';
-			default: return '?';
-		}
-	}
+	to_char(file_type rhs) noexcept;
 
-	std::ostream&
+	inline std::ostream&
 	operator<<(std::ostream& out, const file_type& rhs) {
 		return out << to_char(rhs);
 	}
