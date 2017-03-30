@@ -35,6 +35,9 @@ meson --prefix %{_prefix} . build
 %install
 DESTDIR=%{buildroot} ninja-build -C build install
 
+%check
+ninja-build -C build test
+
 
 %post -p /sbin/ldconfig
 
