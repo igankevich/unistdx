@@ -29,14 +29,15 @@ developing applications that use %{name}.
 
 
 %build
-meson --prefix %{_prefix} . build
+%meson
+%meson_build
 
 
 %install
-DESTDIR=%{buildroot} ninja-build -C build install
+%meson_install
 
 %check
-ninja-build -C build test
+%meson_test
 
 
 %post -p /sbin/ldconfig
