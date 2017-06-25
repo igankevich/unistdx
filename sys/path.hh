@@ -24,6 +24,7 @@ namespace sys {
 		_str(rhs.data())
 		{}
 
+		inline
 		const_path(const path&) noexcept;
 
 		inline

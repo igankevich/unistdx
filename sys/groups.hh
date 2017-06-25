@@ -73,14 +73,9 @@ namespace sys {
 		"bad sys::group size"
 	);
 
-	namespace bits {
-		std::mutex __grentmutex;
-	}
-
 	struct groupstream {
 
 		groupstream():
-		_lock(bits::__grentmutex),
 		_end(false)
 		{ ::setgrent(); }
 
@@ -118,7 +113,6 @@ namespace sys {
 			return static_cast<group*>(::getgrent());
 		}
 
-		std::lock_guard<std::mutex> _lock;
 		bool _end;
 
 	};

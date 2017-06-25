@@ -3,7 +3,6 @@
 
 #include <sys/types.h>
 #include <pwd.h>
-#include <mutex>
 #include <ostream>
 #include <sys/bits/basic_istream_iterator.hh>
 
@@ -75,14 +74,9 @@ namespace sys {
 		"bad sys::user size"
 	);
 
-	namespace bits {
-		std::mutex __pwentmutex;
-	}
-
 	struct userstream {
 
 		userstream():
-		_lock(bits::__pwentmutex),
 		_end(false)
 		{ ::setpwent(); }
 
@@ -120,7 +114,6 @@ namespace sys {
 			return static_cast<user*>(::getpwent());
 		}
 
-		std::lock_guard<std::mutex> _lock;
 		bool _end;
 
 	};
