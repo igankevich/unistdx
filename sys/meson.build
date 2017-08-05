@@ -1,7 +1,9 @@
 libunistdx_src = files(
 	'signal.cc',
 	'system.cc',
-	'file.cc'
+	'file.cc',
+	'process.cc',
+	'bits/safe_calls.cc'
 )
 
 libunistdx_shared = shared_library(

@@ -3,8 +3,8 @@ test(
 	executable(
 		'locks-test',
 		sources: 'locks_test.cc',
-		dependencies: libpthread,
 		include_directories: srcdir,
+		dependencies: [threads,unistdx],
 	)
 )
 
@@ -13,8 +13,8 @@ test(
 	executable(
 		'shmem-test',
 		sources: 'shmem_test.cc',
-		dependencies: libpthread,
 		include_directories: srcdir,
+		dependencies: [threads,unistdx],
 	)
 )
 
@@ -24,6 +24,7 @@ test(
 		'endpoint-test',
 		sources: 'endpoint_test.cc',
 		include_directories: srcdir,
+		dependencies: [unistdx],
 	)
 )
 
@@ -33,6 +34,7 @@ test(
 		'poller-test',
 		sources: 'poller_test.cc',
 		include_directories: srcdir,
+		dependencies: [unistdx],
 	)
 )
 
@@ -40,8 +42,9 @@ test(
 	'sys::file, sys::direntry, sys::path',
 	executable(
 		'sys-test',
-		sources: libunistdx_src + ['sys_test.cc'],
+		sources: 'sys_test.cc',
 		include_directories: srcdir,
+		dependencies: [unistdx],
 	)
 )
 
@@ -51,6 +54,7 @@ test(
 		'process-test',
 		sources: 'process_test.cc',
 		include_directories: srcdir,
+		dependencies: [unistdx],
 	)
 )
 
@@ -60,6 +64,7 @@ test(
 		'buffer-test',
 		sources: 'buffer_test.cc',
 		include_directories: srcdir,
+		dependencies: [unistdx],
 	)
 )
 
@@ -69,6 +74,7 @@ test(
 		'users-test',
 		sources: 'users_test.cc',
 		include_directories: srcdir,
+		dependencies: [unistdx],
 	)
 )
 
@@ -83,8 +89,8 @@ test(
 	executable(
 		'system-test',
 		sources: 'system_test.cc',
-		dependencies: [gtest, unistdx],
 		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
 	)
 )
 
@@ -93,7 +99,7 @@ test(
 	executable(
 		'file-mutex-test',
 		sources: 'file_mutex_test.cc',
-		dependencies: [gtest, unistdx],
 		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
 	)
 )

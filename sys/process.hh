@@ -25,10 +25,10 @@ namespace sys {
 	typedef ::uid_t uid_type;
 	typedef ::gid_t gid_type;
 
-	constexpr uid_type
+	inline constexpr uid_type
 	superuser() noexcept { return 0; }
 
-	constexpr gid_type
+	inline constexpr gid_type
 	supergroup() noexcept { return 0; }
 
 	namespace this_process {
@@ -92,7 +92,7 @@ namespace sys {
 			);
 		}
 
-		int
+		inline int
 		execute(char* const argv[]) {
 			char* const no_env[1] = {0};
 			return bits::check(
@@ -114,7 +114,7 @@ namespace sys {
 			);
 		}
 
-		int
+		inline int
 		execute_command(char* const argv[]) {
 			return bits::check(
 				::execvp(argv[0], argv),
@@ -122,7 +122,7 @@ namespace sys {
 			);
 		}
 
-		void
+		inline void
 		send(signal sig) {
 			bits::check(
 				::kill(::sys::this_process::id(), signal_type(sig)),
@@ -132,7 +132,7 @@ namespace sys {
 
 	}
 
-	pid_type
+	inline pid_type
 	safe_fork() {
 		bits::global_lock_type lock(bits::__forkmutex);
 		return ::fork();
@@ -150,32 +150,32 @@ namespace sys {
 	template<>
 	struct basic_status<wstat_type> {
 
-		explicit constexpr
+		inline explicit constexpr
 		basic_status(wstat_type rhs) noexcept:
 			stat(rhs) {}
 
-		constexpr
+		inline constexpr
 		basic_status() noexcept = default;
 
-		constexpr
+		inline constexpr
 		basic_status(const basic_status&) noexcept = default;
 
-		constexpr bool
+		inline constexpr bool
 		exited() const noexcept {
 			return WIFEXITED(stat);
 		}
 
-		constexpr bool
+		inline constexpr bool
 		killed() const noexcept {
 			return WIFSIGNALED(stat);
 		}
 
-		constexpr bool
+		inline constexpr bool
 		stopped() const noexcept {
 			return WIFSTOPPED(stat);
 		}
 
-		constexpr bool
+		inline constexpr bool
 		core_dumped() const noexcept {
 			#ifdef WCOREDUMP
 			return static_cast<bool>(WCOREDUMP(stat));
@@ -184,48 +184,29 @@ namespace sys {
 			#endif
 		}
 
-		constexpr bool
+		inline constexpr bool
 		trapped() const noexcept {
 			return false;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		continued() const noexcept {
 			return WIFCONTINUED(stat);
 		}
 
-		constexpr code_type
+		inline constexpr code_type
 		exit_code() const noexcept {
 			return WEXITSTATUS(stat);
 		}
 
-		constexpr signal
+		inline constexpr signal
 		term_signal() const noexcept {
 			return signal(WTERMSIG(stat));
 		}
 
-		constexpr signal
+		inline constexpr signal
 		stop_signal() const noexcept {
 			return signal(WSTOPSIG(stat));
-		}
-
-		friend std::ostream&
-		operator<<(std::ostream& out, const basic_status& rhs) {
-			if (rhs.exited()) {
-				out << stdx::make_object("status", "exited", "exit_code", rhs.exit_code());
-			} else
-			if (rhs.killed()) {
-				out << stdx::make_object("status", "killed", "term_signal", rhs.term_signal());
-			} else
-			if (rhs.stopped()) {
-				out << stdx::make_object("status", "stopped", "stop_signal", rhs.stop_signal());
-			} else
-			if (rhs.continued()) {
-				out << stdx::make_object("status", "continued");
-			} else {
-				out << stdx::make_object("status", "unknown");
-			}
-			return out;
 		}
 
 		wstat_type stat = 0;
@@ -243,69 +224,69 @@ namespace sys {
 			continued = CLD_CONTINUED
 		};
 
-		explicit constexpr
+		inline explicit constexpr
 		basic_status(const siginfo_type& rhs) noexcept:
 			stat(static_cast<st>(rhs.si_code)),
 			code(rhs.si_status),
 			_pid(rhs.si_pid) {}
 
-		constexpr
+		inline constexpr
 		basic_status() noexcept = default;
 
-		constexpr
+		inline constexpr
 		basic_status(const basic_status&) noexcept = default;
 
-		constexpr bool
+		inline constexpr bool
 		exited() const noexcept {
 			return stat == st::exited;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		killed() const noexcept {
 			return stat == st::killed;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		stopped() const noexcept {
 			return stat == st::stopped;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		core_dumped() const noexcept {
 			return stat == st::core_dumped;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		trapped() const noexcept {
 			return stat == st::trapped;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		continued() const noexcept {
 			return stat == st::continued;
 		}
 
-		constexpr code_type
+		inline constexpr code_type
 		exit_code() const noexcept {
 			return code;
 		}
 
-		constexpr signal
+		inline constexpr signal
 		term_signal() const noexcept {
 			return signal(code);
 		}
 
-		constexpr signal
+		inline constexpr signal
 		stop_signal() const noexcept {
 			return signal(code);
 		}
 
-		constexpr pid_type
+		inline constexpr pid_type
 		pid() const noexcept {
 			return _pid;
 		}
 
-		constexpr const char*
+		inline constexpr const char*
 		status_string() const noexcept {
 			return exited() ? "exited" :
 				killed() ? "killed" :
@@ -316,18 +297,6 @@ namespace sys {
 				"unknown";
 		}
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const basic_status& rhs) {
-			out << "pid=" << rhs.pid() << ',';
-			out << "status=" << rhs.status_string() << ',';
-			if (rhs.exited()) {
-				out << "exit_code=" << rhs.exit_code();
-			} else {
-				out << "signal=" << rhs.term_signal();
-			}
-			return out;
-		}
-
 		st stat = static_cast<st>(0);
 		code_type code = 0;
 		pid_type _pid = 0;
@@ -336,10 +305,16 @@ namespace sys {
 	typedef basic_status<wstat_type> proc_status;
 	typedef basic_status<siginfo_type> proc_info;
 
+	std::ostream&
+	operator<<(std::ostream& out, const proc_status& rhs);
+
+	std::ostream&
+	operator<<(std::ostream& out, const proc_info& rhs);
+
 	struct process {
 
 		template<class F>
-		explicit inline
+		inline explicit
 		process(F f) {
 			_pid = safe_fork();
 			if (_pid == 0) {
@@ -348,12 +323,12 @@ namespace sys {
 			}
 		}
 
-		explicit
+		inline explicit
 		process(pid_type rhs) noexcept:
 		_pid(rhs)
 		{}
 
-		process() = default;
+		inline process() = default;
 		process(const process&) = delete;
 
 		inline
@@ -363,13 +338,14 @@ namespace sys {
 			rhs._pid = 0;
 		}
 
+		inline
 		~process() {
 			if (_pid > 0) {
 				this->do_kill(sys::signal::terminate);
 			}
 		}
 
-		process&
+		inline process&
 		operator=(process&& rhs) noexcept {
 			std::swap(_pid, rhs._pid);
 			return *this;
@@ -388,7 +364,7 @@ namespace sys {
 			}
 		}
 
-		sys::proc_status
+		inline sys::proc_status
 		wait() {
 			int stat = 0;
 			if (_pid > 0) {
@@ -400,7 +376,7 @@ namespace sys {
 			return sys::proc_status(stat);
 		}
 
-		explicit inline
+		inline explicit
 		operator bool() const noexcept {
 			return _pid > 0 && do_kill(sys::signal(0)) != -1;
 		}
@@ -410,30 +386,30 @@ namespace sys {
 			return !operator bool();
 		}
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const process& rhs) {
 			return out << stdx::make_object("id", rhs.id(), "gid", rhs.group_id());
 		}
 
-		pid_type
+		inline pid_type
 		id() const noexcept {
 			return _pid;
 		}
 
-		pid_type
+		inline pid_type
 		group_id() const noexcept {
 			return ::getpgid(_pid);
 		}
 
-		void
+		inline void
 		set_group_id(pid_type rhs) const {
 			bits::check(::setpgid(_pid, rhs),
 				__FILE__, __LINE__, __func__);
 		}
 
 		/// std::thread interface
-		bool joinable() { return true; }
-		void join() { wait(); }
+		inline bool joinable() { return true; }
+		inline void join() { wait(); }
 
 	private:
 
@@ -451,15 +427,15 @@ namespace sys {
 		typedef std::vector<process>::iterator iterator;
 
 		template<class ... Args>
-		explicit
+		inline explicit
 		process_group(Args&& ... args) {
 			emplace(std::forward<Args>(args)...);
 		}
 
-		process_group() = default;
+		inline process_group() = default;
 		process_group(const process_group&) = delete;
-		process_group(process_group&&) = default;
-		~process_group() = default;
+		inline process_group(process_group&&) = default;
+		inline ~process_group() = default;
 
 		template<class F>
 		const process&
@@ -480,30 +456,15 @@ namespace sys {
 			this->emplace(std::forward<Args>(args)...);
 		}
 
-		int
-		wait() {
-			int ret = 0;
-			for (process& p : _procs) {
-				sys::proc_status x = p.wait();
-				#ifndef NDEBUG
-				stdx::debug_message("sys", "process _ terminated with status _", p, x);
-				#endif
-				ret |= x.exit_code() | signal_type(x.term_signal());
-			}
-			return ret;
-		}
+		int wait();
 
 		template<class F>
 		void
 		wait(F callback, wait_flags flags=proc_exited) {
 			while (!_procs.empty()) {
-				sys::proc_info status = do_wait(flags);
-				auto result = std::find_if(
-					_procs.begin(), _procs.end(),
-					[&status] (const process& p) {
-						return p.id() == status.pid();
-					}
-				);
+				sys::proc_info status;
+				iterator result;
+				do_wait(flags, status, result);
 				if (result != _procs.end()) {
 					callback(*result, status);
 					_procs.erase(result);
@@ -529,69 +490,64 @@ namespace sys {
 			return _procs[i];
 		}
 
-		process&
+		inline process&
 		operator[](size_t i) noexcept {
 			return _procs[i];
 		}
 
-		size_t
+		inline size_t
 		size() const noexcept {
 			return _procs.size();
 		}
 
-		iterator
+		inline iterator
 		begin() noexcept {
 			return _procs.begin();
 		}
 
-		iterator
+		inline iterator
 		end() noexcept {
 			return _procs.end();
 		}
 
-		const process&
+		inline const process&
 		front() const noexcept {
 			return _procs.front();
 		}
 
-		process&
+		inline process&
 		front() noexcept {
 			return _procs.front();
 		}
 
-		const process&
+		inline const process&
 		back() const noexcept {
 			return _procs.back();
 		}
 
-		process&
+		inline process&
 		back() noexcept {
 			return _procs.back();
 		}
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const process_group& rhs) {
-			out << "{gid=" << rhs._gid << ",[";
-			std::copy(rhs._procs.begin(), rhs._procs.end(),
-				stdx::intersperse_iterator<process>(out, ","));
-			out << "]}";
-			return out;
-		}
+		operator<<(std::ostream& out, const process_group& rhs);
 
 	private:
 
 		sys::proc_info
-		do_wait(wait_flags flags) const {
-			sys::siginfo_type info;
-			bits::check_if_not<std::errc::interrupted>(
-				::waitid(P_PGID, _gid, &info, flags),
-				__FILE__, __LINE__, __func__);
-			return sys::proc_info(info);
-		}
+		do_wait(
+			wait_flags flags,
+			sys::proc_info& status,
+			iterator& result
+		) const;
 
 		std::vector<process> _procs;
 		pid_type _gid = 0;
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const process_group& rhs);
 
 }
 

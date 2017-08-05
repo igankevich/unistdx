@@ -13,7 +13,7 @@ namespace sys {
 		typedef stdx::spin_mutex global_mutex_type;
 		typedef std::lock_guard<global_mutex_type> global_lock_type;
 
-		global_mutex_type __forkmutex;
+		extern global_mutex_type __forkmutex;
 
 		inline void
 		set_mandatory_flags(int fd) {
