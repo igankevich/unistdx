@@ -30,3 +30,13 @@ pkgconfig.generate(
 	subdirs: meson.project_name(),
 	filebase: meson.project_name()
 )
+
+prefix = meson.project_name() + '-' + meson.project_version()
+run_target('archive', command: [
+	'git',
+	'archive',
+	'--format=tar.gz',
+	'--output=' + meson.build_root() + '/' + prefix + '.tar.gz',
+	'--prefix=' + prefix + '/',
+	'HEAD'
+])
