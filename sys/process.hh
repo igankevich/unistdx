@@ -425,6 +425,7 @@ namespace sys {
 	struct process_group {
 
 		typedef std::vector<process>::iterator iterator;
+		typedef std::vector<process>::const_iterator const_iterator;
 
 		template<class ... Args>
 		inline explicit
@@ -463,7 +464,7 @@ namespace sys {
 		wait(F callback, wait_flags flags=proc_exited) {
 			while (!_procs.empty()) {
 				sys::proc_info status;
-				iterator result;
+				const_iterator result;
 				do_wait(flags, status, result);
 				if (result != _procs.end()) {
 					callback(*result, status);
@@ -535,11 +536,11 @@ namespace sys {
 
 	private:
 
-		sys::proc_info
+		void
 		do_wait(
 			wait_flags flags,
 			sys::proc_info& status,
-			iterator& result
+			const_iterator& result
 		) const;
 
 		std::vector<process> _procs;

@@ -47,11 +47,11 @@ sys::process_group::wait() {
 	return ret;
 }
 
-sys::proc_info
+void
 sys::process_group::do_wait(
 	wait_flags flags,
 	sys::proc_info& status,
-	iterator& result
+	const_iterator& result
 ) const {
 	sys::siginfo_type info;
 	bits::check_if_not<std::errc::interrupted>(
