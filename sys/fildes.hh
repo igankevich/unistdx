@@ -7,8 +7,6 @@
 #include <sys/ioctl.h>
 #endif
 
-#include <vector>
-
 #include <sys/bits/check.hh>
 #include <sys/bits/safe_calls.hh>
 
@@ -20,7 +18,7 @@ namespace sys {
 	typedef int fd_type;
 	typedef int flag_type;
 
-	fd_type
+	inline fd_type
 	safe_open(const char* path, flag_type oflag, mode_type mode) {
 		bits::global_lock_type lock(bits::__forkmutex);
 		fd_type ret = ::open(path, oflag, mode);
@@ -55,29 +53,33 @@ namespace sys {
 		static const fd_type
 		bad = -1;
 
-		fildes() = default;
+		inline fildes() = default;
 		fildes(const fildes&) = delete;
 		fildes& operator=(const fildes&) = delete;
 
-		explicit
+		inline explicit
 		fildes(fd_type rhs) noexcept:
-			_fd(rhs) {}
+		_fd(rhs)
+		{}
 
+		inline
 		fildes(fildes&& rhs) noexcept: _fd(rhs._fd) {
 			rhs._fd = bad;
 		}
 
+		inline
 		~fildes() {
 			this->close();
 		}
 
-		fildes&
+		inline fildes&
 		operator=(fildes&& rhs) {
 			std::swap(_fd, rhs._fd);
 			return *this;
 		}
 
-		void close() {
+		inline void
+		close() {
 			if (*this) {
 				bits::check(::close(this->_fd),
 					__FILE__, __LINE__, __func__);
@@ -85,89 +87,89 @@ namespace sys {
 			}
 		}
 
-		ssize_t
+		inline ssize_t
 		read(void* buf, size_t n) const noexcept {
 			return ::read(this->_fd, buf, n);
 		}
 
-		ssize_t
+		inline ssize_t
 		write(const void* buf, size_t n) const noexcept {
 			return ::write(this->_fd, buf, n);
 		}
 
-		fd_type
+		inline fd_type
 		get_fd() const noexcept {
 			return this->_fd;
 		}
 
-		flag_type
+		inline flag_type
 		flags() const {
 			return get_flags(F_GETFL);
 		}
 
-		flag_type
+		inline flag_type
 		fd_flags() const {
 			return get_flags(F_GETFD);
 		}
 
-		void
+		inline void
 		setf(flag_type rhs) {
 			set_flag(F_SETFL, get_flags(F_GETFL) | rhs);
 		}
 
-		void
+		inline void
 		unsetf(flag_type rhs) {
 			set_flag(F_SETFL, get_flags(F_GETFL) & ~rhs);
 		}
 
 		#ifdef F_SETNOSIGPIPE
-		void
+		inline void
 		setf(pipe_flag rhs) {
 			set_flag(F_SETNOSIGPIPE, 1);
 		}
 
-		void
+		inline void
 		unsetf(pipe_flag rhs) {
 			set_flag(F_SETNOSIGPIPE, 0);
 		}
 		#endif
 
-		void
+		inline void
 		setf(fd_flag rhs) {
 			set_flag(F_SETFD, rhs);
 		}
 
-		bool
+		inline bool
 		operator==(const fildes& rhs) const noexcept {
 			return this->_fd == rhs._fd;
 		}
 
-		explicit
+		inline explicit
 		operator bool() const noexcept {
 			return this->_fd >= 0;
 		}
 
-		bool
+		inline bool
 		operator !() const noexcept {
 			return !operator bool();
 		}
 
-		bool
+		inline bool
 		operator==(fd_type rhs) const noexcept {
 			return _fd == rhs;
 		}
 
-		friend bool
+		inline friend bool
 		operator==(fd_type lhs, const fildes& rhs) noexcept {
 			return rhs._fd == lhs;
 		}
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const fildes& rhs) {
 			return out << "{fd=" << rhs._fd << '}';
 		}
 
-		void
+		inline void
 		remap(fd_type new_fd) {
 			fd_type ret_fd = bits::check(::dup2(_fd, new_fd),
 				__FILE__, __LINE__, __func__);
@@ -175,20 +177,20 @@ namespace sys {
 			_fd = ret_fd;
 		}
 
-		void
+		inline void
 		validate() {
 			get_flags(F_GETFD);
 		}
 
 	private:
 
-		flag_type
+		inline flag_type
 		get_flags(int which) const {
 			return bits::check(::fcntl(this->_fd, which),
 				__FILE__, __LINE__, __func__);
 		}
 
-		void
+		inline void
 		set_flag(int which, flag_type val) {
 			bits::check(::fcntl(this->_fd, which, val),
 				__FILE__, __LINE__, __func__);
@@ -205,17 +207,17 @@ namespace sys {
 
 		typedef void char_type;
 
-		static std::streamsize
+		inline static std::streamsize
 		write(T& sink, const char_type* s, std::streamsize n) {
 			return sink.write(s, n);
 		}
 
-		static std::streamsize
+		inline static std::streamsize
 		read(T& src, char_type* s, std::streamsize n) {
 			return src.read(s, n);
 		}
 
-		static bool
+		inline static bool
 		is_blocking(const T& rhs) {
 			try {
 				return !bool(rhs.flags() & T::non_blocking);
@@ -224,7 +226,7 @@ namespace sys {
 			}
 		}
 
-		static std::streamsize
+		inline static std::streamsize
 		in_avail(T& rhs) {
 			#if defined(__linux__) && defined(FIONREAD)
 			int nread;
