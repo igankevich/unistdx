@@ -16,6 +16,7 @@
 
 #include <condition_variable>
 #include <cassert>
+#include <chrono>
 
 #include <stdx/mutex.hh>
 
@@ -29,13 +30,15 @@ namespace sys {
 
 		typedef int sem_type;
 		typedef struct ::sembuf sembuf_type;
+		typedef std::chrono::system_clock clock_type;
+		typedef struct ::timespec timespec_type;
 
 		inline explicit
 		sysv_semaphore(mode_type mode=0600):
 		_owner(true)
 		{
 			UNISTDX_CHECK(
-				this->_sem = ::semget(IPC_PRIVATE, _nsems, IPC_CREAT|mode)
+				this->_sem = ::semget(IPC_PRIVATE, 1, IPC_CREAT|mode)
 			);
 		}
 
@@ -80,15 +83,69 @@ namespace sys {
 		template<class Lock>
 		void wait(Lock& lock) {
 			stdx::unlock_guard<Lock> unlock(lock);
-			wait();
+			this->wait();
 		}
 
 		template<class Lock, class Pred>
 		void wait(Lock& lock, Pred pred) {
 			while (!pred()) {
-				wait(lock);
+				this->wait(lock);
 			}
 		}
+
+		#if defined(UNISTDX_HAVE_SEMTIMEDOP)
+		template<class Lock, class Rep, class Period>
+		std::cv_status
+		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
+			return this->wait_until(lock, clock_type::now() + dur);
+		}
+
+		template<class Lock, class Rep, class Period, class Pred>
+		bool
+		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur, Pred pred) {
+			return this->wait_until(lock, clock_type::now() + dur, pred);
+		}
+
+		template<class Lock, class Duration>
+		std::cv_status
+		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
+			using namespace std::chrono;
+			const auto s = time_point_cast<seconds>(tp);
+			const auto ns = duration_cast<nanoseconds>(tp - s);
+			const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
+			stdx::unlock_guard<Lock> unlock(lock);
+			return this->increment(-1, &timeout);
+		}
+
+		template<class Lock, class Duration, class Pred>
+		bool
+		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
+			while (!pred()) {
+				if (this->wait_until(lock, tp) == std::cv_status::timeout) {
+					return pred();
+				}
+			}
+			return true;
+		}
+
+		template<class Lock, class Clock, class Duration>
+		std::cv_status
+		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp) {
+			typedef Clock other_clock;
+			const auto delta = tp - other_clock::now();
+			const auto new_tp = clock_type::now() + delta;
+			return this->wait_until(lock, new_tp);
+		}
+
+		template<class Lock, class Clock, class Duration, class Pred>
+		bool
+		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp, Pred pred) {
+			typedef Clock other_clock;
+			const auto delta = tp - other_clock::now();
+			const auto new_tp = clock_type::now() + delta;
+			return this->wait_until(lock, new_tp, pred);
+		}
+		#endif
 
 	private:
 
@@ -98,13 +155,31 @@ namespace sys {
 			buf.sem_num = 0;
 			buf.sem_op = how;
 			buf.sem_flg = SEM_UNDO;
-			UNISTDX_CHECK(::semop(_sem, &buf, _nsems));
+			UNISTDX_CHECK(::semop(_sem, &buf, 1));
 		}
+
+		#if defined(UNISTDX_HAVE_SEMTIMEDOP)
+		inline std::cv_status
+		increment(int how, const timespec_type* t) {
+			sembuf_type buf;
+			buf.sem_num = 0;
+			buf.sem_op = how;
+			buf.sem_flg = SEM_UNDO;
+			int ret = ::semtimedop(_sem, &buf, 1, t);
+			std::cv_status st = std::cv_status::no_timeout;
+			if (ret == -1) {
+				if (errno == EAGAIN) {
+					st = std::cv_status::timeout;
+				} else {
+					UNISTDX_THROW_BAD_CALL();
+				}
+			}
+			return st;
+		}
+		#endif
 
 		sem_type _sem;
 		bool _owner;
-
-		static const int _nsems = 1;
 	};
 	#endif
 
@@ -114,6 +189,8 @@ namespace sys {
 		typedef ::sem_t* sem_type;
 		typedef int flags_type;
 		typedef std::string path_type;
+		typedef std::chrono::system_clock clock_type;
+		typedef struct ::timespec timespec_type;
 
 		process_semaphore() = default;
 
@@ -194,6 +271,69 @@ namespace sys {
 			}
 		}
 
+		#if defined(UNISTDX_HAVE_SEM_TIMEDWAIT)
+		template<class Lock, class Rep, class Period>
+		std::cv_status
+		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
+			return this->wait_until(lock, clock_type::now() + dur);
+		}
+
+		template<class Lock, class Rep, class Period, class Pred>
+		bool
+		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur, Pred pred) {
+			return this->wait_until(lock, clock_type::now() + dur, pred);
+		}
+
+		template<class Lock, class Duration>
+		std::cv_status
+		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
+			using namespace std::chrono;
+			const auto s = time_point_cast<seconds>(tp);
+			const auto ns = duration_cast<nanoseconds>(tp - s);
+			const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
+			stdx::unlock_guard<Lock> unlock(lock);
+			std::cv_status st = std::cv_status::no_timeout;
+			int ret = ::sem_timedwait(this->_sem, &timeout);
+			if (ret == -1) {
+				if (errno == ETIMEDOUT) {
+					st = std::cv_status::timeout;
+				} else {
+					UNISTDX_THROW_BAD_CALL();
+				}
+			}
+			return st;
+		}
+
+		template<class Lock, class Duration, class Pred>
+		bool
+		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
+			while (!pred()) {
+				if (this->wait_until(lock, tp) == std::cv_status::timeout) {
+					return pred();
+				}
+			}
+			return true;
+		}
+
+		template<class Lock, class Clock, class Duration>
+		std::cv_status
+		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp) {
+			typedef Clock other_clock;
+			const auto delta = tp - other_clock::now();
+			const auto new_tp = clock_type::now() + delta;
+			return this->wait_until(lock, new_tp);
+		}
+
+		template<class Lock, class Clock, class Duration, class Pred>
+		bool
+		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp, Pred pred) {
+			typedef Clock other_clock;
+			const auto delta = tp - other_clock::now();
+			const auto new_tp = clock_type::now() + delta;
+			return this->wait_until(lock, new_tp, pred);
+		}
+		#endif
+
 	private:
 
 		inline sem_type
@@ -259,6 +399,7 @@ namespace sys {
 			}
 		}
 
+		#if defined(UNISTDX_HAVE_SEM_TIMEDWAIT)
 		template<class Lock, class Rep, class Period>
 		std::cv_status
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
@@ -279,10 +420,15 @@ namespace sys {
 			const auto ns = duration_cast<nanoseconds>(tp - s);
 			const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
 			stdx::unlock_guard<Lock> unlock(lock);
-			bits::check_if_not<std::errc::timed_out>(::sem_timedwait(&_sem, &timeout),
-				__FILE__, __LINE__, __func__);
-			std::cv_status st = std::errc(errno) == std::errc::timed_out
-				? std::cv_status::timeout : std::cv_status::no_timeout;
+			std::cv_status st = std::cv_status::no_timeout;
+			int ret = ::sem_timedwait(&_sem, &timeout);
+			if (ret == -1) {
+				if (errno == ETIMEDOUT) {
+					st = std::cv_status::timeout;
+				} else {
+					UNISTDX_THROW_BAD_CALL();
+				}
+			}
 			return st;
 		}
 
@@ -314,6 +460,7 @@ namespace sys {
 			const auto new_tp = clock_type::now() + delta;
 			return this->wait_until(lock, new_tp, pred);
 		}
+		#endif
 
 		inline void
 		notify_one() {

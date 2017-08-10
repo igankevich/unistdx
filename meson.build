@@ -80,6 +80,12 @@ endif
 if cpp.has_header('sys/sem.h')
 	config.set('UNISTDX_HAVE_SYSV_SEMAPHORES', true)
 endif
+if cpp.has_header_symbol('sys/sem.h', 'semtimedop')
+	config.set('UNISTDX_HAVE_SEMTIMEDOP', true)
+endif
+if cpp.has_header_symbol('semaphore.h', 'sem_timedwait')
+	config.set('UNISTDX_HAVE_SEM_TIMEDWAIT', true)
+endif
 # }}}
 
 threads = dependency('threads')

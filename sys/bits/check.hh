@@ -5,6 +5,9 @@
 #include <system_error>
 #include <ostream>
 
+#define UNISTDX_THROW_BAD_CALL() \
+	throw ::sys::bits::bad_call(__FILE__, __LINE__, __func__)
+
 #define UNISTDX_CHECK(func) \
 { \
 	if ((func) == -1) { \
@@ -15,6 +18,13 @@
 #define UNISTDX_CHECK2(func, ret) \
 { \
 	if ((func) == (ret)) { \
+		throw ::sys::bits::bad_call(__FILE__, __LINE__, __func__); \
+	} \
+}
+
+#define UNISTDX_CHECK_IF_NOT(good_err, func) \
+{ \
+	if ((func) == -1 && errno != (good_err)) { \
 		throw ::sys::bits::bad_call(__FILE__, __LINE__, __func__); \
 	} \
 }

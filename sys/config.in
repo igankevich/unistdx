@@ -36,6 +36,8 @@
 
 #mesondefine UNISTDX_HAVE_POSIX_SEMAPHORES
 #mesondefine UNISTDX_HAVE_SYSV_SEMAPHORES
+#mesondefine UNISTDX_HAVE_SEMTIMEDOP
+#mesondefine UNISTDX_HAVE_SEM_TIMEDWAIT
 
 #endif // SYS_CONFIG_IN
 // vi:ft=cpp
