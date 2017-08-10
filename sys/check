@@ -56,31 +56,9 @@ namespace sys {
 			const char* _function;
 		};
 
-		template<class Ret>
-		inline Ret
-		check(Ret ret, Ret bad, const char* file, const int line, const char* func) {
-			if (ret == bad) {
-				throw bad_call(file, line, func);
-			}
-			return ret;
-		}
-
-		template<class Ret>
-		inline Ret
-		check(Ret ret, const char* file, const int line, const char* func) {
-			return check<Ret>(ret, Ret(-1), file, line, func);
-		}
-
-		template<std::errc ignored_errcode, class Ret>
-		inline
-		Ret check_if_not(Ret ret, const char* file, const int line, const char* func) {
-			return std::errc(errno) == ignored_errcode
-				? Ret(0)
-				: check<Ret>(ret, file, line, func);
-		}
-
 	}
 
 }
 
 #endif // SYS_BITS_CHECK_HH
+// vi:ft=cpp

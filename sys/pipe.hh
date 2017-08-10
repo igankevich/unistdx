@@ -71,8 +71,7 @@ namespace sys {
 
 		void open() {
 			this->close();
-			bits::check(bits::safe_pipe(this->_rawfds),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(bits::safe_pipe(this->_rawfds));
 		}
 
 		void close() {

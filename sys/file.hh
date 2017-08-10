@@ -248,10 +248,7 @@ namespace sys {
 
 		void
 		update(const char* filename) {
-			bits::check_if_not<std::errc::no_such_file_or_directory>(
-				::stat(filename, this),
-				__FILE__, __LINE__, __func__
-			);
+			UNISTDX_CHECK_IF_NOT(ENOENT, ::stat(filename, this));
 		}
 
 		friend std::ostream&

@@ -6,24 +6,22 @@ namespace sys {
 	struct sigset_type: public ::sigset_t {
 
 		sigset_type() {
-			bits::check(::sigemptyset(this),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sigemptyset(this));
 		}
 
 		explicit
 		sigset_type(signal_type s):
 		sigset_type()
 		{
-			bits::check(::sigaddset(this, s),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sigaddset(this, s));
 		}
 
 		template<class F>
 		void for_each(F func) {
 			for (signal_type s=1; s<=31; ++s) {
-				if (bits::check(::sigismember(this, s),
-					__FILE__, __LINE__, __func__))
-				{
+				int ret;
+				UNISTDX_CHECK(ret = ::sigismember(this, s));
+				if (ret) {
 					func(s);
 				}
 			}
@@ -53,8 +51,7 @@ namespace sys {
 	private:
 
 		void change_mask(int how) {
-			bits::check(::sigprocmask(how, &_signals, 0),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sigprocmask(how, &_signals, 0));
 		}
 
 		sigset_type _signals;

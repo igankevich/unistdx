@@ -70,7 +70,9 @@ namespace sys {
 
 		inline
 		~fildes() {
-			this->close();
+			try {
+				this->close();
+			} catch (...) {}
 		}
 
 		inline fildes&
@@ -82,8 +84,7 @@ namespace sys {
 		inline void
 		close() {
 			if (*this) {
-				bits::check(::close(this->_fd),
-					__FILE__, __LINE__, __func__);
+				UNISTDX_CHECK(::close(this->_fd));
 				this->_fd = bad;
 			}
 		}
@@ -172,10 +173,10 @@ namespace sys {
 
 		inline void
 		remap(fd_type new_fd) {
-			fd_type ret_fd = bits::check(::dup2(_fd, new_fd),
-				__FILE__, __LINE__, __func__);
+			fd_type ret_fd;
+			UNISTDX_CHECK(ret_fd = ::dup2(_fd, new_fd));
 			this->close();
-			_fd = ret_fd;
+			this->_fd = ret_fd;
 		}
 
 		inline void
@@ -187,14 +188,14 @@ namespace sys {
 
 		inline flag_type
 		get_flags(int which) const {
-			return bits::check(::fcntl(this->_fd, which),
-				__FILE__, __LINE__, __func__);
+			int ret;
+			UNISTDX_CHECK(ret = ::fcntl(this->_fd, which));
+			return ret;
 		}
 
 		inline void
 		set_flag(int which, flag_type val) {
-			bits::check(::fcntl(this->_fd, which, val),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::fcntl(this->_fd, which, val));
 		}
 
 	protected:

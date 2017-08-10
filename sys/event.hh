@@ -490,9 +490,10 @@ namespace sys {
 			remove_fds_if(std::logical_not<poll_event>());
 			insert_pending_specials();
 
-			int ret = bits::check_if_not<std::errc::interrupted>(
-				::poll(_events.data(), _events.size(), timeout_millis),
-				__FILE__, __LINE__, __func__
+			int ret;
+			UNISTDX_CHECK_IF_NOT(
+				EINTR,
+				ret = ::poll(_events.data(), _events.size(), timeout_millis)
 			);
 
 			if (ret > 0) {

@@ -45,8 +45,7 @@ namespace sys {
 
 		inline void
 		set_group_id(pid_type rhs) {
-			bits::check(::setpgid(this_process::id(), rhs),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::setpgid(this_process::id(), rhs));
 		}
 		*/
 
@@ -55,10 +54,7 @@ namespace sys {
 
 		inline void
 		set_user(uid_type rhs) {
-			bits::check(
-				::setuid(rhs),
-				__FILE__, __LINE__, __func__
-			);
+			UNISTDX_CHECK(::setuid(rhs));
 		}
 
 		inline uid_type
@@ -69,10 +65,7 @@ namespace sys {
 
 		inline void
 		set_group(gid_type rhs) {
-			bits::check(
-				::setgid(rhs),
-				__FILE__, __LINE__, __func__
-			);
+			UNISTDX_CHECK(::setgid(rhs));
 		}
 
 		inline gid_type
@@ -86,19 +79,17 @@ namespace sys {
 			assert(str.argc() == sizeof...(Args));
 			char** argv = str.argv();
 			char* const no_env[1] = {0};
-			return bits::check(
-				::execve(argv[0], argv, no_env),
-				__FILE__, __LINE__, __func__
-			);
+			int ret;
+			UNISTDX_CHECK(ret = ::execve(argv[0], argv, no_env));
+			return ret;
 		}
 
 		inline int
 		execute(char* const argv[]) {
 			char* const no_env[1] = {0};
-			return bits::check(
-				::execve(argv[0], argv, no_env),
-				__FILE__, __LINE__, __func__
-			);
+			int ret;
+			UNISTDX_CHECK(ret = ::execve(argv[0], argv, no_env));
+			return ret;
 		}
 
 		template<class ... Args>
@@ -108,26 +99,21 @@ namespace sys {
 			str.append(args...);
 			assert(str.argc() == sizeof...(Args));
 			char** argv = str.argv();
-			return bits::check(
-				::execvp(argv[0], argv),
-				__FILE__, __LINE__, __func__
-			);
+			int ret;
+			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
+			return ret;
 		}
 
 		inline int
 		execute_command(char* const argv[]) {
-			return bits::check(
-				::execvp(argv[0], argv),
-				__FILE__, __LINE__, __func__
-			);
+			int ret;
+			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
+			return ret;
 		}
 
 		inline void
 		send(signal sig) {
-			bits::check(
-				::kill(::sys::this_process::id(), signal_type(sig)),
-				__FILE__, __LINE__, __func__
-			);
+			UNISTDX_CHECK(::kill(::sys::this_process::id(), signal_type(sig)));
 		}
 
 	}
@@ -358,20 +344,17 @@ namespace sys {
 
 		inline void
 		send(sys::signal sig) {
-			if (_pid > 0) {
-		    	bits::check(do_kill(sig),
-					__FILE__, __LINE__, __func__);
+			if (this->_pid > 0) {
+		    	UNISTDX_CHECK(do_kill(sig));
 			}
 		}
 
 		inline sys::proc_status
 		wait() {
 			int stat = 0;
-			if (_pid > 0) {
-				bits::check_if_not<std::errc::interrupted>(
-					::waitpid(_pid, &stat, 0),
-					__FILE__, __LINE__, __func__);
-				_pid = 0;
+			if (this->_pid > 0) {
+				UNISTDX_CHECK_IF_NOT(EINTR, ::waitpid(_pid, &stat, 0));
+				this->_pid = 0;
 			}
 			return sys::proc_status(stat);
 		}
@@ -403,8 +386,7 @@ namespace sys {
 
 		inline void
 		set_group_id(pid_type rhs) const {
-			bits::check(::setpgid(_pid, rhs),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::setpgid(_pid, rhs));
 		}
 
 		/// std::thread interface
@@ -475,9 +457,8 @@ namespace sys {
 
 		inline void
 		terminate() {
-			if (_gid > 0) {
-		    	bits::check(::kill(_gid, SIGTERM),
-					__FILE__, __LINE__, __func__);
+			if (this->_gid > 0) {
+		    	UNISTDX_CHECK(::kill(_gid, SIGTERM));
 			}
 		}
 

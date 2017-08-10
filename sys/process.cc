@@ -54,9 +54,7 @@ sys::process_group::do_wait(
 	const_iterator& result
 ) const {
 	sys::siginfo_type info;
-	bits::check_if_not<std::errc::interrupted>(
-		::waitid(P_PGID, this->_gid, &info, flags),
-		__FILE__, __LINE__, __func__);
+	UNISTDX_CHECK_IF_NOT(EINTR, ::waitid(P_PGID, this->_gid, &info, flags));
 	status = sys::proc_info(info);
 	result = std::find_if(
 		_procs.begin(), _procs.end(),

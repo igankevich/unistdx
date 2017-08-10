@@ -19,9 +19,8 @@ namespace sys {
 		int
 		safe_socket(int domain, int type, int protocol) {
 			global_lock_type lock(__forkmutex);
-			int sock = check(
-				::socket(domain, type, protocol),
-				__FILE__, __LINE__, __func__);
+			int sock;
+			UNISTDX_CHECK(sock = ::socket(domain, type, protocol));
 			#if !defined(UNISTDX_HAVE_SOCK_NONBLOCK) || \
 				!defined(UNISTDX_HAVE_SOCK_CLOEXEC)
 			set_mandatory_flags(sock);
@@ -99,8 +98,7 @@ namespace sys {
 			#ifndef NDEBUG
 			stdx::debug_message("sys", "binding to _", e);
 			#endif
-			bits::check(::bind(this->_fd, e.sockaddr(), e.sockaddrlen()),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::bind(this->_fd, e.sockaddr(), e.sockaddrlen()));
 		}
 
 		void
@@ -108,8 +106,7 @@ namespace sys {
 			#ifndef NDEBUG
 			stdx::debug_message("sys", "listen on _", this->name());
 			#endif
-			bits::check(::listen(this->_fd, SOMAXCONN),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::listen(this->_fd, SOMAXCONN));
 		}
 
 		void
@@ -127,8 +124,7 @@ namespace sys {
 		accept(socket& sock, endpoint& addr) {
 			socklen_type len = sizeof(endpoint);
 			sock.close();
-			sock._fd = bits::check(::accept(this->_fd, addr.sockaddr(), &len),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(sock._fd = ::accept(this->_fd, addr.sockaddr(), &len));
 			bits::set_mandatory_flags(sock._fd);
 			#ifndef NDEBUG
 			stdx::debug_message("sys", "accept connection from _", addr);
@@ -153,9 +149,13 @@ namespace sys {
 		void
 		setopt(option opt) {
 			int one = 1;
-			bits::check(::setsockopt(this->_fd,
-				SOL_SOCKET, opt, &one, sizeof(one)),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::setsockopt(
+				this->_fd,
+				SOL_SOCKET,
+				opt,
+				&one,
+				sizeof(one)
+			));
 		}
 
 		/// @deprecated We use event-based error notifications.
@@ -168,8 +168,13 @@ namespace sys {
 			} else {
 				try {
 					socklen_type sz = sizeof(opt);
-					bits::check(::getsockopt(this->_fd, SOL_SOCKET, SO_ERROR, &opt, &sz),
-						__FILE__, __LINE__, __func__);
+					UNISTDX_CHECK(::getsockopt(
+						this->_fd,
+						SOL_SOCKET,
+						SO_ERROR,
+						&opt,
+						&sz
+					));
 				} catch (...) {
 					ret = -1;
 				}
@@ -205,8 +210,7 @@ namespace sys {
 		name() const {
 			endpoint addr;
 			socklen_type len = sizeof(endpoint);
-			bits::check(::getsockname(this->_fd, addr.sockaddr(), &len),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::getsockname(this->_fd, addr.sockaddr(), &len));
 			return addr;
 		}
 
@@ -214,8 +218,7 @@ namespace sys {
 		peer_name() const {
 			endpoint addr;
 			socklen_type len = sizeof(endpoint);
-			bits::check(::getpeername(this->_fd, addr.sockaddr(), &len),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::getpeername(this->_fd, addr.sockaddr(), &len));
 			return addr;
 		}
 

@@ -188,10 +188,9 @@ namespace sys {
 		static path
 		canonicalise(path&& rhs) {
 			std::unique_ptr<char[]> ptr(new char[PATH_MAX]);
-			bits::check<char*>(
+			UNISTDX_CHECK2(
 				::realpath(const_path(rhs), ptr.get()),
-				static_cast<char*>(nullptr),
-				__FILE__, __LINE__, __func__
+				static_cast<char*>(nullptr)
 			);
 			return path(ptr.get());
 		}

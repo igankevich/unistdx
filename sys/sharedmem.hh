@@ -72,10 +72,7 @@ namespace sys {
 
 		void
 		getstat(shm_type id) {
-			bits::check(
-				::shmctl(id, IPC_STAT, this),
-				__FILE__, __LINE__, __func__
-			);
+			UNISTDX_CHECK(::shmctl(id, IPC_STAT, this));
 		}
 
 	};
@@ -236,11 +233,8 @@ namespace sys {
 		void
 		remove() {
 			if (is_owner()) {
-				bits::check(
-					::shmctl(_shm, IPC_RMID, 0),
-					__FILE__, __LINE__, __func__
-				);
-				_shm = 0;
+				UNISTDX_CHECK(::shmctl(_shm, IPC_RMID, 0));
+				this->_shm = 0;
 			}
 		}
 
@@ -251,28 +245,23 @@ namespace sys {
 
 		static shm_type
 		open(key_type key, size_type size, int shmflags) {
-			return bits::check(
-				::shmget(key, size, shmflags),
-				__FILE__, __LINE__, __func__
-			);
+			int ret;
+			UNISTDX_CHECK(ret = ::shmget(key, size, shmflags));
+			return ret;
 		}
 
 		static addr_type
 		attach(shm_type s) {
-			return bits::check(
-				::shmat(s, nullptr, 0),
-				__FILE__, __LINE__, __func__
-			);
+			addr_type ret;
+			UNISTDX_CHECK2(ret = ::shmat(s, nullptr, 0), nullptr);
+			return ret;
 		}
 
 		void
 		detach() {
-			if (_addr) {
-				bits::check(
-					::shmdt(_addr),
-					__FILE__, __LINE__, __func__
-				);
-				_addr = nullptr;
+			if (this->_addr) {
+				UNISTDX_CHECK(::shmdt(_addr));
+				this->_addr = nullptr;
 			}
 		}
 
