@@ -11,7 +11,7 @@
 #include <stdx/iterator.hh>
 #include <stdx/mutex.hh>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 
 #include "pipe.hh"
 

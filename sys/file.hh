@@ -5,7 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 
 namespace sys {
 

@@ -79,7 +79,7 @@ developing applications that use %{name}.
 %{_includedir}/unistdx/sys/bits/basic_istream_iterator.hh
 %{_includedir}/unistdx/sys/bits/basic_ostream_iterator.hh
 %{_includedir}/unistdx/sys/bits/bit_count.hh
-%{_includedir}/unistdx/sys/bits/check.hh
+%{_includedir}/unistdx/sys/check
 %{_includedir}/unistdx/sys/bits/endpoint_parse.hh
 %{_includedir}/unistdx/sys/bits/ifaddrs_iterator.hh
 %{_includedir}/unistdx/sys/bits/safe_calls.hh

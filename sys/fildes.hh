@@ -8,7 +8,7 @@
 #include <sys/ioctl.h>
 #endif
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 #include <sys/bits/safe_calls.hh>
 
 #include <stdx/streambuf.hh>

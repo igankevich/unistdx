@@ -14,7 +14,7 @@
 #include <stdx/uint128.hh>
 #include <stdx/ios.hh>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 #include "bits/endpoint_parse.hh"
 #include "bits/bit_count.hh"
 #include <sys/packetstream.hh>

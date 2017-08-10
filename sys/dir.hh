@@ -8,7 +8,7 @@
 #include <queue>
 #include <system_error>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 #include <sys/bits/basic_istream_iterator.hh>
 #include <sys/bits/basic_ostream_iterator.hh>
 

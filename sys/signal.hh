@@ -3,7 +3,7 @@
 
 #include <signal.h>
 #include <ostream>
-#include "bits/check.hh"
+#include "check"
 #include <unistdx_config>
 
 namespace sys {

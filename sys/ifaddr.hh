@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <iterator>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 #include "endpoint.hh"
 #include "subnet_iterator.hh"
 

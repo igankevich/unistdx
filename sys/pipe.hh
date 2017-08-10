@@ -3,7 +3,7 @@
 
 #include <unistd.h>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 #include <sys/bits/safe_calls.hh>
 #include <sys/process.hh>
 

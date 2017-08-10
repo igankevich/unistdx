@@ -10,7 +10,7 @@
 
 #include <stdx/iterator.hh>
 
-#include <sys/bits/check.hh>
+#include <sys/check>
 #include <sys/bits/safe_calls.hh>
 
 #include "signal.hh"
