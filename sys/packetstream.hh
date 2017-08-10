@@ -96,7 +96,7 @@ namespace sys {
 		#endif
 		basic_packetstream& operator<<(const std::string& rhs) { return write(rhs); }
 		template<class T>
-		basic_packetstream& operator<<(const sys::Bytes<T>& rhs) {
+		basic_packetstream& operator<<(const sys::bytes<T>& rhs) {
 			return this->write(rhs.begin(), rhs.size());
 		}
 
@@ -119,7 +119,7 @@ namespace sys {
 		#endif
 		basic_packetstream& operator>>(std::string& rhs) { return read(rhs); }
 		template<class T>
-		basic_packetstream& operator>>(sys::Bytes<T>& rhs) {
+		basic_packetstream& operator>>(sys::bytes<T>& rhs) {
 			return this->read(rhs.begin(), rhs.size());
 		}
 
@@ -153,7 +153,7 @@ namespace sys {
 	            " by defining IGNORE_ISO_IEC559."
 			);
 		#endif
-			sys::Bytes<T> val = rhs;
+			sys::bytes<T> val = rhs;
 			val.to_network_format();
 			this->operator<<(val);
 			return *this;
@@ -168,7 +168,7 @@ namespace sys {
 
 		template<class T>
 		basic_packetstream& read(T& rhs) {
-			sys::Bytes<T> val;
+			sys::bytes<T> val;
 			_buf->sgetn(val.begin(), val.size());
 			val.to_host_format();
 			rhs = val;

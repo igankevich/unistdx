@@ -175,7 +175,7 @@ namespace sys {
 	}
 
 	template<class T, class Ch=char>
-	union Bytes {
+	union bytes {
 
 		typedef Ch value_type;
 		typedef bits::Integral<sizeof(T)> integral_type;
@@ -184,20 +184,20 @@ namespace sys {
 		typedef std::size_t size_type;
 
 		inline constexpr
-		Bytes() noexcept:
+		bytes() noexcept:
 		_val{} {}
 
 		inline constexpr
-		Bytes(const Bytes& rhs) noexcept:
+		bytes(const bytes& rhs) noexcept:
 		_val(rhs._val) {}
 
 		inline constexpr
-		Bytes(T rhs) noexcept:
+		bytes(T rhs) noexcept:
 		_val(rhs) {}
 
 		template<class It>
 		inline
-		Bytes(It first, It last) noexcept {
+		bytes(It first, It last) noexcept {
 			std::copy(first, last, _bytes);
 		}
 
@@ -227,12 +227,12 @@ namespace sys {
 		}
 
 		inline constexpr bool
-		operator==(const Bytes& rhs) const noexcept {
+		operator==(const bytes& rhs) const noexcept {
 			return _intval == rhs._intval;
 		}
 
 		inline constexpr bool
-		operator!=(const Bytes& rhs) const noexcept {
+		operator!=(const bytes& rhs) const noexcept {
 			return !operator==(rhs);
 		}
 
@@ -283,15 +283,15 @@ namespace sys {
 	};
 
 	template<class T>
-	inline constexpr Bytes<T>
+	inline constexpr bytes<T>
 	make_bytes(T rhs) noexcept {
-		return Bytes<T>(rhs);
+		return bytes<T>(rhs);
 	}
 
 	template<class T, class B>
 	inline std::ostream&
-	operator<<(std::ostream& out, const Bytes<T,B>& rhs) {
-		typedef typename Bytes<T,B>::value_type value_type;
+	operator<<(std::ostream& out, const bytes<T,B>& rhs) {
+		typedef typename bytes<T,B>::value_type value_type;
 		std::ostream::sentry s(out);
 		if (s) {
 			stdx::ios_guard g(out);
@@ -309,14 +309,14 @@ namespace sys {
 
 	template<class T>
 	inline T
-	to_network_format(Bytes<T> n) noexcept {
+	to_network_format(bytes<T> n) noexcept {
 		n.to_network_format();
 		return n.value();
 	}
 
 	template<class T>
 	inline T
-	to_host_format(Bytes<T> n) noexcept {
+	to_host_format(bytes<T> n) noexcept {
 		n.to_host_format();
 		return n.value();
 	}

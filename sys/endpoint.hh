@@ -202,7 +202,7 @@ namespace sys {
 
 		addr4_type addr;
 		inet4_type inaddr;
-		Bytes<addr4_type> _bytes;
+		bytes<addr4_type> _bytes;
 
 		static_assert(sizeof(addr) == sizeof(inaddr), "bad ipv4_addr size");
 		static_assert(sizeof(addr) == sizeof(_bytes), "bad ipv4_addr size");
@@ -394,7 +394,7 @@ namespace sys {
 		addr6_type addr;
 		inet6_type inaddr;
 		hex_type _hextets[8];
-		Bytes<inet6_type> _bytes;
+		bytes<inet6_type> _bytes;
 
 		static_assert(sizeof(addr) == sizeof(inaddr), "bad ipv6_addr size");
 		static_assert(sizeof(addr) == sizeof(_hextets), "bad ipv6_addr size");
@@ -570,7 +570,7 @@ namespace sys {
 			family_type fam;
 			in >> fam;
 			rhs._addr6.sin6_family = static_cast<sa_family_type>(fam);
-			Bytes<port_type> port;
+			bytes<port_type> port;
 			if (rhs.family() == family_type::inet6) {
 				ipv6_addr addr;
 				in >> addr >> port;
