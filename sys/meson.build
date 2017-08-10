@@ -1,6 +1,6 @@
 configure_file(
 	input: 'config.in',
-	output: 'config',
+	output: 'unistdx_config',
 	configuration: config
 )
 
@@ -68,7 +68,7 @@ install_headers(
 	'bits/bit_count.hh',
 	'bits/check.hh',
 	'bits/endpoint_parse.hh',
-	'bits/ifaddrs_iterator.hh',
+	'ifaddrs_iterator.hh',
 	'bits/safe_calls.hh',
 	subdir: meson.project_name() + '/sys/bits'
 )

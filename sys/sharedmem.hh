@@ -8,7 +8,7 @@
 #include <chrono>
 
 #include <unistd.h>
-#include <sys/shm.h>
+#include <bits/sharedmem>
 
 #include <sys/fildes.hh>
 #include <sys/process.hh>
@@ -93,26 +93,10 @@ namespace sys {
 	namespace shm {
 
 		enum shm_flags_type {
-			#if defined(SHM_HUGETLB)
-			huge_pages = SHM_HUGETLB
-			#else
-			huge_pages = 0
-			#endif
-			#if defined(SHM_HUGE_2MB)
-			, huge_2mb = SHM_HUGE_2MB
-			#else
-			, huge_2mb = 0
-			#endif
-			#if defined(SHM_HUGE_1GB)
-			, huge_1gb = SHM_HUGE_1GB
-			#else
-			, huge_1gb = 0
-			#endif
-			#if defined(SHM_NORESERVE)
-			, no_reserve = SHM_NORESERVE
-			#else
-			, no_reserve = 0
-			#endif
+			huge_pages = UNISTDX_SHM_HUGETLB,
+			huge_2mb = UNISTDX_SHM_HUGE_2MB,
+			huge_1gb = UNISTDX_SHM_HUGE_1GB,
+			no_reserve = UNISTDX_SHM_NORESERVE
 		};
 
 	}

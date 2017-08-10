@@ -40,6 +40,46 @@ endif
 if cpp.has_type('long long')
 	config.set('UNISTDX_HAVE_LONG_LONG', true)
 endif
+if cpp.has_header('ifaddrs.h')
+	config.set('UNISTDX_HAVE_IFADDRS', true)
+endif
+if cpp.has_header_symbol('sys/ioctl.h', 'FIONREAD')
+	config.set('UNISTDX_HAVE_FIONREAD', true)
+endif
+if cpp.has_header_symbol('dirent.h', 'DTTOIF')
+	config.set('UNISTDX_HAVE_DTTOIF', true)
+endif
+if cpp.has_member('passwd', 'pw_gecos', prefix: '#include <pwd.h>')
+	config.set('UNISTDX_HAVE_GECOS', true)
+endif
+if cpp.has_header_symbol('poll.h', 'POLLRDHUP')
+	config.set('UNISTDX_HAVE_POLLRDHUP', true)
+endif
+if cpp.has_header_symbol('sys/socket.h', 'SOCK_NONBLOCK')
+	config.set('UNISTDX_HAVE_SOCK_NONBLOCK', true)
+endif
+if cpp.has_header_symbol('sys/socket.h', 'SOCK_CLOEXEC')
+	config.set('UNISTDX_HAVE_SOCK_CLOEXEC', true)
+endif
+if cpp.has_header_symbol('unistd.h', 'F_SETNOSIGPIPE')
+	config.set('UNISTDX_HAVE_SETNOSIGPIPE', true)
+endif
+foreach name : ['SHM_HUGETLB', 'SHM_HUGE_2MB', 'SHM_HUGE_1GB', 'SHM_NORESERVE']
+	if cpp.has_header_symbol('sys/shm.h', name)
+		config.set('UNISTDX_HAVE_' + name, true)
+	endif
+endforeach
+foreach name : ['SIGPOLL', 'SIGSTKFLT', 'SIGPWR', 'SIGWINCH']
+	if cpp.has_header_symbol('signal.h', name)
+		config.set('UNISTDX_HAVE_' + name, true)
+	endif
+endforeach
+if cpp.has_header('semaphore.h')
+	config.set('UNISTDX_HAVE_POSIX_SEMAPHORES', true)
+endif
+if cpp.has_header('sys/sem.h')
+	config.set('UNISTDX_HAVE_SYSV_SEMAPHORES', true)
+endif
 # }}}
 
 threads = dependency('threads')

@@ -1,20 +1,9 @@
 #ifndef SYS_SOCKET_HH
 #define SYS_SOCKET_HH
 
-#include <sys/socket.h>
+#include <bits/socket>
 #include <unistd.h>
 #include <fcntl.h>
-
-#if !defined(SOCK_NONBLOCK)
-	#define FACTORY_SOCK_NONBLOCK 0
-#else
-	#define FACTORY_SOCK_NONBLOCK SOCK_NONBLOCK
-#endif
-#if !defined(SOCK_CLOEXEC)
-	#define FACTORY_SOCK_CLOEXEC 0
-#else
-	#define FACTORY_SOCK_CLOEXEC SOCK_CLOEXEC
-#endif
 
 #include <stdx/mutex.hh>
 
@@ -33,7 +22,8 @@ namespace sys {
 			int sock = check(
 				::socket(domain, type, protocol),
 				__FILE__, __LINE__, __func__);
-			#if !defined(SOCK_NONBLOCK) || !defined(SOCK_CLOEXEC)
+			#if !defined(UNISTDX_HAVE_SOCK_NONBLOCK) || \
+				!defined(UNISTDX_HAVE_SOCK_CLOEXEC)
 			set_mandatory_flags(sock);
 			#endif
 			return sock;
@@ -57,7 +47,7 @@ namespace sys {
 		};
 
 		static const flag_type
-		default_flags = SOCK_STREAM | FACTORY_SOCK_NONBLOCK | FACTORY_SOCK_CLOEXEC;
+		default_flags = SOCK_STREAM | UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
 
 		socket() = default;
 		socket(const socket&) = delete;

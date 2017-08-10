@@ -53,11 +53,7 @@ namespace sys {
 		friend struct const_path;
 		friend struct std::hash<path>;
 
-		#if defined(_WIN64) || defined(_WIN32)
-		static const char separator = '\\';
-		#else
 		static const char separator = '/';
-		#endif
 
 		path() = default;
 

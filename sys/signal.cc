@@ -23,7 +23,7 @@ sys::operator<<(std::ostream& out, const signal rhs) {
 		case signal::terminal_input: out << "terminal_input"; break;
 		case signal::terminal_output: out << "terminal_output"; break;
 		case signal::bad_memory_access: out << "bad_memory_access"; break;
-		#ifdef SIGPOLL
+		#if defined(UNISTDX_HAVE_SIGPOLL)
 		case signal::poll: out << "poll"; break;
 		#endif
 		case signal::profile: out << "profile"; break;
@@ -33,13 +33,13 @@ sys::operator<<(std::ostream& out, const signal rhs) {
 		case signal::virtual_alarm: out << "virtual_alarm"; break;
 		case signal::cpu_time_limit_exceeded: out << "cpu_time_limit_exceeded"; break;
 		case signal::file_size_limit_exceeded: out << "file_size_limit_exceeded"; break;
-		#ifdef SIGSTKFLT
+		#if defined(UNISTDX_HAVE_SIGSTKFLT)
 		case signal::coprocessor_stack_fault: out << "coprocessor_stack_fault"; break;
 		#endif
-		#ifdef SIGPWR
+		#if defined(UNISTDX_HAVE_SIGPWR)
 		case signal::power_failure: out << "power_failure"; break;
 		#endif
-		#ifdef SIGWINCH
+		#if defined(UNISTDX_HAVE_SIGWINCH)
 		case signal::window_resize: out << "window_resize"; break;
 		#endif
 	}

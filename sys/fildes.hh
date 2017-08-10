@@ -3,7 +3,8 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#if defined(__linux__)
+#include <unistdx_config>
+#if defined(UNISTDX_HAVE_FIONREAD)
 #include <sys/ioctl.h>
 #endif
 
@@ -44,7 +45,7 @@ namespace sys {
 			close_on_exec = FD_CLOEXEC
 		};
 
-		#ifdef F_SETNOSIGPIPE
+		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
 		enum pipe_flag: flag_type {
 			no_sigpipe = 1
 		};
@@ -122,7 +123,7 @@ namespace sys {
 			set_flag(F_SETFL, get_flags(F_GETFL) & ~rhs);
 		}
 
-		#ifdef F_SETNOSIGPIPE
+		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
 		inline void
 		setf(pipe_flag rhs) {
 			set_flag(F_SETNOSIGPIPE, 1);
@@ -228,7 +229,7 @@ namespace sys {
 
 		inline static std::streamsize
 		in_avail(T& rhs) {
-			#if defined(__linux__) && defined(FIONREAD)
+			#if defined(UNISTDX_HAVE_FIONREAD)
 			int nread;
 			if (::ioctl(rhs.get_fd(), FIONREAD, &nread) < 0) {
 				nread = 0;

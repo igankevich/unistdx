@@ -7,7 +7,7 @@
 #include <stdx/uint128.hh>
 #include <stdx/ios.hh>
 
-#include "config"
+#include <unistdx_config>
 
 namespace sys {
 

@@ -5,18 +5,33 @@
 #include <system_error>
 #include <ostream>
 
+#define UNISTDX_CHECK(func) \
+{ \
+	if ((func) == -1) { \
+		throw ::sys::bits::bad_call(__FILE__, __LINE__, __func__); \
+	} \
+}
+
+#define UNISTDX_CHECK2(func, ret) \
+{ \
+	if ((func) == (ret)) { \
+		throw ::sys::bits::bad_call(__FILE__, __LINE__, __func__); \
+	} \
+}
+
 namespace sys {
 
 	namespace bits {
 
 		struct bad_call: public std::system_error {
 
+			inline
 			bad_call(const char* file, const int line, const char* function) noexcept:
 			std::system_error(errno, std::generic_category()),
 			_file(file), _line(line), _function(function)
 			{}
 
-			friend std::ostream&
+			inline friend std::ostream&
 			operator<<(std::ostream& out, const bad_call& rhs) {
 				return out
 					<< rhs._file << ':'

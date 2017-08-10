@@ -4,21 +4,14 @@
 #include <unistd.h>
 #include <signal.h>
 
-// TODO sysv semaphores testing
+#include <unistdx_config>
+#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
+#include <semaphore.h>
+#endif
+#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-
-#if _POSIX_SEMAPHORES > 0 || defined(__MACH__)
-	#include <semaphore.h>
-#elif _XOPEN_SHM > 0
-	#include <sys/types.h>
-	#include <sys/ipc.h>
-	#include <sys/sem.h>
-	#error implement SysV semaphores
-	// TODO: implement SysV semaphores
-#else
-	#error can not find POSIX/SysV semaphores API
 #endif
 
 #include <condition_variable>
@@ -31,34 +24,58 @@
 
 namespace sys {
 
+	#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
 	struct sysv_semaphore {
 
 		typedef int sem_type;
 		typedef struct ::sembuf sembuf_type;
 
-		explicit
-		sysv_semaphore(mode_type mode=0600): _owner(true) {
-			_sem = bits::check(::semget(IPC_PRIVATE, _nsems, IPC_CREAT|mode),
-				__FILE__, __LINE__, __func__);
+		inline explicit
+		sysv_semaphore(mode_type mode=0600):
+		_owner(true)
+		{
+			UNISTDX_CHECK(
+				this->_sem = ::semget(IPC_PRIVATE, _nsems, IPC_CREAT|mode)
+			);
 		}
 
-		explicit
+		inline explicit
 		sysv_semaphore(sem_type sem):
-		_sem(sem), _owner(false)
+		_sem(sem),
+		_owner(false)
 		{}
 
+		inline
 		~sysv_semaphore() {
-			if (_owner) {
-				bits::check(::semctl(_sem, IPC_RMID, 0),
-					__FILE__, __LINE__, __func__);
+			if (this->_owner) {
+				(void)::semctl(this->_sem, IPC_RMID, 0);
 			}
 		}
 
-		sem_type id() const { return _sem; }
+		inline sem_type
+		id() const noexcept {
+			return this->_sem;
+		}
 
-		void wait() { increment(-1); }
-		void notify_one() { increment(1); }
-		void notify_all() { increment(1000); }
+		inline void
+		wait() {
+			this->increment(-1);
+		}
+
+		inline void
+		notify_one() {
+			this->increment(1);
+		}
+
+		inline void
+		notify_all() {
+			this->notify_all(1000);
+		}
+
+		inline void
+		notify_all(int n) {
+			this->increment(n);
+		}
 
 		template<class Lock>
 		void wait(Lock& lock) {
@@ -75,14 +92,13 @@ namespace sys {
 
 	private:
 
-		void
+		inline void
 		increment(int how) {
 			sembuf_type buf;
 			buf.sem_num = 0;
 			buf.sem_op = how;
 			buf.sem_flg = SEM_UNDO;
-			bits::check(::semop(_sem, &buf, _nsems),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::semop(_sem, &buf, _nsems));
 		}
 
 		sem_type _sem;
@@ -90,7 +106,9 @@ namespace sys {
 
 		static const int _nsems = 1;
 	};
+	#endif
 
+	#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
 	struct process_semaphore {
 
 		typedef ::sem_t* sem_type;
@@ -99,28 +117,28 @@ namespace sys {
 
 		process_semaphore() = default;
 
-		explicit
+		inline explicit
 		process_semaphore(path_type&& name, mode_type mode):
-			_path(std::forward<path_type>(name)),
-			_owner(true),
-			_sem(this->open_sem(mode))
-			{}
+		_path(std::forward<path_type>(name)),
+		_owner(true),
+		_sem(this->open_sem(mode))
+		{}
 
-		explicit
+		inline explicit
 		process_semaphore(path_type&& name):
-			_path(std::forward<path_type>(name)),
-			_owner(false),
-			_sem(this->open_sem())
-			{}
+		_path(std::forward<path_type>(name)),
+		_owner(false),
+		_sem(this->open_sem())
+		{}
 
+		inline
 		process_semaphore(process_semaphore&& rhs) noexcept:
-			_path(std::move(rhs._path)),
-			_owner(rhs._owner),
-			_sem(rhs._sem)
-		{
-			rhs._sem = SEM_FAILED;
-		}
+		_path(std::move(rhs._path)),
+		_owner(rhs._owner),
+		_sem(rhs._sem)
+		{ rhs._sem = SEM_FAILED; }
 
+		inline
 		~process_semaphore() {
 			this->close();
 		}
@@ -128,7 +146,7 @@ namespace sys {
 		process_semaphore(const process_semaphore&) = delete;
 		process_semaphore& operator=(const process_semaphore&) = delete;
 
-		void
+		inline void
 		open(path_type&& name, mode_type mode) {
 			this->close();
 			this->_path = std::forward<path_type>(name),
@@ -136,7 +154,7 @@ namespace sys {
 			this->_sem = this->open_sem(mode);
 		}
 
-		void
+		inline void
 		open(path_type&& name) {
 			this->close();
 			this->_path = std::forward<path_type>(name),
@@ -144,104 +162,113 @@ namespace sys {
 			this->_sem = this->open_sem();
 		}
 
-		void
+		inline void
 		wait() {
-			bits::check(::sem_wait(this->_sem),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sem_wait(this->_sem));
 		}
 
-		void
+		inline void
 		notify_one() {
-			bits::check(::sem_post(this->_sem),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sem_post(this->_sem));
 		}
 
-		void
+		inline void
 		notify_all() {
-			for (int i=0; i<1000; ++i) {
-				notify_one();
+			this->notify_all(1000);
+		}
+
+		inline void
+		notify_all(int n) {
+			for (int i=0; i<n; ++i) {
+				this->notify_one();
 			}
 		}
 
-		void
+		inline void
 		close() {
 			if (this->_sem != SEM_FAILED) {
-				bits::check(::sem_close(this->_sem),
-					__FILE__, __LINE__, __func__);
+				UNISTDX_CHECK(::sem_close(this->_sem));
 				if (this->_owner) {
-					bits::check(::sem_unlink(this->_path.c_str()),
-						this->_path.c_str(), __LINE__, __func__);
+					UNISTDX_CHECK(::sem_unlink(this->_path.c_str()));
 				}
 			}
 		}
 
 	private:
 
-		sem_type
+		inline sem_type
 		open_sem(mode_type mode) const {
-			return bits::check(::sem_open(this->_path.c_str(),
-				O_CREAT | O_EXCL, mode, 0), SEM_FAILED,
-				__FILE__, __LINE__, __func__);
+			sem_type ret;
+			UNISTDX_CHECK2(
+				ret = ::sem_open(this->_path.c_str(), O_CREAT | O_EXCL, mode, 0),
+				SEM_FAILED
+			);
+			return ret;
 		}
 
-		sem_type
+		inline sem_type
 		open_sem() const {
-			return bits::check(::sem_open(this->_path.c_str(), 0),
-				SEM_FAILED, __FILE__, __LINE__, __func__);
+			sem_type ret;
+			UNISTDX_CHECK2(
+				ret = ::sem_open(this->_path.c_str(), 0),
+				SEM_FAILED
+			);
+			return ret;
 		}
 
 		path_type _path;
 		bool _owner = false;
 		sem_type _sem = SEM_FAILED;
 	};
+	#endif
 
 	#if defined(__MACH__)
 	typedef std::condition_variable_any thread_semaphore;
-	#else
+	#elif defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
 	struct thread_semaphore {
 
 		typedef ::sem_t sem_type;
 		typedef std::chrono::system_clock clock_type;
 		typedef struct ::timespec timespec_type;
 
+		inline
 		thread_semaphore():
 		_sem()
-		{
-			init_sem();
-		}
+		{ this->init_sem(); }
 
+		inline
 		~thread_semaphore() {
-			destroy();
+			this->destroy();
 		}
 
-		void wait() {
-			bits::check(::sem_wait(&_sem),
-				__FILE__, __LINE__, __func__);
+		inline void
+		wait() {
+			UNISTDX_CHECK(::sem_wait(&_sem));
 		}
 
 		template<class Lock>
 		void wait(Lock& lock) {
 			stdx::unlock_guard<Lock> unlock(lock);
-			wait();
+			this->wait();
 		}
 
 		template<class Lock, class Pred>
 		void wait(Lock& lock, Pred pred) {
 			while (!pred()) {
-				wait(lock);
+				this->wait(lock);
 			}
 		}
 
 		template<class Lock, class Rep, class Period>
 		std::cv_status
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
-			return wait_until(lock, clock_type::now() + dur);
+			return this->wait_until(lock, clock_type::now() + dur);
 		}
 
 		template<class Lock, class Rep, class Period, class Pred>
 		bool
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur, Pred pred) {
-			return wait_until(lock, clock_type::now() + dur, pred);
+			return this->wait_until(lock, clock_type::now() + dur, pred);
 		}
 
 		template<class Lock, class Duration>
@@ -263,7 +290,7 @@ namespace sys {
 		bool
 		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
 			while (!pred()) {
-				if (wait_until(lock, tp) == std::cv_status::timeout) {
+				if (this->wait_until(lock, tp) == std::cv_status::timeout) {
 					return pred();
 				}
 			}
@@ -276,7 +303,7 @@ namespace sys {
 			typedef Clock other_clock;
 			const auto delta = tp - other_clock::now();
 			const auto new_tp = clock_type::now() + delta;
-			return wait_until(lock, new_tp);
+			return this->wait_until(lock, new_tp);
 		}
 
 		template<class Lock, class Clock, class Duration, class Pred>
@@ -285,38 +312,42 @@ namespace sys {
 			typedef Clock other_clock;
 			const auto delta = tp - other_clock::now();
 			const auto new_tp = clock_type::now() + delta;
-			return wait_until(lock, new_tp, pred);
+			return this->wait_until(lock, new_tp, pred);
 		}
 
-		void
+		inline void
 		notify_one() {
-			bits::check(::sem_post(&_sem),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sem_post(&_sem));
 		}
 
-		void
+		inline void
 		notify_all() {
-			for (int i=0; i<1000; ++i) {
-				notify_one();
+			this->notify_all(1000);
+		}
+
+		inline void
+		notify_all(int n) {
+			for (int i=0; i<n; ++i) {
+				this->notify_one();
 			}
 		}
 
 	private:
 
-		void
+		inline void
 		destroy() {
-			bits::check(::sem_destroy(&_sem),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sem_destroy(&_sem));
 		}
 
-		void
+		inline void
 		init_sem() {
-			bits::check(::sem_init(&_sem, 0, 0),
-				__FILE__, __LINE__, __func__);
+			UNISTDX_CHECK(::sem_init(&_sem, 0, 0));
 		}
 
 		sem_type _sem;
 	};
+	#else
+	typedef std::condition_variable_any thread_semaphore;
 	#endif
 
 }

@@ -26,103 +26,103 @@ namespace sys {
 		typedef typename addr_type::rep_type rep_type;
 		typedef subnet_iterator<addr_type> iterator;
 
-		constexpr
+		inline constexpr
 		ifaddr(const addr_type& addr, const addr_type& netmask) noexcept:
 		_address(addr), _netmask(netmask)
 		{}
 
-		constexpr
+		inline constexpr
 		ifaddr(const addr_type& addr, const sys::prefix_type prefix) noexcept:
 		_address(addr), _netmask(addr_type::from_prefix(prefix))
 		{}
 
-		constexpr ifaddr() noexcept = default;
-		constexpr ifaddr(const ifaddr&) noexcept = default;
-		constexpr ifaddr(ifaddr&&) noexcept = default;
-		ifaddr& operator=(const ifaddr&) noexcept = default;
+		inline constexpr ifaddr() noexcept = default;
+		inline constexpr ifaddr(const ifaddr&) noexcept = default;
+		inline constexpr ifaddr(ifaddr&&) noexcept = default;
+		inline ifaddr& operator=(const ifaddr&) noexcept = default;
 
-		constexpr const addr_type&
+		inline constexpr const addr_type&
 		address() const noexcept {
 			return _address;
 		}
 
-		constexpr const addr_type&
+		inline constexpr const addr_type&
 		netmask() const noexcept {
 			return _netmask;
 		}
 
-		sys::prefix_type
+		inline sys::prefix_type
 		prefix() const noexcept {
 			return _netmask.to_prefix();
 		}
 
-		constexpr const addr_type&
+		inline constexpr const addr_type&
 		gateway() const noexcept {
 			return addr_type(first());
 		}
 
-		constexpr rep_type
+		inline constexpr rep_type
 		position() const noexcept {
 			return _address.position(_netmask);
 		}
 
-		constexpr iterator
+		inline constexpr iterator
 		begin() const noexcept {
 			return iterator(first());
 		}
 
-		constexpr iterator
+		inline constexpr iterator
 		middle() const noexcept {
 			return iterator(_address);
 		}
 
-		constexpr iterator
+		inline constexpr iterator
 		end() const noexcept {
 			return iterator(last());
 		}
 
-		constexpr rep_type
+		inline constexpr rep_type
 		count() const noexcept {
 			return last() - first();
 		}
 
-		constexpr bool
+		inline constexpr bool
 		is_loopback() const noexcept {
 			return _address[0] == traits_type::loopback_first_octet
 				and _netmask == traits_type::loopback_mask();
 		}
 
-		constexpr bool
+		inline constexpr bool
 		is_widearea() const noexcept {
 			return _netmask == traits_type::widearea_mask();
 		}
 
-		explicit constexpr
+		inline explicit constexpr
 		operator bool() const noexcept {
 			return static_cast<bool>(_address) and static_cast<bool>(_netmask);
 		}
 
-		constexpr bool
+		inline constexpr bool
 		operator !() const noexcept {
 			return !operator bool();
 		}
 
-		constexpr bool
+		inline constexpr bool
 		operator==(const ifaddr& rhs) const noexcept {
 			return _address == rhs._address && _netmask == rhs._netmask;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		operator!=(const ifaddr& rhs) const noexcept {
 			return !operator==(rhs);
 		}
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const ifaddr& rhs) {
 			return out << rhs._address << Slash() << rhs._netmask.to_prefix();
 		}
 
-		friend std::istream&
+		inline friend std::istream&
 		operator>>(std::istream& in, ifaddr& rhs) {
 			sys::prefix_type prefix = 0;
 			in >> rhs._address >> Slash() >> prefix;
@@ -132,22 +132,22 @@ namespace sys {
 
 	private:
 
-		constexpr rep_type
+		inline constexpr rep_type
 		first() const noexcept {
 			return (addr_long() & mask_long()) + 1;
 		}
 
-		constexpr rep_type
+		inline constexpr rep_type
 		last() const noexcept {
 			return (addr_long() & mask_long()) + (~mask_long());
 		}
 
-		constexpr const rep_type
+		inline constexpr const rep_type
 		addr_long() const noexcept {
 			return sys::to_host_format(_address.rep());
 		}
 
-		constexpr const rep_type
+		inline constexpr const rep_type
 		mask_long() const noexcept {
 			return sys::to_host_format(_netmask.rep());
 		}

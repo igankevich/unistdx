@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <ostream>
 #include "bits/check.hh"
+#include <unistdx_config>
 
 namespace sys {
 
@@ -33,7 +34,7 @@ namespace sys {
 		terminal_output = SIGTTOU,
 		// POSIX.1-2001
 		bad_memory_access = SIGBUS,
-		#ifdef SIGPOLL
+		#if defined(UNISTDX_HAVE_SIGPOLL)
 		poll = SIGPOLL,
 		#endif
 		profile = SIGPROF,
@@ -44,13 +45,13 @@ namespace sys {
 		cpu_time_limit_exceeded = SIGXCPU,
 		file_size_limit_exceeded = SIGXFSZ
 		// non-standard
-		#ifdef SIGSTKFLT
+		#if defined(UNISTDX_HAVE_SIGSTKFLT)
 		, coprocessor_stack_fault = SIGSTKFLT
 		#endif
-		#ifdef SIGPWR
+		#if defined(UNISTDX_HAVE_SIGPWR)
 		, power_failure = SIGPWR
 		#endif
-		#ifdef SIGWINCH
+		#if defined(UNISTDX_HAVE_SIGWINCH)
 		, window_resize = SIGWINCH
 		#endif
 	};
@@ -67,16 +68,14 @@ namespace sys {
 		signal_action(void (*func)(int)) noexcept {
 			this->sa_handler = func;
 		}
+
 	};
 
 	namespace this_process {
 
 		inline void
 		bind_signal(signal sig, const signal_action& action) {
-			bits::check(
-				::sigaction(signal_type(sig), &action, 0),
-				__FILE__, __LINE__, __func__
-			);
+			UNISTDX_CHECK(::sigaction(signal_type(sig), &action, 0));
 		}
 
 		inline void

@@ -2,7 +2,7 @@
 #define SYS_BITS_BIT_COUNT_HH
 
 #include <type_traits>
-#include "config"
+#include <unistdx_config>
 
 namespace sys {
 

@@ -8,6 +8,7 @@
 #include <sys/process.hh>
 
 #include "fildes.hh"
+#include <unistdx_config>
 
 namespace sys {
 
@@ -20,7 +21,7 @@ namespace sys {
 			if (ret != -1) {
 				bits::set_mandatory_flags(fds[0]);
 				bits::set_mandatory_flags(fds[1]);
-				#if defined(F_SETNOSIGPIPE)
+				#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
 				fcntl(fds[1], F_SETNOSIGPIPE, 1);
 				#endif
 			}

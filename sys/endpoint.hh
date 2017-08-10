@@ -409,7 +409,7 @@ namespace sys {
 	constexpr sockinet6_type
 	new_sockinet<ipv6_addr>(family_type f, port_type p, ipv6_addr h) {
 		return sockinet6_type{
-			#ifdef __MACH__
+			#if defined(__MACH__)
 			0,
 			#endif
 			static_cast<sa_family_type>(f),
@@ -424,14 +424,14 @@ namespace sys {
 	constexpr sockinet6_type
 	new_sockinet<ipv4_addr>(family_type f, port_type p, ipv4_addr h) {
 		return sockinet6_type{
-				#ifdef __MACH__
-				0,
-				#endif
-				static_cast<sa_family_type>(f),
-				to_network_format<port_type>(p),
-				h.rep(),
-				IN6ADDR_ANY_INIT,
-				0 // scope
+			#if defined(__MACH__)
+			0,
+			#endif
+			static_cast<sa_family_type>(f),
+			to_network_format<port_type>(p),
+			h.rep(),
+			IN6ADDR_ANY_INIT,
+			0 // scope
 		};
 	}
 

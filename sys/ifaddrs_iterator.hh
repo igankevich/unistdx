@@ -1,6 +1,10 @@
 #ifndef SYS_BITS_IFADDRS_ITERATOR_HH
 #define SYS_BITS_IFADDRS_ITERATOR_HH
 
+#include <unistdx_config>
+#if !defined(UNISTDX_HAVE_IFADDRS)
+#error "ifaddrs.h header not found"
+#endif
 #include <ifaddrs.h>
 
 namespace sys {
@@ -14,27 +18,27 @@ namespace sys {
 		typedef ifaddrs_type& reference;
 		typedef const ifaddrs_type& const_reference;
 
-		explicit constexpr
+		inline explicit constexpr
 		ifaddrs_iterator(pointer rhs) noexcept: _ifa(rhs) {}
 
-		constexpr
+		inline constexpr
 		ifaddrs_iterator() noexcept = default;
 
-		inline
+		inline inline
 		~ifaddrs_iterator() = default;
 
-		constexpr
+		inline constexpr
 		ifaddrs_iterator(const ifaddrs_iterator&) noexcept = default;
 
 		inline ifaddrs_iterator&
 		operator=(const ifaddrs_iterator&) noexcept = default;
 
-		constexpr bool
+		inline constexpr bool
 		operator==(const ifaddrs_iterator& rhs) const noexcept {
 			return this->_ifa == rhs._ifa;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		operator!=(const ifaddrs_iterator& rhs) const noexcept {
 			return !operator==(rhs);
 		}
@@ -44,7 +48,7 @@ namespace sys {
 			return *this->_ifa;
 		}
 
-		constexpr const_reference
+		inline constexpr const_reference
 		operator*() const noexcept {
 			return *this->_ifa;
 		}
@@ -54,7 +58,7 @@ namespace sys {
 			return this->_ifa;
 		}
 
-		constexpr const_pointer
+		inline constexpr const_pointer
 		operator->() const noexcept {
 			return this->_ifa;
 		}

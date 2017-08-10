@@ -23,18 +23,20 @@ namespace sys {
 		using base_type::pbump;
 		typedef std::vector<char_type> arg_type;
 
+		inline
 		basic_argbuf() {
-			_args.reserve(4096);
-			_args.emplace_back();
-			_rawargs.push_back(nullptr);
+			this->_args.reserve(4096);
+			this->_args.emplace_back();
+			this->_rawargs.push_back(nullptr);
 		}
 
+		inline
 		basic_argbuf(basic_argbuf&& rhs):
 		_args(std::move(rhs._args)),
 		_rawargs(std::move(rhs._rawargs))
 		{
 			for	(size_t i=0; i<_args.size(); ++i) {
-				_rawargs[i] = _args[i].data();
+				this->_rawargs[i] = this->_args[i].data();
 			}
 		}
 
@@ -42,11 +44,11 @@ namespace sys {
 
 		~basic_argbuf() = default;
 
-		int_type
+		inline int_type
 		overflow(int_type c) override {
 			assert(pptr() == epptr());
 			if (not traits_type::eq_int_type(c, traits_type::eof())) {
-				arg_type& arg = _args.back();
+				arg_type& arg = this->_args.back();
 				arg.push_back(traits_type::to_char_type(c));
 				if (traits_type::eq_int_type(c, int_type(0))) {
 					append_arg();
@@ -55,12 +57,12 @@ namespace sys {
 			return c;
 		}
 
-		std::streamsize
+		inline std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
 			if (n == 1) {
 				overflow(traits_type::to_int_type(*s));
 			} else {
-				arg_type& arg = _args.back();
+				arg_type& arg = this->_args.back();
 				const auto old_size = arg.size();
 				arg.resize(old_size + n);
 				traits_type::copy(arg.data() + old_size, s, n);
@@ -68,28 +70,28 @@ namespace sys {
 			return n;
 		}
 
-		char**
+		inline char**
 		argv() noexcept {
-			return _rawargs.data();
+			return this->_rawargs.data();
 		}
 
-		char* const*
+		inline char* const*
 		argv() const noexcept {
-			return _rawargs.data();
+			return this->_rawargs.data();
 		}
 
-		int
+		inline int
 		argc() const noexcept {
-			return _rawargs.size()-1;
+			return this->_rawargs.size()-1;
 		}
 
 	private:
 
-		void
+		inline void
 		append_arg() {
-			_rawargs.back() = _args.back().data();
-			_rawargs.push_back(nullptr);
-			_args.emplace_back();
+			this->_rawargs.back() = _args.back().data();
+			this->_rawargs.push_back(nullptr);
+			this->_args.emplace_back();
 		}
 
 		std::vector<arg_type> _args;
@@ -105,38 +107,40 @@ namespace sys {
 
 	public:
 
+		inline
 		argstream():
 		std::ostream(nullptr)
 		{ this->init(&_argbuf); }
 
+		inline
 		argstream(argstream&& rhs):
 		std::ostream(),
 		_argbuf(std::move(rhs._argbuf))
 		{ this->init(&_argbuf); }
 
-		char**
+		inline char**
 		argv() noexcept {
 			return _argbuf.argv();
 		}
 
-		char* const*
+		inline char* const*
 		argv() const noexcept {
 			return _argbuf.argv();
 		}
 
-		int
+		inline int
 		argc() const noexcept {
 			return _argbuf.argc();
 		}
 
 		template<class T>
-		void
+		inline void
 		append(const T& rhs) {
 			*this << rhs << '\0';
 		}
 
 		template<class T, class ... Args>
-		void
+		inline void
 		append(const T& first, const Args& ... args) {
 			append(first);
 			append(args...);

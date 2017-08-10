@@ -14,6 +14,7 @@
 
 #include "path.hh"
 #include "file.hh"
+#include <unistdx_config>
 
 namespace sys {
 
@@ -43,7 +44,7 @@ namespace sys {
 
 		file_type
 		type() const noexcept {
-			#if defined(__linux__)
+			#if defined(UNISTDX_HAVE_DTTOIF)
 			return file_type(DTTOIF(this->d_type));
 			#else
 			return file_type(0);

@@ -177,7 +177,7 @@ namespace sys {
 
 		inline constexpr bool
 		core_dumped() const noexcept {
-			#ifdef WCOREDUMP
+			#if defined(WCOREDUMP)
 			return static_cast<bool>(WCOREDUMP(stat));
 			#else
 			return false;

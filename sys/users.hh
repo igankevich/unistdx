@@ -5,6 +5,7 @@
 #include <pwd.h>
 #include <ostream>
 #include <sys/bits/basic_istream_iterator.hh>
+#include <unistdx_config>
 
 namespace sys {
 
@@ -30,7 +31,7 @@ namespace sys {
 		}
 
 		const char* real_name() const {
-			#ifdef __linux__
+			#if defined(UNISTDX_HAVE_GECOS)
 			return this->pw_gecos;
 			#else
 			return nullptr;

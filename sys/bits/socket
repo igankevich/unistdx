@@ -1,0 +1,18 @@
+#ifndef SYS_BITS_SOCKET
+#define SYS_BITS_SOCKET
+
+#include <sys/socket.h>
+#include <unistdx_config>
+#if !defined(UNISTDX_HAVE_SOCK_NONBLOCK)
+	#define UNISTDX_SOCK_NONBLOCK 0
+#else
+	#define UNISTDX_SOCK_NONBLOCK SOCK_NONBLOCK
+#endif
+#if !defined(UNISTDX_HAVE_SOCK_CLOEXEC)
+	#define UNISTDX_SOCK_CLOEXEC 0
+#else
+	#define UNISTDX_SOCK_CLOEXEC SOCK_CLOEXEC
+#endif
+
+#endif // SYS_BITS_SOCKET
+// vi:ft=cpp

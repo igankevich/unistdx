@@ -7,7 +7,7 @@
 
 #include "network_format.hh"
 #include <stdx/packetbuf.hh>
-#include "config"
+#include <unistdx_config>
 
 namespace sys {
 

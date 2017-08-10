@@ -1,13 +1,8 @@
 #ifndef SYS_EVENT_HH
 #define SYS_EVENT_HH
 
-#include <poll.h>
-#include <sys/socket.h>
-#if !defined(POLLRDHUP)
-	#define FACTORY_POLLRDHUP 0
-#else
-	#define FACTORY_POLLRDHUP POLLRDHUP
-#endif
+#include <bits/poll>
+#include <bits/socket>
 
 #include <cassert>
 #include <chrono>
@@ -31,10 +26,10 @@ namespace sys {
 		enum event_type: legacy_event {
 			In = POLLIN,
 			Out = POLLOUT,
-			Hup = POLLHUP | FACTORY_POLLRDHUP,
+			Hup = POLLHUP | UNISTDX_POLLRDHUP,
 			Err = POLLERR | POLLNVAL,
 			Inout = POLLIN | POLLOUT,
-			Def = FACTORY_POLLRDHUP
+			Def = UNISTDX_POLLRDHUP
 		};
 
 		friend constexpr legacy_event
@@ -501,7 +496,7 @@ namespace sys {
 			);
 
 			if (ret > 0) {
-				#if !defined(POLLRDHUP)
+				#if !defined(UNISTDX_HAVE_POLLRDHUP)
 				check_hup(_events.begin(), _events.end());
 				#endif
 				for_each_pipe_fd(&event_poller::consume);
