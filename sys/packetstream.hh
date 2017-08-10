@@ -7,6 +7,7 @@
 
 #include "network_format.hh"
 #include <stdx/packetbuf.hh>
+#include "config"
 
 namespace sys {
 
@@ -90,7 +91,7 @@ namespace sys {
 		basic_packetstream& operator<<(uint64_t rhs) { return write(rhs); }
 		basic_packetstream& operator<<(float rhs) { return write(rhs); }
 		basic_packetstream& operator<<(double rhs) { return write(rhs); }
-		#ifdef __SIZEOF_LONG_DOUBLE__
+		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
 		basic_packetstream& operator<<(long double rhs) { return write(rhs); }
 		#endif
 		basic_packetstream& operator<<(const std::string& rhs) { return write(rhs); }
@@ -113,7 +114,7 @@ namespace sys {
 		basic_packetstream& operator>>(uint64_t& rhs) { return read(rhs); }
 		basic_packetstream& operator>>(float& rhs) { return read(rhs); }
 		basic_packetstream& operator>>(double& rhs) { return read(rhs); }
-		#ifdef __SIZEOF_LONG_DOUBLE__
+		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
 		basic_packetstream& operator>>(long double& rhs) { return read(rhs); }
 		#endif
 		basic_packetstream& operator>>(std::string& rhs) { return read(rhs); }

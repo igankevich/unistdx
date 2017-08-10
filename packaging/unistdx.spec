@@ -82,7 +82,6 @@ developing applications that use %{name}.
 %{_includedir}/unistdx/sys/bits/check.hh
 %{_includedir}/unistdx/sys/bits/endpoint_parse.hh
 %{_includedir}/unistdx/sys/bits/ifaddrs_iterator.hh
-%{_includedir}/unistdx/sys/bits/macros.hh
 %{_includedir}/unistdx/sys/bits/safe_calls.hh
 %{_libdir}/pkgconfig/unistdx.pc
 %{_libdir}/libunistdx.a

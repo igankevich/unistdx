@@ -7,13 +7,7 @@
 #include <stdx/uint128.hh>
 #include <stdx/ios.hh>
 
-#include <sys/bits/macros.hh>
-
-#if SYSX_GCC_VERSION_AT_LEAST(4, 3)
-	#define FACTORY_HAVE_BUILTIN_SWAP16
-	#define FACTORY_HAVE_BUILTIN_SWAP32
-	#define FACTORY_HAVE_BUILTIN_SWAP64
-#endif
+#include "config"
 
 namespace sys {
 
@@ -35,15 +29,15 @@ namespace sys {
 		}
 
 		template<>
-		constexpr uint8_t
+		inline constexpr uint8_t
 		byte_swap<uint8_t>(uint8_t n) noexcept {
 			return n;
 		}
 
 		template<>
-		constexpr uint16_t
+		inline constexpr uint16_t
 		byte_swap<uint16_t>(uint16_t n) noexcept {
-			#if defined(FACTORY_HAVE_BUILTIN_SWAP16)
+			#if defined(UNISTDX_HAVE_BUILTIN_SWAP16)
 			return __builtin_bswap16(n);
 			#else
 			return ((n & 0xff00)>>8) | ((n & 0x00ff)<<8);
@@ -51,9 +45,9 @@ namespace sys {
 		}
 
 		template<>
-		constexpr uint32_t
+		inline constexpr uint32_t
 		byte_swap<uint32_t>(uint32_t n) noexcept {
-			#if defined(FACTORY_HAVE_BUILTIN_SWAP32)
+			#if defined(UNISTDX_HAVE_BUILTIN_SWAP32)
 			return __builtin_bswap32(n);
 			#else
 			return
@@ -65,9 +59,9 @@ namespace sys {
 		}
 
 		template<>
-		constexpr uint64_t
+		inline constexpr uint64_t
 		byte_swap<uint64_t>(uint64_t n) noexcept {
-			#if defined(FACTORY_HAVE_BUILTIN_SWAP64)
+			#if defined(UNISTDX_HAVE_BUILTIN_SWAP64)
 			return __builtin_bswap64(n);
 			#else
 			return
@@ -111,10 +105,9 @@ namespace sys {
 		);
 		/// @}
 
-		constexpr bool
+		inline constexpr bool
 		is_network_byte_order() noexcept {
-			#if defined(WORDS_BIGENDIAN) \
-				|| __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+			#if defined(UNISTDX_BIG_ENDIAN)
 			return true;
 			#else
 			return false;
@@ -138,7 +131,7 @@ namespace sys {
 				this->to_network_format();
 			}
 
-			constexpr bool
+			inline constexpr bool
 			operator==(const byte_swap_chooser& rhs) const noexcept {
 				return _intval == rhs._intval;
 			}
@@ -190,19 +183,20 @@ namespace sys {
 		typedef const value_type* const_iterator;
 		typedef std::size_t size_type;
 
-		constexpr
+		inline constexpr
 		Bytes() noexcept:
-			_val{} {}
+		_val{} {}
 
-		constexpr
+		inline constexpr
 		Bytes(const Bytes& rhs) noexcept:
-			_val(rhs._val) {}
+		_val(rhs._val) {}
 
-		constexpr
+		inline constexpr
 		Bytes(T rhs) noexcept:
-			_val(rhs) {}
+		_val(rhs) {}
 
 		template<class It>
+		inline
 		Bytes(It first, It last) noexcept {
 			std::copy(first, last, _bytes);
 		}
@@ -222,22 +216,22 @@ namespace sys {
 			return _val;
 		}
 
-		constexpr
+		inline constexpr
 		operator const T&() const noexcept {
 			return _val;
 		}
 
-		constexpr value_type
+		inline constexpr value_type
 		operator[](size_type idx) const noexcept {
 			return _bytes[idx];
 		}
 
-		constexpr bool
+		inline constexpr bool
 		operator==(const Bytes& rhs) const noexcept {
 			return _intval == rhs._intval;
 		}
 
-		constexpr bool
+		inline constexpr bool
 		operator!=(const Bytes& rhs) const noexcept {
 			return !operator==(rhs);
 		}
@@ -252,17 +246,17 @@ namespace sys {
 			return _bytes + sizeof(T);
 		}
 
-		constexpr const_iterator
+		inline constexpr const_iterator
 		begin() const noexcept {
 			return _bytes;
 		}
 
-		constexpr const_iterator
+		inline constexpr const_iterator
 		end() const noexcept {
 			return _bytes + sizeof(T);
 		}
 
-		constexpr const T&
+		inline constexpr const T&
 		value() const noexcept {
 			return _val;
 		}
@@ -272,7 +266,7 @@ namespace sys {
 			return _val;
 		}
 
-		static constexpr size_type
+		inline static constexpr size_type
 		size() noexcept {
 			return sizeof(T);
 		}
@@ -289,13 +283,14 @@ namespace sys {
 	};
 
 	template<class T>
-	constexpr Bytes<T>
+	inline constexpr Bytes<T>
 	make_bytes(T rhs) noexcept {
 		return Bytes<T>(rhs);
 	}
 
 	template<class T, class B>
-	std::ostream& operator<<(std::ostream& out, const Bytes<T,B>& rhs) {
+	inline std::ostream&
+	operator<<(std::ostream& out, const Bytes<T,B>& rhs) {
 		typedef typename Bytes<T,B>::value_type value_type;
 		std::ostream::sentry s(out);
 		if (s) {
@@ -313,25 +308,27 @@ namespace sys {
 	}
 
 	template<class T>
-	T to_network_format(Bytes<T> n) noexcept {
+	inline T
+	to_network_format(Bytes<T> n) noexcept {
 		n.to_network_format();
 		return n.value();
 	}
 
 	template<class T>
-	T to_host_format(Bytes<T> n) noexcept {
+	inline T
+	to_host_format(Bytes<T> n) noexcept {
 		n.to_host_format();
 		return n.value();
 	}
 
 	template<class T>
-	constexpr T
+	inline constexpr T
 	to_network_format(T n) noexcept {
 		return bits::is_network_byte_order() ? n : bits::byte_swap<T>(n);
 	}
 
 	template<class T>
-	constexpr T
+	inline constexpr T
 	to_host_format(T n) noexcept {
 		return bits::is_network_byte_order() ? n : bits::byte_swap<T>(n);
 	}

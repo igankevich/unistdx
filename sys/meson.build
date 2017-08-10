@@ -1,3 +1,9 @@
+configure_file(
+	input: 'config.in',
+	output: 'config',
+	configuration: config
+)
+
 libunistdx_src = files(
 	'signal.cc',
 	'system.cc',
@@ -63,7 +69,6 @@ install_headers(
 	'bits/check.hh',
 	'bits/endpoint_parse.hh',
 	'bits/ifaddrs_iterator.hh',
-	'bits/macros.hh',
 	'bits/safe_calls.hh',
 	subdir: meson.project_name() + '/sys/bits'
 )

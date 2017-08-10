@@ -246,27 +246,27 @@ namespace sys {
 namespace std {
 
 	template<>
-	struct hash<sys::canonical_path> {
+	struct hash<sys::canonical_path>: public std::hash<std::string> {
 
 		typedef size_t result_type;
 		typedef sys::canonical_path argument_type;
 
-		size_t
+		inline size_t
 		operator()(const sys::canonical_path& rhs) const noexcept {
-			return std::hash<std::string>()(rhs._path);
+			return std::hash<std::string>::operator()(rhs._path);
 		}
 
 	};
 
 	template<>
-	struct hash<sys::path> {
+	struct hash<sys::path>: public std::hash<std::string> {
 
 		typedef size_t result_type;
 		typedef sys::path argument_type;
 
-		size_t
+		inline size_t
 		operator()(const sys::path& rhs) const noexcept {
-			return std::hash<std::string>()(rhs._path);
+			return std::hash<std::string>::operator()(rhs._path);
 		}
 
 	};

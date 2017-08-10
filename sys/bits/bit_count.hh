@@ -1,23 +1,17 @@
 #ifndef SYS_BITS_BIT_COUNT_HH
 #define SYS_BITS_BIT_COUNT_HH
 
-#include <sys/bits/macros.hh>
-
-#if SYSX_GCC_VERSION_AT_LEAST(4, 3)
-	#define FACTORY_HAVE_BUILTIN_POPCOUNT
-	#define FACTORY_HAVE_BUILTIN_POPCOUNTL
-	#if defined(__SIZEOF_LONG_LONG__)
-		#define FACTORY_HAVE_BUILTIN_POPCOUNTLL
-	#endif
-#endif
+#include <type_traits>
+#include "config"
 
 namespace sys {
 
 	namespace bits {
 
 		template<class T>
-		unsigned int
+		inline unsigned int
 		bit_count(T value) noexcept {
+			static_assert(std::is_unsigned<T>::value, "bad value type");
 			unsigned int count = 0;
 			while (value > 0) {           // until all bits are zero
 				if ((value & 1) == 1)     // check lower bit
@@ -27,27 +21,28 @@ namespace sys {
 			return count;
 		}
 
-		#if defined(FACTORY_HAVE_BUILTIN_POPCOUNT)
+		#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNT)
 		template<>
-		unsigned int
+		inline unsigned int
 		bit_count<unsigned int>(unsigned int value) noexcept {
 			return __builtin_popcount(value);
 		}
 		#endif
 
-		#if defined(FACTORY_HAVE_BUILTIN_POPCOUNTL)
+		#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNTL)
 		template<>
-		unsigned int
+		inline unsigned int
 		bit_count<unsigned long>(unsigned long value) noexcept {
 			return __builtin_popcountl(value);
 		}
 		#endif
 
-		#if defined(FACTORY_HAVE_BUILTIN_POPCOUNTLL)
+		#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNTLL) && \
+		    defined(UNISTDX_HAVE_LONG_LONG)
 		template<>
-		unsigned int
+		inline unsigned int
 		bit_count<unsigned long long>(unsigned long long value) noexcept {
-			return __builtin_popcountl(value);
+			return __builtin_popcountll(value);
 		}
 		#endif
 
