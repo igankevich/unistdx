@@ -24,4 +24,5 @@ TEST(FileMutex, Check) {
 	EXPECT_FALSE(mtx.try_lock());
 	child.terminate();
 	child.join();
+	EXPECT_TRUE(mtx.try_lock());
 }

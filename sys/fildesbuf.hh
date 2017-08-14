@@ -8,6 +8,7 @@
 #include <stdx/streambuf.hh>
 
 #include "fildes.hh"
+#include "system.hh"
 
 namespace sys {
 
@@ -40,11 +41,22 @@ namespace sys {
 		typedef typename std::vector<char_type>::size_type size_type;
 		typedef typename std::make_signed<size_type>::type signed_size_type;
 
-		basic_fildesbuf(): basic_fildesbuf(std::move(fd_type()), 512, 512) {}
+		inline
+		basic_fildesbuf():
+		basic_fildesbuf(std::move(fd_type()), page_size())
+		{}
 
-		explicit
-		basic_fildesbuf(fd_type&& fd): basic_fildesbuf(std::move(fd), 512, 512) {}
+		inline explicit
+		basic_fildesbuf(fd_type&& fd):
+		basic_fildesbuf(std::move(fd), page_size())
+		{}
 
+		inline
+		basic_fildesbuf(fd_type&& fd, size_type bufsize):
+		basic_fildesbuf(std::move(fd), bufsize, bufsize)
+		{}
+
+		inline
 		basic_fildesbuf(fd_type&& fd, size_type gbufsize, size_type pbufsize):
 		_fd(std::move(fd)), _gbuf(gbufsize), _pbuf(pbufsize)
 		{
@@ -138,24 +150,29 @@ namespace sys {
 			return streambuf_traits_type::in_avail(_fd);
 		}
 
-		void
+		inline void
 		setfd(fd_type&& rhs) {
-			_fd = std::move(rhs);
+			this->_fd = std::move(rhs);
 		}
 
-		const fd_type&
+		inline const fd_type&
 		fd() const {
-			return _fd;
+			return this->_fd;
 		}
 
-		fd_type&
+		inline fd_type&
 		fd() {
-			return _fd;
+			return this->_fd;
+		}
+
+		inline void
+		close() {
+			this->_fd.close();
 		}
 
 	private:
 
-		std::streamsize
+		inline std::streamsize
 		do_fill() {
 			// TODO 2016-03-09 this is not optimal solution,
 			// but i don't know a better alternative
@@ -175,11 +192,11 @@ namespace sys {
 			return first - (eback() + old_egptr_offset);
 		}
 
-		std::streamsize
+		inline std::streamsize
 		do_flush() {
 			const std::streamsize m = pptr() - pbase();
 			if (m == 0) return 0;
-			const std::streamsize n = streambuf_traits_type::write(_fd, pbase(), m);
+			const std::streamsize n = streambuf_traits_type::write(this->_fd, pbase(), m);
 			const bool success = n==m;
 			if (success) {
 				setp(pfirst(), plast());
@@ -192,19 +209,19 @@ namespace sys {
 
 	protected:
 
-		char_type*
+		inline char_type*
 		gfirst() noexcept {
-			return _gbuf.data();
+			return this->_gbuf.data();
 		}
 
-		char_type*
+		inline char_type*
 		glast() noexcept {
-			return _gbuf.data() + _gbuf.size();
+			return this->_gbuf.data() + this->_gbuf.size();
 		}
 
-		void
+		inline void
 		rebase() noexcept {
-			char_type* base = _gbuf.data();
+			char_type* base = this->_gbuf.data();
 			setg(
 				base,
 				base + (gptr()-eback()),
@@ -212,49 +229,49 @@ namespace sys {
 			);
 		}
 
-		bool
+		inline bool
 		has_gbuf() const noexcept {
-			return !_gbuf.empty();
+			return !this->_gbuf.empty();
 		}
 
-		void
+		inline void
 		ggrow() {
-			_gbuf.resize(_gbuf.size() * 2);
+			this->_gbuf.resize(_gbuf.size() * 2);
 			rebase();
 		}
 
-		char_type*
+		inline char_type*
 		pfirst() noexcept {
-			return _pbuf.data();
+			return this->_pbuf.data();
 		}
 
-		char_type*
+		inline char_type*
 		plast() noexcept {
-			return _pbuf.data() + _pbuf.size();
+			return this->_pbuf.data() + this->_pbuf.size();
 		}
 
-		bool
+		inline bool
 		has_pbuf() const noexcept {
-			return !_pbuf.empty();
+			return !this->_pbuf.empty();
 		}
 
-		void
+		inline void
 		pgrow() {
 			const pos_type pptr_offset = pptr() - pbase();
 			const pos_type pbase_offset = pbase() - pfirst();
-			_pbuf.resize(_pbuf.size() * 2);
+			this->_pbuf.resize(_pbuf.size() * 2);
 			setp(pfirst() + pbase_offset, plast());
 			pbump(pbase_offset + pptr_offset);
 		}
 
-		signed_size_type
+		inline signed_size_type
 		psize() const {
-			return static_cast<signed_size_type>(_pbuf.size());
+			return static_cast<signed_size_type>(this->_pbuf.size());
 		}
 
-		signed_size_type
+		inline signed_size_type
 		gsize() const {
-			return static_cast<signed_size_type>(_gbuf.size());
+			return static_cast<signed_size_type>(this->_gbuf.size());
 		}
 
 		fd_type _fd;
@@ -262,67 +279,7 @@ namespace sys {
 		std::vector<char_type> _pbuf;
 	};
 
-	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	struct basic_ifdstream: public std::basic_istream<Ch> {
-
-		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
-		typedef std::basic_istream<Ch,Tr> istream_type;
-		typedef typename fildesbuf_type::fd_type fd_type;
-
-		explicit basic_ifdstream(Fd&& fd): istream_type(nullptr),
-			_fildesbuf(std::move(fd), 512, 0) { this->init(&_fildesbuf); }
-
-		const fd_type&
-		fd() const {
-			return _fildesbuf.fd();
-		}
-
-		fd_type&
-		fd() {
-			return _fildesbuf.fd();
-		}
-
-	private:
-		fildesbuf_type _fildesbuf;
-	};
-
-	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	struct basic_ofdstream: public std::basic_ostream<Ch> {
-
-		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
-		typedef std::basic_ostream<Ch,Tr> ostream_type;
-		typedef typename fildesbuf_type::fd_type fd_type;
-
-		explicit basic_ofdstream(Fd&& fd): ostream_type(nullptr),
-			_fildesbuf(std::move(fd), 0, 512) { this->init(&_fildesbuf); }
-
-		const fd_type&
-		fd() const {
-			return _fildesbuf.fd();
-		}
-
-		fd_type&
-		fd() {
-			return _fildesbuf.fd();
-		}
-	private:
-		fildesbuf_type _fildesbuf;
-	};
-
-
-	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	struct basic_fdstream: public std::basic_iostream<Ch> {
-		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
-		typedef std::basic_iostream<Ch,Tr> iostream_type;
-		explicit basic_fdstream(Fd&& fd): iostream_type(nullptr),
-			_fildesbuf(std::move(fd), 512, 512) { this->init(&_fildesbuf); }
-	private:
-		fildesbuf_type _fildesbuf;
-	};
-
 	typedef basic_fildesbuf<char> fildesbuf;
-	typedef basic_ifdstream<char> ifdstream;
-	typedef basic_ofdstream<char> ofdstream;
 
 }
 

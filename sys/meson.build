@@ -44,7 +44,6 @@ install_headers(
 	'groups.hh',
 	'ifaddr.hh',
 	'ifaddr_list.hh',
-	'log.hh',
 	'network_format.hh',
 	'packetstream.hh',
 	'path.hh',

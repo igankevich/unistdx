@@ -2,6 +2,7 @@
 
 #include <sys/fildesbuf.hh>
 #include <sys/packetstream.hh>
+#include <sys/fdstream>
 
 #include "test.hh"
 #include "datum.hh"

@@ -5,6 +5,7 @@
 #include <stdx/packetbuf.hh>
 #include <stdx/mutex.hh>
 #include <sys/sharedmem.hh>
+#include "system.hh"
 
 namespace sys {
 
@@ -22,7 +23,7 @@ namespace sys {
 
 		explicit
 		basic_shmembuf(path_type&& path, sys::mode_type mode):
-		_sharedmem(std::forward<path_type>(path), 512, mode, BUFFER_PROJID),
+		_sharedmem(std::forward<path_type>(path), page_size(), mode, BUFFER_PROJID),
 		_sharedpart(new (_sharedmem.ptr()) shmem_header)
 		{
 			char_type* ptr = _sharedmem.begin() + sizeof(shmem_header);

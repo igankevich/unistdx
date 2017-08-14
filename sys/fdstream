@@ -1,0 +1,133 @@
+#ifndef SYS_FDSTREAM
+#define SYS_FDSTREAM
+
+#include "fildesbuf.hh"
+
+namespace sys {
+
+	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
+	struct basic_ifdstream: public std::basic_istream<Ch,Tr> {
+
+		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
+		typedef std::basic_istream<Ch,Tr> istream_type;
+		typedef typename fildesbuf_type::fd_type fd_type;
+
+		inline explicit
+		basic_ifdstream(Fd&& fd):
+		istream_type(nullptr),
+		_fildesbuf(std::move(fd), page_size(), 0)
+		{ this->init(&this->_fildesbuf); }
+
+		inline void
+		open(fd_type&& rhs) {
+			this->close();
+			this->_fildesbuf.setfd(std::move(rhs));
+		}
+
+		inline void
+		close() {
+			this->_fildesbuf.close();
+		}
+
+		inline const fd_type&
+		fd() const {
+			return this->_fildesbuf.fd();
+		}
+
+		inline fd_type&
+		fd() {
+			return this->_fildesbuf.fd();
+		}
+
+	private:
+		fildesbuf_type _fildesbuf;
+	};
+
+	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
+	struct basic_ofdstream: public std::basic_ostream<Ch,Tr> {
+
+		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
+		typedef std::basic_ostream<Ch,Tr> ostream_type;
+		typedef typename fildesbuf_type::fd_type fd_type;
+
+		inline
+		basic_ofdstream():
+		ostream_type(nullptr),
+		_fildesbuf()
+		{ this->init(&_fildesbuf); }
+
+		inline explicit
+		basic_ofdstream(Fd&& fd):
+		ostream_type(nullptr),
+		_fildesbuf(std::move(fd), 0, page_size())
+		{ this->init(&_fildesbuf); }
+
+		inline void
+		open(fd_type&& rhs) {
+			this->close();
+			this->_fildesbuf.setfd(std::move(rhs));
+		}
+
+		inline void
+		close() {
+			this->_fildesbuf.close();
+		}
+
+		inline const fd_type&
+		fd() const {
+			return this->_fildesbuf.fd();
+		}
+
+		inline fd_type&
+		fd() {
+			return this->_fildesbuf.fd();
+		}
+
+	private:
+		fildesbuf_type _fildesbuf;
+	};
+
+	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
+	struct basic_fdstream: public std::basic_iostream<Ch,Tr> {
+
+		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
+		typedef std::basic_iostream<Ch,Tr> iostream_type;
+
+		inline explicit
+		basic_fdstream(Fd&& fd):
+		iostream_type(nullptr),
+		_fildesbuf(std::move(fd), page_size())
+		{ this->init(&_fildesbuf); }
+
+		inline void
+		open(fd_type&& rhs) {
+			this->close();
+			this->_fildesbuf.setfd(std::move(rhs));
+		}
+
+		inline void
+		close() {
+			this->_fildesbuf.close();
+		}
+
+		inline const fd_type&
+		fd() const {
+			return this->_fildesbuf.fd();
+		}
+
+		inline fd_type&
+		fd() {
+			return this->_fildesbuf.fd();
+		}
+
+	private:
+		fildesbuf_type _fildesbuf;
+	};
+
+	typedef basic_ifdstream<char> ifdstream;
+	typedef basic_ofdstream<char> ofdstream;
+
+}
+
+#endif // SYS_FDSTREAM
+// vi:ft=cpp

@@ -61,7 +61,6 @@ developing applications that use %{name}.
 %{_includedir}/unistdx/sys/groups.hh
 %{_includedir}/unistdx/sys/ifaddr.hh
 %{_includedir}/unistdx/sys/ifaddr_list.hh
-%{_includedir}/unistdx/sys/log.hh
 %{_includedir}/unistdx/sys/network_format.hh
 %{_includedir}/unistdx/sys/packetstream.hh
 %{_includedir}/unistdx/sys/path.hh
