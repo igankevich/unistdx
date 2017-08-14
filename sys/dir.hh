@@ -24,25 +24,22 @@ namespace sys {
 
 	struct direntry: public dirent_type {
 
-		constexpr static const char* current_dir = ".";
-		constexpr static const char* parent_dir = "..";
-
 		direntry() = default;
 		direntry(const direntry&) = default;
 		direntry(direntry&&) = default;
 		~direntry() = default;
 
-		const char*
+		inline const char*
 		name() const noexcept {
 			return this->d_name;
 		}
 
-		inode_type
+		inline inode_type
 		inode() const noexcept {
 			return this->d_ino;
 		}
 
-		file_type
+		inline file_type
 		type() const noexcept {
 			#if defined(UNISTDX_HAVE_DTTOIF)
 			return file_type(DTTOIF(this->d_type));
@@ -51,47 +48,47 @@ namespace sys {
 			#endif
 		}
 
-		bool
+		inline bool
 		has_type() const noexcept {
-			return type() != file_type(0);
+			return this->type() != file_type(0);
 		}
 
-		bool
+		inline bool
 		is_working_dir() const noexcept {
-			return !std::strcmp(name(), current_dir);
+			return !std::strcmp(this->name(), ".");
 		}
 
-		bool
+		inline bool
 		is_parent_dir() const noexcept {
-			return !std::strcmp(name(), parent_dir);
+			return !std::strcmp(this->name(), "..");
 		}
 
-		bool
+		inline bool
 		is_hidden() const noexcept {
-			return name()[0] == '.';
+			return this->name()[0] == '.';
 		}
 
-		bool
+		inline bool
 		is_directory() const noexcept {
-			return type() == file_type::directory;
+			return this->type() == file_type::directory;
 		}
 
-		bool
+		inline bool
 		operator==(const direntry& rhs) const noexcept {
-			return std::strcmp(name(), rhs.name()) == 0;
+			return std::strcmp(this->name(), rhs.name()) == 0;
 		}
 
-		bool
+		inline bool
 		operator!=(const direntry& rhs) const noexcept {
-			return std::strcmp(name(), rhs.name()) != 0;
+			return std::strcmp(this->name(), rhs.name()) != 0;
 		}
 
-		bool
+		inline bool
 		operator<(const direntry& rhs) const noexcept {
-			return std::strcmp(name(), rhs.name()) < 0;
+			return std::strcmp(this->name(), rhs.name()) < 0;
 		}
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const direntry& rhs) {
 			return out << rhs.name();
 		}
@@ -108,37 +105,38 @@ namespace sys {
 		pathentry(pathentry&& rhs) = default;
 		~pathentry() = default;
 
+		inline
 		pathentry(const path& dirname, const direntry& ent):
 		direntry(ent),
 		_dirname(dirname)
 		{}
 
-		const path&
+		inline const path&
 		dirname() const noexcept {
-			return _dirname;
+			return this->_dirname;
 		}
 
-		path
+		inline path
 		getpath() const {
-			return path(_dirname, name());
+			return path(this->_dirname, name());
 		}
 
-		bool
+		inline bool
 		operator<(const pathentry& rhs) const noexcept {
-			return _dirname < rhs._dirname;
+			return this->_dirname < rhs._dirname;
 		}
 
-		bool
+		inline bool
 		operator==(const pathentry& rhs) const noexcept {
-			return _dirname == rhs._dirname;
+			return this->_dirname == rhs._dirname;
 		}
 
-		bool
+		inline bool
 		operator!=(const pathentry& rhs) const noexcept {
 			return !operator==(rhs);
 		}
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const pathentry& rhs) {
 			return out << rhs.dirname() << path::separator << rhs.name();
 		}
@@ -175,17 +173,18 @@ namespace sys {
 		file(const file&) = default;
 		file(file&&) = default;
 
+		inline
 		file(const path& dirname, const direntry& ent):
 		path(dirname, ent.name()),
 		file_stat(const_path(*this))
 		{}
 
-		bool
+		inline bool
 		is_hidden() const noexcept {
 			return name()[0] == '.';
 		}
 
-		const char*
+		inline const char*
 		name() const noexcept {
 			const std::string& filepath = path::to_string();
 			const size_t pos = filepath.find_last_of(path::separator);
@@ -194,7 +193,7 @@ namespace sys {
 				: (filepath.data() + pos + 1);
 		}
 
-		friend std::ostream&
+		inline friend std::ostream&
 		operator<<(std::ostream& out, const file& rhs) {
 			return out << static_cast<const file_stat&>(rhs)
 				<< ' ' << static_cast<const path&>(rhs);
@@ -217,49 +216,49 @@ namespace sys {
 			eofbit = 4
 		};
 
-		explicit
+		inline explicit
 		operator bool() const noexcept {
-			return !_state;
+			return !this->_state;
 		}
 
-		bool
+		inline bool
 		operator!() const noexcept {
 			return !operator bool();
 		}
 
-		void
+		inline void
 		clear() noexcept {
-			_state = goodbit;
+			this->_state = goodbit;
 		}
 
-		bool
+		inline bool
 		good() const noexcept {
-			return !_state;
+			return !this->_state;
 		}
 
-		bool
+		inline bool
 		bad() const noexcept {
-			return _state & badbit;
+			return this->_state & badbit;
 		}
 
-		bool
+		inline bool
 		fail() const noexcept {
-			return _state & failbit;
+			return this->_state & failbit;
 		}
 
-		bool
+		inline bool
 		eof() const noexcept {
-			return _state & eofbit;
+			return this->_state & eofbit;
 		}
 
-		state
+		inline state
 		rdstate() const noexcept {
-			return _state;
+			return this->_state;
 		}
 
-		void
+		inline void
 		setstate(state rhs) noexcept {
-			_state = state(_state | rhs);
+			this->_state = state(_state | rhs);
 		}
 
 	protected:
@@ -283,11 +282,12 @@ namespace sys {
 
 		basic_directory() = default;
 
-		explicit
+		inline explicit
 		basic_directory(const path& path) {
-			open(path);
+			this->open(path);
 		}
 
+		inline
 		basic_directory(basic_directory&& rhs):
 		basic_dirstream(std::forward<basic_dirstream>(rhs)),
 		_dirpath(std::move(rhs._dirpath)),
@@ -296,82 +296,88 @@ namespace sys {
 
 		basic_directory(const basic_directory&) = delete;
 
+		inline
 		~basic_directory() {
-			close();
+			this->close();
 		}
 
-		void
+		inline void
 		open(const path& p) {
-			close();
-			_dirpath = p;
-			_dir = ::opendir(p);
-			if (!_dir) {
-				setstate(failbit);
+			this->close();
+			this->_dirpath = p;
+			this->_dir = ::opendir(p);
+			if (!this->_dir) {
+				this->setstate(failbit);
 			}
 		}
 
-		void
+		inline void
 		close() {
-			if (_dir) {
-				if (-1 == ::closedir(_dir)) {
-					setstate(failbit);
+			if (this->_dir) {
+				if (-1 == ::closedir(this->_dir)) {
+					this->setstate(failbit);
 				}
-				_dir = nullptr;
+				this->_dir = nullptr;
 			}
 		}
 
-		bool
+		inline bool
 		is_open() const noexcept {
-			return _dir != nullptr;
+			return this->_dir != nullptr;
 		}
 
-		const filepred_type&
+		inline const filepred_type&
 		getfilepred() const noexcept {
-			return _filepred;
+			return this->_filepred;
 		}
 
-		void
+		inline void
 		setfilepred(filepred_type rhs) {
-			_filepred = rhs;
+			this->_filepred = rhs;
 		}
 
-		const path&
+		inline const path&
 		getpath() const noexcept {
-			return _dirpath;
+			return this->_dirpath;
 		}
 
-		basic_directory&
+		inline basic_directory&
 		operator>>(direntry& rhs) {
-			read_direntry(rhs);
+			this->read_direntry(rhs);
 			return *this;
 		}
 
-		basic_directory&
+		inline basic_directory&
 		operator>>(pathentry& rhs) {
-			read_direntry(rhs);
+			this->read_direntry(rhs);
 			return *this;
 		}
 
-		basic_directory&
+		inline basic_directory&
 		operator>>(file& rhs) {
-			read_direntry(rhs);
+			this->read_direntry(rhs);
 			return *this;
 		}
 
 	private:
 
+		inline direntry*
+		read_direntry() noexcept {
+			return static_cast<direntry*>(::readdir(this->_dir));
+		}
+
 		template<class Entry>
-		void
+		inline void
 		read_direntry(Entry& rhs) {
 			if (good()) {
 				bool success = false;
-				while (!success && !eof()) {
-					const direntry* result = static_cast<direntry*>(::readdir(_dir));
+				while (!success && !this->eof()) {
+					const direntry* result = this->read_direntry();
 					if (!result) {
-						setstate(eofbit);
+						this->setstate(eofbit);
 					} else {
-						rhs = Entry(_dirpath, *result);
-						if (_filepred(rhs)) {
+						rhs = Entry(this->_dirpath, *result);
+						if (this->_filepred(rhs)) {
 							success = true;
 						}
 					}
@@ -379,16 +385,16 @@ namespace sys {
 			}
 		}
 
-		void
+		inline void
 		read_direntry(direntry& rhs) {
-			if (good()) {
+			if (this->good()) {
 				bool success = false;
-				while (!success && !eof()) {
-					const direntry* result = static_cast<direntry*>(::readdir(_dir));
+				while (!success && !this->eof()) {
+					const direntry* result = this->read_direntry();
 					if (!result) {
-						setstate(eofbit);
+						this->setstate(eofbit);
 					} else {
-						if (_filepred(*result)) {
+						if (this->_filepred(*result)) {
 							rhs = *result;
 							success = true;
 						}
@@ -412,6 +418,7 @@ namespace sys {
 	public:
 		basic_odirectory() = default;
 
+		inline explicit
 		basic_odirectory(const path& dir):
 		_dirpath(dir)
 		{}
@@ -419,50 +426,50 @@ namespace sys {
 		basic_odirectory(basic_odirectory&&) = default;
 		basic_odirectory(const basic_odirectory&) = delete;
 
-		void
+		inline void
 		open(const path& dir) {
-			_dirpath = dir;
+			this->_dirpath = dir;
 		}
 
-		explicit
+		inline explicit
 		operator bool() const noexcept {
 			return true;
 		}
 
-		bool
+		inline bool
 		operator!() const noexcept {
 			return !operator bool();
 		}
 
-		basic_odirectory&
+		inline basic_odirectory&
 		operator<<(const direntry& rhs) {
-			copy_file(
+			this->copy_file(
 				rhs.name(),
-				path(_dirpath, _trans(rhs))
+				path(this->_dirpath, this->_trans(rhs))
 			);
 			return *this;
 		}
 
-		basic_odirectory&
+		inline basic_odirectory&
 		operator<<(const pathentry& rhs) {
-			copy_file(
+			this->copy_file(
 				rhs.getpath(),
-				path(_dirpath, _trans(rhs))
+				path(this->_dirpath, this->_trans(rhs))
 			);
 			return *this;
 		}
 
-		basic_odirectory&
+		inline basic_odirectory&
 		operator<<(const file& rhs) {
-			copy_file(
+			this->copy_file(
 				rhs,
-				path(_dirpath, _trans(rhs))
+				path(this->_dirpath, this->_trans(rhs))
 			);
 			return *this;
 		}
 
 		template<class FilePred>
-		basic_odirectory<FilePred>&
+		inline basic_odirectory<FilePred>&
 		operator<<(basic_directory<FilePred>& rhs) {
 			pathentry ent;
 			while (rhs >> ent) {
@@ -472,7 +479,7 @@ namespace sys {
 		}
 
 	private:
-		void
+		inline void
 		copy_file(const path& src, const path& dest) {
 			std::ofstream(dest) << std::ifstream(src).rdbuf();
 		}
@@ -533,73 +540,73 @@ namespace sys {
 
 		basic_dirtree() = default;
 
-		explicit
+		inline explicit
 		basic_dirtree(const path& starting_point):
 		directory(starting_point)
-		{ _dirs.emplace(starting_point); }
+		{ this->_dirs.emplace(starting_point); }
 
-		void
+		inline void
 		open(const path& p) {
-			while (!_dirs.empty()) {
-				_dirs.pop();
+			while (!this->_dirs.empty()) {
+				this->_dirs.pop();
 			}
 			directory::open(p);
-			_dirs.emplace(p);
+			this->_dirs.emplace(p);
 		}
 
-		const path&
+		inline const path&
 		current_dir() const noexcept {
-			return _dirs.front();
+			return this->_dirs.front();
 		}
 
-		const dirpred_type&
+		inline const dirpred_type&
 		getdirpred() const noexcept {
-			return _dirpred;
+			return this->_dirpred;
 		}
 
-		void
+		inline void
 		setdirpred(dirpred_type rhs) {
-			_dirpred = rhs;
+			this->_dirpred = rhs;
 		}
 
-		basic_dirtree&
+		inline basic_dirtree&
 		operator>>(direntry& rhs) {
-			read_direntry(rhs);
+			this->read_direntry(rhs);
 			return *this;
 		}
 
-		basic_dirtree&
+		inline basic_dirtree&
 		operator>>(pathentry& rhs) {
-			read_direntry(rhs);
+			this->read_direntry(rhs);
 			return *this;
 		}
 
-		basic_dirtree&
+		inline basic_dirtree&
 		operator>>(file& rhs) {
-			read_direntry(rhs);
+			this->read_direntry(rhs);
 			return *this;
 		}
 
 	private:
 
 		template<class Entry>
-		void
+		inline void
 		read_direntry(Entry& rhs) {
 			bool success = false;
-			while (!success && !eof()) {
-				if (directory::operator>>(rhs)) {
+			while (!success && !this->eof()) {
+				if (this->directory::operator>>(rhs)) {
 					success = true;
-					const path& cur = current_dir();
-					if (_dirpred(cur, rhs)) {
-						_dirs.emplace(cur, rhs.name());
+					const path& cur = this->current_dir();
+					if (this->_dirpred(cur, rhs)) {
+						this->_dirs.emplace(cur, rhs.name());
 					}
 				} else {
-					_dirs.pop();
-					if (_dirs.empty()) {
-						setstate(eofbit);
+					this->_dirs.pop();
+					if (this->_dirs.empty()) {
+						this->setstate(eofbit);
 					} else {
-						clear();
-						directory::open(_dirs.front());
+						this->clear();
+						this->directory::open(this->_dirs.front());
 					}
 				}
 			}
