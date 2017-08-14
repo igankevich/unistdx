@@ -66,7 +66,7 @@ install_headers(
 	'bits/basic_istream_iterator.hh',
 	'bits/basic_ostream_iterator.hh',
 	'bits/bit_count.hh',
-	'bits/check.hh',
+	'check',
 	'bits/endpoint_parse.hh',
 	'ifaddrs_iterator.hh',
 	'bits/safe_calls.hh',

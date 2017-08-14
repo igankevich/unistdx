@@ -66,199 +66,167 @@ namespace sys {
 		file_mode() = default;
 		~file_mode() = default;
 
+		inline
 		file_mode(mode_type rhs) noexcept:
 		_mode(rhs)
 		{}
 
+		inline
 		file_mode(const file_mode& rhs) noexcept:
 		_mode(rhs._mode)
 		{}
 
+		inline
 		operator mode_type&() noexcept {
-			return _mode;
+			return this->_mode;
 		}
 
+		inline
 		operator mode_type() const noexcept {
-			return _mode;
+			return this->_mode;
 		}
 
-		file_mode&
+		inline file_mode&
 		operator=(const file_mode&) = default;
 
-		file_mode&
-		operator=(mode_type rhs) {
-			_mode = rhs;
+		inline file_mode&
+		operator=(mode_type rhs) noexcept {
+			this->_mode = rhs;
 			return *this;
 		}
 
-		mode_type
+		inline mode_type
 		mode() const noexcept {
-			return _mode;
+			return this->_mode;
 		}
 
-		mode_type
+		inline mode_type
 		mode(mode_type mask) const noexcept {
-			return _mode & mask;
+			return this->_mode & mask;
 		}
 
-		mode_type
+		inline mode_type
 		special() const noexcept {
-			return mode(specialbits);
+			return this->mode(specialbits);
 		}
 
-		mode_type
+		inline mode_type
 		user() const noexcept {
-			return mode(userbits);
+			return this->mode(userbits);
 		}
 
-		mode_type
+		inline mode_type
 		group() const noexcept {
-			return mode(groupbits);
+			return this->mode(groupbits);
 		}
 
-		mode_type
+		inline mode_type
 		other() const noexcept {
-			return mode(otherbits);
+			return this->mode(otherbits);
 		}
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const file_mode& rhs) {
-			rhs.print_special(out);
-			rhs.print_user(out);
-			rhs.print_group(out);
-			rhs.print_other(out);
-			return out;
-		}
+		operator<<(std::ostream& out, const file_mode& rhs);
 
 	private:
-
-		void
-		print_special(std::ostream& out) const {
-			const mode_type s = special();
-			out << ((s & setuid) ? 'u' : '-');
-			out << ((s & setgid) ? 'g' : '-');
-			out << ((s & sticky) ? 't' : '-');
-		}
-
-		void
-		print_user(std::ostream& out) const {
-			const mode_type usr = user();
-			out << ((usr & user_r) ? 'r' : '-');
-			out << ((usr & user_w) ? 'w' : '-');
-			out << ((usr & user_x) ? 'x' : '-');
-		}
-
-		void
-		print_group(std::ostream& out) const {
-			const mode_type grp = group();
-			out << ((grp & group_r) ? 'r' : '-');
-			out << ((grp & group_w) ? 'w' : '-');
-			out << ((grp & group_x) ? 'x' : '-');
-		}
-
-		void
-		print_other(std::ostream& out) const {
-			const mode_type oth = other();
-			out << ((oth & other_r) ? 'r' : '-');
-			out << ((oth & other_w) ? 'w' : '-');
-			out << ((oth & other_x) ? 'x' : '-');
-		}
-
 		mode_type _mode = 0;
 
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const file_mode& rhs);
 
 	struct file_stat: public stat_type {
 
 		static const mode_type type_mask = S_IFMT;
 
-		file_stat():
+		inline
+		file_stat() noexcept:
 		stat_type{}
 		{}
 
-		explicit
+		inline explicit
 		file_stat(const char* filename):
 		stat_type{}
-		{ update(filename); }
+		{ this->update(filename); }
 
-		file_type
+		inline file_type
 		type() const noexcept {
 			return file_type(this->st_mode & type_mask);
 		}
 
-		bool
+		inline bool
 		is_regular() const noexcept {
-			return type() == file_type::regular;
+			return this->type() == file_type::regular;
 		}
 
-		bool
+		inline bool
 		is_socket() const noexcept {
-			return type() == file_type::socket;
+			return this->type() == file_type::socket;
 		}
 
-		bool
+		inline bool
 		is_symbolic_link() const noexcept {
-			return type() == file_type::symbolic_link;
+			return this->type() == file_type::symbolic_link;
 		}
 
-		bool
+		inline bool
 		is_block_device() const noexcept {
-			return type() == file_type::block_device;
+			return this->type() == file_type::block_device;
 		}
 
-		bool
+		inline bool
 		is_directory() const noexcept {
-			return type() == file_type::directory;
+			return this->type() == file_type::directory;
 		}
 
-		bool
+		inline bool
 		is_character_device() const noexcept {
-			return type() == file_type::character_device;
+			return this->type() == file_type::character_device;
 		}
 
-		bool
+		inline bool
 		is_pipe() const noexcept {
-			return type() == file_type::pipe;
+			return this->type() == file_type::pipe;
 		}
 
-		offset_type
+		inline offset_type
 		size() const noexcept {
 			return this->st_size;
 		}
 
-		file_mode
+		inline file_mode
 		mode() const noexcept {
 			return file_mode(this->st_mode);
 		}
 
-		uid_type
+		inline uid_type
 		owner() const noexcept {
 			return this->st_uid;
 		}
 
-		gid_type
+		inline gid_type
 		group() const noexcept {
 			return this->st_gid;
 		}
 
-		bool
+		inline bool
 		exists() const noexcept {
 			return this->st_ino != 0;
 		}
 
-		void
+		inline void
 		update(const char* filename) {
 			UNISTDX_CHECK_IF_NOT(ENOENT, ::stat(filename, this));
 		}
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const file_stat& rhs) {
-			return out << rhs.type() << rhs.mode() << ' '
-				<< rhs.owner() << ':' << rhs.group() << ' '
-				<< rhs.size();
-		}
+		operator<<(std::ostream& out, const file_stat& rhs);
 
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const file_stat& rhs);
 
 }
 
