@@ -8,12 +8,12 @@
 #include <queue>
 #include <system_error>
 
-#include <sys/check>
 #include <sys/bits/basic_istream_iterator.hh>
 #include <sys/bits/basic_ostream_iterator.hh>
+#include <sys/check>
 
-#include "path.hh"
 #include "file.hh"
+#include "path.hh"
 #include <unistdx_config>
 
 namespace sys {
@@ -108,8 +108,7 @@ namespace sys {
 		inline
 		pathentry(const path& dirname, const direntry& ent):
 		direntry(ent),
-		_dirname(dirname)
-		{}
+		_dirname(dirname) {}
 
 		inline const path&
 		dirname() const noexcept {
@@ -156,15 +155,15 @@ namespace sys {
 	inline sys::file_type
 	get_file_type(const path& dirname, const direntry& entry) {
 		return entry.has_type()
-			? entry.type()
-			: sys::file_stat(path(dirname, entry.name())).type();
+		       ? entry.type()
+			   : sys::file_stat(path(dirname, entry.name())).type();
 	}
 
 	inline sys::file_type
 	get_file_type(const pathentry& rhs) {
-	   	return rhs.has_type()
-			? rhs.type()
-			: sys::file_stat(rhs.getpath()).type();
+		return rhs.has_type()
+		       ? rhs.type()
+			   : sys::file_stat(rhs.getpath()).type();
 	}
 
 	struct file: public path, public file_stat {
@@ -176,8 +175,7 @@ namespace sys {
 		inline
 		file(const path& dirname, const direntry& ent):
 		path(dirname, ent.name()),
-		file_stat(const_path(*this))
-		{}
+		file_stat(const_path(*this)) {}
 
 		inline bool
 		is_hidden() const noexcept {
@@ -189,14 +187,14 @@ namespace sys {
 			const std::string& filepath = path::to_string();
 			const size_t pos = filepath.find_last_of(path::separator);
 			return pos == std::string::npos
-				? filepath.data()
-				: (filepath.data() + pos + 1);
+			       ? filepath.data()
+				   : (filepath.data() + pos + 1);
 		}
 
 		inline friend std::ostream&
 		operator<<(std::ostream& out, const file& rhs) {
 			return out << static_cast<const file_stat&>(rhs)
-				<< ' ' << static_cast<const path&>(rhs);
+			           << ' ' << static_cast<const path&>(rhs);
 		}
 
 		file&
@@ -271,6 +269,7 @@ namespace sys {
 	class basic_directory: public basic_dirstream {
 
 	public:
+
 		typedef FilePred filepred_type;
 
 	private:
@@ -291,8 +290,9 @@ namespace sys {
 		basic_directory(basic_directory&& rhs):
 		basic_dirstream(std::forward<basic_dirstream>(rhs)),
 		_dirpath(std::move(rhs._dirpath)),
-		_dir(rhs._dir)
-		{ rhs._dir = nullptr; }
+		_dir(rhs._dir) {
+			rhs._dir = nullptr;
+		}
 
 		basic_directory(const basic_directory&) = delete;
 
@@ -409,6 +409,7 @@ namespace sys {
 	class basic_odirectory {
 
 	public:
+
 		typedef Trans transform;
 
 	private:
@@ -420,8 +421,7 @@ namespace sys {
 
 		inline explicit
 		basic_odirectory(const path& dir):
-		_dirpath(dir)
-		{}
+		_dirpath(dir) {}
 
 		basic_odirectory(basic_odirectory&&) = default;
 		basic_odirectory(const basic_odirectory&) = delete;
@@ -510,7 +510,7 @@ namespace sys {
 		inline bool
 		operator()(const path& prefix, const direntry& rhs) const noexcept {
 			return !rhs.is_hidden()
-				&& get_file_type(prefix, rhs) == file_type::directory;
+			       && get_file_type(prefix, rhs) == file_type::directory;
 		}
 
 		inline bool
@@ -536,14 +536,16 @@ namespace sys {
 		using basic_dirstream::eofbit;
 		using basic_dirstream::clear;
 		using basic_dirstream::setstate;
+
 		typedef DirPred dirpred_type;
 
 		basic_dirtree() = default;
 
 		inline explicit
 		basic_dirtree(const path& starting_point):
-		directory(starting_point)
-		{ this->_dirs.emplace(starting_point); }
+		directory(starting_point) {
+			this->_dirs.emplace(starting_point);
+		}
 
 		inline void
 		open(const path& p) {
@@ -632,4 +634,4 @@ namespace sys {
 
 }
 
-#endif // SYS_DIR_HH
+#endif // ifndef SYS_DIR_HH
