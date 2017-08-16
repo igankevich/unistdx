@@ -4,27 +4,27 @@ test(
 		'locks-test',
 		sources: 'locks_test.cc',
 		include_directories: srcdir,
-		dependencies: [threads,unistdx],
+		dependencies: [threads,unistdx,gtest],
 	)
 )
 
 test(
-	'sys::shared_mem',
+	'unistdx/sharedmem',
 	executable(
-		'shmem-test',
-		sources: 'shmem_test.cc',
+		'sharedmem-test',
+		sources: 'sharedmem_test.cc',
 		include_directories: srcdir,
-		dependencies: [threads,unistdx],
+		dependencies: [threads,unistdx,gtest],
 	)
 )
 
 test(
-	'sys::endpoint',
+	'unistdx/endpoint',
 	executable(
 		'endpoint-test',
 		sources: 'endpoint_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [gtest,unistdx],
 	)
 )
 
@@ -34,27 +34,27 @@ test(
 		'poller-test',
 		sources: 'poller_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [gtest,unistdx],
 	)
 )
 
 test(
-	'sys::file, sys::direntry, sys::path',
+	'unistdx/dir',
 	executable(
 		'sys-test',
 		sources: 'sys_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [gtest, unistdx],
 	)
 )
 
 test(
-	'sys::process',
+	'unistdx/process',
 	executable(
 		'process-test',
 		sources: 'process_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [gtest,unistdx],
 	)
 )
 
@@ -64,7 +64,7 @@ test(
 		'buffer-test',
 		sources: 'buffer_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [gtest,unistdx],
 	)
 )
 
@@ -109,6 +109,16 @@ test(
 	executable(
 		'signal-test',
 		sources: 'signal_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)
+
+test(
+	'unistdx/path',
+	executable(
+		'path-test',
+		sources: 'path_test.cc',
 		include_directories: srcdir,
 		dependencies: [gtest, unistdx],
 	)

@@ -54,22 +54,25 @@ struct Datum {
 			u != rhs.u || v != rhs.v || w != rhs.w;
 	}
 
-	friend sys::packetstream&
-	operator<<(sys::packetstream& out, const Datum& rhs) {
+	template <class Ch>
+	friend sys::basic_packetstream<Ch>&
+	operator<<(sys::basic_packetstream<Ch>& out, const Datum& rhs) {
 		return out
 			<< rhs.x << rhs.y << rhs.z
 			<< rhs.u << rhs.v << rhs.w;
 	}
 
-	friend sys::packetstream&
-	operator>>(sys::packetstream& in, Datum& rhs) {
+	template <class Ch>
+	friend sys::basic_packetstream<Ch>&
+	operator>>(sys::basic_packetstream<Ch>& in, Datum& rhs) {
 		return in
 			>> rhs.x >> rhs.y >> rhs.z
 			>> rhs.u >> rhs.v >> rhs.w;
 	}
 
-	friend std::ostream&
-	operator<<(std::ostream& out, const Datum& rhs) {
+	template <class Ch>
+	friend std::basic_ostream<Ch>&
+	operator<<(std::basic_ostream<Ch>& out, const Datum& rhs) {
 		write_raw(out, rhs.x);
 		write_raw(out, rhs.y);
 		write_raw(out, rhs.z);
@@ -79,8 +82,9 @@ struct Datum {
 		return out;
 	}
 
-	friend std::istream&
-	operator>>(std::istream& in, Datum& rhs) {
+	template <class Ch>
+	friend std::basic_istream<Ch>&
+	operator>>(std::basic_istream<Ch>& in, Datum& rhs) {
 		read_raw(in, rhs.x);
 		read_raw(in, rhs.y);
 		read_raw(in, rhs.z);
@@ -98,16 +102,16 @@ struct Datum {
 
 private:
 
-	template<class T>
+	template<class T, class Ch>
 	static void
-	write_raw(std::ostream& out, const T& rhs) {
+	write_raw(std::basic_ostream<Ch>& out, const T& rhs) {
 		sys::bytes<T> raw = rhs;
 		out.write(raw.begin(), raw.size());
 	}
 
-	template<class T>
+	template<class T, class Ch>
 	static void
-	read_raw(std::istream& in, T& rhs) {
+	read_raw(std::basic_istream<Ch>& in, T& rhs) {
 		sys::bytes<T> raw;
 		in.read(raw.begin(), raw.size());
 		rhs = raw;

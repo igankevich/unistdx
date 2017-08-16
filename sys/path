@@ -1,0 +1,328 @@
+#ifndef SYS_PATH
+#define SYS_PATH
+
+#include <limits.h>
+
+#include <memory>
+#include <ostream>
+#include <string>
+
+#include "check"
+
+namespace sys {
+
+	constexpr const char file_separator = '/';
+	constexpr const char path_separator = ':';
+
+	template <class Ch, class Tr, class Alloc>
+	class basic_path;
+
+	template <class Ch, class Tr, class Alloc>
+	class basic_canonical_path;
+
+	#define MAKE_OPERATOR(op, tp1, tp2, tp3, tp4, ...) \
+	inline friend bool \
+	operator op(const tp1 lhs, const tp2 rhs) __VA_ARGS__ { \
+		return ::std::operator op( \
+			static_cast<const tp3>(lhs), \
+			static_cast<const tp4>(rhs) \
+		); \
+	}
+
+	#define MAKE_OPERATOR_EQ(tp1, tp2, tp3, tp4, ...) \
+	MAKE_OPERATOR(==, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
+	MAKE_OPERATOR(!=, tp1, tp2, tp3, tp4, ## __VA_ARGS__)
+
+	#define MAKE_OPERATOR_REL(tp1, tp2, tp3, tp4, ...) \
+	MAKE_OPERATOR(<, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
+	MAKE_OPERATOR(<=, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
+	MAKE_OPERATOR(>, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
+	MAKE_OPERATOR(>=, tp1, tp2, tp3, tp4, ## __VA_ARGS__)
+
+	template <class Ch, class Tr=std::char_traits<Ch>, class Alloc=
+				  std::allocator<Ch>>
+	class basic_path: public std::basic_string<Ch,Tr,Alloc> {
+
+	public:
+
+		typedef std::basic_string<Ch,Tr,Alloc> string_type;
+		using typename string_type::value_type;
+		using typename string_type::traits_type;
+		using typename string_type::allocator_type;
+		using typename string_type::reference;
+		using typename string_type::const_reference;
+		using typename string_type::pointer;
+		using typename string_type::const_pointer;
+		using typename string_type::iterator;
+		using typename string_type::const_iterator;
+		using typename string_type::reverse_iterator;
+		using typename string_type::const_reverse_iterator;
+		using typename string_type::difference_type;
+		using typename string_type::size_type;
+
+		friend struct std::hash<basic_path>;
+		friend class basic_canonical_path<Ch,Tr,Alloc>;
+
+		inline
+		basic_path() = default;
+
+		inline basic_path&
+		operator=(const basic_path&) = default;
+
+		inline explicit
+		basic_path(const char* rhs):
+		string_type(rhs)
+		{}
+
+		inline explicit
+		basic_path(const string_type& rhs):
+		string_type(rhs)
+		{}
+
+		inline explicit
+		basic_path(string_type&& rhs) noexcept:
+		string_type(std::forward<string_type>(rhs))
+		{}
+
+		inline
+		basic_path(const basic_path& rhs):
+		string_type(rhs)
+		{}
+
+		inline
+		basic_path(basic_path&& rhs):
+		string_type(std::forward<string_type>(rhs))
+		{}
+
+		template <class A, class B>
+		inline
+		basic_path(A&& dir, B&& filename):
+		string_type(std::forward<A>(dir)) {
+			this->push_back(file_separator);
+			this->append(std::forward<B>(filename));
+		}
+
+		inline
+		operator const char*() const noexcept {
+			return this->data();
+		}
+
+		MAKE_OPERATOR_EQ(
+			basic_path&,
+			basic_path&,
+			string_type&,
+			string_type&,
+			noexcept
+		);
+		MAKE_OPERATOR_EQ(
+			basic_path&,
+			string_type&,
+			string_type&,
+			string_type&,
+			noexcept
+		);
+		MAKE_OPERATOR_EQ(
+			string_type&,
+			basic_path&,
+			string_type&,
+			string_type&,
+			noexcept
+		);
+		MAKE_OPERATOR_EQ(basic_path&, char*, string_type&, char*);
+		MAKE_OPERATOR_EQ(char*, basic_path&, char*, string_type&);
+
+		MAKE_OPERATOR_REL(
+			basic_path&,
+			basic_path&,
+			string_type&,
+			string_type&,
+			noexcept
+		);
+		MAKE_OPERATOR_REL(
+			basic_path&,
+			string_type&,
+			string_type&,
+			string_type&,
+			noexcept
+		);
+		MAKE_OPERATOR_REL(
+			string_type&,
+			basic_path&,
+			string_type&,
+			string_type&,
+			noexcept
+		);
+		MAKE_OPERATOR_REL(basic_path&, char*, string_type&, char*);
+		MAKE_OPERATOR_REL(char*, basic_path&, char*, string_type&);
+
+	private:
+
+		inline explicit
+		basic_path(std::unique_ptr<char[]> rhs):
+		string_type(rhs.get())
+		{}
+
+	};
+
+	#undef MAKE_OPERATOR
+	#undef MAKE_OPERATOR_EQ
+	#undef MAKE_OPERATOR_REL
+
+	template <class T>
+	inline std::unique_ptr<char[]>
+	make_canonical(T&& rhs) {
+		std::unique_ptr<char[]> ptr(new char[PATH_MAX]);
+		UNISTDX_CHECK2(::realpath(rhs, ptr.get()), nullptr);
+		return ptr;
+	}
+
+	template <class Ch, class Tr, class Alloc>
+	inline std::unique_ptr<char[]>
+	make_canonical(std::basic_string<Ch,Tr,Alloc>&& rhs) {
+		return make_canonical(rhs.data());
+	}
+
+	template <class Ch, class Tr=std::char_traits<Ch>, class Alloc=
+				  std::allocator<Ch>>
+	class basic_canonical_path: public basic_path<Ch,Tr,Alloc> {
+
+	public:
+
+		typedef basic_path<Ch,Tr,Alloc> path_type;
+		using typename path_type::value_type;
+		using typename path_type::traits_type;
+		using typename path_type::allocator_type;
+		using typename path_type::reference;
+		using typename path_type::const_reference;
+		using typename path_type::pointer;
+		using typename path_type::const_pointer;
+		using typename path_type::iterator;
+		using typename path_type::const_iterator;
+		using typename path_type::reverse_iterator;
+		using typename path_type::const_reverse_iterator;
+		using typename path_type::difference_type;
+		using typename path_type::size_type;
+		using typename path_type::string_type;
+
+	public:
+
+		friend struct std::hash<basic_canonical_path>;
+
+		inline
+		basic_canonical_path() = default;
+
+		template <class A, class B>
+		basic_canonical_path(A&& dir, B&& filename):
+		path_type(make_canonical(path_type(std::forward<A>(dir),
+		                                   std::forward<B>(filename))))
+		{}
+
+		inline
+		basic_canonical_path(basic_canonical_path&& rhs):
+		path_type(std::forward<path_type>(rhs))
+		{}
+
+		inline
+		basic_canonical_path(const basic_canonical_path& rhs):
+		path_type(rhs)
+		{}
+
+		inline explicit
+		basic_canonical_path(string_type&& rhs):
+		path_type(make_canonical(std::forward<string_type>(rhs)))
+		{}
+
+		inline explicit
+		basic_canonical_path(const string_type& rhs):
+		path_type(make_canonical(rhs))
+		{}
+
+		inline explicit
+		basic_canonical_path(const path_type& rhs):
+		path_type(make_canonical(rhs.data()))
+		{}
+
+		inline explicit
+		basic_canonical_path(path_type&& rhs):
+		path_type(make_canonical(std::forward<path_type>(rhs)))
+		{}
+
+		inline explicit
+		basic_canonical_path(const char* rhs):
+		path_type(make_canonical(rhs))
+		{}
+
+		inline basic_canonical_path&
+		operator=(basic_canonical_path&&) = default;
+
+		inline basic_canonical_path&
+		operator=(const basic_canonical_path&) = default;
+
+		inline path_type
+		basename() const {
+			const size_t pos = this->find_last_of(file_separator);
+			return (pos == std::string::npos)
+			       ? path_type(*this)
+				   : (pos == 0)
+			       ? path_type("/")
+				   : path_type(std::move(this->substr(pos+1)));
+		}
+
+		inline basic_canonical_path
+		dirname() const {
+			const size_t pos = this->find_last_of(file_separator);
+			return (pos == std::string::npos)
+			       ? *this
+				   : (pos == 0)
+			       ? basic_canonical_path("/")
+				   : basic_canonical_path(std::move(this->substr(0, pos)));
+		}
+
+		inline bool
+		is_relative_to(const basic_canonical_path& root) {
+			return this->find(root) == 0;
+		}
+
+	};
+
+	typedef basic_path<char> path;
+	typedef basic_canonical_path<char> canonical_path;
+
+}
+
+namespace std {
+
+	template <>
+	template <class Ch, class Tr, class Alloc>
+	struct hash<sys::basic_canonical_path<Ch,Tr,Alloc>>:
+		public std::hash<std::basic_string<Ch,Tr,Alloc>> {
+
+		typedef size_t result_type;
+		typedef sys::basic_canonical_path<Ch,Tr,Alloc> argument_type;
+
+		inline size_t
+		operator()(const argument_type& rhs) const noexcept {
+			return std::hash<std::basic_string<Ch,Tr,Alloc>>::operator()(rhs);
+		}
+
+	};
+
+	template <>
+	template <class Ch, class Tr, class Alloc>
+	struct hash<sys::basic_path<Ch,Tr,Alloc>>:
+		public std::hash<std::basic_string<Ch,Tr,Alloc>> {
+
+		typedef size_t result_type;
+		typedef sys::basic_path<Ch,Tr,Alloc> argument_type;
+
+		inline size_t
+		operator()(const argument_type& rhs) const noexcept {
+			return std::hash<std::basic_string<Ch,Tr,Alloc>>::operator()(rhs);
+		}
+
+	};
+
+}
+
+#endif // SYS_PATH
+// vi:ft=cpp

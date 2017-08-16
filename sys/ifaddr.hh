@@ -9,7 +9,7 @@
 #include <iterator>
 
 #include <sys/check>
-#include "endpoint.hh"
+#include "endpoint"
 #include "subnet_iterator.hh"
 
 namespace sys {

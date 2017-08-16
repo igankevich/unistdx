@@ -1,9 +1,8 @@
 #include <stdx/debug.hh>
 #include <sys/process.hh>
-#include "test.hh"
+#include <gtest/gtest.h>
 
-void
-test_fork() {
+TEST(Process, Fork) {
 	sys::pid_type pid = sys::this_process::id();
 	sys::process child{
 		[pid] () {
@@ -15,22 +14,15 @@ test_fork() {
 		}
 	};
 	sys::proc_status status = child.wait();
-	assert(status.exit_code() == 0);
+	EXPECT_EQ(0, status.exit_code());
 }
 
-void
-test_fork_exec(const char* cmd) {
+TEST(Process, ForkExec) {
 	sys::process child{
-		[cmd] () {
-			return sys::this_process::execute_command(cmd);
+		[] () {
+			return sys::this_process::execute_command("ls");
 		}
 	};
 	sys::proc_status status = child.wait();
-	assert(status.exit_code() == 0);
-}
-
-int main() {
-	test_fork();
-	test_fork_exec("ls");
-	return 0;
+	EXPECT_EQ(0, status.exit_code());
 }

@@ -226,6 +226,7 @@ namespace sys {
 	union ipv6_addr {
 
 		typedef uint16_t hex_type;
+		typedef addr6_type rep_type;
 
 		constexpr
 		ipv6_addr() noexcept:
@@ -494,6 +495,11 @@ namespace sys {
 				: addr6() == rhs.addr6() && port6() == rhs.port6());
 		}
 
+		inline bool
+		operator>=(const endpoint& rhs) const noexcept {
+			return !operator<(rhs);
+		}
+
 		constexpr bool
 		operator!=(const endpoint& rhs) const noexcept {
 			return !operator==(rhs);
@@ -734,3 +740,4 @@ namespace std {
 }
 
 #endif // SYS_ENDPOINT_HH
+// vi:ft=cpp

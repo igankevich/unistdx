@@ -4,7 +4,7 @@
 #include <factory/error.hh>
 #include <stdx/packetbuf.hh>
 #include <stdx/mutex.hh>
-#include <sys/sharedmem.hh>
+#include <sys/sharedmem>
 #include "system.hh"
 
 namespace sys {

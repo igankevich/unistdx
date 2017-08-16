@@ -2,16 +2,20 @@
 #include <set>
 #include <stdx/debug.hh>
 
+#include <gtest/gtest.h>
+#include <sys/argstream.hh>
 #include <sys/dir.hh>
 #include <sys/file.hh>
-#include <sys/path.hh>
-#include <sys/argstream.hh>
+#include <sys/path>
 
-#include "test.hh"
+const char*
+current_test_name() {
+	return ::testing::UnitTest::GetInstance()->current_test_info()->name();
+}
 
 namespace test {
 
-	template<class It>
+	template <class It>
 	void
 	generate_files(sys::path subdir, It first, It last) {
 		std::ofstream str;
@@ -29,25 +33,30 @@ namespace test {
 
 	public:
 
+		tmpdir():
+		tmpdir(current_test_name()) {}
+
 		explicit
 		tmpdir(const char* dirname):
-		tmpdir(sys::path(dirname))
-		{ mkdir(); }
+		tmpdir(sys::path(dirname)) {}
 
 		explicit
 		tmpdir(sys::path dirname):
-		_dirname(dirname)
-		{ mkdir(); }
+		_dirname(dirname) {
+			mkdir();
+		}
 
-		template<class It>
+		template <class It>
+		tmpdir(It first, It last):
+		tmpdir(current_test_name(), first, last) {}
+
+		template <class It>
 		tmpdir(const char* dirname, It first, It last):
-		tmpdir(sys::path(dirname), first, last)
-		{ mkdir(); }
+		tmpdir(sys::path(dirname), first, last) {}
 
-		template<class It>
+		template <class It>
 		tmpdir(sys::path dirname, It first, It last):
-		_dirname(dirname)
-		{
+		_dirname(dirname) {
 			mkdir();
 			generate_files(_dirname, first, last);
 		}
@@ -55,7 +64,7 @@ namespace test {
 		~tmpdir() {
 			std::stringstream cmd;
 			cmd << "rm -rf '";
-			for (char ch : _dirname.to_string()) {
+			for (char ch : _dirname) {
 				if (ch == '\'') {
 					cmd.put('\\');
 				}
@@ -94,14 +103,14 @@ namespace test {
 
 void
 assert_good(const sys::directory& dir, bool is_open) {
-	test::equal(dir.is_open(), is_open, "bad sys::directory::open");
-	test::equal(dir.good(), true, "bad sys::directory::good");
-	test::equal(dir.bad(), false, "bad sys::directory::bad");
-	test::equal(dir.eof(), false, "bad sys::directory::eof");
-	test::equal(static_cast<bool>(dir), true, "bad sys::directory::operator bool");
+	EXPECT_EQ(dir.is_open(), is_open);
+	EXPECT_EQ(dir.good(), true);
+	EXPECT_EQ(dir.bad(), false);
+	EXPECT_EQ(dir.eof(), false);
+	EXPECT_EQ(static_cast<bool>(dir), true);
 }
 
-template<class Stream>
+template <class Stream>
 void
 test_open_close(Stream& dir, const test::tmpdir& tdir) {
 	assert_good(dir, false);
@@ -111,19 +120,27 @@ test_open_close(Stream& dir, const test::tmpdir& tdir) {
 	assert_good(dir, false);
 }
 
-template<class Stream = sys::directory, class Iterator = sys::directory_iterator>
+template <class Stream = sys::directory, class Iterator =
+			  sys::directory_iterator>
 void
-test_file_count(const test::tmpdir& tdir, const std::vector<std::string>& files) {
+test_file_count(
+	const test::tmpdir& tdir,
+	const
+	std::vector<std::string>& files
+) {
 	Stream dir(tdir);
 	size_t cnt = std::distance(Iterator(dir), Iterator());
-	std::stringstream msg;
-	msg << "bad total file count in " << tdir.name();
-	test::equal(cnt, files.size(), msg.str());
+	EXPECT_EQ(cnt, files.size()) << "bad total file count in " << tdir.name();
 }
 
-template<class Stream = sys::directory, class Iterator = sys::directory_iterator>
+template <class Stream = sys::directory, class Iterator =
+			  sys::directory_iterator>
 void
-test_file_list(const test::tmpdir& tdir, const std::vector<std::string>& files) {
+test_file_list(
+	const test::tmpdir& tdir,
+	const
+	std::vector<std::string>& files
+) {
 	Stream dir(tdir);
 	std::set<std::string> files_orig(files.begin(), files.end());
 	std::set<std::string> files_actual;
@@ -131,21 +148,23 @@ test_file_list(const test::tmpdir& tdir, const std::vector<std::string>& files) 
 		Iterator(dir),
 		Iterator(),
 		[&files_actual] (const sys::direntry& ent) {
-			files_actual.emplace(ent.name());
+		    files_actual.emplace(ent.name());
 		}
 	);
-	std::stringstream msg;
-	msg << "bad file list in " << tdir.name();
-	test::compare(files_actual, files_orig, msg.str().data());
+	EXPECT_EQ(files_orig, files_actual) << "bad file list in " << tdir.name();
 }
 
-template<
+template <
 	class IStream = sys::directory,
 	class OStream = sys::odirectory,
 	class Iterator = sys::directory_iterator
 >
 void
-test_file_copy(const test::tmpdir& tdir, const std::vector<std::string>& files) {
+test_file_copy(
+	const test::tmpdir& tdir,
+	const
+	std::vector<std::string>& files
+) {
 	IStream dir(tdir);
 	test::tmpdir otdir(__func__);
 	OStream odir(otdir);
@@ -172,23 +191,21 @@ test_file_copy(const test::tmpdir& tdir, const std::vector<std::string>& files) 
 			std::inserter(copied, copied.end())
 		);
 	}
-	std::stringstream msg;
-	msg << "bad file copy from " << tdir.name() << " to " << otdir.name();
-	test::compare(copied, orig, msg.str().data());
+	EXPECT_EQ(orig, copied)
+	    << "bad file copy from " << tdir.name()
+	    << " to " << otdir.name();
 }
 
-void
-test_directory() {
-	std::vector<std::string> files{"a", "b", "c"};
-	test::tmpdir tdir(__func__, files.begin(), files.end());
+TEST(Directory, OpenClose) {
+	std::vector<std::string> files {"a", "b", "c"};
+	test::tmpdir tdir(files.begin(), files.end());
 	sys::directory dir;
 	test_open_close(dir, tdir);
 }
 
-void
-test_directory_iterator() {
-	std::vector<std::string> files{"a", "b", "c"};
-	test::tmpdir tdir(__func__, files.begin(), files.end());
+TEST(Directory, Iterator) {
+	std::vector<std::string> files {"a", "b", "c"};
+	test::tmpdir tdir(files.begin(), files.end());
 	test_file_count(tdir, files);
 	test_file_list(tdir, files);
 	test_file_copy(tdir, files);
@@ -197,110 +214,73 @@ test_directory_iterator() {
 void
 test_current_dir(const test::tmpdir& tdir) {
 	sys::dirtree tree(tdir);
-	test::equal(
-		tree.current_dir(),
-		static_cast<const sys::path&>(tdir),
-		"bad sys::dirtree::current_dir"
-	);
+	EXPECT_EQ(tree.current_dir(), static_cast<const sys::path&>(tdir));
 }
 
-void
-test_dirtree() {
-	std::vector<std::string> files{"a", "b", "c"};
-	test::tmpdir tdir(__func__, files.begin(), files.end());
+TEST(DirTree, OpenClose) {
+	std::vector<std::string> files {"a", "b", "c"};
+	test::tmpdir tdir(files.begin(), files.end());
 	sys::dirtree tree;
 	test_open_close(tree, tdir);
 	test_current_dir(tdir);
 }
 
-void
-test_dirtree_iterator() {
-	std::vector<std::string> files{"a", "b", "c"};
-	std::vector<std::string> files_d{"e", "f", "g"};
-	std::vector<std::string> files_h{"i", "j", "k", "l"};
-	test::tmpdir tdir(__func__, files.begin(), files.end());
-	test::tmpdir tdir_d(sys::path(__func__, "d"), files_d.begin(), files_d.end());
-	test::tmpdir tdir_h(sys::path(__func__, "h"), files_h.begin(), files_h.end());
+TEST(DirTree, Iterator) {
+	std::vector<std::string> files {"a", "b", "c"};
+	std::vector<std::string> files_d {"e", "f", "g"};
+	std::vector<std::string> files_h {"i", "j", "k", "l"};
+	test::tmpdir tdir(files.begin(), files.end());
+	test::tmpdir tdir_d(
+		sys::path(current_test_name(), "d"),
+		files_d.begin(),
+		files_d.end()
+	);
+	test::tmpdir tdir_h(
+		sys::path(current_test_name(), "h"),
+		files_h.begin(),
+		files_h.end()
+	);
 	std::vector<std::string> all_files;
 	std::copy(files.begin(), files.end(), std::back_inserter(all_files));
 	std::copy(files_d.begin(), files_d.end(), std::back_inserter(all_files));
 	std::copy(files_h.begin(), files_h.end(), std::back_inserter(all_files));
 	all_files.emplace_back("d");
 	all_files.emplace_back("h");
+
 	typedef sys::dirtree_iterator<sys::direntry> direntry_iterator;
 	test_file_count<sys::dirtree, direntry_iterator>(tdir, all_files);
 	test_file_list<sys::dirtree, direntry_iterator>(tdir, all_files);
 }
 
-void
-test_argstream() {
+TEST(ArgStream, All) {
 	const std::string arg0 = "Hello!!!";
 	const std::string arg1 = "world";
 	const int arg2 = 123;
 	sys::argstream args;
-	test::equal(args.argc(), 0, "bad argc");
+	EXPECT_EQ(args.argc(), 0);
 	args << arg0 << '\0' << arg1 << '\0' << arg2 << '\0';
-	test::equal(args.argc(), 3, "bad argc");
-	test::equal(args.argv()[0], arg0, "bad arg0");
-	test::equal(args.argv()[1], arg1, "bad arg1");
-	test::equal(args.argv()[2], std::to_string(arg2), "bad arg2");
-	test::equal(args.argv()[args.argc()], (char*)nullptr, "bad last arg");
+	EXPECT_EQ(args.argc(), 3);
+	EXPECT_EQ(args.argv()[0], arg0);
+	EXPECT_EQ(args.argv()[1], arg1);
+	EXPECT_EQ(args.argv()[2], std::to_string(arg2));
+	EXPECT_EQ(args.argv()[args.argc()], (char*)nullptr);
 	args.append(arg0, arg1, arg2);
-	test::equal(args.argc(), 6, "bad argc");
-	test::equal(args.argv()[3], arg0, "bad arg0");
-	test::equal(args.argv()[4], arg1, "bad arg1");
-	test::equal(args.argv()[5], std::to_string(arg2), "bad arg2");
-	test::equal(args.argv()[args.argc()], (char*)nullptr, "bad last arg");
+	EXPECT_EQ(args.argc(), 6);
+	EXPECT_EQ(args.argv()[3], arg0);
+	EXPECT_EQ(args.argv()[4], arg1);
+	EXPECT_EQ(args.argv()[5], std::to_string(arg2));
+	EXPECT_EQ(args.argv()[args.argc()], (char*)nullptr);
 }
 
-void
-test_file_stat() {
+TEST(FileStat, Exists) {
 	sys::canonical_path cwd(".");
 	sys::path non_existent_file(cwd, "asdasdasd");
 	sys::file_stat stat(non_existent_file);
-	assert(!stat.exists());
+	EXPECT_FALSE(stat.exists());
 }
 
-void
-test_canonical_path_1() {
-	sys::canonical_path dir1(".");
-	sys::canonical_path dir2("..");
-	dir1 = std::move(dir1.dirname());
-	test::equal(dir1, dir2, "bad operator=");
-}
-
-void
-test_canonical_path_2() {
-	sys::canonical_path dir1("/tmp");
-	sys::canonical_path dir2("/");
-	test::equal(dir1.dirname(), dir2, "bad dirname");
-	test::equal(dir2.dirname(), dir2, "bad dirname");
-	test::equal(dir2.basename(), dir2, "bad basename");
-}
-
-void
-test_canonical_path_3() {
-	sys::canonical_path cwd(".");
-	test::equal(sys::canonical_path(cwd.dirname(), cwd.basename()), cwd, "bad dirname/basename");
-}
-
-void
-test_canonical_path_4() {
-	sys::canonical_path root("/");
-	sys::canonical_path tmp;
-	sys::canonical_path nonexistent(root, "non-existent-directory");
-}
-
-void
-test_path_1() {
-	test::equal(sys::path("/"), sys::path("/"), "bad operator==");
-	test::equal(sys::path("/"), std::string("/"), "bad operator==");
-	test::equal(sys::path("/"), "/", "bad operator==");
-}
-
-void
-test_get_file_type_1() {
-	const char* filename = __func__;
+TEST(GetFileType, DirEntry) {
+	const char* filename = "get_file_type_1";
 	std::ofstream(filename) << "hello world";
 	sys::path cwd(".");
 	sys::directory dir(cwd);
@@ -309,20 +289,15 @@ test_get_file_type_1() {
 		sys::directory_iterator(dir),
 		end,
 		[&filename] (const sys::direntry& rhs) {
-			return std::strcmp(rhs.name(), filename) == 0;
+		    return std::strcmp(rhs.name(), filename) == 0;
 		}
-	);
-	assert(result != end);
-	test::equal(
-		sys::get_file_type(cwd, *result),
-		sys::file_type::regular,
-		"bad get_file_type(..., direntry)"
-	);
+	              );
+	EXPECT_NE(result, end);
+	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(cwd, *result));
 }
 
-void
-test_get_file_type_2() {
-	const char* filename = __func__;
+TEST(GetFileType, PathEntry) {
+	const char* filename = "get_file_type_2";
 	std::ofstream(filename) << "hello world";
 	sys::path cwd(".");
 	sys::dirtree dir(cwd);
@@ -331,30 +306,9 @@ test_get_file_type_2() {
 		sys::dirtree_iterator<sys::pathentry>(dir),
 		end,
 		[&filename] (const sys::pathentry& rhs) {
-			return std::strcmp(rhs.name(), filename) == 0;
+		    return std::strcmp(rhs.name(), filename) == 0;
 		}
-	);
-	assert(result != end);
-	test::equal(
-		sys::get_file_type(*result),
-		sys::file_type::regular,
-		"bad get_file_type(pathentry)"
-	);
-}
-
-int main() {
-	test_directory();
-	test_directory_iterator();
-	test_dirtree();
-	test_dirtree_iterator();
-	test_argstream();
-	test_file_stat();
-	test_path_1();
-	test_canonical_path_1();
-	test_canonical_path_2();
-	test_canonical_path_3();
-	test_canonical_path_4();
-	test_get_file_type_1();
-	test_get_file_type_2();
-	return 0;
+	              );
+	EXPECT_NE(result, end);
+	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(*result));
 }

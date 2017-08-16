@@ -7,7 +7,7 @@
 
 #include <stdx/mutex.hh>
 
-#include <sys/endpoint.hh>
+#include <sys/endpoint>
 
 #include "fildes.hh"
 

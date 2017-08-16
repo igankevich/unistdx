@@ -5,47 +5,58 @@
 #include <condition_variable>
 #include <vector>
 #include <queue>
+#include <cmath>
+#include <numeric>
 
 #include <stdx/mutex.hh>
 #include <stdx/algorithm.hh>
 #include <sys/semaphore.hh>
 
-#include "test.hh"
+#include <gtest/gtest.h>
 
-template<class Testname, class I=unsigned>
-struct Parametric_test: public test::Test<Testname> {
 
-	typedef I int_type;
+template <class T>
+struct MutexTest: public ::testing::Test {
 
-	Parametric_test(I minthr, I maxpow):
-	_minthreads(minthr),
-	_maxpower(maxpow)
-	{}
-
-	void xrun() override {
-		const I max_threads = std::max(I(std::thread::hardware_concurrency()), I(2)*_minthreads);
-		for (I j=_minthreads; j<=max_threads; ++j) {
-			for (I i=0; i<=_maxpower; ++i) {
-				parametric_run(j, I(1) << i);
+	template <class Func>
+	void
+	run(Func func) {
+		const unsigned max_threads = std::max(
+			std::thread::hardware_concurrency(),
+			2*this->_minthreads
+		);
+		for (unsigned j=_minthreads; j<=max_threads; ++j) {
+			for (uint64_t i=0; i<=_maxpower; ++i) {
+				func(j, uint64_t(1) << i);
 			}
 		}
 	}
 
-	virtual void parametric_run(int_type nthreads, int_type increment) = 0;
+	const unsigned _minthreads = 2;
+	const uint64_t _maxpower = 10;
 
-private:
-	I _minthreads;
-	I _maxpower;
 };
 
-template<class Mutex>
-struct Test_mutex: public Parametric_test<Test_mutex<Mutex>> {
+template <class T>
+struct SemaphoreTest: public MutexTest<T> {};
 
-	Test_mutex(unsigned minthr, unsigned maxpow):
-	Parametric_test<Test_mutex<Mutex>>(minthr, maxpow) {}
+typedef ::testing::Types<stdx::spin_mutex> MyTypes;
+TYPED_TEST_CASE(MutexTest, MyTypes);
 
-	void
-	parametric_run(unsigned nthreads, unsigned increment) override {
+typedef ::testing::Types<
+std::condition_variable
+#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
+, sys::sysv_semaphore
+#endif
+#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
+, sys::thread_semaphore
+#endif
+> MyTypes2;
+TYPED_TEST_CASE(SemaphoreTest, MyTypes2);
+
+TYPED_TEST(MutexTest, Mutex) {
+	typedef TypeParam Mutex;
+	this->run([&] (unsigned nthreads, uint64_t increment) {
 		volatile unsigned counter = 0;
 		Mutex m;
 		std::vector<std::thread> threads;
@@ -61,9 +72,9 @@ struct Test_mutex: public Parametric_test<Test_mutex<Mutex>> {
 			t.join();
 		}
 		unsigned good_counter = nthreads*increment;
-		test::equal(counter, good_counter, "bad counter");
-	}
-};
+		EXPECT_EQ(counter, good_counter);
+	});
+}
 
 template<class Q, class Mutex, class Semaphore=std::condition_variable, class Thread=std::thread>
 struct Thread_pool {
@@ -78,8 +89,8 @@ struct Thread_pool {
 		while (!stopped) {
 			Q val;
 			{
-				std::lock_guard<Mutex> lock(mtx);
-				cv.wait(mtx, [this] () { return stopped || !queue.empty(); });
+				std::unique_lock<Mutex> lock(mtx);
+				cv.wait(lock, [this] () { return stopped || !queue.empty(); });
 				if (stopped) break;
 				val = queue.front();
 				queue.pop();
@@ -118,15 +129,11 @@ private:
 	Q sum = 0;
 };
 
-template<class Mutex, class Semaphore=std::condition_variable, class I=unsigned>
-struct Test_semaphore: public Parametric_test<Test_semaphore<Mutex,Semaphore,I>> {
-
-	typedef Test_semaphore<Mutex, Semaphore, I> this_type;
-
-	Test_semaphore(I nthreads_, I max_):
-	Parametric_test<this_type>(nthreads_, max_) {}
-
-	void parametric_run(I nthreads, I max) override {
+TYPED_TEST(SemaphoreTest, Semaphore) {
+	typedef std::mutex Mutex;
+	typedef TypeParam Semaphore;
+	this->run([&] (unsigned nthreads, uint64_t max) {
+		typedef uint64_t I;
 		typedef Thread_pool<I, Mutex, Semaphore> Pool;
 		std::vector<Pool*> thread_pool(nthreads);
 		std::for_each(thread_pool.begin(), thread_pool.end(), [] (Pool*& ptr) {
@@ -157,9 +164,9 @@ struct Test_semaphore: public Parametric_test<Test_semaphore<Mutex,Semaphore,I>>
 	//	}
 	//	std::cout << max << ": " << sum << std::endl;
 		stdx::delete_each(thread_pool.begin(), thread_pool.end());
-		test::equal(sum, expected_sum, "bad sum");
-	}
-};
+		EXPECT_EQ(expected_sum, sum);
+	});
+}
 
 //template<class Integer>
 //void test_perf_x(Integer m) {
@@ -187,11 +194,3 @@ struct Test_semaphore: public Parametric_test<Test_semaphore<Mutex,Semaphore,I>>
 //		<< ", time=" << t1-t0 << "ns"
 //		<< std::endl;
 //}
-
-int main() {
-//	sys::init_signal_semaphore init(SIGUSR1);
-	return test::Test_suite{
-		new Test_mutex<stdx::spin_mutex>(2, 10),
-		new Test_semaphore<std::mutex,sys::sysv_semaphore>(1, 10)
-	}.run();
-}

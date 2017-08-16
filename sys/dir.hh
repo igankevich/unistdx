@@ -13,7 +13,7 @@
 #include <sys/check>
 
 #include "file.hh"
-#include "path.hh"
+#include "path"
 #include <unistdx_config>
 
 namespace sys {
@@ -137,7 +137,7 @@ namespace sys {
 
 		inline friend std::ostream&
 		operator<<(std::ostream& out, const pathentry& rhs) {
-			return out << rhs.dirname() << path::separator << rhs.name();
+			return out << rhs.dirname() << file_separator << rhs.name();
 		}
 
 		pathentry&
@@ -175,7 +175,7 @@ namespace sys {
 		inline
 		file(const path& dirname, const direntry& ent):
 		path(dirname, ent.name()),
-		file_stat(const_path(*this)) {}
+		file_stat(*this) {}
 
 		inline bool
 		is_hidden() const noexcept {
@@ -184,11 +184,10 @@ namespace sys {
 
 		inline const char*
 		name() const noexcept {
-			const std::string& filepath = path::to_string();
-			const size_t pos = filepath.find_last_of(path::separator);
+			const size_t pos = this->find_last_of(file_separator);
 			return pos == std::string::npos
-			       ? filepath.data()
-				   : (filepath.data() + pos + 1);
+			       ? this->data()
+				   : (this->data() + pos + 1);
 		}
 
 		inline friend std::ostream&
@@ -634,4 +633,4 @@ namespace sys {
 
 }
 
-#endif // ifndef SYS_DIR_HH
+#endif // SYS_DIR_HH

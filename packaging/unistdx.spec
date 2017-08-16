@@ -50,9 +50,8 @@ developing applications that use %{name}.
 
 %files devel
 %{_includedir}/unistdx/sys/argstream.hh
-%{_includedir}/unistdx/sys/cmdline.hh
 %{_includedir}/unistdx/sys/dir.hh
-%{_includedir}/unistdx/sys/endpoint.hh
+%{_includedir}/unistdx/sys/endpoint
 %{_includedir}/unistdx/sys/event.hh
 %{_includedir}/unistdx/sys/fildes.hh
 %{_includedir}/unistdx/sys/fildesbuf.hh
@@ -63,11 +62,11 @@ developing applications that use %{name}.
 %{_includedir}/unistdx/sys/ifaddr_list.hh
 %{_includedir}/unistdx/sys/network_format.hh
 %{_includedir}/unistdx/sys/packetstream.hh
-%{_includedir}/unistdx/sys/path.hh
+%{_includedir}/unistdx/sys/path
 %{_includedir}/unistdx/sys/pipe.hh
 %{_includedir}/unistdx/sys/process.hh
 %{_includedir}/unistdx/sys/semaphore.hh
-%{_includedir}/unistdx/sys/sharedmem.hh
+%{_includedir}/unistdx/sys/sharedmem
 %{_includedir}/unistdx/sys/shmembuf.hh
 %{_includedir}/unistdx/sys/signal.hh
 %{_includedir}/unistdx/sys/signal_semaphore.hh
