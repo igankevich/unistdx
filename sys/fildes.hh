@@ -223,7 +223,7 @@ namespace sys {
 		is_blocking(const T& rhs) {
 			try {
 				return !bool(rhs.flags() & T::non_blocking);
-			} catch (sys::bits::bad_call& err) {
+			} catch (sys::bad_call& err) {
 				return false;
 			}
 		}

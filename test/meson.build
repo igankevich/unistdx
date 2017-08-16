@@ -103,3 +103,13 @@ test(
 		dependencies: [gtest, unistdx],
 	)
 )
+
+test(
+	'signal-test',
+	executable(
+		'signal-test',
+		sources: 'signal_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)

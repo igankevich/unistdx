@@ -9,7 +9,8 @@ libunistdx_src = files(
 	'system.cc',
 	'file.cc',
 	'process.cc',
-	'bits/safe_calls.cc'
+	'bits/safe_calls.cc',
+	'backtrace.cc'
 )
 
 libunistdx_shared = shared_library(

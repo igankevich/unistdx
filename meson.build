@@ -86,6 +86,15 @@ endif
 if cpp.has_header_symbol('semaphore.h', 'sem_timedwait')
 	config.set('UNISTDX_HAVE_SEM_TIMEDWAIT', true)
 endif
+if cpp.has_header('execinfo.h')
+	config.set('UNISTDX_HAVE_BACKTRACE', true)
+	if cpp.get_id() == 'gcc' or cpp.has_argument('-rdynamic')
+		add_global_link_arguments('-rdynamic', language: 'cpp')
+	endif
+	if cpp.has_header('cxxabi.h')
+		config.set('UNISTDX_HAVE_CXXABI', true)
+	endif
+endif
 # }}}
 
 threads = dependency('threads')

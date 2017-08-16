@@ -39,5 +39,8 @@
 #mesondefine UNISTDX_HAVE_SEMTIMEDOP
 #mesondefine UNISTDX_HAVE_SEM_TIMEDWAIT
 
+#mesondefine UNISTDX_HAVE_BACKTRACE
+#mesondefine UNISTDX_HAVE_CXXABI
+
 #endif // SYS_CONFIG_IN
 // vi:ft=cpp
