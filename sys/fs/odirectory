@@ -73,22 +73,22 @@ namespace sys {
 
 		inline basic_odirectory&
 		operator<<(const pathentry& rhs) {
+			path p(this->_dirpath, this->_trans(rhs));
 			if (get_file_type(rhs) != sys::file_type::directory) {
-				this->copy_file(
-					rhs.getpath(),
-					path(this->_dirpath, this->_trans(rhs))
-				);
+				this->copy_file(rhs.getpath(), p);
+			} else {
+				this->make_directory(p);
 			}
 			return *this;
 		}
 
 		inline basic_odirectory&
 		operator<<(const file& rhs) {
+			path p(this->_dirpath, this->_trans(rhs));
 			if (!rhs.is_directory()) {
-				this->copy_file(
-					rhs,
-					path(this->_dirpath, this->_trans(rhs))
-				);
+				this->copy_file(rhs, p);
+			} else {
+				this->make_directory(p);
 			}
 			return *this;
 		}
@@ -118,6 +118,11 @@ namespace sys {
 		copy_file(const path& src, const path& dest) {
 			// TODO replace with splice for linux
 			std::ofstream(dest) << std::ifstream(src).rdbuf();
+		}
+
+		inline void
+		make_directory(const path& p) {
+			UNISTDX_CHECK(::mkdir(p, 0755));
 		}
 	};
 

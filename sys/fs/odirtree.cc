@@ -1,5 +1,4 @@
 #include "odirtree"
-#include "mkdirs"
 
 sys::path
 sys::copy_recursively::make_dirs(const sys::path& rhs) const {
@@ -9,6 +8,5 @@ sys::copy_recursively::make_dirs(const sys::path& rhs) const {
 	} else {
 		p = rhs;
 	}
-	mkdirs(this->_dest, p);
 	return p;
 }
