@@ -1,49 +1,68 @@
 #include "signal.hh"
 
-std::ostream&
-sys::operator<<(std::ostream& out, const signal rhs) {
-	switch (rhs) {
-		case signal::hang_up: out << "hang_up"; break;
-		case signal::keyboard_interrupt: out << "keyboard_interrupt"; break;
-		case signal::quit: out << "quit"; break;
-		case signal::illegal_instruction: out << "illegal_instruction"; break;
-		case signal::abort: out << "abort"; break;
-		case signal::floating_point_exception: out << "floating_point_exception"; break;
-		case signal::kill: out << "kill"; break;
-		case signal::segmentation_fault: out << "segmentation_fault"; break;
-		case signal::broken_pipe: out << "broken_pipe"; break;
-		case signal::alarm: out << "alarm"; break;
-		case signal::terminate: out << "terminate"; break;
-		case signal::user_defined_1: out << "user_defined_1"; break;
-		case signal::user_defined_2: out << "user_defined_2"; break;
-		case signal::child: out << "child"; break;
-		case signal::resume: out << "resume"; break;
-		case signal::stop: out << "stop"; break;
-		case signal::stop_from_terminal: out << "stop_from_terminal"; break;
-		case signal::terminal_input: out << "terminal_input"; break;
-		case signal::terminal_output: out << "terminal_output"; break;
-		case signal::bad_memory_access: out << "bad_memory_access"; break;
-		#if defined(UNISTDX_HAVE_SIGPOLL)
-		case signal::poll: out << "poll"; break;
-		#endif
-		case signal::profile: out << "profile"; break;
-		case signal::bad_argument: out << "bad_argument"; break;
-		case signal::breakpoint: out << "breakpoint"; break;
-		case signal::urgent: out << "urgent"; break;
-		case signal::virtual_alarm: out << "virtual_alarm"; break;
-		case signal::cpu_time_limit_exceeded: out << "cpu_time_limit_exceeded"; break;
-		case signal::file_size_limit_exceeded: out << "file_size_limit_exceeded"; break;
-		#if defined(UNISTDX_HAVE_SIGSTKFLT)
-		case signal::coprocessor_stack_fault: out << "coprocessor_stack_fault"; break;
-		#endif
-		#if defined(UNISTDX_HAVE_SIGPWR)
-		case signal::power_failure: out << "power_failure"; break;
-		#endif
-		#if defined(UNISTDX_HAVE_SIGWINCH)
-		case signal::window_resize: out << "window_resize"; break;
-		#endif
-	}
-	out << '(' << signal_type(rhs) << ')';
-	return out;
+namespace {
+
+	constexpr const int nsignals = sizeof(::sigset_t);
+
+	struct init_signal_names {
+
+		const char* signal_names[nsignals] = {0};
+
+		init_signal_names() {
+			signal_names[SIGHUP] = "hang_up";
+			signal_names[SIGINT] = "keyboard_interrupt";
+			signal_names[SIGQUIT] = "quit";
+			signal_names[SIGILL] = "illegal_instruction";
+			signal_names[SIGABRT] = "abort";
+			signal_names[SIGFPE] = "floating_point_exception";
+			signal_names[SIGKILL] = "kill";
+			signal_names[SIGSEGV] = "segmentation_fault";
+			signal_names[SIGPIPE] = "broken_pipe";
+			signal_names[SIGALRM] = "alarm";
+			signal_names[SIGTERM] = "terminate";
+			signal_names[SIGUSR1] = "user_defined_1";
+			signal_names[SIGUSR2] = "user_defined_2";
+			signal_names[SIGCHLD] = "child";
+			signal_names[SIGCONT] = "resume";
+			signal_names[SIGSTOP] = "stop";
+			signal_names[SIGTSTP] = "stop_from_terminal";
+			signal_names[SIGTTIN] = "terminal_input";
+			signal_names[SIGTTOU] = "terminal_output";
+			signal_names[SIGBUS] = "bad_memory_access";
+			#if defined(UNISTDX_HAVE_SIGPOLL)
+			signal_names[SIGPOLL] = "poll";
+			#endif
+			signal_names[SIGPROF] = "profile";
+			signal_names[SIGSYS] = "bad_argument";
+			signal_names[SIGTRAP] = "breakpoint";
+			signal_names[SIGURG] = "urgent";
+			signal_names[SIGVTALRM] = "virtual_alarm";
+			signal_names[SIGXCPU] = "cpu_time_limit_exceeded";
+			signal_names[SIGXFSZ] ="file_size_limit_exceeded";
+			#if defined(UNISTDX_HAVE_SIGSTKFLT)
+			signal_names[SIGSTKFLT] = "coprocessor_stack_fault";
+			#endif
+			#if defined(UNISTDX_HAVE_SIGPWR)
+			signal_names[SIGPWR] = "power_failure";
+			#endif
+			#if defined(UNISTDX_HAVE_SIGWINCH)
+			signal_names[SIGWINCH] ="window_resize";
+			#endif
+		}
+
+		inline const char*
+		operator[](sys::signal_type s) {
+			return this->signal_names[s];
+		}
+
+	} signal_names;
+
 }
 
+std::ostream&
+sys::operator<<(std::ostream& out, const signal rhs) {
+	const signal_type s = signal_type(rhs);
+	const char* name = (s >= 0 && s < nsignals) ? signal_names[s] : nullptr;
+	out << (name ? name : "unknown") << '(' << s << ')';
+	return out;
+}
