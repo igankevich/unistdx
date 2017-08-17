@@ -122,12 +122,12 @@ namespace sys {
 				: family_type::inet;
 		};
 
-		packetstream&
+		inline packetstream&
 		operator<<(packetstream& out, family_type rhs) {
 			return out << static_cast<raw_family_type>(map_family_type(rhs));
 		}
 
-		packetstream&
+		inline packetstream&
 		operator>>(packetstream& in, family_type& rhs) {
 			raw_family_type raw;
 			in >> raw;
@@ -135,7 +135,7 @@ namespace sys {
 			return in;
 		}
 
-		void
+		inline void
 		pad_stream(std::ostream& out, const std::streamsize padding) {
 			const char ch = out.fill();
 			for (std::streamsize i=0; i<padding; ++i) {
