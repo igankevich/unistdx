@@ -1,0 +1,130 @@
+#ifndef SYS_FS_IDIRTREE
+#define SYS_FS_IDIRTREE
+
+#include <queue>
+
+#include "idirectory"
+
+namespace sys {
+
+	template<class FilePred, class DirPred>
+	struct basic_idirtree: public basic_idirectory<FilePred> {
+
+		typedef basic_idirectory<FilePred> directory;
+		using dirstream::good;
+		using dirstream::eof;
+		using dirstream::_state;
+		using typename dirstream::state;
+		using dirstream::eofbit;
+		using dirstream::clear;
+		using dirstream::setstate;
+
+		typedef DirPred dirpred_type;
+
+		basic_idirtree() = default;
+
+		inline explicit
+		basic_idirtree(const path& starting_point):
+		directory(starting_point) {
+			this->_dirs.emplace(starting_point);
+		}
+
+		inline void
+		open(const path& p) {
+			while (!this->_dirs.empty()) {
+				this->_dirs.pop();
+			}
+			directory::open(p);
+			this->_dirs.emplace(p);
+		}
+
+		inline const path&
+		current_dir() const noexcept {
+			return this->_dirs.front();
+		}
+
+		inline const dirpred_type&
+		getdirpred() const noexcept {
+			return this->_dirpred;
+		}
+
+		inline void
+		setdirpred(dirpred_type rhs) {
+			this->_dirpred = rhs;
+		}
+
+		inline basic_idirtree&
+		operator>>(direntry& rhs) {
+			this->read_direntry(rhs);
+			return *this;
+		}
+
+		inline basic_idirtree&
+		operator>>(pathentry& rhs) {
+			this->read_direntry(rhs);
+			return *this;
+		}
+
+		inline basic_idirtree&
+		operator>>(file& rhs) {
+			this->read_direntry(rhs);
+			return *this;
+		}
+
+	private:
+
+		template<class Entry>
+		inline void
+		read_direntry(Entry& rhs) {
+			bool success = false;
+			while (!success && !this->eof()) {
+				if (this->directory::operator>>(rhs)) {
+					success = true;
+					const path& cur = this->current_dir();
+					if (this->_dirpred(cur, rhs)) {
+						this->_dirs.emplace(cur, rhs.name());
+					}
+				} else {
+					this->_dirs.pop();
+					if (this->_dirs.empty()) {
+						this->setstate(eofbit);
+					} else {
+						this->clear();
+						this->directory::open(this->_dirs.front());
+					}
+				}
+			}
+		}
+
+		std::queue<sys::path> _dirs;
+		dirpred_type _dirpred;
+
+	};
+
+	struct ignore_hidden_dirs {
+
+		inline bool
+		operator()(const path& prefix, const direntry& rhs) const noexcept {
+			return !rhs.is_hidden()
+			       && get_file_type(prefix, rhs) == file_type::directory;
+		}
+
+		inline bool
+		operator()(const path&, const pathentry& rhs) const noexcept {
+			return !rhs.is_hidden() && get_file_type(rhs) == file_type::directory;
+		}
+
+		inline bool
+		operator()(const path&, const file& rhs) const noexcept {
+			return !rhs.is_hidden() && rhs.is_directory();
+		}
+
+	};
+
+	typedef basic_idirtree<ignore_hidden_files, ignore_hidden_dirs> idirtree;
+	template<class T>
+	using idirtree_iterator = basic_istream_iterator<idirtree, T>;
+
+}
+
+#endif // SYS_FS_IDIRTREE vi:ft=cpp

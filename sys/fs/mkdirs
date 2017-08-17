@@ -1,0 +1,15 @@
+#ifndef SYS_FS_MKDIRS
+#define SYS_FS_MKDIRS
+
+#include "path"
+
+namespace sys {
+
+	/// split path into components ignoring the last one
+	/// assuming it is a file
+	void
+	mkdirs(const sys::path& root, const sys::path& relative_path);
+
+}
+
+#endif // SYS_FS_MKDIRS vi:ft=cpp

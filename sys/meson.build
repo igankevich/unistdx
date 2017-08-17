@@ -7,13 +7,14 @@ configure_file(
 libunistdx_src = files(
 	'signal.cc',
 	'system.cc',
-	'file.cc',
 	'process.cc',
 	'bits/safe_calls.cc',
 	'backtrace.cc',
 	'endpoint.cc',
 	'pipe.cc'
 )
+
+subdir('fs')
 
 libunistdx_shared = shared_library(
 	'unistdx',
@@ -36,26 +37,22 @@ unistdx = declare_dependency(
 
 install_headers(
 	'argstream.hh',
-	'dir.hh',
 	'endpoint',
-	'event.hh',
+	'poller',
 	'fildesbuf.hh',
 	'fildes.hh',
-	'file.hh',
-	'file_mutex.hh',
 	'groups.hh',
 	'ifaddr.hh',
 	'ifaddr_list.hh',
 	'network_format.hh',
 	'packetstream.hh',
-	'path',
 	'pipe.hh',
+	'filesystem',
 	'process.hh',
 	'semaphore.hh',
 	'sharedmem',
 	'shmembuf.hh',
-	'signal.hh',
-	'signal_semaphore.hh',
+	'signal',
 	'socket.hh',
 	'subnet_iterator.hh',
 	'system.hh',

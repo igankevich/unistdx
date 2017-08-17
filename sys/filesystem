@@ -1,0 +1,21 @@
+#ifndef SYS_FILESYSTEM
+#define SYS_FILESYSTEM
+
+#include "fs/canonical_path"
+#include "fs/directory"
+#include "fs/direntry"
+#include "fs/dirstream"
+#include "fs/file"
+#include "fs/file_mode"
+#include "fs/file_mutex"
+#include "fs/file_stat"
+#include "fs/file_type"
+#include "fs/idirectory"
+#include "fs/idirtree"
+#include "fs/odirectory"
+#include "fs/odirtree"
+#include "fs/path"
+#include "fs/pathentry"
+#include "fs/mkdirs"
+
+#endif // SYS_FILESYSTEM vi:ft=cpp

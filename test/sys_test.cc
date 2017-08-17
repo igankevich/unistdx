@@ -1,12 +1,11 @@
+#include <algorithm>
 #include <fstream>
 #include <set>
 #include <stdx/debug.hh>
 
 #include <gtest/gtest.h>
 #include <sys/argstream.hh>
-#include <sys/dir.hh>
-#include <sys/file.hh>
-#include <sys/path>
+#include <sys/filesystem>
 
 const char*
 current_test_name() {
@@ -102,7 +101,7 @@ namespace test {
 }
 
 void
-assert_good(const sys::directory& dir, bool is_open) {
+assert_good(const sys::idirectory& dir, bool is_open) {
 	EXPECT_EQ(dir.is_open(), is_open);
 	EXPECT_EQ(dir.good(), true);
 	EXPECT_EQ(dir.bad(), false);
@@ -120,8 +119,8 @@ test_open_close(Stream& dir, const test::tmpdir& tdir) {
 	assert_good(dir, false);
 }
 
-template <class Stream = sys::directory, class Iterator =
-			  sys::directory_iterator>
+template <class Stream = sys::idirectory, class Iterator =
+			  sys::idirectory_iterator<sys::direntry> >
 void
 test_file_count(
 	const test::tmpdir& tdir,
@@ -133,13 +132,12 @@ test_file_count(
 	EXPECT_EQ(cnt, files.size()) << "bad total file count in " << tdir.name();
 }
 
-template <class Stream = sys::directory, class Iterator =
-			  sys::directory_iterator>
+template <class Stream = sys::idirectory, class Iterator =
+			  sys::idirectory_iterator<sys::direntry> >
 void
 test_file_list(
 	const test::tmpdir& tdir,
-	const
-	std::vector<std::string>& files
+	const std::vector<std::string>& files
 ) {
 	Stream dir(tdir);
 	std::set<std::string> files_orig(files.begin(), files.end());
@@ -155,15 +153,14 @@ test_file_list(
 }
 
 template <
-	class IStream = sys::directory,
+	class IStream = sys::idirectory,
 	class OStream = sys::odirectory,
-	class Iterator = sys::directory_iterator
+	class Iterator = sys::idirectory_iterator<sys::direntry>
 >
 void
 test_file_copy(
 	const test::tmpdir& tdir,
-	const
-	std::vector<std::string>& files
+	const std::vector<std::string>& files
 ) {
 	IStream dir(tdir);
 	test::tmpdir otdir(__func__);
@@ -199,7 +196,7 @@ test_file_copy(
 TEST(Directory, OpenClose) {
 	std::vector<std::string> files {"a", "b", "c"};
 	test::tmpdir tdir(files.begin(), files.end());
-	sys::directory dir;
+	sys::idirectory dir;
 	test_open_close(dir, tdir);
 }
 
@@ -213,14 +210,14 @@ TEST(Directory, Iterator) {
 
 void
 test_current_dir(const test::tmpdir& tdir) {
-	sys::dirtree tree(tdir);
+	sys::idirtree tree(tdir);
 	EXPECT_EQ(tree.current_dir(), static_cast<const sys::path&>(tdir));
 }
 
 TEST(DirTree, OpenClose) {
 	std::vector<std::string> files {"a", "b", "c"};
 	test::tmpdir tdir(files.begin(), files.end());
-	sys::dirtree tree;
+	sys::idirtree tree;
 	test_open_close(tree, tdir);
 	test_current_dir(tdir);
 }
@@ -247,9 +244,9 @@ TEST(DirTree, Iterator) {
 	all_files.emplace_back("d");
 	all_files.emplace_back("h");
 
-	typedef sys::dirtree_iterator<sys::direntry> direntry_iterator;
-	test_file_count<sys::dirtree, direntry_iterator>(tdir, all_files);
-	test_file_list<sys::dirtree, direntry_iterator>(tdir, all_files);
+	typedef sys::idirtree_iterator<sys::direntry> direntry_iterator;
+	test_file_count<sys::idirtree, direntry_iterator>(tdir, all_files);
+	test_file_list<sys::idirtree, direntry_iterator>(tdir, all_files);
 }
 
 TEST(ArgStream, All) {
@@ -283,10 +280,10 @@ TEST(GetFileType, DirEntry) {
 	const char* filename = "get_file_type_1";
 	std::ofstream(filename) << "hello world";
 	sys::path cwd(".");
-	sys::directory dir(cwd);
-	sys::directory_iterator end;
+	sys::idirectory dir(cwd);
+	sys::idirectory_iterator<sys::direntry> end;
 	auto result = std::find_if(
-		sys::directory_iterator(dir),
+		sys::idirectory_iterator<sys::direntry>(dir),
 		end,
 		[&filename] (const sys::direntry& rhs) {
 		    return std::strcmp(rhs.name(), filename) == 0;
@@ -300,15 +297,59 @@ TEST(GetFileType, PathEntry) {
 	const char* filename = "get_file_type_2";
 	std::ofstream(filename) << "hello world";
 	sys::path cwd(".");
-	sys::dirtree dir(cwd);
-	sys::dirtree_iterator<sys::pathentry> end;
-	auto result = std::find_if(
-		sys::dirtree_iterator<sys::pathentry>(dir),
-		end,
-		[&filename] (const sys::pathentry& rhs) {
-		    return std::strcmp(rhs.name(), filename) == 0;
-		}
-	              );
+	sys::idirtree dir(cwd);
+	sys::idirtree_iterator<sys::pathentry> end;
+	auto result =
+		std::find_if(
+			sys::idirtree_iterator<sys::pathentry>(dir),
+			end,
+			[&filename] (const sys::pathentry& rhs) {
+			    return std::strcmp(rhs.name(), filename) == 0;
+			}
+		);
 	EXPECT_NE(result, end);
 	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(*result));
+}
+
+TEST(DirTree, CopyRecursively) {
+	std::vector<std::string> files1 {"a", "b", "c"};
+	std::vector<std::string> files2 {"d", "e", "f"};
+	test::tmpdir dir1("dirtree-copy-in", files1.begin(), files1.end());
+	test::tmpdir dir2("dirtree-copy-in/next", files2.begin(), files2.end());
+	test::tmpdir dir3("dirtree-copy-out");
+	std::set<sys::path> expected;
+	expected.emplace("a");
+	expected.emplace("b");
+	expected.emplace("c");
+	expected.emplace("next");
+	expected.emplace("next/d");
+	expected.emplace("next/e");
+	expected.emplace("next/f");
+	{
+		sys::idirtree idir(dir1);
+		sys::odirtree odir(dir3);
+		odir.settransform(sys::copy_recursively{dir1, dir3});
+		std::copy(
+			sys::idirtree_iterator<sys::pathentry>(idir),
+			sys::idirtree_iterator<sys::pathentry>(),
+			sys::odirtree_iterator<sys::pathentry>(odir)
+		);
+	}
+	std::set<sys::path> actual;
+	{
+		sys::idirtree idir(dir3);
+		std::transform(
+			sys::idirtree_iterator<sys::pathentry>(idir),
+			sys::idirtree_iterator<sys::pathentry>(),
+			std::inserter(actual, actual.begin()),
+			[&] (const sys::pathentry& rhs) {
+				sys::path p = rhs.getpath();
+				if (p.find(dir3.name()) == 0) {
+					p = p.substr(dir3.name().size()+1);
+				}
+				return p;
+			}
+		);
+	}
+	EXPECT_EQ(expected, actual);
 }

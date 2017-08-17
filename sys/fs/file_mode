@@ -1,0 +1,118 @@
+#ifndef SYS_FS_FILE_MODE
+#define SYS_FS_FILE_MODE
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <ostream>
+
+namespace sys {
+
+	typedef ::mode_t mode_type;
+
+	struct file_mode {
+
+		static const mode_type mode_mask = 07777;
+		static const mode_type perm_mask = 0777;
+
+		enum mask_type {
+			specialbits = S_ISUID | S_ISGID | S_ISVTX,
+			userbits = S_IRWXU,
+			groupbits = S_IRWXG,
+			otherbits = S_IRWXO,
+			user_rwx = S_IRWXU,
+			user_rw = S_IRUSR | S_IWUSR,
+			user_r = S_IRUSR,
+			user_w = S_IWUSR,
+			user_x = S_IXUSR,
+			group_rwx = S_IRWXG,
+			group_rw = S_IRGRP | S_IWGRP,
+			group_r = S_IRGRP,
+			group_w = S_IWGRP,
+			group_x = S_IXGRP,
+			other_rwx = S_IRWXO,
+			other_rw = S_IROTH | S_IWOTH,
+			other_r = S_IROTH,
+			other_w = S_IWOTH,
+			other_x = S_IXOTH,
+			setuid = S_ISUID,
+			setgid = S_ISGID,
+			sticky = S_ISVTX
+		};
+
+		file_mode() = default;
+		~file_mode() = default;
+
+		inline
+		file_mode(mode_type rhs) noexcept:
+		_mode(rhs)
+		{}
+
+		inline
+		file_mode(const file_mode& rhs) noexcept:
+		_mode(rhs._mode)
+		{}
+
+		inline
+		operator mode_type&() noexcept {
+			return this->_mode;
+		}
+
+		inline
+		operator mode_type() const noexcept {
+			return this->_mode;
+		}
+
+		inline file_mode&
+		operator=(const file_mode&) = default;
+
+		inline file_mode&
+		operator=(mode_type rhs) noexcept {
+			this->_mode = rhs;
+			return *this;
+		}
+
+		inline mode_type
+		mode() const noexcept {
+			return this->_mode;
+		}
+
+		inline mode_type
+		mode(mode_type mask) const noexcept {
+			return this->_mode & mask;
+		}
+
+		inline mode_type
+		special() const noexcept {
+			return this->mode(specialbits);
+		}
+
+		inline mode_type
+		user() const noexcept {
+			return this->mode(userbits);
+		}
+
+		inline mode_type
+		group() const noexcept {
+			return this->mode(groupbits);
+		}
+
+		inline mode_type
+		other() const noexcept {
+			return this->mode(otherbits);
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const file_mode& rhs);
+
+	private:
+		mode_type _mode = 0;
+
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const file_mode& rhs);
+
+}
+
+#endif // SYS_FS_FILE_MODE vi:ft=cpp

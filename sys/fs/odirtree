@@ -1,0 +1,45 @@
+#ifndef SYS_FS_ODIRTREE
+#define SYS_FS_ODIRTREE
+
+#include "idirtree"
+#include "idirectory"
+#include "odirectory"
+
+namespace sys {
+
+	template <class Trans>
+	using basic_odirtree = basic_odirectory<Trans>;
+
+	struct copy_recursively {
+
+		path _src;
+		path _dest;
+
+		inline sys::path
+		operator()(const direntry& rhs) const {
+			return sys::path(rhs.name());
+		}
+
+		inline sys::path
+		operator()(const pathentry& rhs) const {
+			return this->make_dirs(rhs.getpath());
+		}
+
+		inline sys::path
+		operator()(const file& rhs) const {
+			return this->make_dirs(rhs);
+		}
+
+	private:
+		sys::path
+		make_dirs(const sys::path& rhs) const;
+
+	};
+
+	typedef basic_odirtree<copy_recursively> odirtree;
+	template<class T>
+	using odirtree_iterator = basic_ostream_iterator<odirtree, T>;
+
+}
+
+#endif // SYS_FS_ODIRTREE vi:ft=cpp

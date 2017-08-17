@@ -2,7 +2,7 @@
 #include <chrono>
 
 #include <stdx/debug.hh>
-#include <sys/file_mutex.hh>
+#include <sys/fs/file_mutex>
 #include <sys/process.hh>
 #include <gtest/gtest.h>
 

@@ -1,0 +1,75 @@
+#ifndef SYS_FS_DIRSTREAM
+#define SYS_FS_DIRSTREAM
+
+namespace sys {
+
+	class dirstream {
+
+	protected:
+		dirstream() = default;
+		dirstream(const dirstream&) = default;
+		dirstream(dirstream&&) = default;
+		~dirstream() = default;
+
+	public:
+		enum state {
+			goodbit = 0,
+			failbit = 1,
+			badbit = 2,
+			eofbit = 4
+		};
+
+		inline explicit
+		operator bool() const noexcept {
+			return !this->_state;
+		}
+
+		inline bool
+		operator!() const noexcept {
+			return !operator bool();
+		}
+
+		inline void
+		clear() noexcept {
+			this->_state = goodbit;
+		}
+
+		inline bool
+		good() const noexcept {
+			return !this->_state;
+		}
+
+		inline bool
+		bad() const noexcept {
+			return this->_state & badbit;
+		}
+
+		inline bool
+		fail() const noexcept {
+			return this->_state & failbit;
+		}
+
+		inline bool
+		eof() const noexcept {
+			return this->_state & eofbit;
+		}
+
+		inline state
+		rdstate() const noexcept {
+			return this->_state;
+		}
+
+		inline void
+		setstate(state rhs) noexcept {
+			this->_state = state(this->_state | rhs);
+		}
+
+	protected:
+
+		state _state = goodbit;
+
+	};
+
+}
+
+#endif // SYS_FS_DIRSTREAM vi:ft=cpp

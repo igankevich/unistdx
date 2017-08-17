@@ -1,0 +1,140 @@
+#ifndef SYS_FS_ODIRECTORY
+#define SYS_FS_ODIRECTORY
+
+#include <fstream>
+
+#include "file"
+#include "idirtree"
+#include "idirectory"
+#include <sys/bits/basic_ostream_iterator.hh>
+
+namespace sys {
+
+	template<class Trans>
+	class basic_odirectory {
+
+	public:
+
+		typedef Trans transform;
+
+	private:
+		path _dirpath;
+		transform _trans;
+
+	public:
+		basic_odirectory() = default;
+		~basic_odirectory() = default;
+
+		inline explicit
+		basic_odirectory(const path& dir):
+		_dirpath(dir) {}
+
+		basic_odirectory(basic_odirectory&&) = default;
+		basic_odirectory(const basic_odirectory&) = delete;
+
+		inline void
+		open(const path& dir) {
+			this->_dirpath = dir;
+		}
+
+		inline const path&
+		getpath() const noexcept {
+			return this->_dirpath;
+		}
+
+		inline void
+		settransform(transform rhs) {
+			this->_trans = rhs;
+		}
+
+		inline const transform&
+		gettransform() const noexcept {
+			return this->_trans;
+		}
+
+		inline explicit
+		operator bool() const noexcept {
+			return true;
+		}
+
+		inline bool
+		operator!() const noexcept {
+			return !operator bool();
+		}
+
+		inline basic_odirectory&
+		operator<<(const direntry& rhs) {
+			this->copy_file(
+				rhs.name(),
+				path(this->_dirpath, this->_trans(rhs))
+			);
+			return *this;
+		}
+
+		inline basic_odirectory&
+		operator<<(const pathentry& rhs) {
+			if (get_file_type(rhs) != sys::file_type::directory) {
+				this->copy_file(
+					rhs.getpath(),
+					path(this->_dirpath, this->_trans(rhs))
+				);
+			}
+			return *this;
+		}
+
+		inline basic_odirectory&
+		operator<<(const file& rhs) {
+			if (!rhs.is_directory()) {
+				this->copy_file(
+					rhs,
+					path(this->_dirpath, this->_trans(rhs))
+				);
+			}
+			return *this;
+		}
+
+		template<class FilePred>
+		inline basic_odirectory&
+		operator<<(basic_idirectory<FilePred>& rhs) {
+			pathentry ent;
+			while (rhs >> ent) {
+				*this << ent;
+			}
+			return *this;
+		}
+
+		template<class X, class Y>
+		inline basic_odirectory&
+		operator<<(basic_idirtree<X,Y>& rhs) {
+			pathentry ent;
+			while (rhs >> ent) {
+				*this << ent;
+			}
+			return *this;
+		}
+
+	private:
+		inline void
+		copy_file(const path& src, const path& dest) {
+			// TODO replace with splice for linux
+			std::ofstream(dest) << std::ifstream(src).rdbuf();
+		}
+	};
+
+	struct copy_verbatim {
+
+		template<class Ent>
+		inline sys::path
+		operator()(const Ent& rhs) const {
+			return sys::path(rhs.name());
+		}
+
+	};
+
+	typedef basic_odirectory<copy_verbatim> odirectory;
+	template<class T>
+	using odirectory_iterator = basic_ostream_iterator<odirectory, T>;
+
+}
+
+#endif // SYS_FS_ODIRECTORY vi:ft=cpp

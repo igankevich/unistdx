@@ -85,6 +85,67 @@ namespace sys {
 
 	}
 
+	struct sigset_type: public ::sigset_t {
+
+		inline
+		sigset_type() {
+			UNISTDX_CHECK(::sigemptyset(this));
+		}
+
+		inline explicit
+		sigset_type(signal_type s):
+		sigset_type() {
+			UNISTDX_CHECK(::sigaddset(this, s));
+		}
+
+		template<class F>
+		void
+		for_each(F func) {
+			for (signal_type s=1; s<=31; ++s) {
+				int ret;
+				UNISTDX_CHECK(ret = ::sigismember(this, s));
+				if (ret) {
+					func(s);
+				}
+			}
+		}
+
+	};
+
+	struct signal_guard {
+
+		inline explicit
+		signal_guard(sigset_type s):
+		_signals(s) {
+			this->lock();
+		}
+
+		inline
+		~signal_guard() {
+			this->unlock();
+		}
+
+		inline void
+		lock() {
+			this->change_mask(SIG_BLOCK);
+		}
+
+		inline void
+		unlock() {
+			this->change_mask(SIG_UNBLOCK);
+		}
+
+	private:
+
+		inline void
+		change_mask(int how) {
+			UNISTDX_CHECK(::sigprocmask(how, &this->_signals, 0));
+		}
+
+		sigset_type _signals;
+	};
+
 }
 
 #endif // SYS_SIGNAL_HH
+// vi:ft=cpp

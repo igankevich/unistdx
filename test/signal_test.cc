@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "signal.hh"
+#include "signal"
 #include <stdx/debug.hh>
 #include "process.hh"
 

@@ -13,7 +13,7 @@
 #include <sys/check>
 #include <sys/bits/safe_calls.hh>
 
-#include "signal.hh"
+#include "signal"
 #include "argstream.hh"
 
 namespace sys {

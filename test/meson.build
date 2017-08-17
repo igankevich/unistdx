@@ -1,5 +1,5 @@
 test(
-	'stdx::spin_mutex, sys::sysv_semaphore',
+	'unistdx/semaphore',
 	executable(
 		'locks-test',
 		sources: 'locks_test.cc',
@@ -29,7 +29,7 @@ test(
 )
 
 test(
-	'sys::event_poller',
+	'unistdx/poller',
 	executable(
 		'poller-test',
 		sources: 'poller_test.cc',

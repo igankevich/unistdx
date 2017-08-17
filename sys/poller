@@ -1,5 +1,5 @@
-#ifndef SYS_EVENT_HH
-#define SYS_EVENT_HH
+#ifndef SYS_POLLER
+#define SYS_POLLER
 
 #include <bits/poll>
 #include <bits/socket>
@@ -558,4 +558,5 @@ namespace sys {
 
 }
 
-#endif // SYS_EVENT_HH
+#endif // SYS_POLLER
+// vi:ft=cpp

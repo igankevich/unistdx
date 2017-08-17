@@ -1,18 +1,4 @@
-#include "file.hh"
-
-char
-sys::to_char(sys::file_type rhs) noexcept {
-	switch (rhs) {
-		case sys::file_type::regular: return '-';
-		case sys::file_type::directory: return 'd';
-		case sys::file_type::block_device: return 'b';
-		case sys::file_type::character_device: return 'c';
-		case sys::file_type::pipe: return 'p';
-		case sys::file_type::socket: return 's';
-		case sys::file_type::symbolic_link: return 'l';
-		default: return '?';
-	}
-}
+#include "file_mode"
 
 std::ostream&
 sys::operator<<(std::ostream& out, const file_mode& rhs) {
@@ -36,12 +22,5 @@ sys::operator<<(std::ostream& out, const file_mode& rhs) {
 		0
 	};
 	return out << bits;
-}
-
-std::ostream&
-sys::operator<<(std::ostream& out, const file_stat& rhs) {
-	return out << rhs.type() << rhs.mode() << ' '
-		<< rhs.owner() << ':' << rhs.group() << ' '
-		<< rhs.size();
 }
 

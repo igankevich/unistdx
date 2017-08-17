@@ -1,0 +1,99 @@
+#ifndef SYS_FS_DIRENTRY
+#define SYS_FS_DIRENTRY
+
+#include <dirent.h>
+#include <cstring>
+#include "path"
+#include "file_stat"
+
+namespace sys {
+
+	typedef struct ::dirent dirent_type;
+	typedef ::ino_t inode_type;
+
+	struct direntry: public dirent_type {
+
+		direntry() = default;
+		direntry(const direntry&) = default;
+		direntry(direntry&&) = default;
+		~direntry() = default;
+
+		inline const char*
+		name() const noexcept {
+			return this->d_name;
+		}
+
+		inline inode_type
+		inode() const noexcept {
+			return this->d_ino;
+		}
+
+		inline file_type
+		type() const noexcept {
+			#if defined(UNISTDX_HAVE_DTTOIF)
+			return file_type(DTTOIF(this->d_type));
+			#else
+			return file_type(0);
+			#endif
+		}
+
+		inline bool
+		has_type() const noexcept {
+			return this->type() != file_type(0);
+		}
+
+		inline bool
+		is_working_dir() const noexcept {
+			return !std::strcmp(this->name(), ".");
+		}
+
+		inline bool
+		is_parent_dir() const noexcept {
+			return !std::strcmp(this->name(), "..");
+		}
+
+		inline bool
+		is_hidden() const noexcept {
+			return this->name()[0] == '.';
+		}
+
+		inline bool
+		is_directory() const noexcept {
+			return this->type() == file_type::directory;
+		}
+
+		inline bool
+		operator==(const direntry& rhs) const noexcept {
+			return std::strcmp(this->name(), rhs.name()) == 0;
+		}
+
+		inline bool
+		operator!=(const direntry& rhs) const noexcept {
+			return std::strcmp(this->name(), rhs.name()) != 0;
+		}
+
+		inline bool
+		operator<(const direntry& rhs) const noexcept {
+			return std::strcmp(this->name(), rhs.name()) < 0;
+		}
+
+		inline friend std::ostream&
+		operator<<(std::ostream& out, const direntry& rhs) {
+			return out << rhs.name();
+		}
+
+		direntry&
+		operator=(const direntry& rhs) = default;
+
+	};
+
+	inline sys::file_type
+	get_file_type(const path& dirname, const direntry& entry) {
+		return entry.has_type()
+		       ? entry.type()
+			   : file_stat(path(dirname, entry.name())).type();
+	}
+
+}
+
+#endif // SYS_FS_DIRENTRY vi:ft=cpp

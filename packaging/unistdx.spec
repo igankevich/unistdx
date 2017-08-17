@@ -50,25 +50,23 @@ developing applications that use %{name}.
 
 %files devel
 %{_includedir}/unistdx/sys/argstream.hh
-%{_includedir}/unistdx/sys/dir.hh
+%{_includedir}/unistdx/sys/filesystem
 %{_includedir}/unistdx/sys/endpoint
-%{_includedir}/unistdx/sys/event.hh
+%{_includedir}/unistdx/sys/poller
 %{_includedir}/unistdx/sys/fildes.hh
 %{_includedir}/unistdx/sys/fildesbuf.hh
-%{_includedir}/unistdx/sys/file.hh
 %{_includedir}/unistdx/sys/file_mutex.hh
 %{_includedir}/unistdx/sys/groups.hh
 %{_includedir}/unistdx/sys/ifaddr.hh
 %{_includedir}/unistdx/sys/ifaddr_list.hh
 %{_includedir}/unistdx/sys/network_format.hh
 %{_includedir}/unistdx/sys/packetstream.hh
-%{_includedir}/unistdx/sys/path
 %{_includedir}/unistdx/sys/pipe.hh
 %{_includedir}/unistdx/sys/process.hh
 %{_includedir}/unistdx/sys/semaphore.hh
 %{_includedir}/unistdx/sys/sharedmem
 %{_includedir}/unistdx/sys/shmembuf.hh
-%{_includedir}/unistdx/sys/signal.hh
+%{_includedir}/unistdx/sys/signal
 %{_includedir}/unistdx/sys/signal_semaphore.hh
 %{_includedir}/unistdx/sys/socket.hh
 %{_includedir}/unistdx/sys/subnet_iterator.hh

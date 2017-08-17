@@ -1,0 +1,71 @@
+#ifndef SYS_FS_PATHENTRY
+#define SYS_FS_PATHENTRY
+
+#include "direntry"
+
+namespace sys {
+
+	struct pathentry: public direntry {
+
+		pathentry() = default;
+		pathentry(const pathentry&) = default;
+		pathentry(pathentry&& rhs) = default;
+		~pathentry() = default;
+
+		inline
+		pathentry(const path& dirname, const direntry& ent):
+		direntry(ent),
+		_dirname(dirname) {}
+
+		inline const path&
+		dirname() const noexcept {
+			return this->_dirname;
+		}
+
+		inline path
+		getpath() const {
+			return path(this->_dirname, name());
+		}
+
+		inline bool
+		operator<(const pathentry& rhs) const noexcept {
+			return this->_dirname < rhs._dirname;
+		}
+
+		inline bool
+		operator==(const pathentry& rhs) const noexcept {
+			return this->_dirname == rhs._dirname;
+		}
+
+		inline bool
+		operator!=(const pathentry& rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		inline friend std::ostream&
+		operator<<(std::ostream& out, const pathentry& rhs) {
+			return out << rhs.dirname() << file_separator << rhs.name();
+		}
+
+		pathentry&
+		operator=(const pathentry&) = default;
+
+		pathentry&
+		operator=(pathentry&& rhs) = default;
+
+	public:
+
+		path _dirname;
+
+	};
+
+	inline sys::file_type
+	get_file_type(const pathentry& rhs) {
+		return rhs.has_type()
+		       ? rhs.type()
+			   : file_stat(rhs.getpath()).type();
+	}
+
+}
+
+#endif // SYS_FS_PATHENTRY vi:ft=cpp

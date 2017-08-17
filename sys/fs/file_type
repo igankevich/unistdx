@@ -1,0 +1,28 @@
+#ifndef SYS_FS_FILE_TYPE
+#define SYS_FS_FILE_TYPE
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#include <ostream>
+
+namespace sys {
+
+	typedef ::mode_t mode_type;
+
+	enum struct file_type: mode_type {
+		regular = S_IFREG,
+		directory = S_IFDIR,
+		block_device = S_IFBLK,
+		character_device = S_IFCHR,
+		pipe = S_IFIFO,
+		socket = S_IFSOCK,
+		symbolic_link = S_IFLNK
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const file_type& rhs);
+
+}
+
+#endif // SYS_FS_FILE_TYPE vi:ft=cpp

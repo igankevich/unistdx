@@ -1,0 +1,55 @@
+#ifndef SYS_FS_DIRECTORY
+#define SYS_FS_DIRECTORY
+
+#include "idirectory"
+#include "odirectory"
+
+namespace sys {
+
+	template<class FilePred, class Trans>
+	class basic_directory:
+		public basic_idirectory<FilePred>,
+		public basic_odirectory<Trans> {
+
+	public:
+
+		typedef basic_idirectory<FilePred> idir_type;
+		typedef basic_odirectory<Trans> odir_type;
+
+		using typename idir_type::filepred_type;
+		using typename odir_type::transform;
+
+		inline void
+		open(const path& p) {
+			this->idir_type::open(p);
+			this->odir_type::open(p);
+		}
+
+		inline void
+		close() {
+			this->idir_type::close();
+		}
+
+		inline const path&
+		getpath() const noexcept {
+			return this->idir_type::getpath();
+		}
+
+		inline explicit
+		operator bool() const noexcept {
+			return this->idir_type::operator bool() &&
+			       this->odir_type::operator bool();
+		}
+
+		inline bool
+		operator!() const noexcept {
+			return !operator bool();
+		}
+
+	};
+
+	typedef basic_directory<ignore_hidden_files,copy_verbatim> directory;
+
+}
+
+#endif // SYS_FS_DIRECTORY vi:ft=cpp
