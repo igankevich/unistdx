@@ -1,49 +1,27 @@
 #ifndef SYS_PIPE_HH
 #define SYS_PIPE_HH
 
-#include <unistd.h>
-
-#include <sys/check>
-#include <sys/bits/safe_calls.hh>
 #include <sys/process.hh>
 
 #include "fildes.hh"
-#include <unistdx_config>
 
 namespace sys {
-
-	namespace bits {
-
-		fd_type
-		safe_pipe(fd_type fds[2]) {
-			bits::global_lock_type lock(bits::__forkmutex);
-			int ret = ::pipe(fds);
-			if (ret != -1) {
-				bits::set_mandatory_flags(fds[0]);
-				bits::set_mandatory_flags(fds[1]);
-				#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
-				fcntl(fds[1], F_SETNOSIGPIPE, 1);
-				#endif
-			}
-			return ret;
-		}
-
-	}
 
 	union pipe {
 
 		inline
-		pipe(): _fds{} {
-			open();
+		pipe(): _fds {} {
+			this->open();
 		}
 
 		inline
 		pipe(pipe&& rhs) noexcept:
-			_fds{std::move(rhs._fds[0]), std::move(rhs._fds[1])}
+		_fds {std::move(rhs._fds[0]), std::move(rhs._fds[1])}
 		{}
 
+		inline
 		pipe(fd_type in, fd_type out) noexcept:
-		_fds{sys::fildes(in), sys::fildes(out)}
+		_fds {sys::fildes(in), sys::fildes(out)}
 		{}
 
 		inline
@@ -69,20 +47,12 @@ namespace sys {
 			return this->_fds[1];
 		}
 
-		void open() {
-			this->close();
-			UNISTDX_CHECK(bits::safe_pipe(this->_rawfds));
-		}
+		void open();
 
-		void close() {
-			in().close();
-			out().close();
-		}
+		void close();
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const pipe& rhs) {
-			return out << stdx::make_object("in", rhs.out(), "out", rhs.in());
-		}
+		operator<<(std::ostream& out, const pipe& rhs);
 
 	private:
 		sys::fildes _fds[2] = {};
@@ -91,76 +61,90 @@ namespace sys {
 		static_assert(sizeof(_fds) == sizeof(_rawfds), "bad sys::fildes size");
 	};
 
+	std::ostream&
+	operator<<(std::ostream& out, const pipe& rhs);
+
 	struct two_way_pipe {
 
+		inline
 		two_way_pipe():
 		_owner(sys::this_process::id())
 		{}
+
 		~two_way_pipe() = default;
 		two_way_pipe(const two_way_pipe&) = delete;
 		two_way_pipe(two_way_pipe&&) = default;
-		two_way_pipe& operator=(two_way_pipe&) = delete;
+		two_way_pipe&
+		operator=(two_way_pipe&) = delete;
 
-		fildes& parent_in() noexcept { return _pipe1.in(); }
-		fildes& parent_out() noexcept { return _pipe2.out(); }
-		const fildes& parent_in() const noexcept { return _pipe1.in(); }
-		const fildes& parent_out() const noexcept { return _pipe2.out(); }
-
-		fildes& child_in() noexcept { return _pipe2.in(); }
-		fildes& child_out() noexcept { return _pipe1.out(); }
-		const fildes& child_in() const noexcept { return _pipe2.in(); }
-		const fildes& child_out() const noexcept { return _pipe1.out(); }
-
-		void open() {
-			_pipe1.open();
-			_pipe2.open();
+		inline fildes&
+		parent_in() noexcept {
+			return this->_pipe1.in();
 		}
 
-		void close() {
-			_pipe1.close();
-			_pipe2.close();
+		inline fildes&
+		parent_out() noexcept {
+			return this->_pipe2.out();
 		}
 
-		void close_in_child() {
-			_pipe1.in().close();
-			_pipe2.out().close();
+		inline const fildes&
+		parent_in() const noexcept {
+			return this->_pipe1.in();
 		}
 
-		void close_in_parent() {
-			_pipe1.out().close();
-			_pipe2.in().close();
+		inline const fildes&
+		parent_out() const noexcept {
+			return this->_pipe2.out();
 		}
 
-		void remap_in_child(fd_type in, fd_type out) {
-			child_in().remap(in);
-			child_out().remap(out);
+		inline fildes&
+		child_in() noexcept {
+			return this->_pipe2.in();
 		}
 
-		bool
-		is_owner() const {
-			return sys::this_process::id() == _owner;
+		inline fildes&
+		child_out() noexcept {
+			return this->_pipe1.out();
+		}
+
+		inline const fildes&
+		child_in() const noexcept {
+			return this->_pipe2.in();
+		}
+
+		inline const fildes&
+		child_out() const noexcept {
+			return this->_pipe1.out();
+		}
+
+		inline bool
+		is_owner() const noexcept {
+			return sys::this_process::id() == this->_owner;
 		}
 
 		void
-		close_unused() {
-			is_owner() ? close_in_parent() : close_in_child();
-		}
+		open();
 
 		void
-		validate() {
-			if (is_owner()) {
-				parent_in().validate();
-				parent_out().validate();
-			} else {
-				child_in().validate();
-				child_out().validate();
-			}
-		}
+		close();
+
+		void
+		close_in_child();
+
+		void
+		close_in_parent();
+
+		void
+		close_unused();
+
+		void
+		remap_in_child(fd_type in, fd_type out);
+
+		void
+		validate();
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const two_way_pipe& rhs) {
-			return out << stdx::make_object("pipe1", rhs._pipe1, "pipe2", rhs._pipe2);
-		}
+		operator<<(std::ostream& out, const two_way_pipe& rhs);
 
 	private:
 
@@ -169,6 +153,9 @@ namespace sys {
 		pid_type _owner;
 
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const two_way_pipe& rhs);
 
 }
 
