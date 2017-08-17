@@ -33,7 +33,7 @@ namespace sys {
 	typedef bits::family_type family_type;
 	typedef bits::legacy_family_type sa_family_type;
 	typedef ::in_addr_t addr4_type;
-	typedef std::uint128_t addr6_type;
+	typedef stdx::uint128_t addr6_type;
 	typedef ::in_port_t port_type;
 	typedef unsigned int prefix_type;
 
@@ -328,14 +328,14 @@ namespace sys {
 		) {
 			using namespace stdx::literals;
 			return (
-				((h1 << 0)   & UINT128_C(0xffff)) |
-				((h2 << 16)  & UINT128_C(0xffff0000)) |
-				((h3 << 32)  & UINT128_C(0xffff00000000)) |
-				((h4 << 48)  & UINT128_C(0xffff000000000000)) |
-				((h5 << 64)  & UINT128_C(0xffff0000000000000000)) |
-				((h6 << 80)  & UINT128_C(0xffff00000000000000000000)) |
-				((h7 << 96)  & UINT128_C(0xffff000000000000000000000000)) |
-				((h8 << 112) & UINT128_C(0xffff0000000000000000000000000000)));
+				((h1 << 0)   & 0xffff_u128) |
+				((h2 << 16)  & 0xffff0000_u128) |
+				((h3 << 32)  & 0xffff00000000_u128) |
+				((h4 << 48)  & 0xffff000000000000_u128) |
+				((h5 << 64)  & 0xffff0000000000000000_u128) |
+				((h6 << 80)  & 0xffff00000000000000000000_u128) |
+				((h7 << 96)  & 0xffff000000000000000000000000_u128) |
+				((h8 << 112) & 0xffff0000000000000000000000000000_u128));
 		}
 
 		addr6_type addr;

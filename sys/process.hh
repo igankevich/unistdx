@@ -369,10 +369,8 @@ namespace sys {
 			return !operator bool();
 		}
 
-		inline friend std::ostream&
-		operator<<(std::ostream& out, const process& rhs) {
-			return out << stdx::make_object("id", rhs.id(), "gid", rhs.group_id());
-		}
+		friend std::ostream&
+		operator<<(std::ostream& out, const process& rhs);
 
 		inline pid_type
 		id() const noexcept {
@@ -403,6 +401,9 @@ namespace sys {
 		pid_type _pid = 0;
 
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const process& rhs);
 
 	struct process_group {
 

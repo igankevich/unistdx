@@ -77,14 +77,14 @@ namespace sys {
 		}
 
 		template<>
-		inline uint128_t
-		byte_swap(uint128_t x) noexcept {
+		inline stdx::uint128_t
+		byte_swap(stdx::uint128_t x) noexcept {
 			union {
-				uint128_t n;
-				unsigned char raw[sizeof(uint128_t)];
+				stdx::uint128_t n;
+				unsigned char raw[sizeof(stdx::uint128_t)];
 			} tmp;
 			tmp.n = x;
-			std::reverse(tmp.raw, tmp.raw + sizeof(uint128_t));
+			std::reverse(tmp.raw, tmp.raw + sizeof(stdx::uint128_t));
 			return tmp.n;
 		}
 
@@ -170,7 +170,7 @@ namespace sys {
 		template<> struct Integral<2>: public byte_swap_chooser<uint16_t,true> {};
 		template<> struct Integral<4>: public byte_swap_chooser<uint32_t,true> {};
 		template<> struct Integral<8>: public byte_swap_chooser<uint64_t,true> {};
-		template<> struct Integral<16>: public byte_swap_chooser<uint128_t,true> {};
+		template<> struct Integral<16>: public byte_swap_chooser<stdx::uint128_t,true> {};
 
 	}
 
