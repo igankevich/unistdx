@@ -4,7 +4,6 @@
 #include "sharedmem"
 #include "semaphore"
 #include <stdx/packetbuf.hh>
-#include <mutex>
 
 namespace sys {
 
@@ -20,7 +19,6 @@ namespace sys {
 		typedef typename sys::shared_mem<char_type> shared_mem_type;
 		typedef typename shared_mem_type::size_type size_type;
 		typedef sysv_semaphore sem_type;
-		typedef std::lock_guard<basic_shmembuf> lock_type;
 
 		struct shmem_header {
 			sem_type read_sem;
@@ -251,11 +249,7 @@ namespace sys {
 
 	};
 
-	template <class Shmembuf>
-	using basic_shmembuf_guard = std::lock_guard<Shmembuf>;
-
 	typedef basic_shmembuf<char> shmembuf;
-	typedef std::lock_guard<shmembuf> shmembuf_guard;
 
 }
 

@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 #include <limits>
 #include <random>
+#include <mutex>
 
 template <class T>
 struct SharedMemTest: public ::testing::Test {};
@@ -38,10 +39,7 @@ TYPED_TEST(SharedMemTest, SharedMem) {
 	EXPECT_EQ(mem1.size(), std::distance(mem1.begin(), mem1.end()));
 	EXPECT_EQ(mem2.size(), std::distance(mem2.begin(), mem2.end()));
 	std::default_random_engine rng;
-	std::uniform_int_distribution<T> dist(
-		std::numeric_limits<T>::min(),
-		std::numeric_limits<T>::max()
-	);
+	std::uniform_int_distribution<T> dist('a', 'z');
 	std::generate(mem1.begin(), mem1.end(), std::bind(dist, rng));
 	EXPECT_EQ(mem1, mem2);
 	// close multiple times
@@ -58,7 +56,7 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
 	typedef typename sys::shared_mem<T> shmem;
 	typedef typename sys::basic_shmembuf<T> shmembuf;
 	typedef typename shmem::size_type size_type;
-	typedef typename shmembuf::lock_type shmembuf_guard;
+	typedef std::lock_guard<shmembuf> shmembuf_guard;
 	const size_type SHMEM_SIZE = sys::page_size()*4;
 	shmembuf buf1(shmem(0600, SHMEM_SIZE));
 	// generated randon data
