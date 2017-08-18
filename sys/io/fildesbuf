@@ -8,7 +8,7 @@
 #include <stdx/streambuf.hh>
 
 #include "fildes"
-#include <sys/system.hh>
+#include <sys/util/system>
 
 namespace sys {
 

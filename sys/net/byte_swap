@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <stdx/uint128.hh>
-#include <unistdx_config>
+#include <sys/unistdx_config>
 
 namespace sys {
 

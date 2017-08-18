@@ -1,0 +1,84 @@
+#ifndef SYS_UTIL_USERS
+#define SYS_UTIL_USERS
+
+#include <pwd.h>
+#include <sys/types.h>
+#include <sys/unistdx_config>
+#include <ostream>
+#include <cstddef>
+#include <string>
+
+namespace sys {
+
+	typedef ::uid_t uid_type;
+	typedef ::gid_t gid_type;
+
+	struct user: public ::passwd {
+
+		inline const char*
+		name() const {
+			return this->pw_name;
+		}
+
+		inline const char*
+		password() const {
+			return this->pw_passwd;
+		}
+
+		inline uid_type
+		id() const {
+			return this->pw_uid;
+		}
+
+		inline gid_type
+		group_id() const {
+			return this->pw_gid;
+		}
+
+		inline const char*
+		real_name() const {
+			#if defined(UNISTDX_HAVE_GECOS)
+			return this->pw_gecos;
+			#else
+			return nullptr;
+			#endif
+		}
+
+		inline const char*
+		home() const {
+			return this->pw_dir;
+		}
+
+		inline const char*
+		shell() const {
+			return this->pw_shell;
+		}
+
+		inline bool
+		operator==(const user& rhs) const noexcept {
+			return id() == rhs.id();
+		}
+
+		inline bool
+		operator!=(const user& rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const user& rhs);
+
+		std::string _buf;
+
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const user& rhs);
+
+	static_assert(
+		offsetof(user, _buf) >= sizeof(::passwd),
+		"bad sys::user size"
+	);
+
+}
+
+#endif // SYS_UTIL_USERS vim:filetype=cpp

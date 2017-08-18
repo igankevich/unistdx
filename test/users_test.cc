@@ -1,10 +1,9 @@
 #include <iostream>
 #include <iterator>
 #include <algorithm>
-#include <stdx/debug.hh>
-#include <sys/users.hh>
-#include <sys/groups.hh>
-#include <sys/ipc/process>
+#include <sys/util/user>
+#include <sys/util/userstream>
+#include <sys/util/groups>
 #include <sys/ipc/identity>
 
 void

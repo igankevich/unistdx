@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include <unistdx_config>
+#include <sys/unistdx_config>
 #if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
 #include <semaphore.h>
 #endif

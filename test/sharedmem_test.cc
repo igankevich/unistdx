@@ -2,7 +2,7 @@
 #include <sys/ipc/sharedmem>
 #include <sys/ipc/shmembuf>
 #include <sys/ipc/process>
-#include <sys/system.hh>
+#include <sys/util/system>
 
 #include <functional>
 #include <gtest/gtest.h>

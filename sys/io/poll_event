@@ -1,8 +1,8 @@
 #ifndef SYS_IO_POLL_EVENT
 #define SYS_IO_POLL_EVENT
 
-#include <bits/poll>
-#include <bits/socket>
+#include <sys/bits/poll>
+#include <sys/bits/socket>
 #include <ostream>
 
 namespace sys {

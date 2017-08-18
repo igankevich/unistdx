@@ -1,4 +1,4 @@
-#include "system.hh"
+#include "system"
 #include <cstdlib>
 #include <thread>
 

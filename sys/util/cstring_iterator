@@ -1,0 +1,160 @@
+#ifndef SYS_UTIL_CSTRING_ITERATOR
+#define SYS_UTIL_CSTRING_ITERATOR
+
+#include <iterator>
+
+namespace sys {
+
+	template<class T>
+	class cstring_iterator: public std::iterator<std::bidirectional_iterator_tag, T>
+	{
+
+	public:
+		typedef T value_type;
+		typedef T* pointer;
+		typedef const T* const_pointer;
+		typedef T& reference;
+		typedef const T& const_reference;
+		typedef typename std::iterator_traits<pointer>::difference_type
+			difference_type;
+		typedef size_t size_type;
+
+		inline explicit
+		cstring_iterator(pointer ptr):
+		_ptr(ptr) {}
+
+		cstring_iterator() = default;
+		cstring_iterator(const cstring_iterator&) = default;
+		cstring_iterator(cstring_iterator&&) = default;
+		~cstring_iterator() = default;
+		cstring_iterator&
+		operator=(const cstring_iterator&) = default;
+
+		inline bool
+		operator==(const cstring_iterator& rhs) const noexcept {
+			return this->_ptr == rhs._ptr or (!*this->_ptr and !rhs._ptr);
+		}
+
+		inline bool
+		operator!=(const cstring_iterator& rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		inline const_reference
+		operator*() const noexcept {
+			return *this->_ptr;
+		}
+
+		inline reference
+		operator*() noexcept {
+			return *this->_ptr;
+		}
+
+		inline const_pointer
+		operator->() const noexcept {
+			return this->ptr;
+		}
+
+		inline pointer
+		operator->() noexcept {
+			return this->ptr;
+		}
+
+		inline cstring_iterator&
+		operator++() noexcept {
+			++this->_ptr;
+			return *this;
+		}
+
+		inline cstring_iterator
+		operator++(int) noexcept {
+			cstring_iterator tmp(*this);
+			++this->_ptr;
+			return tmp;
+		}
+
+		inline cstring_iterator&
+		operator--() noexcept {
+			--this->_ptr;
+			return *this;
+		}
+
+		inline cstring_iterator
+		operator--(int) noexcept {
+			cstring_iterator tmp(*this);
+			--this->_ptr;
+			return tmp;
+		}
+
+		inline cstring_iterator&
+		operator+=(difference_type n) noexcept {
+			this->_ptr += n;
+			return *this;
+		}
+
+		inline cstring_iterator&
+		operator-=(difference_type n) noexcept {
+			this->_ptr -= n;
+			return *this;
+		}
+
+		inline friend cstring_iterator
+		operator+(const cstring_iterator& lhs, difference_type rhs) {
+			cstring_iterator tmp(lhs);
+			tmp += rhs;
+			return tmp;
+		}
+
+		inline friend cstring_iterator
+		operator+(difference_type lhs, const cstring_iterator& rhs) {
+			cstring_iterator tmp(rhs);
+			tmp += lhs;
+			return tmp;
+		}
+
+		inline friend cstring_iterator
+		operator-(const cstring_iterator& lhs, difference_type rhs) {
+			cstring_iterator tmp(lhs);
+			tmp -= rhs;
+			return tmp;
+		}
+
+		inline const value_type&
+		operator[](size_type n) const noexcept {
+			return this->_ptr[n];
+		}
+
+		inline value_type&
+		operator[](size_type n) noexcept {
+			return this->_ptr[n];
+		}
+
+		inline bool
+		operator<(const cstring_iterator& rhs) const noexcept {
+			return this->_ptr < rhs._ptr;
+		}
+
+		inline bool
+		operator>=(const cstring_iterator& rhs) const noexcept {
+			return !operator<(rhs);
+		}
+
+		inline bool
+		operator>(const cstring_iterator& rhs) const noexcept {
+			return !operator<=(rhs);
+		}
+
+		inline bool
+		operator<=(const cstring_iterator& rhs) const noexcept {
+			return operator==(rhs) or operator<(rhs);
+		}
+
+	private:
+
+		pointer _ptr = nullptr;
+
+	};
+
+}
+
+#endif // SYS_UTIL_CSTRING_ITERATOR vim:filetype=cpp

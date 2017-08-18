@@ -2,7 +2,7 @@
 
 #include <sys/bits/safe_calls.hh>
 #include <stdx/debug.hh>
-#include <unistdx_config>
+#include <sys/unistdx_config>
 #include <sys/check>
 
 namespace {

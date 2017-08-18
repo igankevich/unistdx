@@ -1,0 +1,78 @@
+#ifndef SYS_UTIL_INTERSPERSE_ITERATOR
+#define SYS_UTIL_INTERSPERSE_ITERATOR
+
+#include <iterator>
+
+namespace sys {
+
+	template <class T, class Delim=const char*, class Ch=char, class Tr=
+				  std::char_traits<Ch> >
+	class intersperse_iterator:
+		public std::iterator<std::output_iterator_tag, void, void, void, void>{
+
+	public:
+		typedef Ch char_type;
+		typedef Tr traits_type;
+		typedef std::basic_ostream<Ch,Tr> ostream_type;
+		typedef Delim delim_type;
+
+		inline explicit constexpr
+		intersperse_iterator(ostream_type& s, delim_type delimiter=nullptr):
+		ostr(&s), delim(delimiter) {}
+
+		inline constexpr
+		intersperse_iterator() = default;
+
+		inline
+		~intersperse_iterator() = default;
+
+		inline constexpr
+		intersperse_iterator(const intersperse_iterator&) = default;
+
+		inline intersperse_iterator(intersperse_iterator&& rhs):
+		ostr(rhs.ostr), delim(rhs.delim), first(rhs.first) {
+			rhs.ostr = nullptr;
+		}
+
+		inline intersperse_iterator&
+		operator=(const intersperse_iterator&) = default;
+
+		inline intersperse_iterator&
+		operator=(const T& value) {
+			if (ostr) {
+				if (delim != 0 && !first) {
+					*ostr << delim;
+				}
+				*ostr << value;
+				if (first) {
+					first = false;
+				}
+			}
+			return *this;
+		}
+
+		inline intersperse_iterator&
+		operator*() {
+			return *this;
+		}
+
+		inline intersperse_iterator&
+		operator++() {
+			return *this;
+		}
+
+		inline intersperse_iterator&
+		operator++(int) {
+			return *this;
+		}
+
+	private:
+		ostream_type* ostr;
+		delim_type delim = nullptr;
+		bool first = true;
+	};
+
+
+}
+
+#endif // SYS_UTIL_INTERSPERSE_ITERATOR vim:filetype=cpp

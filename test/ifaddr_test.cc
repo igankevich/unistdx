@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "net/ifaddr"
+#include <sys/net/ifaddr>
 #include <sstream>
 
 TEST(Ifaddr, LocalhostIPv4) {

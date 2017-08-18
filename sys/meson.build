@@ -5,15 +5,14 @@ configure_file(
 )
 
 libunistdx_src = files(
-	'system.cc',
 	'bits/safe_calls.cc',
-	'backtrace.cc',
 )
 
 subdir('fs')
 subdir('net')
 subdir('io')
 subdir('ipc')
+subdir('util')
 
 libunistdx_shared = shared_library(
 	'unistdx',
@@ -31,16 +30,15 @@ libunistdx_static = static_library(
 
 unistdx = declare_dependency(
 	link_with: libunistdx_static,
-	include_directories: include_directories('.')
+	include_directories: srcdir
 )
 
 install_headers(
-	'groups.hh',
 	'network',
 	'filesystem',
 	'process',
-	'system.hh',
-	'users.hh',
+	'utils',
+	'fildes',
 	subdir: meson.project_name() + '/sys'
 )
 

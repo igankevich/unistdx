@@ -6,10 +6,10 @@
 #include <cstring>
 
 #include <stdx/debug.hh>
-#include <bits/sharedmem>
+#include <sys/bits/sharedmem>
 #include <unistd.h>
 
-#include "check"
+#include <sys/check>
 
 namespace sys {
 

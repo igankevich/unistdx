@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <unordered_set>
 #include <string>
-#include "fs/path"
-#include "fs/canonical_path"
+#include <sys/fs/path>
+#include <sys/fs/canonical_path>
 
 TEST(Path, Hash) {
 	std::unordered_set<sys::path> s;

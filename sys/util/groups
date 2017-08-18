@@ -1,12 +1,14 @@
-#ifndef SYS_GROUPS_HH
-#define SYS_GROUPS_HH
+#ifndef SYS_UTIL_GROUPS
+#define SYS_UTIL_GROUPS
 
-#include <sys/types.h>
 #include <grp.h>
+#include <sys/types.h>
+#include <algorithm>
 #include <iterator>
 #include <ostream>
-#include <algorithm>
-#include <stdx/iterator.hh>
+#include "cstring_iterator"
+#include "intersperse_iterator"
+#include <sys/bits/basic_istream_iterator.hh>
 
 namespace sys {
 
@@ -14,41 +16,44 @@ namespace sys {
 
 	struct group: public ::group {
 
-		typedef stdx::cstring_iterator<char*> iterator;
+		typedef cstring_iterator<char*> iterator;
 
-		const char* name() const {
+		inline const char*
+		name() const {
 			return this->gr_name;
 		}
 
-		const char* password() const {
+		inline const char*
+		password() const {
 			return this->gr_passwd;
 		}
 
-		gid_type id() const {
+		inline gid_type
+		id() const {
 			return this->gr_gid;
 		}
 
-		iterator
+		inline iterator
 		begin() const {
 			return iterator(this->gr_mem);
 		}
 
-		iterator
+		inline iterator
 		end() const {
 			return iterator();
 		}
 
-		size_t
+		inline size_t
 		size() const {
 			return std::distance(begin(), end());
 		}
 
-		bool
+		inline bool
 		operator==(const group& rhs) const noexcept {
 			return id() == rhs.id();
 		}
 
-		bool
+		inline bool
 		operator!=(const group& rhs) const noexcept {
 			return !operator==(rhs);
 		}
@@ -56,12 +61,12 @@ namespace sys {
 		friend std::ostream&
 		operator<<(std::ostream& out, const group& rhs) {
 			out << rhs.name() << ':'
-				<< rhs.password() << ':'
-				<< rhs.id() << ':';
+			    << rhs.password() << ':'
+			    << rhs.id() << ':';
 			std::copy(
 				rhs.begin(),
 				rhs.end(),
-				stdx::intersperse_iterator<const char*,char>(out, ',')
+				intersperse_iterator<const char*,char>(out, ',')
 			);
 			return out;
 		}
@@ -75,25 +80,28 @@ namespace sys {
 
 	struct groupstream {
 
+		inline
 		groupstream():
-		_end(false)
-		{ ::setgrent(); }
+		_end(false) {
+			::setgrent();
+		}
 
+		inline
 		~groupstream() {
 			::endgrent();
 		}
 
-		explicit
+		inline explicit
 		operator bool() const noexcept {
 			return !_end;
 		}
 
-		bool
+		inline bool
 		operator!() const noexcept {
 			return !operator bool();
 		}
 
-		groupstream&
+		inline groupstream&
 		operator>>(group& rhs) {
 			if (*this) {
 				group* g = next_entry();
@@ -108,7 +116,7 @@ namespace sys {
 
 	private:
 
-		static group*
+		inline static group*
 		next_entry() {
 			return static_cast<group*>(::getgrent());
 		}
@@ -121,4 +129,4 @@ namespace sys {
 
 }
 
-#endif // SYS_GROUPS_HH
+#endif // SYS_UTIL_GROUPS vim:filetype=cpp

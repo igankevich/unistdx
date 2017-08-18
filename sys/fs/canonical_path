@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #include "path"
-#include "check"
+#include <sys/check>
 
 namespace sys {
 

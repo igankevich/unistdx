@@ -3,8 +3,8 @@
 
 #include <signal.h>
 #include <ostream>
-#include "check"
-#include <unistdx_config>
+#include <sys/check>
+#include <sys/unistdx_config>
 
 namespace sys {
 

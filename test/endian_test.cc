@@ -1,4 +1,4 @@
-#include "net/endian"
+#include <sys/net/endian>
 #include <gtest/gtest.h>
 
 TEST(EndianGuard, NoThrow) {

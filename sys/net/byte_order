@@ -2,7 +2,7 @@
 #define SYS_NET_BYTE_ORDER
 
 #include "byte_swap"
-#include <unistdx_config>
+#include <sys/unistdx_config>
 
 namespace sys {
 

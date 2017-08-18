@@ -1,4 +1,4 @@
-#include <sys/system.hh>
+#include <sys/util/system>
 #include <gtest/gtest.h>
 #include <stdlib.h>
 

@@ -2,7 +2,7 @@
 #define SYS_BITS_POLL
 
 #include <poll.h>
-#include <unistdx_config>
+#include <sys/unistdx_config>
 #if !defined(UNISTDX_HAVE_POLLRDHUP)
 	#define UNISTDX_POLLRDHUP 0
 #else
