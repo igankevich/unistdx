@@ -1,5 +1,6 @@
 #include <stdx/debug.hh>
-#include <sys/process.hh>
+#include <sys/ipc/process>
+#include <sys/ipc/execute>
 #include <gtest/gtest.h>
 
 TEST(Process, Fork) {

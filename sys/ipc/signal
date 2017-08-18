@@ -1,5 +1,5 @@
-#ifndef SYS_SIGNAL_HH
-#define SYS_SIGNAL_HH
+#ifndef SYS_IPC_SIGNAL
+#define SYS_IPC_SIGNAL
 
 #include <signal.h>
 #include <ostream>
@@ -147,5 +147,4 @@ namespace sys {
 
 }
 
-#endif // SYS_SIGNAL_HH
-// vi:ft=cpp
+#endif // SYS_IPC_SIGNAL vim:filetype=cpp

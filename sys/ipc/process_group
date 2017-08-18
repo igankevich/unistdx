@@ -1,0 +1,150 @@
+#ifndef SYS_IPC_PROCESS_GROUP
+#define SYS_IPC_PROCESS_GROUP
+
+#include "process"
+#include <vector>
+
+namespace sys {
+
+	namespace this_process {
+
+		inline pid_type
+		process_group_id() noexcept { return ::getpgrp(); }
+
+		inline void
+		set_process_group_id(pid_type rhs) {
+			UNISTDX_CHECK(::setpgid(this_process::id(), rhs));
+		}
+
+	}
+
+	struct process_group {
+
+		typedef std::vector<process>::iterator iterator;
+		typedef std::vector<process>::const_iterator const_iterator;
+
+		template<class ... Args>
+		inline explicit
+		process_group(Args&& ... args) {
+			this->emplace(std::forward<Args>(args)...);
+		}
+
+		inline process_group() = default;
+		process_group(const process_group&) = delete;
+		inline process_group(process_group&&) = default;
+		inline ~process_group() = default;
+
+		template<class F>
+		const process&
+		emplace(F&& childmain) {
+			this->_procs.emplace_back(std::forward<F>(childmain));
+			process& proc = this->_procs.back();
+			if (this->_procs.size() == 1) {
+				this->_gid = proc.id();
+			}
+			proc.set_group_id(_gid);
+			return proc;
+		}
+
+		template<class Func, class ... Args>
+		void
+		emplace(Func&& main, Args&& ... args) {
+			this->emplace(std::forward<Func>(main));
+			this->emplace(std::forward<Args>(args)...);
+		}
+
+		int wait();
+
+		template<class F>
+		void
+		wait(F callback, wait_flags flags=proc_exited) {
+			while (!this->_procs.empty()) {
+				sys::proc_info status;
+				const_iterator result;
+				this->do_wait(flags, status, result);
+				if (result != this->_procs.end()) {
+					callback(*result, status);
+					this->_procs.erase(result);
+				}
+			}
+		}
+
+		inline void
+		terminate() {
+			if (this->_gid > 0) {
+		    	UNISTDX_CHECK(::kill(this->_gid, SIGTERM));
+			}
+		}
+
+		inline pid_type
+		id() const noexcept {
+			return this->_gid;
+		}
+
+		const process&
+		operator[](size_t i) const noexcept {
+			return this->_procs[i];
+		}
+
+		inline process&
+		operator[](size_t i) noexcept {
+			return this->_procs[i];
+		}
+
+		inline size_t
+		size() const noexcept {
+			return this->_procs.size();
+		}
+
+		inline iterator
+		begin() noexcept {
+			return this->_procs.begin();
+		}
+
+		inline iterator
+		end() noexcept {
+			return this->_procs.end();
+		}
+
+		inline const process&
+		front() const noexcept {
+			return this->_procs.front();
+		}
+
+		inline process&
+		front() noexcept {
+			return this->_procs.front();
+		}
+
+		inline const process&
+		back() const noexcept {
+			return this->_procs.back();
+		}
+
+		inline process&
+		back() noexcept {
+			return this->_procs.back();
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const process_group& rhs);
+
+	private:
+
+		void
+		do_wait(
+			wait_flags flags,
+			sys::proc_info& status,
+			const_iterator& result
+		) const;
+
+		std::vector<process> _procs;
+		pid_type _gid = 0;
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const process_group& rhs);
+
+}
+
+#endif // SYS_IPC_PROCESS_GROUP vim:filetype=cpp

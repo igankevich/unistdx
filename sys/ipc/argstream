@@ -1,9 +1,10 @@
-#ifndef SYS_ARGSTREAM_HH
-#define SYS_ARGSTREAM_HH
+#ifndef SYS_IPC_ARGSTREAM
+#define SYS_IPC_ARGSTREAM
 
 #include <streambuf>
 #include <vector>
 #include <cassert>
+#include <ostream>
 
 namespace sys {
 
@@ -154,4 +155,4 @@ namespace sys {
 
 }
 
-#endif // SYS_ARGSTREAM_HH
+#endif // SYS_IPC_ARGSTREAM vim:filetype=cpp

@@ -49,7 +49,7 @@ developing applications that use %{name}.
 %{_libdir}/libunistdx.so
 
 %files devel
-%{_includedir}/unistdx/sys/argstream.hh
+%{_includedir}/unistdx/sys/ipc/argstream
 %{_includedir}/unistdx/sys/filesystem
 %{_includedir}/unistdx/sys/net/endpoint
 %{_includedir}/unistdx/sys/poller
@@ -63,11 +63,10 @@ developing applications that use %{name}.
 %{_includedir}/unistdx/sys/pstream.hh
 %{_includedir}/unistdx/sys/pipe.hh
 %{_includedir}/unistdx/sys/process.hh
-%{_includedir}/unistdx/sys/semaphore.hh
-%{_includedir}/unistdx/sys/sharedmem
-%{_includedir}/unistdx/sys/shmembuf.hh
+%{_includedir}/unistdx/sys/ipc/semaphore
+%{_includedir}/unistdx/sys/ipc/sharedmem
+%{_includedir}/unistdx/sys/ipc/shmembuf
 %{_includedir}/unistdx/sys/signal
-%{_includedir}/unistdx/sys/signal_semaphore.hh
 %{_includedir}/unistdx/sys/socket.hh
 %{_includedir}/unistdx/sys/subnet_iterator.hh
 %{_includedir}/unistdx/sys/system.hh

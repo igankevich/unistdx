@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
-#include "signal"
+#include <sys/ipc/process>
+#include <sys/ipc/signal>
 #include <stdx/debug.hh>
-#include "process.hh"
 
 volatile int caught = 0;
 

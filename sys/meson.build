@@ -5,9 +5,7 @@ configure_file(
 )
 
 libunistdx_src = files(
-	'signal.cc',
 	'system.cc',
-	'process.cc',
 	'bits/safe_calls.cc',
 	'backtrace.cc',
 )
@@ -15,6 +13,7 @@ libunistdx_src = files(
 subdir('fs')
 subdir('net')
 subdir('io')
+subdir('ipc')
 
 libunistdx_shared = shared_library(
 	'unistdx',
@@ -36,15 +35,10 @@ unistdx = declare_dependency(
 )
 
 install_headers(
-	'argstream.hh',
 	'groups.hh',
 	'network',
 	'filesystem',
-	'process.hh',
-	'semaphore.hh',
-	'sharedmem',
-	'shmembuf.hh',
-	'signal',
+	'process',
 	'system.hh',
 	'users.hh',
 	subdir: meson.project_name() + '/sys'

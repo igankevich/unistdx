@@ -1,0 +1,152 @@
+#ifndef SYS_IPC_PROCESS
+#define SYS_IPC_PROCESS
+
+#include <unistd.h>
+#include <sys/bits/safe_calls.hh>
+#include <sys/check>
+#include "signal"
+#include "proc_status"
+#include "proc_info"
+
+namespace sys {
+
+	typedef ::pid_t pid_type;
+
+	namespace this_process {
+
+		inline pid_type
+		id() noexcept { return ::getpid(); }
+
+		inline pid_type
+		parent_id() noexcept { return ::getppid(); }
+
+		inline pid_type
+		fork() {
+			bits::global_lock_type lock(bits::__forkmutex);
+			return ::fork();
+		}
+
+		inline void
+		send(signal sig) {
+			UNISTDX_CHECK(::kill(::sys::this_process::id(), signal_type(sig)));
+		}
+
+	}
+
+	enum wait_flags {
+		proc_exited = WEXITED,
+		proc_stopped = WSTOPPED,
+		proc_continued = WCONTINUED
+	};
+
+	struct process {
+
+		template<class F>
+		inline explicit
+		process(F f) {
+			this->_pid = this_process::fork();
+			if (this->_pid == 0) {
+				int ret = f();
+				std::exit(ret);
+			}
+		}
+
+		inline explicit
+		process(pid_type rhs) noexcept:
+		_pid(rhs)
+		{}
+
+		inline process() = default;
+		process(const process&) = delete;
+
+		inline
+		process(process&& rhs) noexcept:
+		_pid(rhs._pid)
+		{
+			rhs._pid = 0;
+		}
+
+		inline
+		~process() {
+			if (_pid > 0) {
+				this->do_kill(sys::signal::terminate);
+			}
+		}
+
+		inline process&
+		operator=(process&& rhs) noexcept {
+			std::swap(_pid, rhs._pid);
+			return *this;
+		}
+
+		inline void terminate() { this->send(sys::signal::terminate); }
+		inline void kill() { this->send(sys::signal::kill); }
+		inline void interrupt() { this->send(sys::signal::keyboard_interrupt); }
+		inline void hang_up() { this->send(sys::signal::hang_up); }
+
+		inline void
+		send(sys::signal sig) {
+			if (this->_pid > 0) {
+		    	UNISTDX_CHECK(do_kill(sig));
+			}
+		}
+
+		inline sys::proc_status
+		wait() {
+			int stat = 0;
+			if (this->_pid > 0) {
+				UNISTDX_CHECK_IF_NOT(EINTR, ::waitpid(_pid, &stat, 0));
+				this->_pid = 0;
+			}
+			return sys::proc_status(stat);
+		}
+
+		inline explicit
+		operator bool() const noexcept {
+			return _pid > 0 && do_kill(sys::signal(0)) != -1;
+		}
+
+		inline bool
+		operator !() const noexcept {
+			return !operator bool();
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const process& rhs);
+
+		inline pid_type
+		id() const noexcept {
+			return _pid;
+		}
+
+		inline pid_type
+		group_id() const noexcept {
+			return ::getpgid(_pid);
+		}
+
+		inline void
+		set_group_id(pid_type rhs) const {
+			UNISTDX_CHECK(::setpgid(_pid, rhs));
+		}
+
+		/// std::thread interface
+		inline bool joinable() { return true; }
+		inline void join() { wait(); }
+
+	private:
+
+		inline int
+		do_kill(sys::signal sig) const noexcept {
+		   	return ::kill(_pid, signal_type(sig));
+		}
+
+		pid_type _pid = 0;
+
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const process& rhs);
+
+}
+
+#endif // SYS_IPC_PROCESS vim:filetype=cpp

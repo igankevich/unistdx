@@ -1,0 +1,56 @@
+#ifndef SYS_IPC_EXECUTE
+#define SYS_IPC_EXECUTE
+
+#include "argstream"
+#include <sys/check>
+#include <unistd.h>
+
+namespace sys {
+
+	namespace this_process {
+
+		template<class ... Args>
+		int
+		execute(const Args& ... args) {
+			sys::argstream str;
+			str.append(args ...);
+			assert(str.argc() == sizeof ... (Args));
+			char** argv = str.argv();
+			char* const no_env[1] = {0};
+			int ret;
+			UNISTDX_CHECK(ret = ::execve(argv[0], argv, no_env));
+			return ret;
+		}
+
+		inline int
+		execute(char* const argv[]) {
+			char* const no_env[1] = {0};
+			int ret;
+			UNISTDX_CHECK(ret = ::execve(argv[0], argv, no_env));
+			return ret;
+		}
+
+		template<class ... Args>
+		int
+		execute_command(const Args& ... args) {
+			sys::argstream str;
+			str.append(args ...);
+			assert(str.argc() == sizeof ... (Args));
+			char** argv = str.argv();
+			int ret;
+			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
+			return ret;
+		}
+
+		inline int
+		execute_command(char* const argv[]) {
+			int ret;
+			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
+			return ret;
+		}
+
+	}
+
+}
+
+#endif // SYS_IPC_EXECUTE vim:filetype=cpp

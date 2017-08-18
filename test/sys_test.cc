@@ -4,7 +4,7 @@
 #include <stdx/debug.hh>
 
 #include <gtest/gtest.h>
-#include <sys/argstream.hh>
+#include <sys/ipc/argstream>
 #include <sys/filesystem>
 
 const char*

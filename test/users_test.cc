@@ -4,7 +4,8 @@
 #include <stdx/debug.hh>
 #include <sys/users.hh>
 #include <sys/groups.hh>
-#include <sys/process.hh>
+#include <sys/ipc/process>
+#include <sys/ipc/identity>
 
 void
 test_users() {

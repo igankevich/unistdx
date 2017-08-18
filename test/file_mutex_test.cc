@@ -3,7 +3,7 @@
 
 #include <stdx/debug.hh>
 #include <sys/fs/file_mutex>
-#include <sys/process.hh>
+#include <sys/ipc/process>
 #include <gtest/gtest.h>
 
 TEST(FileMutex, Check) {

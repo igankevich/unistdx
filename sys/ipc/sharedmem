@@ -1,10 +1,11 @@
-#ifndef SYS_SHAREDMEM
-#define SYS_SHAREDMEM
+#ifndef SYS_IPC_SHAREDMEM
+#define SYS_IPC_SHAREDMEM
 
 #include <algorithm>
 #include <chrono>
 #include <cstring>
 
+#include <stdx/debug.hh>
 #include <bits/sharedmem>
 #include <unistd.h>
 
@@ -120,8 +121,8 @@ namespace sys {
 		shared_mem(shared_mem&& rhs):
 		_shm(rhs._shm),
 		_addr(rhs._addr),
-		_owner(rhs._owner),
-		_size(rhs._size) {
+		_size(rhs._size),
+		_owner(rhs._owner) {
 			rhs._addr = nullptr;
 			rhs._owner = false;
 		}
@@ -169,7 +170,7 @@ namespace sys {
 		}
 
 		inline bool
-		is_owner() const noexcept {
+		owner() const noexcept {
 			return this->_owner;
 		}
 
@@ -245,7 +246,7 @@ namespace sys {
 
 		inline void
 		remove() {
-			if (this->is_owner()) {
+			if (this->owner() && this->_shm) {
 				UNISTDX_CHECK(::shmctl(this->_shm, IPC_RMID, 0));
 				this->_shm = 0;
 			}
@@ -253,7 +254,7 @@ namespace sys {
 
 		inline void
 		memzero() noexcept {
-			std::memset(ptr(), 0, this->size_in_bytes());
+			std::memset(this->ptr(), 0, this->size_in_bytes());
 		}
 
 		inline static shm_type
@@ -292,7 +293,7 @@ namespace sys {
 				"size",
 				rhs.size(),
 				"owner",
-				rhs.is_owner(),
+				rhs.owner(),
 				"shm",
 				rhs.id()
 			    );
@@ -307,5 +308,4 @@ namespace sys {
 
 }
 
-#endif // SYS_SHAREDMEM
-// vi:ft=cpp
+#endif // SYS_IPC_SHAREDMEM vim:filetype=cpp

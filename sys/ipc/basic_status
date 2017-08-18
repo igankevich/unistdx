@@ -1,0 +1,13 @@
+#ifndef SYS_IPC_BASIC_STATUS
+#define SYS_IPC_BASIC_STATUS
+
+namespace sys {
+
+	typedef int code_type;
+
+	template<class T>
+	struct basic_status {};
+
+}
+
+#endif // SYS_IPC_BASIC_STATUS vim:filetype=cpp

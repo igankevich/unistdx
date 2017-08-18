@@ -1,0 +1,110 @@
+#ifndef SYS_IPC_PROC_INFO
+#define SYS_IPC_PROC_INFO
+
+#include <sys/wait.h>
+#include "signal"
+#include "basic_status"
+
+namespace sys {
+
+	typedef ::siginfo_t siginfo_type;
+	typedef ::pid_t pid_type;
+
+	template<>
+	struct basic_status<siginfo_type> {
+
+		enum struct st {
+			exited = CLD_EXITED,
+			killed = CLD_KILLED,
+			core_dumped = CLD_DUMPED,
+			stopped = CLD_STOPPED,
+			trapped = CLD_TRAPPED,
+			continued = CLD_CONTINUED
+		};
+
+		inline explicit constexpr
+		basic_status(const siginfo_type& rhs) noexcept:
+		stat(static_cast<st>(rhs.si_code)),
+		code(rhs.si_status),
+		_pid(rhs.si_pid) {}
+
+		inline constexpr
+		basic_status() noexcept = default;
+
+		inline constexpr
+		basic_status(const basic_status&) noexcept = default;
+
+		inline constexpr bool
+		exited() const noexcept {
+			return stat == st::exited;
+		}
+
+		inline constexpr bool
+		killed() const noexcept {
+			return stat == st::killed;
+		}
+
+		inline constexpr bool
+		stopped() const noexcept {
+			return stat == st::stopped;
+		}
+
+		inline constexpr bool
+		core_dumped() const noexcept {
+			return stat == st::core_dumped;
+		}
+
+		inline constexpr bool
+		trapped() const noexcept {
+			return stat == st::trapped;
+		}
+
+		inline constexpr bool
+		continued() const noexcept {
+			return stat == st::continued;
+		}
+
+		inline constexpr code_type
+		exit_code() const noexcept {
+			return code;
+		}
+
+		inline constexpr signal
+		term_signal() const noexcept {
+			return signal(code);
+		}
+
+		inline constexpr signal
+		stop_signal() const noexcept {
+			return signal(code);
+		}
+
+		inline constexpr pid_type
+		pid() const noexcept {
+			return _pid;
+		}
+
+		inline constexpr const char*
+		status_string() const noexcept {
+			return exited() ? "exited" :
+			       killed() ? "killed" :
+			       core_dumped() ? "core_dumped" :
+			       stopped() ? "stopped" :
+			       continued() ? "continued" :
+			       trapped() ? "trapped" :
+			       "unknown";
+		}
+
+		st stat = static_cast<st>(0);
+		code_type code = 0;
+		pid_type _pid = 0;
+	};
+
+	typedef basic_status<siginfo_type> proc_info;
+
+	std::ostream&
+	operator<<(std::ostream& out, const proc_info& rhs);
+
+}
+
+#endif // SYS_IPC_PROC_INFO vim:filetype=cpp

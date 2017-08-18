@@ -7,10 +7,11 @@
 #include <queue>
 #include <cmath>
 #include <numeric>
+#include <algorithm>
 
 #include <stdx/mutex.hh>
 #include <stdx/algorithm.hh>
-#include <sys/semaphore.hh>
+#include <sys/ipc/semaphore>
 
 #include <gtest/gtest.h>
 

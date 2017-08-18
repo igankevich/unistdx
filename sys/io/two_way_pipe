@@ -1,7 +1,7 @@
 #ifndef SYS_IO_TWO_WAY_PIPE
 #define SYS_IO_TWO_WAY_PIPE
 
-#include <sys/process.hh>
+#include <sys/ipc/process>
 #include "pipe"
 
 namespace sys {

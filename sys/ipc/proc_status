@@ -1,0 +1,85 @@
+#ifndef SYS_IPC_PROC_STATUS
+#define SYS_IPC_PROC_STATUS
+
+#include <sys/wait.h>
+#include "signal"
+#include "basic_status"
+
+namespace sys {
+
+	typedef int wstat_type;
+	typedef int code_type;
+
+	template<>
+	struct basic_status<wstat_type> {
+
+		inline explicit constexpr
+		basic_status(wstat_type rhs) noexcept:
+		stat(rhs) {}
+
+		inline constexpr
+		basic_status() noexcept = default;
+
+		inline constexpr
+		basic_status(const basic_status&) noexcept = default;
+
+		inline constexpr bool
+		exited() const noexcept {
+			return WIFEXITED(stat);
+		}
+
+		inline constexpr bool
+		killed() const noexcept {
+			return WIFSIGNALED(stat);
+		}
+
+		inline constexpr bool
+		stopped() const noexcept {
+			return WIFSTOPPED(stat);
+		}
+
+		inline constexpr bool
+		core_dumped() const noexcept {
+			#if defined(WCOREDUMP)
+			return static_cast<bool>(WCOREDUMP(stat));
+			#else
+			return false;
+			#endif
+		}
+
+		inline constexpr bool
+		trapped() const noexcept {
+			return false;
+		}
+
+		inline constexpr bool
+		continued() const noexcept {
+			return WIFCONTINUED(stat);
+		}
+
+		inline constexpr code_type
+		exit_code() const noexcept {
+			return WEXITSTATUS(stat);
+		}
+
+		inline constexpr signal
+		term_signal() const noexcept {
+			return signal(WTERMSIG(stat));
+		}
+
+		inline constexpr signal
+		stop_signal() const noexcept {
+			return signal(WSTOPSIG(stat));
+		}
+
+		wstat_type stat = 0;
+	};
+
+	typedef basic_status<wstat_type> proc_status;
+
+	std::ostream&
+	operator<<(std::ostream& out, const proc_status& rhs);
+
+}
+
+#endif // SYS_IPC_PROC_STATUS vim:filetype=cpp

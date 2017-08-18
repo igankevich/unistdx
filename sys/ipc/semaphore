@@ -1,5 +1,5 @@
-#ifndef SYS_SEMAPHORE_HH
-#define SYS_SEMAPHORE_HH
+#ifndef SYS_IPC_SEMAPHORE
+#define SYS_IPC_SEMAPHORE
 
 #include <unistd.h>
 #include <signal.h>
@@ -20,8 +20,8 @@
 
 #include <stdx/mutex.hh>
 
-#include <sys/fildes>
-#include <sys/process.hh>
+#include <sys/io/fildes>
+#include "process"
 
 namespace sys {
 
@@ -58,6 +58,11 @@ namespace sys {
 		inline sem_type
 		id() const noexcept {
 			return this->_sem;
+		}
+
+		inline bool
+		owner() const noexcept {
+			return this->_owner;
 		}
 
 		inline void
@@ -499,4 +504,4 @@ namespace sys {
 
 }
 
-#endif // SYS_SEMAPHORE_HH
+#endif // SYS_IPC_SEMAPHORE vim:filetype=cpp

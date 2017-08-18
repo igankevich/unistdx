@@ -1,0 +1,13 @@
+#ifndef SYS_PROCESS
+#define SYS_PROCESS
+
+#include "ipc/identity"
+#include "ipc/process_group"
+#include "ipc/process"
+#include "ipc/execute"
+#include "ipc/proc_info"
+#include "ipc/proc_status"
+#include "ipc/sharedmem"
+#include "ipc/shmembuf"
+
+#endif // SYS_PROCESS vim:filetype=cpp
