@@ -14,14 +14,14 @@ template <class T>
 struct BufferTest: public ::testing::Test {
 
 	std::basic_string<T>
-	random_string(size_t n) {
+	random_string(std::streamsize n) {
 		std::uniform_int_distribution<T> dist('a', 'z');
 		std::basic_string<T> str(n, '_');
 		std::generate(str.begin(), str.end(), std::bind(dist, rng));
 		return str;
 	}
 
-	std::vector<size_t> _sizes {1, 2, 3, 133, 4095, 4096, 4097};
+	std::vector<std::streamsize> _sizes {1, 2, 3, 133, 4095, 4096, 4097};
 	std::default_random_engine rng;
 };
 
@@ -35,7 +35,7 @@ TYPED_TEST(BufferTest, FdStream) {
 	typedef std::basic_stringbuf<T> Fd;
 	typedef sys::basic_fdstream<T,Tr,Fd> stream_type;
 	typedef Fd sink_type;
-	for (size_t k : this->_sizes) {
+	for (std::streamsize k : this->_sizes) {
 		std::basic_string<T> expected_contents = this->random_string(k);
 		stream_type s {sink_type {}};
 		s << expected_contents << std::flush;
@@ -54,7 +54,7 @@ TYPED_TEST(BufferTest, FildesBuf) {
 	typedef sys::basic_fildesbuf<T,Tr,Fd> packetbuf_type;
 	typedef Fd sink_type;
 
-	for (size_t k : this->_sizes) {
+	for (std::streamsize k : this->_sizes) {
 		std::basic_string<T> contents = this->random_string(k);
 		packetbuf_type buf(sink_type {});
 		std::basic_ostream<T> out(&buf);
@@ -84,7 +84,7 @@ TYPED_TEST(BufferTest, PacketStream) {
 	typedef Fd sink_type;
 	typedef sys::basic_fildesbuf<T,Tr,Fd> basebuf;
 
-	for (size_t size : this->_sizes) {
+	for (std::streamsize size : this->_sizes) {
 
 		std::vector<Datum> input(size);
 		std::vector<Datum> output(size);

@@ -10,11 +10,11 @@ libunistdx_src = files(
 	'process.cc',
 	'bits/safe_calls.cc',
 	'backtrace.cc',
-	'endpoint.cc',
 	'pipe.cc'
 )
 
 subdir('fs')
+subdir('net')
 
 libunistdx_shared = shared_library(
 	'unistdx',
@@ -37,14 +37,11 @@ unistdx = declare_dependency(
 
 install_headers(
 	'argstream.hh',
-	'endpoint',
 	'poller',
 	'fildesbuf.hh',
 	'fildes.hh',
 	'groups.hh',
-	'ifaddr.hh',
-	'ifaddr_list.hh',
-	'network_format.hh',
+	'network',
 	'packetstream.hh',
 	'pipe.hh',
 	'filesystem',
@@ -53,8 +50,6 @@ install_headers(
 	'sharedmem',
 	'shmembuf.hh',
 	'signal',
-	'socket.hh',
-	'subnet_iterator.hh',
 	'system.hh',
 	'users.hh',
 	subdir: meson.project_name() + '/sys'
@@ -66,7 +61,6 @@ install_headers(
 	'bits/bit_count.hh',
 	'check',
 	'bits/endpoint_parse.hh',
-	'ifaddrs_iterator.hh',
 	'bits/safe_calls.hh',
 	subdir: meson.project_name() + '/sys/bits'
 )

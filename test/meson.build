@@ -123,3 +123,13 @@ test(
 		dependencies: [gtest, unistdx],
 	)
 )
+
+test(
+	'unistdx/net/ifaddr',
+	executable(
+		'ifaddr-test',
+		sources: 'ifaddr_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)

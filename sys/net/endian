@@ -1,0 +1,20 @@
+#ifndef SYS_NET_ENDIAN
+#define SYS_NET_ENDIAN
+
+namespace sys {
+
+	struct endian_guard {
+
+		endian_guard();
+		endian_guard(const endian_guard&) = delete;
+		endian_guard(endian_guard&&) = delete;
+		~endian_guard() = default;
+
+		endian_guard&
+		operator=(const endian_guard&) = delete;
+
+	};
+
+}
+
+#endif // SYS_NET_ENDIAN vim:filetype=cpp

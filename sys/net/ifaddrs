@@ -1,24 +1,29 @@
-#ifndef SYS_IFADDR_LIST_HH
-#define SYS_IFADDR_LIST_HH
+#ifndef SYS_NET_IFADDRS
+#define SYS_NET_IFADDRS
 
-#include "ifaddrs_iterator.hh"
-#include "ifaddr.hh"
+#include <unistdx_config>
+#if !defined(UNISTDX_HAVE_IFADDRS)
+#error "ifaddrs.h header not found"
+#endif
+#include <ifaddrs.h>
+#include "ifaddrs_iterator"
+#include "ifaddr"
 
 namespace sys {
 
-	struct ifaddr_list {
+	struct ifaddrs {
 
 		typedef ifaddrs_type value_type;
 		typedef ifaddrs_iterator iterator;
 		typedef std::size_t size_type;
 
 		inline
-		ifaddr_list() {
+		ifaddrs() {
 			UNISTDX_CHECK(::getifaddrs(&this->_addrs));
 		}
 
 		inline
-		~ifaddr_list() noexcept {
+		~ifaddrs() noexcept {
 			if (this->_addrs) {
 				::freeifaddrs(this->_addrs);
 			}
@@ -59,7 +64,7 @@ namespace sys {
 	inline void
 	enumerate_ifaddrs(Result result) {
 		typedef typename sys::ipaddr_traits<Addr> traits_type;
-		sys::ifaddr_list addrs;
+		sys::ifaddrs addrs;
 		std::for_each(
 			addrs.begin(), addrs.end(),
 			[&result] (const sys::ifaddrs_type& rhs) {
@@ -75,4 +80,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IFADDR_LIST_HH
+#endif // SYS_NET_IFADDRS vim:filetype=cpp

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <random>
 #include <stdx/random.hh>
-#include <sys/endpoint>
+#include <sys/net/endpoint>
 
 void
 check_read(const char* str, sys::endpoint expected_result) {

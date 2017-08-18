@@ -15,9 +15,9 @@
 #include <stdx/ios.hh>
 #include <stdx/uint128.hh>
 
-#include "bits/bit_count.hh"
-#include "bits/endpoint_parse.hh"
-#include "network_format.hh"
+#include "byte_order"
+#include <sys/bits/bit_count.hh>
+#include <sys/bits/endpoint_parse.hh>
 #include <sys/check>
 #include <sys/packetstream.hh>
 
@@ -162,9 +162,6 @@ namespace sys {
 				((o4 << 24) & UINT32_C(0xff000000)));
 		}
 
-		static const size_t nbits =
-			sizeof(addr4_type) * std::numeric_limits<unsigned char>::digits;
-
 		addr4_type addr;
 		inet4_type inaddr;
 		bytes<addr4_type> _bytes;
@@ -290,6 +287,14 @@ namespace sys {
 			return in >> rhs._bytes;
 		}
 
+		inline prefix_type
+		to_prefix() const noexcept {
+			return bits::bit_count(addr);
+		}
+
+		inline static ipv6_addr
+		    from_prefix(prefix_type prefix) noexcept;
+
 	private:
 		inline constexpr const hex_type*
 		begin() const noexcept {
@@ -326,16 +331,18 @@ namespace sys {
 			addr6_type h7,
 			addr6_type h8
 		) {
+			#define UINT128_C(x) x ## _u128
 			using namespace stdx::literals;
 			return (
-				((h1 << 0)   & 0xffff_u128) |
-				((h2 << 16)  & 0xffff0000_u128) |
-				((h3 << 32)  & 0xffff00000000_u128) |
-				((h4 << 48)  & 0xffff000000000000_u128) |
-				((h5 << 64)  & 0xffff0000000000000000_u128) |
-				((h6 << 80)  & 0xffff00000000000000000000_u128) |
-				((h7 << 96)  & 0xffff000000000000000000000000_u128) |
-				((h8 << 112) & 0xffff0000000000000000000000000000_u128));
+				((h1 << 0)   & UINT128_C(0xffff)) |
+				((h2 << 16)  & UINT128_C(0xffff0000)) |
+				((h3 << 32)  & UINT128_C(0xffff00000000)) |
+				((h4 << 48)  & UINT128_C(0xffff000000000000)) |
+				((h5 << 64)  & UINT128_C(0xffff0000000000000000)) |
+				((h6 << 80)  & UINT128_C(0xffff00000000000000000000)) |
+				((h7 << 96)  & UINT128_C(0xffff000000000000000000000000)) |
+				((h8 << 112) & UINT128_C(0xffff0000000000000000000000000000)));
+			#undef UINT128_C
 		}
 
 		addr6_type addr;
@@ -353,6 +360,31 @@ namespace sys {
 
 	std::istream&
 	operator>>(std::istream& in, ipv6_addr& rhs);
+
+	template<>
+	struct ipaddr_traits<ipv6_addr> {
+
+		typedef ipv6_addr::hex_type oct_type;
+
+		static constexpr const oct_type loopback_first_octet = 0;
+		static constexpr const sa_family_type family = AF_INET6;
+
+		inline static constexpr ipv6_addr
+		localhost() noexcept {
+			return ipv6_addr {0,0,0,0,0,0,0,1};
+		}
+
+		inline static constexpr ipv6_addr
+		loopback_mask() noexcept {
+			return widearea_mask();
+		}
+
+		inline static constexpr ipv6_addr
+		widearea_mask() noexcept {
+			return ipv6_addr {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
+		}
+
+	};
 
 	template<class Addr>
 	inline constexpr sockinet6_type
@@ -507,6 +539,11 @@ namespace sys {
 			return static_cast<family_type>(this->_addr6.sin6_family);
 		}
 
+		inline constexpr sa_family_type
+		sa_family() const noexcept {
+			return this->_addr6.sin6_family;
+		}
+
 		inline void
 		reset() noexcept {
 			this->_addr4.sin_family = 0;
@@ -540,11 +577,6 @@ namespace sys {
 
 	private:
 
-		inline constexpr sa_family_type
-		sa_family() const noexcept {
-			return this->_addr6.sin6_family;
-		}
-
 		inline constexpr port_type
 		port4() const {
 			return this->_addr4.sin_port;
@@ -561,7 +593,7 @@ namespace sys {
 		}
 
 		void
-		addr(const char* host, port_type p);
+		    addr(const char* host, port_type p);
 
 		sockinet6_type _addr6 = {};
 		sockinet4_type _addr4;
@@ -594,13 +626,22 @@ namespace sys {
 
 	ipv4_addr
 	ipv4_addr::from_prefix(prefix_type prefix) noexcept {
-
-		typedef addr4_type T;
+		constexpr const size_t nbits = sizeof(addr4_type) *
+		                               std::numeric_limits<unsigned char>::digits;
 		return nbits == prefix
 		       ? ipaddr_traits<ipv4_addr>::widearea_mask()
-			   : ipv4_addr((T(1) << prefix) - T(1));
+			   : ipv4_addr((addr4_type(1) << prefix) - addr4_type(1));
 	}
 
+
+	ipv6_addr
+	ipv6_addr::from_prefix(prefix_type prefix) noexcept {
+		constexpr const size_t nbits = sizeof(addr6_type) *
+		                               std::numeric_limits<unsigned char>::digits;
+		return nbits == prefix
+		       ? ipaddr_traits<ipv6_addr>::widearea_mask()
+			   : ipv6_addr((addr6_type(1) << prefix) - addr6_type(1));
+	}
 }
 
 namespace std {

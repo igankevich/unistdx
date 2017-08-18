@@ -51,7 +51,7 @@ developing applications that use %{name}.
 %files devel
 %{_includedir}/unistdx/sys/argstream.hh
 %{_includedir}/unistdx/sys/filesystem
-%{_includedir}/unistdx/sys/endpoint
+%{_includedir}/unistdx/sys/net/endpoint
 %{_includedir}/unistdx/sys/poller
 %{_includedir}/unistdx/sys/fildes.hh
 %{_includedir}/unistdx/sys/fildesbuf.hh
@@ -59,7 +59,7 @@ developing applications that use %{name}.
 %{_includedir}/unistdx/sys/groups.hh
 %{_includedir}/unistdx/sys/ifaddr.hh
 %{_includedir}/unistdx/sys/ifaddr_list.hh
-%{_includedir}/unistdx/sys/network_format.hh
+%{_includedir}/unistdx/sys/network
 %{_includedir}/unistdx/sys/packetstream.hh
 %{_includedir}/unistdx/sys/pipe.hh
 %{_includedir}/unistdx/sys/process.hh

@@ -5,7 +5,7 @@
 #include <istream>
 #include <ostream>
 
-#include "network_format.hh"
+#include "net/bytes"
 #include <stdx/packetbuf.hh>
 #include <unistdx_config>
 

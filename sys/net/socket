@@ -1,0 +1,144 @@
+#ifndef SYS_NET_SOCKET
+#define SYS_NET_SOCKET
+
+#include "endpoint"
+#include <bits/socket>
+#include <fcntl.h>
+#include <sys/fildes.hh>
+#include <unistd.h>
+
+namespace sys {
+
+	struct socket: public fildes {
+
+		typedef int opt_type;
+
+		enum option : opt_type {
+			reuse_addr = SO_REUSEADDR,
+			keep_alive = SO_KEEPALIVE
+		};
+
+		enum shutdown_how {
+			shut_read = SHUT_RD,
+			shut_write = SHUT_WR,
+			shut_read_write = SHUT_RDWR
+		};
+
+		static const flag_type default_flags
+		    = SOCK_STREAM | UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
+
+		socket() = default;
+		socket(const socket&) = delete;
+		socket&
+		operator=(const socket&) = delete;
+
+		inline explicit
+		socket(socket&& rhs) noexcept:
+		sys::fildes(std::move(rhs)) {}
+
+		inline explicit
+		socket(fildes&& rhs) noexcept:
+		sys::fildes(std::move(rhs)) {}
+
+		/// Bind on @bind_addr and listen.
+		explicit
+		socket(const endpoint& bind_addr);
+
+		/// Bind on @bind_addr and connect to a server on @conn_addr.
+		socket(const endpoint& bind_addr, const endpoint& conn_addr);
+
+		inline
+		~socket() {
+			this->close();
+		}
+
+		inline socket&
+		operator=(socket&& rhs) {
+			sys::fildes::operator=(std::move(static_cast<sys::fildes&&>(rhs)));
+			return *this;
+		}
+
+		void
+		bind(const endpoint& e);
+
+		void
+		listen();
+
+		void
+		connect(const endpoint& e);
+
+		void
+		accept(socket& sock, endpoint& addr);
+
+		void
+		shutdown(shutdown_how how);
+
+		void
+		close();
+
+		void
+		setopt(option opt);
+
+		/// @deprecated We use event-based error notifications.
+		int
+		error() const;
+
+		inline endpoint
+		bind_addr() const {
+			endpoint addr;
+			socklen_type len = sizeof(endpoint);
+			::getsockname(this->_fd, addr.sockaddr(), &len);
+			return addr;
+		}
+
+		inline endpoint
+		name() const {
+			endpoint addr;
+			socklen_type len = sizeof(endpoint);
+			UNISTDX_CHECK(::getsockname(this->_fd, addr.sockaddr(), &len));
+			return addr;
+		}
+
+		inline endpoint
+		peer_name() const {
+			endpoint addr;
+			socklen_type len = sizeof(endpoint);
+			UNISTDX_CHECK(::getpeername(this->_fd, addr.sockaddr(), &len));
+			return addr;
+		}
+
+		inline fd_type
+		fd() const noexcept {
+			return this->_fd;
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const socket& rhs);
+
+	protected:
+
+		inline explicit
+		socket(fd_type sock) noexcept:
+		sys::fildes(sock) {}
+
+	private:
+		void
+		create_socket_if_necessary(const endpoint& e);
+
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const socket& rhs);
+
+}
+
+namespace stdx {
+
+	template<>
+	struct streambuf_traits<sys::socket>:
+		public sys::fildes_streambuf_traits<sys::socket>
+	{};
+
+}
+
+#endif // SYS_NET_SOCKET vim:filetype=cpp

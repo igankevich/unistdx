@@ -1,0 +1,78 @@
+#ifndef SYS_BITS_BYTE_SWAP_CHOOSER
+#define SYS_BITS_BYTE_SWAP_CHOOSER
+
+#include <sys/net/byte_swap>
+
+namespace sys {
+
+	namespace bits {
+
+		template<class Int, bool integral>
+		struct byte_swap_chooser {};
+
+		template<class Int>
+		struct byte_swap_chooser<Int, true> {
+
+			inline void
+			to_network_format() noexcept {
+				if (!is_network_byte_order()) {
+					_intval = byte_swap<Int>(_intval);
+				}
+			}
+
+			inline void
+			to_host_format() noexcept {
+				this->to_network_format();
+			}
+
+			inline constexpr bool
+			operator==(const byte_swap_chooser& rhs) const noexcept {
+				return _intval == rhs._intval;
+			}
+
+		private:
+			Int _intval;
+		};
+
+		template<class Arr>
+		struct byte_swap_chooser<Arr, false> {
+
+			inline void
+			to_network_format() noexcept {
+				if (!is_network_byte_order()) {
+					std::reverse(_arr, _arr + sizeof(Arr));
+				}
+			}
+
+			inline void
+			to_host_format() noexcept {
+				this->to_network_format();
+			}
+
+			inline bool
+			operator==(const byte_swap_chooser& rhs) const noexcept {
+				return std::equal(_arr, _arr + sizeof(Arr), rhs._arr);
+			}
+
+		private:
+			Arr _arr;
+		};
+
+		template<size_t bytes>
+		struct Integral: public byte_swap_chooser<uint8_t[bytes],false> {};
+		template<>
+		struct Integral<1>: public byte_swap_chooser<uint8_t,true> {};
+		template<>
+		struct Integral<2>: public byte_swap_chooser<uint16_t,true> {};
+		template<>
+		struct Integral<4>: public byte_swap_chooser<uint32_t,true> {};
+		template<>
+		struct Integral<8>: public byte_swap_chooser<uint64_t,true> {};
+		template<>
+		struct Integral<16>: public byte_swap_chooser<stdx::uint128_t,true> {};
+
+	}
+
+}
+
+#endif // SYS_BITS_BYTE_SWAP_CHOOSER vim:filetype=cpp
