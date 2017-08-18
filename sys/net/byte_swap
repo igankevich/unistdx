@@ -101,4 +101,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_BYTE_SWAP vi:ft=cpp
+#endif // SYS_NET_BYTE_SWAP vim:ft=cpp

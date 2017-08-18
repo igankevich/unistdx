@@ -1,0 +1,11 @@
+#ifndef SYS_NET_IPADDR_TRAITS
+#define SYS_NET_IPADDR_TRAITS
+
+namespace sys {
+
+	template<class Address>
+	struct ipaddr_traits;
+
+}
+
+#endif // SYS_NET_IPADDR_TRAITS

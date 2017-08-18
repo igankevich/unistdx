@@ -6,7 +6,7 @@
 #include "file"
 #include "idirtree"
 #include "idirectory"
-#include <sys/bits/basic_ostream_iterator.hh>
+#include <sys/bits/basic_ostream_iterator>
 
 namespace sys {
 
@@ -142,4 +142,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_ODIRECTORY vi:ft=cpp
+#endif // SYS_FS_ODIRECTORY vim:ft=cpp

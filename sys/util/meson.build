@@ -1,14 +1,21 @@
 libunistdx_src += files([
-	'system.cc',
 	'backtrace.cc',
-	'userstream.cc',
+	'group.cc',
+	'groupstream.cc',
+	'system.cc',
 	'user.cc',
+	'userstream.cc',
 ])
 
 install_headers(
-	'system',
 	'backtrace',
-	'userstream',
+	'cstring_iterator',
+	'group',
+	'groupstream',
+	'intersperse_iterator',
+	'meson.build',
+	'system',
 	'user',
+	'userstream',
 	subdir: meson.project_name() + '/sys/util'
 )

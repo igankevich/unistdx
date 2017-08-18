@@ -52,4 +52,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_DIRECTORY vi:ft=cpp
+#endif // SYS_FS_DIRECTORY vim:ft=cpp

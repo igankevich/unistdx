@@ -1,6 +1,6 @@
 #include "pipe"
 
-#include <sys/bits/safe_calls.hh>
+#include <sys/bits/safe_calls>
 #include <stdx/debug.hh>
 #include <sys/unistdx_config>
 #include <sys/check>

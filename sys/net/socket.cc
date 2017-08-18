@@ -1,6 +1,6 @@
 #include "socket"
 #include <stdx/debug.hh>
-#include <sys/bits/safe_calls.hh>
+#include <sys/bits/safe_calls>
 
 namespace {
 

@@ -18,4 +18,4 @@
 #include "fs/pathentry"
 #include "fs/mkdirs"
 
-#endif // SYS_FILESYSTEM vi:ft=cpp
+#endif // SYS_FILESYSTEM vim:ft=cpp

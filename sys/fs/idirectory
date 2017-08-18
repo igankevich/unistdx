@@ -5,7 +5,7 @@
 #include "direntry"
 #include "pathentry"
 #include "file"
-#include <sys/bits/basic_istream_iterator.hh>
+#include <sys/bits/basic_istream_iterator>
 
 namespace sys {
 
@@ -167,4 +167,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_IDIRECTORY vi:ft=cpp
+#endif // SYS_FS_IDIRECTORY vim:ft=cpp

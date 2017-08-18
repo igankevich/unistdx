@@ -55,5 +55,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_CHECK_HH
-// vi:ft=cpp
+#endif // SYS_BITS_CHECK_HH vim:ft=cpp

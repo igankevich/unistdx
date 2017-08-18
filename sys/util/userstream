@@ -1,8 +1,8 @@
 #ifndef SYS_UTIL_USERSTREAM
 #define SYS_UTIL_USERSTREAM
 
+#include <sys/bits/basic_istream_iterator>
 #include "user"
-#include <sys/bits/basic_istream_iterator.hh>
 
 namespace sys {
 
@@ -25,7 +25,7 @@ namespace sys {
 
 		inline bool
 		operator!() const noexcept {
-			return !operator bool();
+			return !this->operator bool();
 		}
 
 		userstream&

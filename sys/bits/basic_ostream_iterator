@@ -1,15 +1,15 @@
-#ifndef SYS_BITS_BASIC_OSTREAM_ITERATOR_HH
-#define SYS_BITS_BASIC_OSTREAM_ITERATOR_HH
+#ifndef SYS_BITS_BASIC_OSTREAM_ITERATOR
+#define SYS_BITS_BASIC_OSTREAM_ITERATOR
 
 namespace sys {
 
 	template<class Stream, class Value>
 	class basic_ostream_iterator:
-		public std::iterator<std::output_iterator_tag, Value>
-	{
+		public std::iterator<std::output_iterator_tag, Value>{
 
 		typedef Stream stream_type;
-		typedef typename std::iterator<std::output_iterator_tag, Value> base_type;
+		typedef typename std::iterator<std::output_iterator_tag,
+		                               Value> base_type;
 
 	public:
 
@@ -21,7 +21,7 @@ namespace sys {
 		typedef value_type& reference;
 		typedef const value_type& const_reference;
 
-		explicit
+		inline explicit
 		basic_ostream_iterator(stream_type& rhs):
 		_stream(&rhs)
 		{}
@@ -36,12 +36,12 @@ namespace sys {
 		inline basic_ostream_iterator&
 		operator=(const basic_ostream_iterator&) = default;
 
-		bool
+		inline bool
 		operator==(const basic_ostream_iterator& rhs) const noexcept {
 			return this->_stream == rhs._stream;
 		}
 
-		bool
+		inline bool
 		operator!=(const basic_ostream_iterator& rhs) const noexcept {
 			return !operator==(rhs);
 		}
@@ -51,7 +51,7 @@ namespace sys {
 			return this->_value;
 		}
 
-		const_reference
+		inline const_reference
 		operator*() const noexcept {
 			return this->_value;
 		}
@@ -61,7 +61,7 @@ namespace sys {
 			return &this->_value;
 		}
 
-		const_pointer
+		inline const_pointer
 		operator->() const noexcept {
 			return &this->_value;
 		}
@@ -73,15 +73,17 @@ namespace sys {
 
 		inline basic_ostream_iterator
 		operator++(int) {
-			basic_ostream_iterator tmp(*this); this->write(); return tmp;
+			basic_ostream_iterator tmp(*this);
+			this->write();
+			return tmp;
 		}
 
 	private:
 
 		inline void
 		write() {
- 			if (not (*_stream << _value)) {
-				_stream = nullptr;
+			if (!(*this->_stream << _value)) {
+				this->_stream = nullptr;
 			}
 		}
 
@@ -92,5 +94,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_BASIC_OSTREAM_ITERATOR_HH
-
+#endif // SYS_BITS_BASIC_OSTREAM_ITERATOR vim:ft=cpp

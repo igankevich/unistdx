@@ -29,4 +29,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_BYTE_ORDER vi:ft=cpp
+#endif // SYS_NET_BYTE_ORDER vim:ft=cpp

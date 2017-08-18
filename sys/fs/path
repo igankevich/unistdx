@@ -199,4 +199,4 @@ namespace std {
 
 }
 
-#endif // SYS_FS_PATH vi:ft=cpp
+#endif // SYS_FS_PATH vim:ft=cpp

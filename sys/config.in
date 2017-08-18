@@ -42,5 +42,9 @@
 #mesondefine UNISTDX_HAVE_BACKTRACE
 #mesondefine UNISTDX_HAVE_CXXABI
 
-#endif // SYS_CONFIG_IN
-// vi:ft=cpp
+#mesondefine UNISTDX_HAVE_GETPWNAM_R
+#mesondefine UNISTDX_HAVE_GETPWUID_R
+#mesondefine UNISTDX_HAVE_GETGRGID_R
+#mesondefine UNISTDX_HAVE_GETGRNAM_R
+
+#endif // SYS_CONFIG_IN vim:ft=cpp

@@ -14,5 +14,4 @@
 	#define UNISTDX_SOCK_CLOEXEC SOCK_CLOEXEC
 #endif
 
-#endif // SYS_BITS_SOCKET
-// vi:ft=cpp
+#endif // SYS_BITS_SOCKET vim:ft=cpp

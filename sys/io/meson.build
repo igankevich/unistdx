@@ -6,7 +6,10 @@ libunistdx_src += files([
 ])
 
 install_headers(
+	'fdstream',
 	'fildes',
+	'fildesbuf',
+	'meson.build',
 	'pipe',
 	'poll_event',
 	'poller',

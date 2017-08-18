@@ -12,4 +12,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_MKDIRS vi:ft=cpp
+#endif // SYS_FS_MKDIRS vim:ft=cpp

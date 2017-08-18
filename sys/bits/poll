@@ -9,5 +9,4 @@
 	#define UNISTDX_POLLRDHUP POLLRDHUP
 #endif
 
-#endif // SYS_BITS_POLL
-// vi:ft=cpp
+#endif // SYS_BITS_POLL vim:ft=cpp

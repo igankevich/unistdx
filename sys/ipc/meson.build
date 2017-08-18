@@ -1,6 +1,6 @@
 libunistdx_src += files([
-	'proc_status.cc',
 	'proc_info.cc',
+	'proc_status.cc',
 	'process.cc',
 	'process_group.cc',
 	'signal.cc',
@@ -8,11 +8,17 @@ libunistdx_src += files([
 
 install_headers(
 	'argstream',
-	'proc_status',
+	'basic_status',
+	'execute',
+	'identity',
+	'meson.build',
 	'proc_info',
+	'proc_status',
 	'process',
 	'process_group',
-	'identity',
+	'semaphore',
+	'sharedmem',
+	'shmembuf',
 	'signal',
 	subdir: meson.project_name() + '/sys/fs'
 )

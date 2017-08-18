@@ -24,5 +24,4 @@
 #define UNISTDX_SHM_NORESERVE 0
 #endif
 
-#endif // SYS_BITS_SHAREDMEM
-// vi:ft=cpp
+#endif // SYS_BITS_SHAREDMEM vim:ft=cpp

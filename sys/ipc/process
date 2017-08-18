@@ -2,7 +2,7 @@
 #define SYS_IPC_PROCESS
 
 #include <unistd.h>
-#include <sys/bits/safe_calls.hh>
+#include <sys/bits/safe_calls>
 #include <sys/check>
 #include "signal"
 #include "proc_status"

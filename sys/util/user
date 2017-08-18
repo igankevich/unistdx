@@ -12,8 +12,9 @@ namespace sys {
 
 	typedef ::uid_t uid_type;
 	typedef ::gid_t gid_type;
+	typedef struct ::passwd passwd_type;
 
-	struct user: public ::passwd {
+	struct user: public passwd_type {
 
 		inline const char*
 		name() const {
@@ -67,6 +68,29 @@ namespace sys {
 		friend std::ostream&
 		operator<<(std::ostream& out, const user& rhs);
 
+		friend bool
+		find_user(uid_type uid, user& result);
+
+		friend bool
+		find_user(const char* name, user& result);
+
+	private:
+
+		inline char*
+		buffer() noexcept {
+			return &this->_buf[0];
+		}
+
+		inline void
+		resize_buffer(size_t n) noexcept {
+			this->_buf.resize(n);
+		}
+
+		inline void
+		grow_buffer() noexcept {
+			this->_buf.resize(this->_buf.size()*2);
+		}
+
 		std::string _buf;
 
 	};
@@ -74,10 +98,11 @@ namespace sys {
 	std::ostream&
 	operator<<(std::ostream& out, const user& rhs);
 
-	static_assert(
-		offsetof(user, _buf) >= sizeof(::passwd),
-		"bad sys::user size"
-	);
+	bool
+	find_user(uid_type uid, user& result);
+
+	bool
+	find_user(const char* name, user& result);
 
 }
 

@@ -95,6 +95,18 @@ if cpp.has_header('execinfo.h')
 		config.set('UNISTDX_HAVE_CXXABI', true)
 	endif
 endif
+if cpp.has_header_symbol('pwd.h', 'getpwnam_r')
+	config.set('UNISTDX_HAVE_GETPWNAM_R', true)
+endif
+if cpp.has_header_symbol('pwd.h', 'getpwuid_r')
+	config.set('UNISTDX_HAVE_GETPWUID_R', true)
+endif
+if cpp.has_header_symbol('grp.h', 'getgrnam_r')
+	config.set('UNISTDX_HAVE_GETGRNAM_R', true)
+endif
+if cpp.has_header_symbol('grp.h', 'getgrgid_r')
+	config.set('UNISTDX_HAVE_GETGRGID_R', true)
+endif
 # }}}
 
 threads = dependency('threads')

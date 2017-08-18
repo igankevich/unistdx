@@ -1,8 +1,8 @@
 libunistdx_src += files([
-	'file_type.cc',
 	'file_mode.cc',
 	'file_mutex.cc',
 	'file_stat.cc',
+	'file_type.cc',
 	'mkdirs.cc',
 	'odirtree.cc',
 ])
@@ -19,6 +19,7 @@ install_headers(
 	'file_type',
 	'idirectory',
 	'idirtree',
+	'meson.build',
 	'mkdirs',
 	'odirectory',
 	'odirtree',

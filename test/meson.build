@@ -74,7 +74,7 @@ test(
 		'users-test',
 		sources: 'users_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [unistdx,gtest],
 	)
 )
 

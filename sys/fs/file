@@ -45,4 +45,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_FILE vi:ft=cpp
+#endif // SYS_FS_FILE vim:ft=cpp

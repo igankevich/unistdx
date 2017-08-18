@@ -70,4 +70,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_FILE_MUTEX vi:ft=cpp
+#endif // SYS_FS_FILE_MUTEX vim:ft=cpp

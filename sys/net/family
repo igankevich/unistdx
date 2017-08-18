@@ -1,0 +1,24 @@
+#ifndef SYS_NET_FAMILY
+#define SYS_NET_FAMILY
+
+#include <netinet/in.h>
+#include "pstream"
+
+namespace sys {
+
+	typedef ::sa_family_t sa_family_type;
+
+	enum struct family_type: sa_family_type {
+		inet = AF_INET,
+		inet6 = AF_INET6
+	};
+
+	pstream&
+	operator<<(pstream& out, family_type rhs);
+
+	pstream&
+	operator>>(pstream& in, family_type& rhs);
+
+}
+
+#endif // SYS_NET_FAMILY vim:ft=cpp

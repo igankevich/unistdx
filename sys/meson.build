@@ -4,15 +4,14 @@ configure_file(
 	configuration: config
 )
 
-libunistdx_src = files(
-	'bits/safe_calls.cc',
-)
+libunistdx_src = files()
 
 subdir('fs')
 subdir('net')
 subdir('io')
 subdir('ipc')
 subdir('util')
+subdir('bits')
 
 libunistdx_shared = shared_library(
 	'unistdx',
@@ -38,16 +37,7 @@ install_headers(
 	'filesystem',
 	'process',
 	'utils',
-	'fildes',
-	subdir: meson.project_name() + '/sys'
-)
-
-install_headers(
-	'bits/basic_istream_iterator.hh',
-	'bits/basic_ostream_iterator.hh',
-	'bits/bit_count.hh',
 	'check',
-	'bits/endpoint_parse.hh',
-	'bits/safe_calls.hh',
-	subdir: meson.project_name() + '/sys/bits'
+	'fildes',
+	subdir: join_paths(meson.project_name(), 'sys')
 )

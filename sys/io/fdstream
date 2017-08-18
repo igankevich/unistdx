@@ -129,5 +129,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FDSTREAM
-// vi:ft=cpp
+#endif // SYS_FDSTREAM vim:ft=cpp

@@ -1,0 +1,233 @@
+#ifndef SYS_NET_IPV6_ADDR
+#define SYS_NET_IPV6_ADDR
+
+#include <netinet/in.h>
+#include <functional>
+#include <istream>
+#include <ostream>
+#include <stdx/uint128.hh>
+#include "ipaddr_traits"
+#include "pstream"
+#include "bit_count"
+
+namespace sys {
+
+	typedef struct ::sockaddr sa_type;
+	typedef struct ::sockaddr_in6 sockinet6_type;
+	typedef struct ::in6_addr inet6_type;
+	typedef ::sa_family_t sa_family_type;
+	typedef stdx::uint128_t addr6_type;
+	typedef unsigned int prefix_type;
+
+	union ipv6_addr {
+
+		typedef uint16_t hex_type;
+		typedef addr6_type rep_type;
+
+		inline constexpr
+		ipv6_addr() noexcept:
+		inaddr {} {}
+
+		inline constexpr
+		ipv6_addr(const ipv6_addr &rhs) noexcept:
+		inaddr(rhs.inaddr) {}
+
+		inline constexpr explicit
+		ipv6_addr(addr6_type rhs) noexcept:
+		addr(rhs) {}
+
+		inline constexpr explicit
+		ipv6_addr(const inet6_type& rhs) noexcept:
+		inaddr(rhs) {}
+
+		inline constexpr
+		ipv6_addr(
+			hex_type h1,
+			hex_type h2,
+			hex_type h3,
+			hex_type h4,
+			hex_type h5,
+			hex_type h6,
+			hex_type h7,
+			hex_type h8
+		):
+			addr(from_hextets(h1, h2, h3, h4, h5, h6, h7, h8)) {}
+
+		inline constexpr
+		operator const inet6_type&() const {
+			return this->inaddr;
+		}
+
+		inline constexpr const addr6_type&
+		rep() const noexcept {
+			return this->addr;
+		}
+
+		inline constexpr bool
+		operator<(const ipv6_addr& rhs) const {
+			return this->addr < rhs.addr;
+		}
+
+		inline constexpr bool
+		operator==(const ipv6_addr& rhs) const {
+			return this->addr == rhs.addr;
+		}
+
+		inline constexpr explicit
+		operator bool() const {
+			return this->addr != 0;
+		}
+
+		inline constexpr bool
+		operator!() const {
+			return !operator bool();
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const ipv6_addr& rhs);
+
+		friend std::istream&
+		operator>>(std::istream& in, ipv6_addr& rhs);
+
+		inline friend pstream&
+		operator<<(pstream& out, const ipv6_addr& rhs) {
+			return out << rhs._bytes;
+		}
+
+		inline friend pstream&
+		operator>>(pstream& in, ipv6_addr& rhs) {
+			return in >> rhs._bytes;
+		}
+
+		inline prefix_type
+		to_prefix() const noexcept {
+			return bit_count(addr);
+		}
+
+		inline static ipv6_addr
+	    from_prefix(prefix_type prefix) noexcept;
+
+	private:
+		inline constexpr const hex_type*
+		begin() const noexcept {
+			return this->_hextets;
+		}
+
+		inline constexpr const hex_type*
+		end() const noexcept {
+			return this->_hextets + num_fields();
+		}
+
+		inline hex_type*
+		begin() noexcept {
+			return this->_hextets;
+		}
+
+		inline hex_type*
+		end() noexcept {
+			return this->_hextets + num_fields();
+		}
+
+		static constexpr int
+		num_fields() {
+			return sizeof(_hextets) / sizeof(hex_type);
+		}
+
+		constexpr static addr6_type
+		from_hextets(
+			addr6_type h1,
+			addr6_type h2,
+			addr6_type h3,
+			addr6_type h4,
+			addr6_type h5,
+			addr6_type h6,
+			addr6_type h7,
+			addr6_type h8
+		) {
+			#define UINT128_C(x) x ## _u128
+			using namespace stdx::literals;
+			return (
+				((h1 << 0)   & UINT128_C(0xffff)) |
+				((h2 << 16)  & UINT128_C(0xffff0000)) |
+				((h3 << 32)  & UINT128_C(0xffff00000000)) |
+				((h4 << 48)  & UINT128_C(0xffff000000000000)) |
+				((h5 << 64)  & UINT128_C(0xffff0000000000000000)) |
+				((h6 << 80)  & UINT128_C(0xffff00000000000000000000)) |
+				((h7 << 96)  & UINT128_C(0xffff000000000000000000000000)) |
+				((h8 << 112) & UINT128_C(0xffff0000000000000000000000000000)));
+			#undef UINT128_C
+		}
+
+		addr6_type addr;
+		inet6_type inaddr;
+		hex_type _hextets[8];
+		bytes<inet6_type> _bytes;
+
+		static_assert(sizeof(addr) == sizeof(inaddr), "bad ipv6_addr size");
+		static_assert(sizeof(addr) == sizeof(_hextets), "bad ipv6_addr size");
+		static_assert(sizeof(addr) == sizeof(_bytes), "bad ipv6_addr size");
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const ipv6_addr& rhs);
+
+	std::istream&
+	operator>>(std::istream& in, ipv6_addr& rhs);
+
+	template<>
+	struct ipaddr_traits<ipv6_addr> {
+
+		typedef ipv6_addr::hex_type oct_type;
+
+		static constexpr const oct_type loopback_first_octet = 0;
+		static constexpr const sa_family_type family = AF_INET6;
+
+		inline static constexpr ipv6_addr
+		localhost() noexcept {
+			return ipv6_addr {0,0,0,0,0,0,0,1};
+		}
+
+		inline static constexpr ipv6_addr
+		loopback_mask() noexcept {
+			return widearea_mask();
+		}
+
+		inline static constexpr ipv6_addr
+		widearea_mask() noexcept {
+			return ipv6_addr {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
+		}
+
+	};
+
+	ipv6_addr
+	ipv6_addr::from_prefix(prefix_type prefix) noexcept {
+		constexpr const size_t nbits = sizeof(addr6_type) *
+		                               std::numeric_limits<unsigned char>::digits;
+		return nbits == prefix
+		       ? ipaddr_traits<ipv6_addr>::widearea_mask()
+			   : ipv6_addr((addr6_type(1) << prefix) - addr6_type(1));
+	}
+
+}
+
+namespace std {
+
+	template<>
+	struct hash<sys::ipv6_addr> {
+
+		typedef size_t result_type;
+		typedef sys::ipv6_addr argument_type;
+
+		inline size_t
+		operator()(const argument_type& rhs) const noexcept {
+			using namespace stdx::literals;
+			const size_t low = (rhs.rep() & 0xffffffffffffffff_u128);
+			const size_t high = ((rhs.rep() >> 64) & 0xffffffffffffffff_u128);
+			return low ^ high;
+		}
+
+	};
+
+}
+
+#endif // SYS_NET_IPV6_ADDR vim:ft=cpp

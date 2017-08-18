@@ -1,85 +1,102 @@
+#include <algorithm>
+#include <gtest/gtest.h>
 #include <iostream>
 #include <iterator>
-#include <algorithm>
+#include <sys/ipc/identity>
+#include <sys/util/groupstream>
 #include <sys/util/user>
 #include <sys/util/userstream>
-#include <sys/util/groups>
-#include <sys/ipc/identity>
 
-void
-test_users() {
-	sys::userstream users;
-	std::copy(
-		sys::user_iterator(users),
-		sys::user_iterator(),
-		std::ostream_iterator<sys::user>(std::cout, "\n")
-	);
-}
-
-void
-test_groups() {
-	sys::groupstream groups;
-	std::copy(
-		sys::group_iterator(groups),
-		sys::group_iterator(),
-		std::ostream_iterator<sys::group>(std::cout, "\n")
-	);
-}
-
-void
-test_groups_with_two_members() {
-	sys::groupstream groups;
-	std::copy_if(
-		sys::group_iterator(groups),
-		sys::group_iterator(),
-		std::ostream_iterator<sys::group>(std::cout, "\n"),
-		[] (const sys::group rhs) {
-			return rhs.size() >= 2;
-		}
-	);
-}
-
-void
-test_groups_of_the_current_user() {
-	sys::userstream users;
-	sys::user_iterator end;
-	sys::user_iterator result = std::find_if(
-		sys::user_iterator(users),
-		end,
-		[] (const sys::user rhs) {
-			return rhs.id() == sys::this_process::user();
-		}
-	);
-	if (result == end) {
-		throw std::runtime_error("bad user");
-	}
-	std::string username = result->name();
-	sys::groupstream groups;
-	std::copy_if(
-		sys::group_iterator(groups),
-		sys::group_iterator(),
-		std::ostream_iterator<sys::group>(std::cout, "\n"),
-		[&username] (const sys::group rhs) {
-			auto result = std::find_if(
-				rhs.begin(),
-				rhs.end(),
-				[&username] (const char* member) {
-					return username == member;
-				}
+TEST(User, Enumerate) {
+	{
+		sys::userstream users;
+		const ptrdiff_t dist =
+			std::distance(
+				sys::user_iterator(users),
+				sys::user_iterator()
 			);
-			return result != rhs.end();
-		}
-	);
+		EXPECT_GE(dist, 1);
+	}
+	if (::testing::Test::HasFailure()) {
+		std::cout << "all users" << std::endl;
+		sys::userstream users;
+		std::copy(
+			sys::user_iterator(users),
+			sys::user_iterator(),
+			std::ostream_iterator<sys::user>(std::cout, "\n")
+		);
+	}
 }
 
-int main() {
-	std::cout << "all users" << std::endl;
-	test_users();
-	std::cout << "all groups" << std::endl;
-	test_groups();
-	std::cout << "all groups with at least two members" << std::endl;
-	test_groups_with_two_members();
-	std::cout << "all groups in which the current user is a member" << std::endl;
-	test_groups_of_the_current_user();
-	return 0;
+TEST(Group, Enumerate) {
+	{
+		sys::groupstream groups;
+		const ptrdiff_t dist =
+			std::distance(
+				sys::group_iterator(groups),
+				sys::group_iterator()
+			);
+		EXPECT_GE(dist, 1);
+	}
+	if (::testing::Test::HasFailure()) {
+		std::cout << "all groups" << std::endl;
+		sys::groupstream groups;
+		std::copy(
+			sys::group_iterator(groups),
+			sys::group_iterator(),
+			std::ostream_iterator<sys::group>(std::cout, "\n")
+		);
+	}
+}
+
+TEST(User, FindBy) {
+	sys::user u1, u2;
+	bool success;
+	success = sys::find_user(sys::this_process::user(), u1);
+	EXPECT_TRUE(success);
+	success = sys::find_user(u1.name(), u2);
+	EXPECT_TRUE(success);
+}
+
+struct args_and_count {
+
+	size_t count;
+	std::vector<const char*> args;
+
+	inline const char**
+	get_args() const noexcept {
+		return const_cast<const char**>(args.data());
+	}
+
+};
+
+class CSrtingIteratorTest: public ::testing::TestWithParam<args_and_count> {};
+
+TEST_P(CSrtingIteratorTest, All) {
+	const args_and_count& param = GetParam();
+	const size_t cnt =
+		std::distance(
+			sys::cstring_iterator<const char*>(param.get_args()),
+			sys::cstring_iterator<const char*>()
+		);
+	EXPECT_EQ(param.count, cnt);
+}
+
+INSTANTIATE_TEST_CASE_P(
+	AllSizes,
+	CSrtingIteratorTest,
+	::testing::Values(
+		args_and_count{2, {"1", "2", 0}},
+		args_and_count{1, {"1", 0}},
+		args_and_count{0, {0}}
+	)
+);
+
+TEST(Group, FindBy) {
+	sys::group g1, g2;
+	bool success;
+	success = sys::find_group(sys::this_process::group(), g1);
+	EXPECT_TRUE(success);
+	success = sys::find_group(g1.name(), g2);
+	EXPECT_TRUE(success);
 }

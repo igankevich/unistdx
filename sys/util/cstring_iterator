@@ -6,8 +6,8 @@
 namespace sys {
 
 	template<class T>
-	class cstring_iterator: public std::iterator<std::bidirectional_iterator_tag, T>
-	{
+	class cstring_iterator: public
+		std::iterator<std::bidirectional_iterator_tag, T>{
 
 	public:
 		typedef T value_type;
@@ -16,7 +16,7 @@ namespace sys {
 		typedef T& reference;
 		typedef const T& const_reference;
 		typedef typename std::iterator_traits<pointer>::difference_type
-			difference_type;
+		    difference_type;
 		typedef size_t size_type;
 
 		inline explicit
@@ -24,15 +24,19 @@ namespace sys {
 		_ptr(ptr) {}
 
 		cstring_iterator() = default;
+
 		cstring_iterator(const cstring_iterator&) = default;
+
 		cstring_iterator(cstring_iterator&&) = default;
+
 		~cstring_iterator() = default;
+
 		cstring_iterator&
 		operator=(const cstring_iterator&) = default;
 
 		inline bool
 		operator==(const cstring_iterator& rhs) const noexcept {
-			return this->_ptr == rhs._ptr or (!*this->_ptr and !rhs._ptr);
+			return this->_ptr == rhs._ptr || (!*this->_ptr && !rhs._ptr);
 		}
 
 		inline bool
@@ -146,7 +150,8 @@ namespace sys {
 
 		inline bool
 		operator<=(const cstring_iterator& rhs) const noexcept {
-			return operator==(rhs) or operator<(rhs);
+			return operator==(rhs) || operator<(rhs);
+
 		}
 
 	private:

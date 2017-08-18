@@ -25,4 +25,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_FILE_TYPE vi:ft=cpp
+#endif // SYS_FS_FILE_TYPE vim:ft=cpp

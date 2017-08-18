@@ -68,4 +68,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_PATHENTRY vi:ft=cpp
+#endif // SYS_FS_PATHENTRY vim:ft=cpp

@@ -42,4 +42,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_ODIRTREE vi:ft=cpp
+#endif // SYS_FS_ODIRTREE vim:ft=cpp

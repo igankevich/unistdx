@@ -219,16 +219,9 @@ TEST(Endpoint, OperatorCopy) {
 TEST(Endpoint, Literals) {
 	using sys::ipv4_addr;
 	using sys::ipv6_addr;
-	using sys::operator""_ipv4;
 	constexpr ipv4_addr any4;
 	constexpr ipv6_addr any6;
 	constexpr sys::endpoint any;
-	std::cout << "192.168.33.77"_ipv4 << std::endl;
-	constexpr sys::endpoint endp("192.168.33.77"_ipv4,0);
-	std::cout << endp << std::endl;
-	constexpr sys::endpoint endpX(sys::endpoint("10.0.0.1"_ipv4, 1234), 100);
-	constexpr sys::endpoint endpY("10.0.0.1"_ipv4, 100);
-	EXPECT_EQ(endpX, endpY);
 	constexpr sys::endpoint endpU(sys::endpoint(ipv6_addr(), 1234), 100);
 	constexpr sys::endpoint endpV(ipv6_addr(), 100);
 	EXPECT_EQ(endpU, endpV);
