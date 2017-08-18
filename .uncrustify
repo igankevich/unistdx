@@ -1053,7 +1053,7 @@ nl_getset_leave_one_liners      = false    # false/true
 nl_func_leave_one_liners        = false    # false/true
 
 # Don't split one-line C++11 lambdas - '[]() { return 0; }'
-nl_cpp_lambda_leave_one_liners  = false    # false/true
+nl_cpp_lambda_leave_one_liners  = true    # false/true
 
 # Don't split one-line if/else statements - 'if(a) b++;'
 nl_if_leave_one_liners          = false    # false/true
@@ -1095,11 +1095,11 @@ nl_func_var_def_blk             = 0        # number
 # The number of newlines before a block of typedefs
 # 0 = No change (default)
 # the option 'nl_after_access_spec' takes preference over 'nl_typedef_blk_start'
-nl_typedef_blk_start            = 2        # number
+nl_typedef_blk_start            = 1        # number
 
 # The number of newlines after a block of typedefs
 # 0 = No change (default)
-nl_typedef_blk_end              = 2        # number
+nl_typedef_blk_end              = 1        # number
 
 # The maximum consecutive newlines within a block of typedefs
 # 0 = No change (default)
@@ -1535,13 +1535,13 @@ ls_code_width                   = true    # false/true
 nl_max                          = 0        # number
 
 # The number of newlines after a function prototype, if followed by another function prototype
-nl_after_func_proto             = 0        # number
+nl_after_func_proto             = 2        # number
 
 # The number of newlines after a function prototype, if not followed by another function prototype
 nl_after_func_proto_group       = 0        # number
 
 # The number of newlines after a function class prototype, if followed by another function class prototype
-nl_after_func_class_proto       = 0        # number
+nl_after_func_class_proto       = 2        # number
 
 # The number of newlines after a function class prototype, if not followed by another function class prototype
 nl_after_func_class_proto_group = 0        # number
@@ -1553,10 +1553,10 @@ nl_before_func_body_def         = 0        # number
 nl_before_func_body_proto       = 0        # number
 
 # The number of newlines after '}' of a multi-line function body
-nl_after_func_body              = 0        # number
+nl_after_func_body              = 2        # number
 
 # The number of newlines after '}' of a multi-line function body in a class declaration
-nl_after_func_body_class        = 0        # number
+nl_after_func_body_class        = 2        # number
 
 # The number of newlines after '}' of a single line function body
 nl_after_func_body_one_liner    = 0        # number

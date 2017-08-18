@@ -1,5 +1,5 @@
-#ifndef SYS_FILDESBUF_HH
-#define SYS_FILDESBUF_HH
+#ifndef SYS_IO_FILDESBUF
+#define SYS_IO_FILDESBUF
 
 #include <vector>
 #include <cassert>
@@ -7,8 +7,8 @@
 #include <stdx/packetbuf.hh>
 #include <stdx/streambuf.hh>
 
-#include "fildes.hh"
-#include "system.hh"
+#include "fildes"
+#include <sys/system.hh>
 
 namespace sys {
 
@@ -283,4 +283,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FILDESBUF_HH
+#endif // SYS_IO_FILDESBUF vim:filetype=cpp

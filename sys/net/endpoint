@@ -19,7 +19,7 @@
 #include <sys/bits/bit_count.hh>
 #include <sys/bits/endpoint_parse.hh>
 #include <sys/check>
-#include <sys/packetstream.hh>
+#include <sys/net/pstream>
 
 
 namespace sys {
@@ -74,13 +74,13 @@ namespace sys {
 		friend std::istream&
 		operator>>(std::istream& in, ipv4_addr& rhs);
 
-		inline friend packetstream&
-		operator<<(packetstream& out, const ipv4_addr& rhs) {
+		inline friend pstream&
+		operator<<(pstream& out, const ipv4_addr& rhs) {
 			return out << rhs._bytes;
 		}
 
-		inline friend packetstream&
-		operator>>(packetstream& in, ipv4_addr& rhs) {
+		inline friend pstream&
+		operator>>(pstream& in, ipv4_addr& rhs) {
 			return in >> rhs._bytes;
 		}
 
@@ -277,13 +277,13 @@ namespace sys {
 		friend std::istream&
 		operator>>(std::istream& in, ipv6_addr& rhs);
 
-		inline friend packetstream&
-		operator<<(packetstream& out, const ipv6_addr& rhs) {
+		inline friend pstream&
+		operator<<(pstream& out, const ipv6_addr& rhs) {
 			return out << rhs._bytes;
 		}
 
-		inline friend packetstream&
-		operator>>(packetstream& in, ipv6_addr& rhs) {
+		inline friend pstream&
+		operator>>(pstream& in, ipv6_addr& rhs) {
 			return in >> rhs._bytes;
 		}
 
@@ -518,11 +518,11 @@ namespace sys {
 		friend std::istream&
 		operator>>(std::istream& in, endpoint& rhs);
 
-		friend packetstream&
-		operator<<(packetstream& out, const endpoint& rhs);
+		friend pstream&
+		operator<<(pstream& out, const endpoint& rhs);
 
-		friend packetstream&
-		operator>>(packetstream& in, endpoint& rhs);
+		friend pstream&
+		operator>>(pstream& in, endpoint& rhs);
 
 		inline constexpr addr4_type
 		address() const noexcept {
@@ -608,11 +608,11 @@ namespace sys {
 	std::istream&
 	operator>>(std::istream& in, endpoint& rhs);
 
-	packetstream&
-	operator<<(packetstream& out, const endpoint& rhs);
+	pstream&
+	operator<<(pstream& out, const endpoint& rhs);
 
-	packetstream&
-	operator>>(packetstream& in, endpoint& rhs);
+	pstream&
+	operator>>(pstream& in, endpoint& rhs);
 
 	static_assert(
 		sizeof(endpoint) == sizeof(sockinet6_type),

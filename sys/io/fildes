@@ -1,5 +1,5 @@
-#ifndef SYS_FILDES_HH
-#define SYS_FILDES_HH
+#ifndef SYS_IO_FILDES
+#define SYS_IO_FILDES
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -7,27 +7,15 @@
 #if defined(UNISTDX_HAVE_FIONREAD)
 #include <sys/ioctl.h>
 #endif
-
 #include <sys/check>
-#include <sys/bits/safe_calls.hh>
-
 #include <stdx/streambuf.hh>
+#include <ostream>
 
 namespace sys {
 
 	typedef ::mode_t mode_type;
 	typedef int fd_type;
 	typedef int flag_type;
-
-	inline fd_type
-	safe_open(const char* path, flag_type oflag, mode_type mode) {
-		bits::global_lock_type lock(bits::__forkmutex);
-		fd_type ret = ::open(path, oflag, mode);
-		if (ret != -1) {
-			bits::set_mandatory_flags(ret);
-		}
-		return ret;
-	}
 
 	struct fildes {
 
@@ -77,7 +65,7 @@ namespace sys {
 
 		inline fildes&
 		operator=(fildes&& rhs) {
-			std::swap(_fd, rhs._fd);
+			std::swap(this->_fd, rhs._fd);
 			return *this;
 		}
 
@@ -106,39 +94,39 @@ namespace sys {
 
 		inline flag_type
 		flags() const {
-			return get_flags(F_GETFL);
+			return this->get_flags(F_GETFL);
 		}
 
 		inline flag_type
 		fd_flags() const {
-			return get_flags(F_GETFD);
+			return this->get_flags(F_GETFD);
 		}
 
 		inline void
 		setf(flag_type rhs) {
-			set_flag(F_SETFL, get_flags(F_GETFL) | rhs);
+			this->set_flag(F_SETFL, this->get_flags(F_GETFL) | rhs);
 		}
 
 		inline void
 		unsetf(flag_type rhs) {
-			set_flag(F_SETFL, get_flags(F_GETFL) & ~rhs);
+			this->set_flag(F_SETFL, this->get_flags(F_GETFL) & ~rhs);
 		}
 
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
 		inline void
 		setf(pipe_flag rhs) {
-			set_flag(F_SETNOSIGPIPE, 1);
+			this->set_flag(F_SETNOSIGPIPE, 1);
 		}
 
 		inline void
 		unsetf(pipe_flag rhs) {
-			set_flag(F_SETNOSIGPIPE, 0);
+			this->set_flag(F_SETNOSIGPIPE, 0);
 		}
 		#endif
 
 		inline void
 		setf(fd_flag rhs) {
-			set_flag(F_SETFD, rhs);
+			this->set_flag(F_SETFD, rhs);
 		}
 
 		inline bool
@@ -153,12 +141,12 @@ namespace sys {
 
 		inline bool
 		operator !() const noexcept {
-			return !operator bool();
+			return !this->operator bool();
 		}
 
 		inline bool
 		operator==(fd_type rhs) const noexcept {
-			return _fd == rhs;
+			return this->_fd == rhs;
 		}
 
 		inline friend bool
@@ -166,22 +154,15 @@ namespace sys {
 			return rhs._fd == lhs;
 		}
 
-		inline friend std::ostream&
-		operator<<(std::ostream& out, const fildes& rhs) {
-			return out << "{fd=" << rhs._fd << '}';
-		}
+		friend std::ostream&
+		operator<<(std::ostream& out, const fildes& rhs);
 
-		inline void
-		remap(fd_type new_fd) {
-			fd_type ret_fd;
-			UNISTDX_CHECK(ret_fd = ::dup2(_fd, new_fd));
-			this->close();
-			this->_fd = ret_fd;
-		}
+		void
+		remap(fd_type new_fd);
 
 		inline void
 		validate() {
-			get_flags(F_GETFD);
+			this->get_flags(F_GETFD);
 		}
 
 	private:
@@ -201,6 +182,9 @@ namespace sys {
 	protected:
 		fd_type _fd = bad;
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const fildes& rhs);
 
 	static_assert(sizeof(fildes) == sizeof(fd_type), "bad fd size");
 
@@ -242,6 +226,7 @@ namespace sys {
 		}
 
 	};
+
 }
 
 namespace stdx {
@@ -253,4 +238,4 @@ namespace stdx {
 
 }
 
-#endif // SYS_FILDES_HH
+#endif // SYS_IO_FILDES vim:filetype=cpp

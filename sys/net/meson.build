@@ -9,10 +9,10 @@ install_headers(
 	'byte_order',
 	'byte_swap',
 	'endian',
-	'network_format',
 	'endpoint',
 	'ifaddr',
 	'socket',
+	'pstream',
 	subdir: meson.project_name() + '/sys/net'
 )
 

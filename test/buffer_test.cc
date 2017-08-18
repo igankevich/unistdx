@@ -2,9 +2,9 @@
 
 #include <gtest/gtest.h>
 #include <random>
-#include <sys/fdstream>
-#include <sys/fildesbuf.hh>
-#include <sys/packetstream.hh>
+#include <sys/io/fdstream>
+#include <sys/io/fildesbuf>
+#include <sys/net/pstream>
 #include <vector>
 
 #include "datum.hh"
@@ -90,7 +90,7 @@ TYPED_TEST(BufferTest, PacketStream) {
 		std::vector<Datum> output(size);
 
 		basebuf buf {sink_type {}};
-		sys::basic_packetstream<T> str(&buf);
+		sys::basic_pstream<T> str(&buf);
 
 		EXPECT_EQ(0, str.tellp()) << "buffer is not empty before write";
 		std::for_each(

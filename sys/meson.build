@@ -10,11 +10,11 @@ libunistdx_src = files(
 	'process.cc',
 	'bits/safe_calls.cc',
 	'backtrace.cc',
-	'pipe.cc'
 )
 
 subdir('fs')
 subdir('net')
+subdir('io')
 
 libunistdx_shared = shared_library(
 	'unistdx',
@@ -37,13 +37,8 @@ unistdx = declare_dependency(
 
 install_headers(
 	'argstream.hh',
-	'poller',
-	'fildesbuf.hh',
-	'fildes.hh',
 	'groups.hh',
 	'network',
-	'packetstream.hh',
-	'pipe.hh',
 	'filesystem',
 	'process.hh',
 	'semaphore.hh',

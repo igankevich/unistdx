@@ -6,7 +6,7 @@
 #include <random>
 
 #include <stdx/debug.hh>
-#include <sys/poller>
+#include <sys/io/poller>
 
 #include <gtest/gtest.h>
 

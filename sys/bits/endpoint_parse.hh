@@ -3,7 +3,7 @@
 
 #include <limits>
 
-#include <sys/packetstream.hh>
+#include <sys/net/pstream>
 
 namespace sys {
 
@@ -122,13 +122,13 @@ namespace sys {
 				: family_type::inet;
 		};
 
-		inline packetstream&
-		operator<<(packetstream& out, family_type rhs) {
+		inline pstream&
+		operator<<(pstream& out, family_type rhs) {
 			return out << static_cast<raw_family_type>(map_family_type(rhs));
 		}
 
-		inline packetstream&
-		operator>>(packetstream& in, family_type& rhs) {
+		inline pstream&
+		operator>>(pstream& in, family_type& rhs) {
 			raw_family_type raw;
 			in >> raw;
 			rhs = map_family_type(static_cast<portable_family_type>(raw));

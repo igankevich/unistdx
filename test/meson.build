@@ -133,3 +133,13 @@ test(
 		dependencies: [gtest, unistdx],
 	)
 )
+
+test(
+	'unistdx/net/endian',
+	executable(
+		'endian-test',
+		sources: 'endian_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)

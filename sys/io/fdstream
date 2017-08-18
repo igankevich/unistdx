@@ -1,7 +1,7 @@
 #ifndef SYS_FDSTREAM
 #define SYS_FDSTREAM
 
-#include "fildesbuf.hh"
+#include "fildesbuf"
 
 namespace sys {
 

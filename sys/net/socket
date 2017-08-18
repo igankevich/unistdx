@@ -4,7 +4,7 @@
 #include "endpoint"
 #include <bits/socket>
 #include <fcntl.h>
-#include <sys/fildes.hh>
+#include <sys/fildes>
 #include <unistd.h>
 
 namespace sys {

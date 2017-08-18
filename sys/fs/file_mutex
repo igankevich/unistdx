@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "fildes.hh"
+#include "fildes"
 
 namespace sys {
 

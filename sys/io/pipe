@@ -1,0 +1,67 @@
+#ifndef SYS_IO_PIPE
+#define SYS_IO_PIPE
+
+#include "fildes"
+
+namespace sys {
+
+	union pipe {
+
+		inline
+		pipe(): _fds {} {
+			this->open();
+		}
+
+		inline
+		pipe(pipe&& rhs) noexcept:
+		_fds {std::move(rhs._fds[0]), std::move(rhs._fds[1])}
+		{}
+
+		inline
+		pipe(fd_type in, fd_type out) noexcept:
+		_fds {sys::fildes(in), sys::fildes(out)}
+		{}
+
+		inline
+		~pipe() {}
+
+		inline fildes&
+		in() noexcept {
+			return this->_fds[0];
+		}
+
+		inline fildes&
+		out() noexcept {
+			return this->_fds[1];
+		}
+
+		inline const fildes&
+		in() const noexcept {
+			return this->_fds[0];
+		}
+
+		inline const fildes&
+		out() const noexcept {
+			return this->_fds[1];
+		}
+
+		void open();
+
+		void close();
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const pipe& rhs);
+
+	private:
+		sys::fildes _fds[2] = {};
+		fd_type _rawfds[2];
+
+		static_assert(sizeof(_fds) == sizeof(_rawfds), "bad sys::fildes size");
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const pipe& rhs);
+
+}
+
+#endif // SYS_IO_PIPE vim:filetype=cpp
