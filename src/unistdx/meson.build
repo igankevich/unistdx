@@ -23,6 +23,7 @@ subdir('bits')
 libunistdx_shared = shared_library(
 	'unistdx',
 	sources: libunistdx_src,
+	version: meson.project_version(),
 	install: true,
 	include_directories: srcdir
 )
