@@ -1,0 +1,138 @@
+#ifndef BASE_LOG_MESSAGE
+#define BASE_LOG_MESSAGE
+
+#include <cassert>
+#include <iomanip>
+#include <iostream>
+#include <mutex>
+
+#include "make_object"
+
+namespace sys {
+
+	class log_message {
+
+	public:
+
+		template<class ... Args>
+		explicit
+		log_message(
+			std::ostream& rhs,
+			const char* name,
+			const Args& ... tokens
+		):
+		_log(rhs) {
+			assert(name);
+			this->lock();
+			this->_log << std::setw(10) << std::right << name << ": ";
+			if (sizeof ... (tokens) > 0) {
+				this->_log << make_sentence(tokens ...) << ' ';
+			}
+		}
+
+		template<class ... Args>
+		explicit
+		log_message(
+			std::ostream& rhs,
+			const char* name,
+			char spec,
+			const char* fmt,
+			const Args& ... tokens
+		):
+		_log(rhs),
+		_spec(spec) {
+			assert(name);
+			assert(fmt);
+			this->lock();
+			_log << std::setw(10) << std::right << name << ": ";
+			format_msg(fmt, tokens ...);
+		}
+
+		template<class ... Args>
+		explicit
+		log_message(
+			std::ostream& rhs,
+			const char* name,
+			const char* fmt,
+			const Args& ... tokens
+		):
+		log_message(rhs, name, '_', fmt, tokens ...)
+		{}
+
+		template<class ... Args>
+		explicit
+		log_message(const char* name, const Args& ... tokens):
+		log_message(::std::clog, name, tokens ...)
+		{}
+
+		template<class ... Args>
+		explicit
+		log_message(const char* name, const char* fmt, const Args& ... tokens):
+		log_message(::std::clog, name, fmt, tokens ...)
+		{}
+
+		template<class ... Args>
+		explicit
+		log_message(
+			const char* name,
+			char spec,
+			const char* fmt,
+			const Args& ... tokens
+		):
+		log_message(::std::clog, name, spec, fmt, tokens ...)
+		{}
+
+		inline
+		~log_message() {
+			this->_log << std::endl;
+			this->unlock();
+		}
+
+		template<class T>
+		std::ostream&
+		operator<<(const T& rhs) {
+			return this->_log << rhs;
+		}
+
+		inline std::ostream&
+		operator<<(std::ostream& (*rhs)(std::ostream&)) {
+			return this->_log << rhs;
+		}
+
+		inline std::ostream&
+		out() noexcept {
+			return this->_log;
+		}
+
+	private:
+
+		inline void
+		format_msg(const char* s) {
+			this->_log << s;
+		}
+
+		template<class T, class ... Args>
+		void
+		format_msg(const char* s, const T& value, const Args& ... args) {
+			while (*s != this->_spec) {
+				this->_log << *s++;
+			}
+			;
+			this->_log << value;
+			this->format_msg(++s, args ...);
+		}
+
+		void
+		lock() noexcept;
+
+		void
+		unlock() noexcept;
+
+		std::ostream& _log;
+		char _spec = '_';
+
+	};
+
+}
+
+#endif // BASE_LOG_MESSAGE vim:filetype=cpp

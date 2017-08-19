@@ -1,0 +1,135 @@
+#ifndef SYS_BITS_MAKE_OBJECT
+#define SYS_BITS_MAKE_OBJECT
+
+#include <ostream>
+
+namespace sys {
+
+	namespace bits {
+
+		template<class ... Args> struct Field {
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Field&) {
+				return out;
+			}
+		};
+
+		template<class Key, class Value>
+		struct Field<Key, Value> {
+
+			inline
+			Field(const Key& k, const Value& v):
+			_key(k), _val(v)
+			{}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Field& rhs) {
+				return out << rhs._key << '=' << rhs._val;
+			}
+
+		private:
+			const Key& _key;
+			const Value& _val;
+		};
+
+		template<class Key, class Value, class ... Args>
+		struct Field<Key, Value, Args...>: public Field<Args...> {
+
+			inline
+			Field(const Key& k, const Value& v, const Args& ... args):
+			Field<Args...>(args...),
+			_key(k), _val(v)
+			{}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Field& rhs) {
+				return out << rhs._key << '=' << rhs._val << ','
+					<< static_cast<Field<Args...>>(rhs);
+			}
+
+		private:
+			const Key& _key;
+			const Value& _val;
+		};
+
+		template<class ... Args>
+		struct Function: public Field<Args...> {
+
+			inline explicit
+			Function(const char* name, const Args& ... args):
+			Field<Args...>(args...),
+			_name(name)
+			{}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Function& rhs) {
+				return out << rhs._name << '(' << static_cast<Field<Args...>>(rhs) << ')';
+			}
+
+		private:
+			const char* _name;
+		};
+
+		template<class ... Args>
+		struct Object: public Field<Args...> {
+
+			inline explicit
+			Object(const Args& ... rhs):
+			Field<Args...>(rhs...)
+			{}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Object& rhs) {
+				return out << '{' << static_cast<Field<Args...>>(rhs) << '}';
+			}
+
+		};
+
+		template<class ... Args>
+		struct Sentence {
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Sentence&) {
+				return out;
+			}
+		};
+
+		template<class T>
+		struct Sentence<T> {
+
+			inline explicit
+			Sentence(const T& k):
+			_word(k)
+			{}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Sentence& rhs) {
+				return out << rhs._word;
+			}
+
+		private:
+			const T& _word;
+		};
+
+		template<class T, class ... Args>
+		struct Sentence<T, Args...>: public Sentence<Args...> {
+
+			inline
+			Sentence(const T& k, const Args& ... args):
+			Sentence<Args...>(args...),
+			_word(k)
+			{}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Sentence& rhs) {
+				return out << rhs._word << ' ' << static_cast<Sentence<Args...>>(rhs);
+			}
+
+		private:
+			const T& _word;
+		};
+
+	}
+
+}
+
+#endif // SYS_BITS_MAKE_OBJECT vim:filetype=cpp

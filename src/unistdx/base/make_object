@@ -1,0 +1,34 @@
+#ifndef BASE_MAKE_OBJECT
+#define BASE_MAKE_OBJECT
+
+#include <unistdx/bits/make_object>
+
+namespace sys {
+
+	template<class ... Args>
+	bits::Field<Args...>
+	make_fields(const Args& ... args) {
+		return bits::Field<Args...>(args...);
+	}
+
+	template<class ... Args>
+	bits::Object<Args...>
+	make_object(const Args& ... args) {
+		return bits::Object<Args...>(args...);
+	}
+
+	template<class ... Args>
+	bits::Function<Args...>
+	make_func(const char* name, const Args& ... args) {
+		return bits::Function<Args...>(name, args...);
+	}
+
+	template<class ... Args>
+	bits::Sentence<Args...>
+	make_sentence(const Args& ... args) {
+		return bits::Sentence<Args...>(args...);
+	}
+
+}
+
+#endif // BASE_MAKE_OBJECT vim:filetype=cpp

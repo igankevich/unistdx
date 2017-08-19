@@ -1,0 +1,170 @@
+#ifndef SYS_FS_IDIRECTORY
+#define SYS_FS_IDIRECTORY
+
+#include "dirstream"
+#include "direntry"
+#include "pathentry"
+#include "file"
+#include <unistdx/it/basic_istream_iterator>
+
+namespace sys {
+
+	typedef DIR dir_type;
+
+	template<class FilePred>
+	class basic_idirectory: public dirstream {
+
+	public:
+
+		typedef FilePred filepred_type;
+
+	private:
+		path _dirpath;
+		dir_type* _dir = nullptr;
+		filepred_type _filepred;
+
+	public:
+
+		basic_idirectory() = default;
+
+		inline explicit
+		basic_idirectory(const path& path) {
+			this->open(path);
+		}
+
+		inline
+		basic_idirectory(basic_idirectory&& rhs):
+		dirstream(std::forward<dirstream>(rhs)),
+		_dirpath(std::move(rhs._dirpath)),
+		_dir(rhs._dir) {
+			rhs._dir = nullptr;
+		}
+
+		basic_idirectory(const basic_idirectory&) = delete;
+
+		inline
+		~basic_idirectory() {
+			this->close();
+		}
+
+		inline void
+		open(const path& p) {
+			this->close();
+			this->_dirpath = p;
+			this->_dir = ::opendir(p);
+			if (!this->_dir) {
+				this->setstate(failbit);
+			}
+		}
+
+		inline void
+		close() {
+			if (this->_dir) {
+				if (-1 == ::closedir(this->_dir)) {
+					this->setstate(failbit);
+				}
+				this->_dir = nullptr;
+			}
+		}
+
+		inline bool
+		is_open() const noexcept {
+			return this->_dir != nullptr;
+		}
+
+		inline const filepred_type&
+		getfilepred() const noexcept {
+			return this->_filepred;
+		}
+
+		inline void
+		setfilepred(filepred_type rhs) {
+			this->_filepred = rhs;
+		}
+
+		inline const path&
+		getpath() const noexcept {
+			return this->_dirpath;
+		}
+
+		inline basic_idirectory&
+		operator>>(direntry& rhs) {
+			this->read_direntry(rhs);
+			return *this;
+		}
+
+		inline basic_idirectory&
+		operator>>(pathentry& rhs) {
+			this->read_direntry(rhs);
+			return *this;
+		}
+
+		inline basic_idirectory&
+		operator>>(file& rhs) {
+			this->read_direntry(rhs);
+			return *this;
+		}
+
+	private:
+
+		inline direntry*
+		read_direntry() noexcept {
+			return static_cast<direntry*>(::readdir(this->_dir));
+		}
+
+		template<class Entry>
+		inline void
+		read_direntry(Entry& rhs) {
+			if (good()) {
+				bool success = false;
+				while (!success && !this->eof()) {
+					const direntry* result = this->read_direntry();
+					if (!result) {
+						this->setstate(eofbit);
+					} else {
+						if (this->_filepred(this->_dirpath, *result)) {
+							rhs = Entry(this->_dirpath, *result);
+							success = true;
+						}
+					}
+				}
+			}
+		}
+
+		inline void
+		read_direntry(direntry& rhs) {
+			if (this->good()) {
+				bool success = false;
+				while (!success && !this->eof()) {
+					const direntry* result = this->read_direntry();
+					if (!result) {
+						this->setstate(eofbit);
+					} else {
+						if (this->_filepred(this->_dirpath, *result)) {
+							rhs = *result;
+							success = true;
+						}
+					}
+				}
+			}
+		}
+
+	};
+
+	struct ignore_hidden_files {
+
+		template <class Entry>
+		inline bool
+		operator()(const path& prefix, const Entry& rhs) const noexcept {
+			return !rhs.is_hidden();
+		}
+
+	};
+
+	typedef basic_idirectory<ignore_hidden_files> idirectory;
+	template<class T>
+	using idirectory_iterator = basic_istream_iterator<idirectory, T>;
+
+}
+
+#endif // SYS_FS_IDIRECTORY vim:ft=cpp

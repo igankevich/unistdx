@@ -1,0 +1,181 @@
+#ifndef SYS_IT_CONTAINER_TRAITS
+#define SYS_IT_CONTAINER_TRAITS
+
+#include <stdexcept>
+
+namespace sys {
+
+	template <class Container>
+	struct container_traits {
+
+		typedef Container container_type;
+		typedef typename Container::value_type value_type;
+
+	};
+
+	template <class Container>
+	struct vector_traits: public container_traits<Container> {
+
+		using typename container_traits<Container>::container_type;
+		using typename container_traits<Container>::value_type;
+
+		static void
+		push(container_type& cnt, const value_type& rhs) {
+			cnt.push_back(rhs);
+		}
+
+		static void
+		emplace(container_type& cnt, const value_type&& rhs) {
+			cnt.emplace_back(std::forward<value_type>(rhs));
+		}
+
+		static value_type&
+		front(container_type& cnt) {
+			return cnt.front();
+		}
+
+		static const value_type&
+		front(const container_type& cnt) {
+			return cnt.front();
+		}
+
+		static void
+		pop_front(container_type& cnt) {
+			throw std::runtime_error("unsupported operation pop_front");
+		}
+
+		static void
+		pop_back(container_type& cnt) {
+			cnt.pop_back();
+		}
+
+	};
+
+	template <class Container>
+	struct queue_traits: public container_traits<Container> {
+
+		using typename container_traits<Container>::container_type;
+		using typename container_traits<Container>::value_type;
+
+		static void
+		push(container_type& cnt, const value_type& rhs) {
+			cnt.push(rhs);
+		}
+
+		static void
+		emplace(container_type& cnt, const value_type&& rhs) {
+			cnt.emplace(std::forward<value_type>(rhs));
+		}
+
+		static value_type&
+		front(container_type& cnt) {
+			return cnt.front();
+		}
+
+		static const value_type&
+		front(const container_type& cnt) {
+			return cnt.front();
+		}
+
+		static void
+		pop(container_type& cnt) {
+			cnt.pop();
+		}
+
+		static void
+		pop_front(container_type& cnt) {
+			cnt.pop();
+		}
+
+		static void
+		pop_back(container_type& cnt) {
+			throw std::runtime_error("unsupported operation pop_front");
+		}
+
+	};
+
+	template <class Container>
+	struct priority_queue_traits: public container_traits<Container> {
+
+		using typename container_traits<Container>::container_type;
+		using typename container_traits<Container>::value_type;
+
+		static void
+		push(container_type& cnt, const value_type& rhs) {
+			cnt.push(rhs);
+		}
+
+		static void
+		emplace(container_type& cnt, const value_type&& rhs) {
+			cnt.emplace(std::forward<value_type>(rhs));
+		}
+
+		static const value_type&
+		front(const container_type& cnt) {
+			return cnt.top();
+		}
+
+		static void
+		pop(container_type& cnt) {
+			cnt.pop();
+		}
+
+		static void
+		pop_front(container_type& cnt) {
+			cnt.pop();
+		}
+
+		static void
+		pop_back(container_type& cnt) {
+			throw std::runtime_error("unsupported operation pop_front");
+		}
+
+	};
+
+
+	template <class Container>
+	struct deque_traits: public container_traits<Container> {
+
+		using typename container_traits<Container>::container_type;
+		using typename container_traits<Container>::value_type;
+
+		static void
+		push(container_type& cnt, const value_type& rhs) {
+			cnt.push_back(rhs);
+		}
+
+		static void
+		emplace(container_type& cnt, const value_type&& rhs) {
+			cnt.emplace_back(std::forward<value_type>(rhs));
+		}
+
+		static value_type&
+		front(container_type& cnt) {
+			return cnt.front();
+		}
+
+		static const value_type&
+		front(const container_type& cnt) {
+			return cnt.front();
+		}
+
+		static void
+		pop(container_type& cnt) {
+			cnt.pop_front();
+		}
+
+		static void
+		pop_front(container_type& cnt) {
+			cnt.pop_front();
+		}
+
+		static void
+		pop_back(container_type& cnt) {
+			cnt.pop_back();
+		}
+
+	};
+
+}
+
+#endif // SYS_IT_CONTAINER_TRAITS vim:filetype=cpp

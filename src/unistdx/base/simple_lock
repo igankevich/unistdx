@@ -1,0 +1,48 @@
+#ifndef BASE_SIMPLE_LOCK
+#define BASE_SIMPLE_LOCK
+
+namespace sys {
+
+	template<class Mutex>
+	class simple_lock {
+
+	public:
+		typedef Mutex mutex_type;
+
+	private:
+		Mutex& _mtx;
+
+	public:
+		inline
+		simple_lock(mutex_type& m) noexcept:
+		_mtx(m)
+		{ this->lock(); }
+
+		inline
+		~simple_lock() noexcept {
+			this->unlock();
+		}
+
+		inline void
+		lock() noexcept {
+			this->_mtx.lock();
+		}
+
+		inline void
+		unlock() noexcept {
+			this->_mtx.unlock();
+		}
+
+		// disallow copy & move operations
+		simple_lock() = delete;
+		simple_lock(const simple_lock&) = delete;
+		simple_lock(simple_lock&&) = delete;
+		simple_lock& operator=(const simple_lock&) = delete;
+		simple_lock& operator=(simple_lock&&) = delete;
+
+	};
+
+
+}
+
+#endif // BASE_SIMPLE_LOCK vim:filetype=cpp

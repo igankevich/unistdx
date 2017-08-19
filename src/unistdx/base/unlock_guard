@@ -1,0 +1,57 @@
+#ifndef BASE_UNLOCK_GUARD
+#define BASE_UNLOCK_GUARD
+
+namespace sys {
+
+	template<class Mutex>
+	class unlock_guard {
+
+	public:
+		typedef Mutex mutex_type;
+
+	private:
+		Mutex& _mtx;
+
+	public:
+		inline
+		unlock_guard(mutex_type& m) noexcept:
+		_mtx(m)
+		{ this->unlock(); }
+
+		inline
+		~unlock_guard() noexcept {
+			this->lock();
+		}
+
+		inline void
+		lock() noexcept {
+			this->_mtx.lock();
+		}
+
+		inline void
+		unlock() noexcept {
+			this->_mtx.unlock();
+		}
+
+		// disallow copy & move operations
+		unlock_guard() = delete;
+		unlock_guard(const unlock_guard&) = delete;
+		unlock_guard(unlock_guard&&) = delete;
+		unlock_guard& operator=(const unlock_guard&) = delete;
+		unlock_guard& operator=(unlock_guard&&) = delete;
+
+	};
+
+	template<class Lock, class It, class Func>
+	inline void
+	for_each_unlock(Lock& lock, It first, It last, Func func) {
+		while (first != last) {
+			unlock_guard<Lock> unlock(lock);
+			func(*first);
+			++first;
+		}
+	}
+
+}
+
+#endif // BASE_UNLOCK_GUARD vim:filetype=cpp

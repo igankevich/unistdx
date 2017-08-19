@@ -10,9 +10,6 @@ if get_option('buildtype') == 'release'
 	add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
 
-srcdir = include_directories('.')
-testdir = include_directories('test')
-
 # compile-time configuration {{{
 config = configuration_data()
 cpp = meson.get_compiler('cpp')
@@ -39,6 +36,9 @@ if cpp.has_type('long double')
 endif
 if cpp.has_type('long long')
 	config.set('UNISTDX_HAVE_LONG_LONG', true)
+endif
+if cpp.has_type('__int128')
+	config.set('UNISTDX_HAVE_INT128', true)
 endif
 if cpp.has_header('ifaddrs.h')
 	config.set('UNISTDX_HAVE_IFADDRS', true)
@@ -110,11 +110,9 @@ endif
 # }}}
 
 threads = dependency('threads')
-libstdx = dependency('stdx')
 gtest = dependency('gtest', main: true)
 
-subdir('sys')
-subdir('test')
+subdir('src')
 
 pkgconfig = import('pkgconfig')
 pkgconfig.generate(
@@ -125,13 +123,3 @@ pkgconfig.generate(
 	subdirs: meson.project_name(),
 	filebase: meson.project_name()
 )
-
-prefix = meson.project_name() + '-' + meson.project_version()
-run_target('archive', command: [
-	'git',
-	'archive',
-	'--format=tar.gz',
-	'--output=' + meson.build_root() + '/' + prefix + '.tar.gz',
-	'--prefix=' + prefix + '/',
-	'HEAD'
-])

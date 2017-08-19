@@ -1,0 +1,137 @@
+#ifndef BASE_PACKETBUF
+#define BASE_PACKETBUF
+
+#include <cassert>
+
+#include "streambuf_traits"
+
+namespace sys {
+
+	template<class Ch, class Tr=std::char_traits<Ch> >
+	class basic_packetbuf: public std::basic_streambuf<Ch,Tr> {
+
+	public:
+		using typename std::basic_streambuf<Ch,Tr>::pos_type;
+		using typename std::basic_streambuf<Ch,Tr>::off_type;
+		using typename std::basic_streambuf<Ch,Tr>::char_type;
+		using std::basic_streambuf<Ch,Tr>::eback;
+		using std::basic_streambuf<Ch,Tr>::egptr;
+		using std::basic_streambuf<Ch,Tr>::setg;
+		typedef std::streamsize size_type;
+
+		inline
+		basic_packetbuf():
+		std::basic_streambuf<Ch,Tr>()
+		{}
+
+		basic_packetbuf(basic_packetbuf&&) = default;
+
+		basic_packetbuf(const basic_packetbuf&) = delete;
+
+		virtual
+		~basic_packetbuf() = default;
+
+		virtual void
+		begin_packet() {}
+
+		virtual void
+		end_packet() {}
+
+		virtual bool
+		read_packet() {
+			return false;
+		}
+
+		virtual void
+		skip_packet() {}
+
+	protected:
+
+		inline char_type*
+		payload_begin() noexcept {
+			return this->eback() + this->_payloadpos;
+		}
+
+		inline char_type*
+		payload_end() noexcept {
+			return this->payload_begin() + this->payloadsize();
+		}
+
+		inline pos_type
+		payloadpos() const noexcept {
+			return this->_payloadpos;
+		}
+
+		inline size_type
+		payloadsize() const noexcept {
+			return this->_packetsize - (this->_payloadpos - this->_packetpos);
+		}
+
+		inline char_type*
+		packet_begin() const noexcept {
+			return this->eback() + this->_packetpos;
+		}
+
+		inline char_type*
+		packet_end() const noexcept {
+			return this->packet_begin() + this->_packetsize;
+		}
+
+		inline pos_type
+		packetpos() const noexcept {
+			return this->_packetpos;
+		}
+
+		inline size_type
+		packetsize() const noexcept {
+			return this->_packetsize;
+		}
+
+		inline void
+		setpacket(pos_type pos1, pos_type pos2, size_type n) noexcept {
+			this->_packetpos = pos1;
+			this->_payloadpos = pos2;
+			this->_packetsize = n;
+			assert(this->_packetpos <= this->_payloadpos);
+			assert(this->_payloadpos <= this->_packetpos + pos_type(n));
+		}
+
+		inline void
+		seekpayloadpos(off_type off) noexcept {
+			assert(this->eback() <= this->payload_begin() + off);
+			assert(this->payload_begin() + off <= this->egptr());
+			this->setg(
+				this->eback(),
+				this->payload_begin() + off,
+				this->egptr()
+			);
+		}
+
+		template<class Ch1, class Tr1>
+		friend void
+		append_payload(
+			basic_packetbuf<Ch1,Tr1>& buf,
+			basic_packetbuf<Ch1,Tr1>& rhs
+		);
+
+	private:
+
+		pos_type _packetpos = 0;
+		pos_type _payloadpos = 0;
+		size_type _packetsize = 0;
+
+	};
+
+	template<class Ch, class Tr>
+	void
+	append_payload(basic_packetbuf<Ch,Tr>& buf, basic_packetbuf<Ch,Tr>& rhs) {
+		const std::streamsize n = rhs.payloadsize();
+		buf.sputn(rhs.payload_begin(), n);
+		rhs.seekpayloadpos(n);
+	}
+
+	typedef basic_packetbuf<char> packetbuf;
+
+}
+
+#endif // BASE_PACKETBUF vim:filetype=cpp

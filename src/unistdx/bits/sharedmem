@@ -1,0 +1,27 @@
+#ifndef SYS_BITS_SHAREDMEM
+#define SYS_BITS_SHAREDMEM
+
+#include <sys/shm.h>
+#include <unistdx/unistdx_config>
+#if defined(UNISTDX_HAVE_SHM_HUGETLB)
+#define UNISTDX_SHM_HUGETLB SHM_HUGETLB
+#else
+#define UNISTDX_SHM_HUGETLB 0
+#endif
+#if defined(UNISTDX_HAVE_SHM_HUGE_2MB)
+#define UNISTDX_SHM_HUGE_2MB SHM_HUGE_2MB
+#else
+#define UNISTDX_SHM_HUGE_2MB 0
+#endif
+#if defined(UNISTDX_HAVE_SHM_HUGE_1GB)
+#define UNISTDX_SHM_HUGE_1GB SHM_HUGE_1GB
+#else
+#define UNISTDX_SHM_HUGE_1GB 0
+#endif
+#if defined(UNISTDX_HAVE_SHM_NORESERVE)
+#define UNISTDX_SHM_NORESERVE SHM_NORESERVE
+#else
+#define UNISTDX_SHM_NORESERVE 0
+#endif
+
+#endif // SYS_BITS_SHAREDMEM vim:ft=cpp

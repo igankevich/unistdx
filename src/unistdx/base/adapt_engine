@@ -1,0 +1,83 @@
+#ifndef BASE_ADAPT_ENGINE
+#define BASE_ADAPT_ENGINE
+
+#include <limits>
+
+namespace sys {
+
+	template<class Engine, class Result>
+	class adapt_engine {
+
+	public:
+		typedef Result result_type;
+		typedef typename Engine::result_type base_result_type;
+
+		explicit
+		adapt_engine(Engine& rhs):
+		_engine(rhs),
+		_it(this->end())
+		{}
+
+		adapt_engine() = delete;
+
+		adapt_engine(const adapt_engine&) = delete;
+
+		adapt_engine(adapt_engine&&) = delete;
+
+		adapt_engine&
+		operator=(const adapt_engine&) = delete;
+
+		~adapt_engine() = default;
+
+		inline result_type
+		operator()() {
+			if (this->_it == this->end()) {
+				this->_it = this->begin();
+				this->_result = this->_engine();
+			}
+			result_type res = *this->_it;
+			++this->_it;
+			return res;
+		}
+
+		inline static constexpr result_type
+		min() noexcept {
+			return std::numeric_limits<result_type>::min();
+		}
+
+		inline static constexpr result_type
+		max() noexcept {
+			return std::numeric_limits<result_type>::max();
+		}
+
+	private:
+
+		inline result_type*
+		begin() {
+			return this->_buffer;
+		}
+
+		inline result_type*
+		end() {
+			return this->_buffer + sizeof(this->_buffer);
+		}
+
+		Engine& _engine;
+		union {
+			result_type _buffer[sizeof(base_result_type) / sizeof(result_type)];
+			base_result_type _result;
+		};
+
+		result_type* _it;
+
+		static_assert(sizeof(_buffer) == sizeof(_result), "bad result type");
+
+		static_assert(
+			sizeof(base_result_type) % sizeof(result_type) == 0,
+			"bad result type"
+		);
+	};
+
+}
+
+#endif // BASE_ADAPT_ENGINE vim:filetype=cpp

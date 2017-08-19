@@ -1,0 +1,188 @@
+#ifndef SYS_BITS_PAIRED_ITERATOR
+#define SYS_BITS_PAIRED_ITERATOR
+
+#include <utility>
+#include <iterator>
+
+namespace sys {
+
+	namespace bits {
+
+		/// A pair with ``move'' assignment operator.
+		template<class T1, class T2>
+		class pair: public ::std::pair<T1,T2> {
+
+		public:
+			typedef ::std::pair<T1,T2> base_pair;
+
+			inline explicit
+			pair(T1 x, T2 y):
+			base_pair(x, y) {}
+
+			inline
+			pair(const pair& rhs):
+			base_pair(rhs) {}
+
+			inline pair&
+			operator=(pair&& rhs) {
+				base_pair::first = std::move(rhs.first);
+				base_pair::second = std::move(rhs.second);
+				return *this;
+			}
+
+		};
+
+		template<class It1, class It2>
+		class paired_iterator: public std::iterator<
+				typename std::iterator_traits<It1>::iterator_category,
+				pair<typename std::iterator_traits<It1>::value_type,
+				          typename std::iterator_traits<It2>::value_type>,
+				std::ptrdiff_t,
+				pair<typename std::iterator_traits<It1>::value_type*,
+				          typename std::iterator_traits<It2>::value_type*>,
+				pair<typename std::iterator_traits<It1>::reference,typename
+				          std::iterator_traits<It2>::reference>
+			>{
+		public:
+			typedef typename
+			    std::iterator_traits<paired_iterator>::reference
+			    reference;
+			typedef typename
+			    std::iterator_traits<paired_iterator>::pointer
+			    pointer;
+			typedef typename
+			    std::iterator_traits<paired_iterator>::difference_type
+			    difference_type;
+			typedef const reference const_reference;
+			typedef const pointer const_pointer;
+
+			typedef typename std::iterator_traits<It1>::value_type&& rvalueref1;
+			typedef typename std::iterator_traits<It2>::value_type&& rvalueref2;
+			typedef pair<
+					typename std::iterator_traits<It1>::reference,
+					typename std::iterator_traits<It2>::reference> pair_type;
+
+			inline
+			paired_iterator(It1 x, It2 y):
+			iter1(x), iter2(y) {}
+
+			inline
+			paired_iterator() = default;
+
+			inline
+			~paired_iterator() = default;
+
+			inline
+			paired_iterator(const paired_iterator&) = default;
+
+			inline paired_iterator&
+			operator=(const paired_iterator&) = default;
+
+			inline constexpr bool
+			operator==(const paired_iterator& rhs) const {
+				return iter1 == rhs.iter1;
+			}
+
+			inline constexpr bool
+			operator!=(const paired_iterator& rhs) const {
+				return !this->operator==(rhs);
+			}
+
+			inline const_reference
+			operator*() const {
+				return pair_type(*iter1,*iter2);
+			}
+
+			inline reference
+			operator*() {
+				return pair_type(*iter1,*iter2);
+			}
+
+			inline const_pointer
+			operator->() const {
+				return std::make_pair(iter1.operator->(),iter2.operator->());
+			}
+
+			inline pointer
+			operator->() {
+				return std::make_pair(iter1.operator->(),iter2.operator->());
+			}
+
+			inline paired_iterator&
+			operator++() {
+				++iter1; ++iter2; return *this;
+			}
+
+			inline paired_iterator
+			operator++(int) {
+				paired_iterator tmp(*this); ++iter1; ++iter2; return tmp;
+			}
+
+			inline difference_type
+			operator-(const paired_iterator& rhs) const {
+				return std::distance(rhs.iter1, iter1);
+			}
+
+			inline paired_iterator
+			operator+(difference_type rhs) const {
+				return paired_iterator(
+					std::advance(iter1, rhs),
+					std::advance(
+						iter2,
+						rhs
+					)
+				);
+			}
+
+			inline It1
+			first() const {
+				return iter1;
+			}
+
+			inline It2
+			second() const {
+				return iter2;
+			}
+
+		private:
+			It1 iter1;
+			It2 iter2;
+		};
+
+		template<class It1, class It2>
+		inline paired_iterator<It1,It2>
+		make_paired(It1 it1, It2 it2) {
+			return paired_iterator<It1,It2>(it1, it2);
+		}
+
+		template<size_t No, class F>
+		class Apply_to {
+
+		public:
+			inline constexpr explicit
+			Apply_to(F&& f):
+			func(std::forward<F>(f))
+			{}
+
+			template<class Arg>
+			inline auto
+			operator()(const Arg& rhs)->
+			typename std::result_of<F& (decltype(std::get<No>(rhs)))>::type {
+				return func(std::get<No>(rhs));
+			}
+
+		private:
+			F&& func;
+		};
+
+		template<size_t No, class F>
+		inline constexpr Apply_to<No,F>
+		apply_to(F&& f) {
+			return Apply_to<No,F>(std::forward<F>(f));
+		}
+
+	}
+
+}
+
+#endif // SYS_BITS_PAIRED_ITERATOR vim:filetype=cpp

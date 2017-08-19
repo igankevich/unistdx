@@ -1,0 +1,44 @@
+#ifndef SYS_UTIL_GROUPSTREAM
+#define SYS_UTIL_GROUPSTREAM
+
+#include <unistdx/it/basic_istream_iterator>
+#include "group"
+
+namespace sys {
+
+	struct groupstream {
+
+		groupstream();
+
+		~groupstream();
+
+		groupstream(const groupstream&) = delete;
+		groupstream(groupstream&&) = delete;
+
+		groupstream&
+		operator=(const groupstream&) = delete;
+
+		inline explicit
+		operator bool() const noexcept {
+			return !this->_end;
+		}
+
+		inline bool
+		operator!() const noexcept {
+			return !this->operator bool();
+		}
+
+		groupstream&
+		operator>>(group& rhs);
+
+	private:
+
+		bool _end = false;
+
+	};
+
+	typedef basic_istream_iterator<groupstream, group> group_iterator;
+
+}
+
+#endif // SYS_UTIL_GROUPSTREAM vim:filetype=cpp

@@ -1,0 +1,17 @@
+#ifndef BASE_DELETE_EACH
+#define BASE_DELETE_EACH
+
+namespace sys {
+
+	template<class It>
+	void
+	delete_each(It first, It last) {
+		while (first != last) {
+			delete *first;
+			++first;
+		}
+	}
+
+}
+
+#endif // BASE_DELETE_EACH vim:filetype=cpp

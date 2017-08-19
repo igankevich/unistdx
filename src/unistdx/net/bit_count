@@ -1,0 +1,50 @@
+#ifndef SYS_NET_BIT_COUNT
+#define SYS_NET_BIT_COUNT
+
+#include <type_traits>
+#include <unistdx/unistdx_config>
+
+namespace sys {
+
+	template<class T>
+	inline unsigned int
+	bit_count(T value) noexcept {
+		static_assert(std::is_unsigned<T>::value, "bad value type");
+		unsigned int count = 0;
+		while (value > 0) {           // until all bits are zero
+			if ((value & 1) == 1)     // check lower bit
+				++count;
+			value >>= 1;              // shift bits, removing lower bit
+		}
+		return count;
+	}
+
+	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNT)
+	template<>
+	inline unsigned int
+	bit_count<unsigned int>(unsigned int value) noexcept {
+		return __builtin_popcount(value);
+	}
+	#endif
+
+	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNTL)
+	template<>
+	inline unsigned int
+	bit_count<unsigned long>(unsigned long value) noexcept {
+		return __builtin_popcountl(value);
+	}
+	#endif
+
+	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNTLL) && \
+		defined(UNISTDX_HAVE_LONG_LONG)
+	template<>
+	inline unsigned int
+	bit_count<unsigned long long>(unsigned long long value) noexcept {
+		return __builtin_popcountll(value);
+	}
+	#endif
+
+
+}
+
+#endif // SYS_NET_BIT_COUNT vim:ft=cpp

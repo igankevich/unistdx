@@ -1,0 +1,43 @@
+#ifndef BASE_SPIN_MUTEX
+#define BASE_SPIN_MUTEX
+
+#include <atomic>
+
+namespace sys {
+
+	/// Fast mutex for scheduling.
+	class spin_mutex {
+
+	private:
+		std::atomic_flag _flag = ATOMIC_FLAG_INIT;
+
+	public:
+		inline void
+		lock() noexcept {
+			while (this->_flag.test_and_set(std::memory_order_acquire));
+		}
+
+		inline void
+		unlock() noexcept {
+			this->_flag.clear(std::memory_order_release);
+		}
+
+		inline bool
+		try_lock() noexcept {
+			return !this->_flag.test_and_set(std::memory_order_acquire);
+		}
+
+		inline
+		spin_mutex() noexcept = default;
+
+		// disallow copy & move operations
+		spin_mutex(const spin_mutex&) = delete;
+		spin_mutex(spin_mutex&&) = delete;
+		spin_mutex& operator=(const spin_mutex&) = delete;
+		spin_mutex& operator=(spin_mutex&&) = delete;
+
+	};
+
+}
+
+#endif // BASE_SPIN_MUTEX vim:filetype=cpp

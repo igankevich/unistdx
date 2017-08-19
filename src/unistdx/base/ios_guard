@@ -1,0 +1,37 @@
+#ifndef STDX_IOS_HH
+#define STDX_IOS_HH
+
+#include <ostream>
+
+namespace sys {
+
+	/**
+	Save/restore std::ios flags and fill character with RAII
+	upon construction/destruction of an ios_guard object.
+	*/
+	class ios_guard {
+
+	private:
+		std::ios& _stream;
+		std::ios_base::fmtflags _oldf;
+		std::ios::char_type _oldfill;
+
+	public:
+		inline explicit
+		ios_guard(std::ios& s):
+		_stream(s),
+		_oldf(s.flags()),
+		_oldfill(s.fill())
+		{}
+
+		inline
+		~ios_guard() {
+			this->_stream.setf(this->_oldf);
+			this->_stream.fill(this->_oldfill);
+		}
+
+	};
+
+}
+
+#endif // STDX_IOS_HH

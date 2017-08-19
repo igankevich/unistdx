@@ -1,0 +1,48 @@
+#ifndef SYS_IPC_IDENTITY
+#define SYS_IPC_IDENTITY
+
+#include <unistd.h>
+#include <unistdx/check>
+
+namespace sys {
+
+	typedef ::pid_t pid_type;
+	typedef ::uid_t uid_type;
+	typedef ::gid_t gid_type;
+
+	inline constexpr uid_type
+	superuser() noexcept { return 0; }
+
+	inline constexpr gid_type
+	supergroup() noexcept { return 0; }
+
+	namespace this_process {
+
+		inline uid_type
+		user() noexcept { return ::getuid(); }
+
+		inline void
+		set_user(uid_type rhs) {
+			UNISTDX_CHECK(::setuid(rhs));
+		}
+
+		inline uid_type
+		effective_user() noexcept { return ::geteuid(); }
+
+		inline gid_type
+		group() noexcept { return ::getgid(); }
+
+		inline void
+		set_group(gid_type rhs) {
+			UNISTDX_CHECK(::setgid(rhs));
+		}
+
+		inline gid_type
+		effective_group() noexcept { return ::getegid(); }
+
+	}
+
+
+}
+
+#endif // SYS_IPC_IDENTITY vim:filetype=cpp

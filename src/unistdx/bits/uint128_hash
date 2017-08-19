@@ -1,0 +1,28 @@
+#ifndef BASE_BITS_UINT128_HASH
+#define BASE_BITS_UINT128_HASH
+
+namespace std {
+
+	template<>
+	struct hash<sys::uint128_t> {
+
+		typedef size_t result_type;
+		typedef ::sys::uint128_t argument_type;
+
+		inline size_t
+		operator()(const sys::uint128_t& rhs) const noexcept {
+			std::hash<uint64_t> h;
+			#if defined(UNISTDX_INTERNAL_UINT128_EMULATE)
+			return h(rhs.lo) ^ h(rhs.hi);
+			#else
+			using namespace sys::literals;
+			return h(uint64_t(rhs & 0xffffffffffffffff_u128)) ^
+			       h(uint64_t((rhs >> 64) & 0xffffffffffffffff_u128));
+			#endif
+		}
+
+	};
+
+}
+
+#endif // BASE_BITS_UINT128_HASH vim:filetype=cpp

@@ -1,0 +1,73 @@
+#ifndef SYS_FS_FILE_MUTEX
+#define SYS_FS_FILE_MUTEX
+
+#include <exception>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include <unistdx/io/fildes>
+
+namespace sys {
+
+	class bad_file_lock: public std::exception {
+
+	public:
+		bad_file_lock() noexcept = default;
+		~bad_file_lock() noexcept = default;
+
+		const char*
+		what() const noexcept override {
+			return "bad file lock";
+		}
+
+	};
+
+	enum file_lock_type : short {
+		read_lock = F_RDLCK,
+		write_lock = F_WRLCK
+	};
+
+	template<file_lock_type LockType>
+	class file_mutex: public fildes {
+
+	public:
+		void
+		lock();
+
+		void
+		unlock();
+
+		bool
+		try_lock();
+
+		file_mutex() noexcept = default;
+
+		inline
+		file_mutex(const char* filename, mode_type mode) noexcept:
+		fildes() {
+			this->open(filename, mode);
+		}
+
+		void
+		open(const char* filename, mode_type mode);
+
+		// disallow copy & move operations
+		file_mutex(const file_mutex&) = delete;
+		file_mutex(file_mutex&&) = delete;
+		file_mutex&
+		operator=(const file_mutex&) = delete;
+		file_mutex&
+		operator=(file_mutex&&) = delete;
+
+	private:
+
+		void
+		call_fcntl(int cmd);
+
+	};
+
+}
+
+#endif // SYS_FS_FILE_MUTEX vim:ft=cpp

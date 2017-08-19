@@ -1,0 +1,75 @@
+#ifndef BASE_UINT128
+#define BASE_UINT128
+
+#include <unistdx/unistdx_config>
+#include <unistdx/bits/uint128_parse>
+
+#if defined(UNISTDX_HAVE_INT128)
+namespace sys {
+	typedef unsigned __int128 uint128_t;
+}
+
+// Attempt to simulate useful behaviour for ``unsigned __int128''
+// (input/output operators, static type information.)
+namespace std {
+
+	inline std::ostream&
+	operator<<(std::ostream& out, unsigned __int128 rhs) {
+		std::ostream::sentry s(out);
+		if (s) {
+			sys::bits::uint128_put(rhs, out);
+		}
+		return out;
+	}
+
+	inline std::istream&
+	operator>>(std::istream& in, unsigned __int128& rhs) {
+		std::istream::sentry s(in);
+		if (s) {
+			sys::bits::uint128_get(rhs, in);
+		}
+		return in;
+	}
+
+}
+#else
+#include <unistdx/bits/basic_uint>
+namespace sys {
+	typedef bits::basic_uint<uint64_t> uint128_t;
+}
+#endif
+
+namespace std {
+
+	template<> struct is_arithmetic<sys::uint128_t> {
+		static const bool value = true;
+	};
+
+	template<> struct is_integral<sys::uint128_t> {
+		static const bool value = true;
+	};
+
+	template<> struct is_unsigned<sys::uint128_t> {
+		static const bool value = true;
+	};
+
+}
+
+namespace sys {
+
+	namespace literals {
+
+		template<char ... Chars>
+		constexpr uint128_t
+		operator"" _u128() noexcept {
+			return bits::parse_uint<uint128_t, sizeof...(Chars)>((const char[]){Chars...});
+		}
+
+	}
+
+}
+
+#include <unistdx/bits/uint128_limits>
+#include <unistdx/bits/uint128_hash>
+
+#endif // BASE_UINT128 vim:filetype=cpp

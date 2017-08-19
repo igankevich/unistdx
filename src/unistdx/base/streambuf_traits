@@ -1,0 +1,39 @@
+#ifndef STDX_STREAMBUF_HH
+#define STDX_STREAMBUF_HH
+
+#include <streambuf>
+
+namespace sys {
+
+	template<class T>
+	class streambuf_traits {
+
+	public:
+		typedef typename T::char_type char_type;
+
+		inline static std::streamsize
+		write(T& buf, const char_type* s, std::streamsize n) {
+			return buf.sputn(s, n);
+		}
+
+		inline static std::streamsize
+		read(T& buf, char_type* s, std::streamsize n) {
+			return buf.sgetn(s, n);
+		}
+
+		inline static bool
+		is_blocking(const T&) {
+			return false;
+		}
+
+		inline static std::streamsize
+		in_avail(T& buf) {
+			return buf.in_avail();
+		}
+
+	};
+
+
+}
+
+#endif // STDX_STREAMBUF_HH

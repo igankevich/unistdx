@@ -1,0 +1,103 @@
+#ifndef SYS_IT_QUEUE_POPPER
+#define SYS_IT_QUEUE_POPPER
+
+#include "container_traits"
+#include <iterator>
+
+namespace sys {
+
+	template <class Container, template<class C> class Traits = queue_traits>
+	class queue_pop_iterator:
+		public std::iterator<std::input_iterator_tag,
+		                     typename Container::value_type>{
+
+	public:
+		typedef Container container_type;
+		typedef typename Container::value_type value_type;
+		typedef Traits<Container> traits_type;
+
+		inline explicit constexpr
+		queue_pop_iterator(container_type& x) noexcept:
+		container(&x) {}
+
+		inline constexpr
+		queue_pop_iterator() noexcept = default;
+
+		inline constexpr
+		queue_pop_iterator(const queue_pop_iterator& rhs) noexcept = default;
+
+		inline bool
+		operator==(const queue_pop_iterator&) const noexcept {
+			return container->empty();
+		}
+
+		inline bool
+		operator!=(const queue_pop_iterator& rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		inline const value_type&
+		operator*() const noexcept {
+			return traits_type::front(*container);
+		}
+
+		inline const value_type*
+		operator->() const noexcept {
+			return &traits_type::front(*container);
+		}
+
+		inline queue_pop_iterator&
+		operator++() noexcept {
+			traits_type::pop(*container);
+			return *this;
+		}
+
+		inline queue_pop_iterator&
+		operator++(int) noexcept {
+			throw std::logic_error("can't post increment sys::queue_popper");
+			return *this;
+		}
+
+	private:
+		container_type* container = nullptr;
+	};
+
+	template<class C>
+	inline queue_pop_iterator<C>
+	queue_popper(C& cont) noexcept {
+		return queue_pop_iterator<C>(cont);
+	}
+
+	template<class C>
+	inline queue_pop_iterator<C>
+	queue_popper_end(C&) noexcept {
+		return queue_pop_iterator<C>();
+	}
+
+	template<class C>
+	inline queue_pop_iterator<C,priority_queue_traits>
+	priority_queue_popper(C& cont) noexcept {
+		return queue_pop_iterator<C,priority_queue_traits>(cont);
+	}
+
+	template<class C>
+	inline queue_pop_iterator<C,priority_queue_traits>
+	priority_queue_popper_end(C&) noexcept {
+		return queue_pop_iterator<C,priority_queue_traits>();
+	}
+
+	template<class C>
+	inline queue_pop_iterator<C,deque_traits>
+	deque_popper(C& cont) noexcept {
+		return queue_pop_iterator<C,deque_traits>(cont);
+	}
+
+	template<class C>
+	inline queue_pop_iterator<C,deque_traits>
+	deque_popper_end(C&) noexcept {
+		return queue_pop_iterator<C,deque_traits>();
+	}
+
+}
+
+#endif // SYS_IT_QUEUE_POPPER vim:filetype=cpp

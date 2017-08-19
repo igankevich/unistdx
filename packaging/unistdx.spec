@@ -49,35 +49,16 @@ developing applications that use %{name}.
 %{_libdir}/libunistdx.so
 
 %files devel
-%{_includedir}/unistdx/sys/ipc/argstream
-%{_includedir}/unistdx/sys/filesystem
-%{_includedir}/unistdx/sys/net/endpoint
-%{_includedir}/unistdx/sys/poller
-%{_includedir}/unistdx/sys/fildes
-%{_includedir}/unistdx/sys/fildesbuf.hh
-%{_includedir}/unistdx/sys/file_mutex.hh
-%{_includedir}/unistdx/sys/groups.hh
-%{_includedir}/unistdx/sys/ifaddr.hh
-%{_includedir}/unistdx/sys/ifaddr_list.hh
-%{_includedir}/unistdx/sys/network
-%{_includedir}/unistdx/sys/pstream.hh
-%{_includedir}/unistdx/sys/pipe.hh
-%{_includedir}/unistdx/sys/process.hh
-%{_includedir}/unistdx/sys/ipc/semaphore
-%{_includedir}/unistdx/sys/ipc/sharedmem
-%{_includedir}/unistdx/sys/ipc/shmembuf
-%{_includedir}/unistdx/sys/signal
-%{_includedir}/unistdx/sys/socket.hh
-%{_includedir}/unistdx/sys/subnet_iterator.hh
-%{_includedir}/unistdx/sys/system.hh
-%{_includedir}/unistdx/sys/users.hh
-%{_includedir}/unistdx/sys/bits/basic_istream_iterator.hh
-%{_includedir}/unistdx/sys/bits/basic_ostream_iterator.hh
-%{_includedir}/unistdx/sys/net/bit_count
-%{_includedir}/unistdx/sys/check
-%{_includedir}/unistdx/sys/bits/addr_parse.hh
-%{_includedir}/unistdx/sys/bits/ifaddrs_iterator.hh
-%{_includedir}/unistdx/sys/bits/safe_calls.hh
+%{_includedir}/unistdx/*
+%{_includedir}/unistdx/bits/*
+%{_includedir}/unistdx/net/*
+%{_includedir}/unistdx/base/*
+%{_includedir}/unistdx/fs/*
+%{_includedir}/unistdx/io/*
+%{_includedir}/unistdx/ipc/*
+%{_includedir}/unistdx/it/*
+%{_includedir}/unistdx/net/*
+%{_includedir}/unistdx/util/*
 %{_libdir}/pkgconfig/unistdx.pc
 %{_libdir}/libunistdx.a
 

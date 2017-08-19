@@ -1,0 +1,109 @@
+#ifndef SYS_UTIL_USERS
+#define SYS_UTIL_USERS
+
+#include <pwd.h>
+#include <sys/types.h>
+#include <unistdx/unistdx_config>
+#include <ostream>
+#include <cstddef>
+#include <string>
+
+namespace sys {
+
+	typedef ::uid_t uid_type;
+	typedef ::gid_t gid_type;
+	typedef struct ::passwd passwd_type;
+
+	struct user: public passwd_type {
+
+		inline const char*
+		name() const {
+			return this->pw_name;
+		}
+
+		inline const char*
+		password() const {
+			return this->pw_passwd;
+		}
+
+		inline uid_type
+		id() const {
+			return this->pw_uid;
+		}
+
+		inline gid_type
+		group_id() const {
+			return this->pw_gid;
+		}
+
+		inline const char*
+		real_name() const {
+			#if defined(UNISTDX_HAVE_GECOS)
+			return this->pw_gecos;
+			#else
+			return nullptr;
+			#endif
+		}
+
+		inline const char*
+		home() const {
+			return this->pw_dir;
+		}
+
+		inline const char*
+		shell() const {
+			return this->pw_shell;
+		}
+
+		inline bool
+		operator==(const user& rhs) const noexcept {
+			return id() == rhs.id();
+		}
+
+		inline bool
+		operator!=(const user& rhs) const noexcept {
+			return !operator==(rhs);
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const user& rhs);
+
+		friend bool
+		find_user(uid_type uid, user& result);
+
+		friend bool
+		find_user(const char* name, user& result);
+
+	private:
+
+		inline char*
+		buffer() noexcept {
+			return &this->_buf[0];
+		}
+
+		inline void
+		resize_buffer(size_t n) noexcept {
+			this->_buf.resize(n);
+		}
+
+		inline void
+		grow_buffer() noexcept {
+			this->_buf.resize(this->_buf.size()*2);
+		}
+
+		std::string _buf;
+
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const user& rhs);
+
+	bool
+	find_user(uid_type uid, user& result);
+
+	bool
+	find_user(const char* name, user& result);
+
+}
+
+#endif // SYS_UTIL_USERS vim:filetype=cpp

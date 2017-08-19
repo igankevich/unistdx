@@ -1,0 +1,72 @@
+#ifndef SYS_IT_QUEUE_PUSHER
+#define SYS_IT_QUEUE_PUSHER
+
+#include <iterator>
+#include "container_traits"
+
+namespace sys {
+
+	template <class Container, template<class C> class Traits = queue_traits>
+	class queue_push_iterator:
+	public std::iterator<std::output_iterator_tag,void,void,void,void> {
+
+	public:
+		typedef Container container_type;
+		typedef typename Container::value_type value_type;
+		typedef Traits<Container> traits_type;
+
+		explicit inline
+		queue_push_iterator(Container& x) noexcept: container(x) {}
+
+		inline queue_push_iterator&
+		operator=(const value_type& rhs) {
+			traits_type::push(container, rhs);
+			return *this;
+		}
+
+		inline queue_push_iterator&
+		operator=(const value_type&& rhs) {
+			traits_type::push(container, std::move(rhs));
+			return *this;
+		}
+
+		inline queue_push_iterator&
+		operator*() noexcept {
+			return *this;
+		}
+
+		inline queue_push_iterator&
+		operator++() noexcept {
+			return *this;
+		}
+
+		inline queue_push_iterator
+		operator++(int) noexcept {
+			return *this;
+		}
+
+	private:
+		Container& container;
+	};
+
+	template<class Container>
+	inline queue_push_iterator<Container>
+	queue_pusher(Container& rhs) {
+		return queue_push_iterator<Container>(rhs);
+	}
+
+	template<class Container>
+	inline queue_push_iterator<Container,priority_queue_traits>
+	priority_queue_pusher(Container& rhs) {
+		return queue_push_iterator<Container,priority_queue_traits>(rhs);
+	}
+
+	template<class Container>
+	inline queue_push_iterator<Container,deque_traits>
+	deque_pusher(Container& rhs) {
+		return queue_push_iterator<Container,deque_traits>(rhs);
+	}
+
+}
+
+#endif // SYS_IT_QUEUE_PUSHER vim:filetype=cpp
