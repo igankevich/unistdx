@@ -17,5 +17,5 @@ install_headers(
 	'uint128_hash',
 	'uint128_limits',
 	'uint128_parse',
-	subdir: join_paths(meson.project_name(), 'unistdx', 'bits')
+	subdir: join_paths(meson.project_name(), 'bits')
 )

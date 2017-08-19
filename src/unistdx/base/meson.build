@@ -15,5 +15,5 @@ install_headers(
 	'streambuf_traits',
 	'uint128',
 	'unlock_guard',
-	subdir: join_paths(meson.project_name(), 'unistdx', 'base')
+	subdir: join_paths(meson.project_name(), 'base')
 )

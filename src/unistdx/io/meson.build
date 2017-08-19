@@ -13,7 +13,7 @@ install_headers(
 	'poll_event',
 	'poller',
 	'two_way_pipe',
-	subdir: join_paths(meson.project_name(), 'unistdx', 'io')
+	subdir: join_paths(meson.project_name(), 'io')
 )
 
 

@@ -24,6 +24,6 @@ install_headers(
 	'odirtree',
 	'path',
 	'pathentry',
-	subdir: join_paths(meson.project_name(), 'unistdx', 'fs')
+	subdir: join_paths(meson.project_name(), 'fs')
 )
 
