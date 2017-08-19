@@ -1,5 +1,5 @@
 #include "backtrace"
-#include "unistdx_config"
+#include <unistdx/config>
 #include <unistd.h>
 #if defined(UNISTDX_HAVE_BACKTRACE)
 #include <execinfo.h>

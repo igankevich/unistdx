@@ -1,7 +1,7 @@
 #ifndef SYS_NET_IFADDRS
 #define SYS_NET_IFADDRS
 
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #if !defined(UNISTDX_HAVE_IFADDRS)
 #error "ifaddrs.h header not found"
 #endif

@@ -1,7 +1,7 @@
 #include "group"
 #include <unistdx/it/intersperse_iterator>
 #include <algorithm>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #include <unistdx/bits/entity>
 
 std::ostream&

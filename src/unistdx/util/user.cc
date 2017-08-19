@@ -1,5 +1,5 @@
 #include "user"
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #include <unistdx/bits/entity>
 
 std::ostream&

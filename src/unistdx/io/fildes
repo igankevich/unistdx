@@ -3,7 +3,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #if defined(UNISTDX_HAVE_FIONREAD)
 #include <sys/ioctl.h>
 #endif

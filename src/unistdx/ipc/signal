@@ -4,7 +4,7 @@
 #include <signal.h>
 #include <ostream>
 #include <unistdx/check>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 
 namespace sys {
 

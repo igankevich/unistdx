@@ -1,7 +1,7 @@
 #ifndef BASE_UINT128
 #define BASE_UINT128
 
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #include <unistdx/bits/uint128_parse>
 
 #if defined(UNISTDX_HAVE_INT128)

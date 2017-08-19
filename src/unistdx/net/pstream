@@ -9,7 +9,7 @@
 
 #include "bytes"
 #include <unistdx/base/packetbuf>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 
 namespace sys {
 

@@ -2,7 +2,7 @@
 #define SYS_BITS_SOCKET
 
 #include <sys/socket.h>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #if !defined(UNISTDX_HAVE_SOCK_NONBLOCK)
 	#define UNISTDX_SOCK_NONBLOCK 0
 #else

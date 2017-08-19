@@ -1,7 +1,8 @@
 configure_file(
 	input: 'config.in',
-	output: 'unistdx_config',
-	configuration: config
+	output: 'config',
+	configuration: config,
+	install_dir: join_paths(get_option('prefix'), get_option('includedir'))
 )
 
 libunistdx_src = files()

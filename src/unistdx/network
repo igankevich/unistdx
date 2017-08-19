@@ -9,7 +9,7 @@
 #include "net/ifaddr"
 #include "net/socket"
 #include "net/pstream"
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #if defined(UNISTDX_HAVE_IFADDRS)
 #include "net/ifaddrs"
 #endif

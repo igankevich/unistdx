@@ -2,7 +2,7 @@
 
 #include <unistdx/bits/safe_calls>
 #include <unistdx/base/make_object>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #include <unistdx/check>
 
 namespace {

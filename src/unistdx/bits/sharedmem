@@ -2,7 +2,7 @@
 #define SYS_BITS_SHAREDMEM
 
 #include <sys/shm.h>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 #if defined(UNISTDX_HAVE_SHM_HUGETLB)
 #define UNISTDX_SHM_HUGETLB SHM_HUGETLB
 #else

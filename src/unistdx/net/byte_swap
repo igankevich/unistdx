@@ -3,7 +3,7 @@
 
 #include <algorithm>
 #include <unistdx/base/uint128>
-#include <unistdx/unistdx_config>
+#include <unistdx/config>
 
 namespace sys {
 
