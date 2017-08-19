@@ -41,5 +41,5 @@ install_headers(
 	'utils',
 	'check',
 	'fildes',
-	subdir: join_paths(meson.project_name(), 'unistdx')
+	subdir: join_paths(meson.project_name())
 )
