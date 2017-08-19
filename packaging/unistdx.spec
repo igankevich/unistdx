@@ -1,5 +1,5 @@
 Name:           unistdx
-Version:        0.2
+Version:        0.3
 Release:        1%{?dist}
 Summary:        A library of C++ abstractions for libc.
 

@@ -6,6 +6,6 @@ install_headers(
 	'intersperse_iterator',
 	'queue_popper',
 	'queue_pusher',
-	subdir: join_paths(meson.project_name(), 'sys', 'it')
+	subdir: join_paths(meson.project_name(), 'unistdx', 'it')
 )
 

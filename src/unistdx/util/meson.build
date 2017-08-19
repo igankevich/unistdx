@@ -14,5 +14,5 @@ install_headers(
 	'system',
 	'user',
 	'userstream',
-	subdir: join_paths(meson.project_name(), 'sys', 'util')
+	subdir: join_paths(meson.project_name(), 'unistdx', 'util')
 )

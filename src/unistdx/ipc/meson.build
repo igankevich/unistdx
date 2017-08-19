@@ -19,6 +19,6 @@ install_headers(
 	'sharedmem',
 	'shmembuf',
 	'signal',
-	subdir: join_paths(meson.project_name(), 'sys', 'ipc')
+	subdir: join_paths(meson.project_name(), 'unistdx', 'ipc')
 )
 

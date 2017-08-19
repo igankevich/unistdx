@@ -25,7 +25,7 @@ install_headers(
 	'pstream',
 	'socket',
 	'subnet_iterator',
-	subdir: join_paths(meson.project_name(), 'sys', 'net')
+	subdir: join_paths(meson.project_name(), 'unistdx', 'net')
 )
 
 
