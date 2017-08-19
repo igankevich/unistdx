@@ -2,7 +2,11 @@ configure_file(
 	input: 'config.in',
 	output: 'config',
 	configuration: config,
-	install_dir: join_paths(get_option('prefix'), get_option('includedir'))
+	install_dir: join_paths(
+		get_option('prefix'),
+		get_option('includedir'),
+		meson.project_name()
+	)
 )
 
 libunistdx_src = files()
