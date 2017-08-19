@@ -70,14 +70,14 @@ namespace test {
 				cmd.put(ch);
 			}
 			cmd.put('\'');
-			std::system(cmd.str().data());
+			(void)std::system(cmd.str().data());
 		}
 
 		void
 		list() {
 			std::stringstream cmd;
 			cmd << "find " << name();
-			std::system(cmd.str().data());
+			(void)std::system(cmd.str().data());
 		}
 
 		operator const sys::path&() const noexcept {
@@ -158,10 +158,7 @@ template <
 	class Iterator = sys::idirectory_iterator<sys::direntry>
 >
 void
-test_file_copy(
-	const test::tmpdir& tdir,
-	const std::vector<std::string>& files
-) {
+test_file_copy(const test::tmpdir& tdir) {
 	IStream dir(tdir);
 	test::tmpdir otdir(__func__);
 	OStream odir(otdir);
@@ -205,7 +202,7 @@ TEST(Directory, Iterator) {
 	test::tmpdir tdir(files.begin(), files.end());
 	test_file_count(tdir, files);
 	test_file_list(tdir, files);
-	test_file_copy(tdir, files);
+	test_file_copy(tdir);
 }
 
 void

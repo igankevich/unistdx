@@ -22,7 +22,7 @@ sys::backtrace(int fd) {
 	#if defined(UNISTDX_HAVE_CXXABI)
 	if (char** symbols = ::backtrace_symbols(buffer, nptrs)) {
 		const char msg[] = "Backtrace:\n";
-		::write(fd, msg, sizeof(msg));
+		(void)::write(fd, msg, sizeof(msg));
 		for (int i=0; i<nptrs; ++i) {
 			const char* name = symbols[i];
 			int status = 0;
@@ -45,11 +45,11 @@ sys::backtrace(int fd) {
 				s.push_back(' ');
 				s.append(status == 0 ? buf : func.data());
 				s.push_back('\n');
-				::write(fd, s.data(), s.size());
+				(void)::write(fd, s.data(), s.size());
 			} catch (...) {
-				::write(fd, "\t", 1);
-				::write(fd, name, std::strlen(name));
-				::write(fd, "\n", 1);
+				(void)::write(fd, "\t", 1);
+				(void)::write(fd, name, std::strlen(name));
+				(void)::write(fd, "\n", 1);
 			}
 			std::free(buf);
 		}

@@ -422,7 +422,7 @@ namespace sys {
 
 		#ifndef NDEBUG
 		inline void
-		assert_invariant(const char* func) const {
+		assert_invariant(const char*) const {
 			assert(pipes_begin() == _events.begin());
 			assert(pipes_begin() <= pipes_end());
 			assert(pipes_end() == special_begin());

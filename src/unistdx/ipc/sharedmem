@@ -154,7 +154,7 @@ namespace sys {
 			return this->_addr;
 		}
 
-		inline const addr_type
+		inline addr_type
 		ptr() const noexcept {
 			return this->_addr;
 		}

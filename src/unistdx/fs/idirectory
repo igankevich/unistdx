@@ -155,7 +155,7 @@ namespace sys {
 
 		template <class Entry>
 		inline bool
-		operator()(const path& prefix, const Entry& rhs) const noexcept {
+		operator()(const path&, const Entry& rhs) const noexcept {
 			return !rhs.is_hidden();
 		}
 
