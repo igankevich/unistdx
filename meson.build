@@ -126,6 +126,5 @@ pkgconfig.generate(
 	version: meson.project_version(),
 	name: meson.project_name(),
 	description: 'C++ wrappers for libc',
-	subdirs: meson.project_name(),
 	filebase: meson.project_name()
 )
