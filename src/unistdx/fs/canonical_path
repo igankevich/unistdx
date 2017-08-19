@@ -9,12 +9,29 @@
 
 namespace sys {
 
-	template <class T>
 	inline std::unique_ptr<char[]>
-	make_canonical(T&& rhs) {
+	make_canonical(const char* rhs) {
 		std::unique_ptr<char[]> ptr(new char[PATH_MAX]);
 		UNISTDX_CHECK2(::realpath(rhs, ptr.get()), nullptr);
 		return ptr;
+	}
+
+	template <class T>
+	inline std::unique_ptr<char[]>
+	make_canonical(path&& rhs) {
+		return make_canonical(static_cast<const char*>(rhs));
+	}
+
+	template <class T>
+	inline std::unique_ptr<char[]>
+	make_canonical(const path& rhs) {
+		return make_canonical(static_cast<const char*>(rhs));
+	}
+
+	template <class Ch, class Tr, class Alloc>
+	inline std::unique_ptr<char[]>
+	make_canonical(const std::basic_string<Ch,Tr,Alloc>& rhs) {
+		return make_canonical(rhs.data());
 	}
 
 	template <class Ch, class Tr, class Alloc>

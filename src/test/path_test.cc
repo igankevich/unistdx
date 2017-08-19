@@ -57,3 +57,8 @@ TEST(CanonicalPath, NonExistent) {
 		sys::bad_call
 	);
 }
+
+TEST(CanonicalPath, FromString) {
+	std::string str = "/";
+	sys::canonical_path root(str);
+}
