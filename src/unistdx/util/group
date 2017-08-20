@@ -15,6 +15,20 @@ namespace sys {
 
 		typedef cstring_iterator<char*> iterator;
 
+		group() = default;
+		group(const group&) = default;
+		group(group&&) = default;
+		~group() = default;
+
+		group&
+		operator=(const group&) = default;
+
+		group&
+		operator=(const group_type& rhs) {
+			group_type::operator=(rhs);
+			return *this;
+		}
+
 		inline const char*
 		name() const {
 			return this->gr_name;

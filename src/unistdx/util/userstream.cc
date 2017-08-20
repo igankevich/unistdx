@@ -5,11 +5,6 @@ namespace {
 
 	std::mutex usermutex;
 
-	inline sys::user*
-	next_entry() {
-		return static_cast<sys::user*>(::getpwent());
-	}
-
 }
 
 sys::userstream::userstream():
@@ -26,9 +21,9 @@ sys::userstream::~userstream() {
 sys::userstream&
 sys::userstream::operator>>(user& rhs) {
 	if (*this) {
-		user* u = next_entry();
+		passwd_type* u = ::getpwent();
 		if (u == nullptr) {
-			_end = true;
+			this->_end = true;
 		} else {
 			rhs = *u;
 		}

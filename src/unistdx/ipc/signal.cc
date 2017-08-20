@@ -2,7 +2,7 @@
 
 namespace {
 
-	constexpr const int nsignals = sizeof(::sigset_t);
+	constexpr const int nsignals = 32;
 
 	struct init_signal_names {
 

@@ -35,7 +35,7 @@ namespace sys {
 
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
 		enum pipe_flag: flag_type {
-			no_sigpipe = 1
+			no_sigpipe = F_SETNOSIGPIPE
 		};
 		#endif
 
@@ -115,12 +115,12 @@ namespace sys {
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
 		inline void
 		setf(pipe_flag rhs) {
-			this->set_flag(F_SETNOSIGPIPE, 1);
+			this->set_flag(rhs, 1);
 		}
 
 		inline void
 		unsetf(pipe_flag rhs) {
-			this->set_flag(F_SETNOSIGPIPE, 0);
+			this->set_flag(rhs, 0);
 		}
 		#endif
 

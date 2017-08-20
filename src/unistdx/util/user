@@ -16,6 +16,20 @@ namespace sys {
 
 	struct user: public passwd_type {
 
+		user() = default;
+		user(user&&) = default;
+		user(const user&) = default;
+		~user() = default;
+
+		user&
+		operator=(const user& rhs) = default;
+
+		inline user&
+		operator=(const passwd_type& rhs) {
+			passwd_type::operator=(rhs);
+			return *this;
+		}
+
 		inline const char*
 		name() const {
 			return this->pw_name;

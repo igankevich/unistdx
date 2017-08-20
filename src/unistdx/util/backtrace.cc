@@ -7,6 +7,7 @@
 #endif
 #if defined(UNISTDX_HAVE_CXXABI)
 #include <cstring>
+#include <cstdlib>
 #include <cxxabi.h>
 #include <string>
 #endif

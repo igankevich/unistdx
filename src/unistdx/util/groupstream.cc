@@ -5,11 +5,6 @@ namespace {
 
 	std::mutex group_mutex;
 
-	inline sys::group*
-	next_entry() {
-		return static_cast<sys::group*>(::getgrent());
-	}
-
 }
 
 sys::groupstream::groupstream():
@@ -26,9 +21,9 @@ sys::groupstream::~groupstream() {
 sys::groupstream&
 sys::groupstream::operator>>(group& rhs) {
 	if (*this) {
-		group* g = next_entry();
+		group_type* g = ::getgrent();
 		if (g == nullptr) {
-			_end = true;
+			this->_end = true;
 		} else {
 			rhs = *g;
 		}

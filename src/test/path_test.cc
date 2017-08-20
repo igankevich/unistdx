@@ -30,12 +30,12 @@ TEST(Path, Equals) {
 TEST(CanonicalPath, Assign) {
 	sys::canonical_path dir1(".");
 	sys::canonical_path dir2("..");
-	dir1 = std::move(dir1.dirname());
+	dir1 = dir1.dirname();
 	EXPECT_EQ(dir1, dir2);
 }
 
 TEST(CanonicalPath, Dirname) {
-	sys::canonical_path dir1("/tmp");
+	sys::canonical_path dir1("/usr");
 	sys::canonical_path dir2("/");
 	EXPECT_EQ(dir1.dirname(), dir2);
 	EXPECT_EQ(dir2.dirname(), dir2);

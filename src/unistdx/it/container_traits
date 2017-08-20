@@ -40,7 +40,7 @@ namespace sys {
 		}
 
 		static void
-		pop_front(container_type& cnt) {
+		pop_front(container_type&) {
 			throw std::runtime_error("unsupported operation pop_front");
 		}
 
@@ -88,8 +88,8 @@ namespace sys {
 		}
 
 		static void
-		pop_back(container_type& cnt) {
-			throw std::runtime_error("unsupported operation pop_front");
+		pop_back(container_type&) {
+			throw std::runtime_error("unsupported operation pop_back");
 		}
 
 	};
@@ -126,8 +126,8 @@ namespace sys {
 		}
 
 		static void
-		pop_back(container_type& cnt) {
-			throw std::runtime_error("unsupported operation pop_front");
+		pop_back(container_type&) {
+			throw std::runtime_error("unsupported operation pop_back");
 		}
 
 	};

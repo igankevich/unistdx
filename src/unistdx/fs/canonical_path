@@ -149,7 +149,6 @@ namespace sys {
 
 namespace std {
 
-	template <>
 	template <class Ch, class Tr, class Alloc>
 	struct hash<sys::basic_canonical_path<Ch,Tr,Alloc>>:
 		public std::hash<std::basic_string<Ch,Tr,Alloc>> {

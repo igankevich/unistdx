@@ -85,6 +85,7 @@ namespace sys {
 
 	}
 
+	#if !defined(__MACH__)
 	struct sigset_type: public ::sigset_t {
 
 		inline
@@ -144,6 +145,7 @@ namespace sys {
 
 		sigset_type _signals;
 	};
+	#endif
 
 }
 

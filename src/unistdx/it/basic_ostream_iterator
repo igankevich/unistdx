@@ -13,7 +13,7 @@ namespace sys {
 
 	public:
 
-		using base_type::iterator_category;
+		using typename base_type::iterator_category;
 
 		typedef Value value_type;
 		typedef value_type* pointer;

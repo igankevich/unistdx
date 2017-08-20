@@ -12,7 +12,7 @@ namespace {
 
 	struct flock_wrapper: public ::flock {
 		flock_wrapper(sys::file_lock_type type) {
-			std::memset(this, 0, sizeof(::flock));
+			std::memset(this, 0, sizeof(struct ::flock));
 			this->l_type = type;
 			this->l_whence = SEEK_SET;
 		}

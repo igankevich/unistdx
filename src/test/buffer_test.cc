@@ -26,7 +26,11 @@ struct BufferTest: public ::testing::Test {
 	std::default_random_engine rng;
 };
 
+#if defined(__clang__)
+typedef ::testing::Types<char> MyTypes;
+#else
 typedef ::testing::Types<char, unsigned char> MyTypes;
+#endif
 TYPED_TEST_CASE(BufferTest, MyTypes);
 
 TYPED_TEST(BufferTest, FdStream) {
