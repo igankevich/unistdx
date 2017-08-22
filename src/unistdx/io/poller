@@ -206,8 +206,8 @@ namespace sys {
 			assert_invariant(__func__);
 			#endif
 			std::for_each(
-				make_paired(ordinary_begin(), _handlers.begin()),
-				make_paired(_events.end(), _handlers.end()),
+				bits::make_paired(ordinary_begin(), _handlers.begin()),
+				bits::make_paired(_events.end(), _handlers.end()),
 				[&func] (const bits::pair<poll_event&,handler_type&>& rhs) {
 				    func(rhs.first, rhs.second);
 				}

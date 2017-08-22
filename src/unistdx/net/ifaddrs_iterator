@@ -24,7 +24,7 @@ namespace sys {
 		inline constexpr
 		ifaddrs_iterator() noexcept = default;
 
-		inline inline
+		inline
 		~ifaddrs_iterator() = default;
 
 		inline constexpr

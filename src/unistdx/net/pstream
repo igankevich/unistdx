@@ -93,7 +93,7 @@ namespace sys {
 		append_payload(basic_pstream& rhs) {
 			assert(this->_buf != nullptr);
 			assert(rhs._buf != nullptr);
-			append_payload(*this->_buf, *rhs._buf);
+			::sys::append_payload(*this->_buf, *rhs._buf);
 		}
 
 		inline explicit
