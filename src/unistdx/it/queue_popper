@@ -6,7 +6,7 @@
 
 namespace sys {
 
-	template <class Container, template<class C> class Traits = queue_traits>
+	template <class Container, class Traits=queue_traits<Container>>
 	class queue_pop_iterator:
 		public std::iterator<std::input_iterator_tag,
 		                     typename Container::value_type>{
@@ -14,7 +14,7 @@ namespace sys {
 	public:
 		typedef Container container_type;
 		typedef typename Container::value_type value_type;
-		typedef Traits<Container> traits_type;
+		typedef Traits traits_type;
 
 		inline explicit constexpr
 		queue_pop_iterator(container_type& x) noexcept:
@@ -75,27 +75,27 @@ namespace sys {
 	}
 
 	template<class C>
-	inline queue_pop_iterator<C,priority_queue_traits>
+	inline queue_pop_iterator<C,priority_queue_traits<C>>
 	priority_queue_popper(C& cont) noexcept {
-		return queue_pop_iterator<C,priority_queue_traits>(cont);
+		return queue_pop_iterator<C,priority_queue_traits<C>>(cont);
 	}
 
 	template<class C>
-	inline queue_pop_iterator<C,priority_queue_traits>
+	inline queue_pop_iterator<C,priority_queue_traits<C>>
 	priority_queue_popper_end(C&) noexcept {
-		return queue_pop_iterator<C,priority_queue_traits>();
+		return queue_pop_iterator<C,priority_queue_traits<C>>();
 	}
 
 	template<class C>
-	inline queue_pop_iterator<C,deque_traits>
+	inline queue_pop_iterator<C,deque_traits<C>>
 	deque_popper(C& cont) noexcept {
-		return queue_pop_iterator<C,deque_traits>(cont);
+		return queue_pop_iterator<C,deque_traits<C>>(cont);
 	}
 
 	template<class C>
-	inline queue_pop_iterator<C,deque_traits>
+	inline queue_pop_iterator<C,deque_traits<C>>
 	deque_popper_end(C&) noexcept {
-		return queue_pop_iterator<C,deque_traits>();
+		return queue_pop_iterator<C,deque_traits<C>>();
 	}
 
 }
