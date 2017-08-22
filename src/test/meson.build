@@ -183,3 +183,13 @@ test(
 		dependencies: gtest
 	)
 )
+
+test(
+	'cmdline-test',
+	executable(
+		'cmdline-test',
+		sources: 'cmdline_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest,unistdx]
+	)
+)

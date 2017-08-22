@@ -1,5 +1,6 @@
 libunistdx_src += files([
 	'log_message.cc',
+	'cmdline.cc',
 ])
 
 install_headers(

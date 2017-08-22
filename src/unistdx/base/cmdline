@@ -1,0 +1,56 @@
+#ifndef UNISTDX_BASE_CMDLINE
+#define UNISTDX_BASE_CMDLINE
+
+#include <functional>
+#include <iosfwd>
+#include <string>
+
+namespace sys {
+
+	template <class T>
+	class key_value {
+
+	public:
+		typedef std::string key_type;
+
+	private:
+		key_type _key;
+		T& _value;
+
+	public:
+		inline
+		key_value(const key_type& key, T& value):
+		_key(key),
+		_value(value)
+		{}
+
+		inline bool
+		operator()(const key_type& key, std::istream& in) {
+			const bool success = key == this->_key;
+			if (success) {
+				in >> this->_value;
+			}
+			return success;
+		}
+
+	};
+
+	template <class T>
+	key_value<T>
+	make_key_value(const std::string& key, T& value) {
+		return key_value<T>(key, value);
+	}
+
+	typedef std::function<bool (const std::string&,std::istream&)>
+	    input_operator_type;
+
+	void
+	parse_arguments(
+		int argc,
+		const char* argv[],
+		input_operator_type* input_operators
+	);
+
+}
+
+#endif // UNISTDX_BASE_CMDLINE vim:filetype=cpp
