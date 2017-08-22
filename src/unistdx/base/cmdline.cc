@@ -1,7 +1,5 @@
 #include "cmdline"
 
-#include <stdexcept>
-
 void
 sys::parse_arguments(
 	int argc,
@@ -15,7 +13,7 @@ sys::parse_arguments(
 			++op;
 		}
 		if (!*op) {
-			throw std::invalid_argument("bad command line argument");
+			throw sys::bad_argument(argv[i]);
 		}
 	}
 }
