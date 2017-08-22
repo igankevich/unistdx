@@ -17,6 +17,7 @@
 #include <condition_variable>
 #include <cassert>
 #include <chrono>
+#include <cmath>
 
 #include <unistdx/base/unlock_guard>
 
@@ -24,6 +25,11 @@
 #include "process"
 
 namespace sys {
+
+	enum struct semaphore_type: int {
+		thread = 0,
+		process = 1
+	};
 
 	#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
 	struct sysv_semaphore {
@@ -102,53 +108,48 @@ namespace sys {
 		template<class Lock, class Rep, class Period>
 		std::cv_status
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
-			return this->wait_until(lock, clock_type::now() + dur);
+			using namespace std::chrono;
+			const auto d = std::max(duration<Rep,Period>::zero(), dur);
+			const auto s = duration_cast<seconds>(d);
+			const auto ns = duration_cast<nanoseconds>(d - s);
+			const timespec_type timeout{s.count(), ns.count()};
+			unlock_guard<Lock> unlock(lock);
+			return this->increment(-1, &timeout);
 		}
 
 		template<class Lock, class Rep, class Period, class Pred>
 		bool
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur, Pred pred) {
-			return this->wait_until(lock, clock_type::now() + dur, pred);
-		}
-
-		template<class Lock, class Duration>
-		std::cv_status
-		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
-			using namespace std::chrono;
-			const auto s = time_point_cast<seconds>(tp);
-			const auto ns = duration_cast<nanoseconds>(tp - s);
-			const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
-			unlock_guard<Lock> unlock(lock);
-			return this->increment(-1, &timeout);
-		}
-
-		template<class Lock, class Duration, class Pred>
-		bool
-		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
 			while (!pred()) {
-				if (this->wait_until(lock, tp) == std::cv_status::timeout) {
+				if (this->wait_for(lock, dur) == std::cv_status::timeout) {
 					return pred();
 				}
 			}
 			return true;
 		}
 
+		template<class Lock, class Duration>
+		std::cv_status
+		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
+			return this->wait_for(lock, tp - clock_type::now());
+		}
+
+		template<class Lock, class Duration, class Pred>
+		bool
+		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
+			return this->wait_for(lock, tp - clock_type::now(), pred);
+		}
+
 		template<class Lock, class Clock, class Duration>
 		std::cv_status
 		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp) {
-			typedef Clock other_clock;
-			const auto delta = tp - other_clock::now();
-			const auto new_tp = clock_type::now() + delta;
-			return this->wait_until(lock, new_tp);
+			return this->wait_for(lock, tp - Clock::now());
 		}
 
 		template<class Lock, class Clock, class Duration, class Pred>
 		bool
 		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp, Pred pred) {
-			typedef Clock other_clock;
-			const auto delta = tp - other_clock::now();
-			const auto new_tp = clock_type::now() + delta;
-			return this->wait_until(lock, new_tp, pred);
+			return this->wait_for(lock, tp - Clock::now(), pred);
 		}
 		#endif
 
@@ -160,7 +161,7 @@ namespace sys {
 			buf.sem_num = 0;
 			buf.sem_op = how;
 			buf.sem_flg = SEM_UNDO;
-			UNISTDX_CHECK(::semop(_sem, &buf, 1));
+			UNISTDX_CHECK(::semop(this->_sem, &buf, 1));
 		}
 
 		#if defined(UNISTDX_HAVE_SEMTIMEDOP)
@@ -170,7 +171,7 @@ namespace sys {
 			buf.sem_num = 0;
 			buf.sem_op = how;
 			buf.sem_flg = SEM_UNDO;
-			int ret = ::semtimedop(_sem, &buf, 1, t);
+			int ret = ::semtimedop(this->_sem, &buf, 1, t);
 			std::cv_status st = std::cv_status::no_timeout;
 			if (ret == -1) {
 				if (errno == EAGAIN) {
@@ -189,200 +190,19 @@ namespace sys {
 	#endif
 
 	#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
-	struct process_semaphore {
-
-		typedef ::sem_t* sem_type;
-		typedef int flags_type;
-		typedef std::string path_type;
-		typedef std::chrono::system_clock clock_type;
-		typedef struct ::timespec timespec_type;
-
-		process_semaphore() = default;
-
-		inline explicit
-		process_semaphore(path_type&& name, mode_type mode):
-		_path(std::forward<path_type>(name)),
-		_owner(true),
-		_sem(this->open_sem(mode))
-		{}
-
-		inline explicit
-		process_semaphore(path_type&& name):
-		_path(std::forward<path_type>(name)),
-		_owner(false),
-		_sem(this->open_sem())
-		{}
-
-		inline
-		process_semaphore(process_semaphore&& rhs) noexcept:
-		_path(std::move(rhs._path)),
-		_owner(rhs._owner),
-		_sem(rhs._sem)
-		{ rhs._sem = SEM_FAILED; }
-
-		inline
-		~process_semaphore() {
-			this->close();
-		}
-
-		process_semaphore(const process_semaphore&) = delete;
-		process_semaphore& operator=(const process_semaphore&) = delete;
-
-		inline void
-		open(path_type&& name, mode_type mode) {
-			this->close();
-			this->_path = std::forward<path_type>(name),
-			this->_owner = true;
-			this->_sem = this->open_sem(mode);
-		}
-
-		inline void
-		open(path_type&& name) {
-			this->close();
-			this->_path = std::forward<path_type>(name),
-			this->_owner = false;
-			this->_sem = this->open_sem();
-		}
-
-		inline void
-		wait() {
-			UNISTDX_CHECK(::sem_wait(this->_sem));
-		}
-
-		inline void
-		notify_one() {
-			UNISTDX_CHECK(::sem_post(this->_sem));
-		}
-
-		inline void
-		notify_all() {
-			this->notify_all(1000);
-		}
-
-		inline void
-		notify_all(int n) {
-			for (int i=0; i<n; ++i) {
-				this->notify_one();
-			}
-		}
-
-		inline void
-		close() {
-			if (this->_sem != SEM_FAILED) {
-				UNISTDX_CHECK(::sem_close(this->_sem));
-				if (this->_owner) {
-					UNISTDX_CHECK(::sem_unlink(this->_path.c_str()));
-				}
-			}
-		}
-
-		#if defined(UNISTDX_HAVE_SEM_TIMEDWAIT)
-		template<class Lock, class Rep, class Period>
-		std::cv_status
-		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
-			return this->wait_until(lock, clock_type::now() + dur);
-		}
-
-		template<class Lock, class Rep, class Period, class Pred>
-		bool
-		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur, Pred pred) {
-			return this->wait_until(lock, clock_type::now() + dur, pred);
-		}
-
-		template<class Lock, class Duration>
-		std::cv_status
-		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
-			using namespace std::chrono;
-			const auto s = time_point_cast<seconds>(tp);
-			const auto ns = duration_cast<nanoseconds>(tp - s);
-			const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
-			unlock_guard<Lock> unlock(lock);
-			std::cv_status st = std::cv_status::no_timeout;
-			int ret = ::sem_timedwait(this->_sem, &timeout);
-			if (ret == -1) {
-				if (errno == ETIMEDOUT) {
-					st = std::cv_status::timeout;
-				} else {
-					UNISTDX_THROW_BAD_CALL();
-				}
-			}
-			return st;
-		}
-
-		template<class Lock, class Duration, class Pred>
-		bool
-		wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp, Pred pred) {
-			while (!pred()) {
-				if (this->wait_until(lock, tp) == std::cv_status::timeout) {
-					return pred();
-				}
-			}
-			return true;
-		}
-
-		template<class Lock, class Clock, class Duration>
-		std::cv_status
-		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp) {
-			typedef Clock other_clock;
-			const auto delta = tp - other_clock::now();
-			const auto new_tp = clock_type::now() + delta;
-			return this->wait_until(lock, new_tp);
-		}
-
-		template<class Lock, class Clock, class Duration, class Pred>
-		bool
-		wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp, Pred pred) {
-			typedef Clock other_clock;
-			const auto delta = tp - other_clock::now();
-			const auto new_tp = clock_type::now() + delta;
-			return this->wait_until(lock, new_tp, pred);
-		}
-		#endif
-
-	private:
-
-		inline sem_type
-		open_sem(mode_type mode) const {
-			sem_type ret;
-			UNISTDX_CHECK2(
-				ret = ::sem_open(this->_path.c_str(), O_CREAT | O_EXCL, mode, 0),
-				SEM_FAILED
-			);
-			return ret;
-		}
-
-		inline sem_type
-		open_sem() const {
-			sem_type ret;
-			UNISTDX_CHECK2(
-				ret = ::sem_open(this->_path.c_str(), 0),
-				SEM_FAILED
-			);
-			return ret;
-		}
-
-		path_type _path;
-		bool _owner = false;
-		sem_type _sem = SEM_FAILED;
-	};
-	#endif
-
-	#if defined(__MACH__)
-	typedef std::condition_variable_any thread_semaphore;
-	#elif defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
-	struct thread_semaphore {
+	struct posix_semaphore {
 
 		typedef ::sem_t sem_type;
 		typedef std::chrono::system_clock clock_type;
 		typedef struct ::timespec timespec_type;
 
-		inline
-		thread_semaphore():
+		inline explicit
+		posix_semaphore(semaphore_type type):
 		_sem()
-		{ this->init_sem(); }
+		{ this->init_sem(type); }
 
 		inline
-		~thread_semaphore() {
+		~posix_semaphore() {
 			this->destroy();
 		}
 
@@ -426,7 +246,7 @@ namespace sys {
 			const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
 			unlock_guard<Lock> unlock(lock);
 			std::cv_status st = std::cv_status::no_timeout;
-			int ret = ::sem_timedwait(&_sem, &timeout);
+			int ret = ::sem_timedwait(&this->_sem, &timeout);
 			if (ret == -1) {
 				if (errno == ETIMEDOUT) {
 					st = std::cv_status::timeout;
@@ -492,14 +312,12 @@ namespace sys {
 		}
 
 		inline void
-		init_sem() {
-			UNISTDX_CHECK(::sem_init(&_sem, 0, 0));
+		init_sem(semaphore_type type) {
+			UNISTDX_CHECK(::sem_init(&this->_sem, static_cast<int>(type), 0));
 		}
 
 		sem_type _sem;
 	};
-	#else
-	typedef std::condition_variable_any thread_semaphore;
 	#endif
 
 }

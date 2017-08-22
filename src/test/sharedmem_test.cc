@@ -10,11 +10,12 @@
 #include <random>
 #include <mutex>
 
+#include "make_types.hh"
+
 template <class T>
 struct SharedMemTest: public ::testing::Test {};
 
-typedef ::testing::Types<char, unsigned char> MyTypes;
-TYPED_TEST_CASE(SharedMemTest, MyTypes);
+TYPED_TEST_CASE(SharedMemTest, MAKE_TYPES(char, unsigned char));
 
 TYPED_TEST(SharedMemTest, SharedMem) {
 	typedef TypeParam T;
@@ -59,7 +60,7 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
 	typedef std::lock_guard<shmembuf> shmembuf_guard;
 	const size_type SHMEM_SIZE = sys::page_size()*4;
 	shmembuf buf1(shmem(0600, SHMEM_SIZE));
-	// generated randon data
+	// generated random data
 	const size_t ninputs = 12;
 	std::default_random_engine rng;
 	std::uniform_int_distribution<T> dist('a', 'z');

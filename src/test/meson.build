@@ -1,15 +1,25 @@
 test(
-	'unistdx/semaphore',
+	'ipc/semaphore',
 	executable(
-		'locks-test',
-		sources: 'locks_test.cc',
+		'semaphore-test',
+		sources: 'semaphore_test.cc',
 		include_directories: srcdir,
 		dependencies: [threads,unistdx,gtest],
 	)
 )
 
 test(
-	'unistdx/sharedmem',
+	'base/spin_mutex',
+	executable(
+		'spin-mutex-test',
+		sources: 'spin_mutex_test.cc',
+		include_directories: srcdir,
+		dependencies: [threads,unistdx,gtest],
+	)
+)
+
+test(
+	'ipc/sharedmem',
 	executable(
 		'sharedmem-test',
 		sources: 'sharedmem_test.cc',
@@ -19,7 +29,7 @@ test(
 )
 
 test(
-	'unistdx/endpoint',
+	'net/endpoint',
 	executable(
 		'endpoint-test',
 		sources: 'endpoint_test.cc',
@@ -29,7 +39,7 @@ test(
 )
 
 test(
-	'unistdx/poller',
+	'io/poller',
 	executable(
 		'poller-test',
 		sources: 'poller_test.cc',
@@ -39,17 +49,17 @@ test(
 )
 
 test(
-	'unistdx/dir',
+	'filesystem',
 	executable(
-		'sys-test',
-		sources: 'sys_test.cc',
+		'filesystem-test',
+		sources: 'filesystem_test.cc',
 		include_directories: srcdir,
 		dependencies: [gtest, unistdx],
 	)
 )
 
 test(
-	'unistdx/process',
+	'ipc/process',
 	executable(
 		'process-test',
 		sources: 'process_test.cc',
@@ -59,7 +69,7 @@ test(
 )
 
 test(
-	'sys::fildesbuf',
+	'io/fildesbuf',
 	executable(
 		'buffer-test',
 		sources: 'buffer_test.cc',
@@ -69,7 +79,7 @@ test(
 )
 
 test(
-	'sys::users',
+	'util/users',
 	executable(
 		'users-test',
 		sources: 'users_test.cc',
@@ -79,13 +89,13 @@ test(
 )
 
 executable(
-	'posix-compliance',
+	'POSIX compliance',
 	sources: 'posix_test.cc',
 	include_directories: srcdir,
 )
 
 test(
-	'system-test',
+	'util/system',
 	executable(
 		'system-test',
 		sources: 'system_test.cc',
@@ -95,7 +105,7 @@ test(
 )
 
 test(
-	'file-mutex-test',
+	'fs/file_mutex',
 	executable(
 		'file-mutex-test',
 		sources: 'file_mutex_test.cc',
@@ -105,7 +115,7 @@ test(
 )
 
 test(
-	'signal-test',
+	'ipc/signal',
 	executable(
 		'signal-test',
 		sources: 'signal_test.cc',
@@ -115,7 +125,7 @@ test(
 )
 
 test(
-	'unistdx/path',
+	'fs/path',
 	executable(
 		'path-test',
 		sources: 'path_test.cc',
@@ -125,7 +135,17 @@ test(
 )
 
 test(
-	'unistdx/net/ifaddr',
+	'fs/canonical_path',
+	executable(
+		'canonical-path-test',
+		sources: 'canonical_path_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)
+
+test(
+	'net/ifaddr',
 	executable(
 		'ifaddr-test',
 		sources: 'ifaddr_test.cc',
@@ -135,7 +155,7 @@ test(
 )
 
 test(
-	'unistdx/net/endian',
+	'net/endian',
 	executable(
 		'endian-test',
 		sources: 'endian_test.cc',
@@ -144,7 +164,7 @@ test(
 	)
 )
 test(
-	'std::uint128_t (builtin)',
+	'base/uint128 (builtin)',
 	executable(
 		'uint128-test',
 		sources: 'uint128_test.cc',
@@ -154,7 +174,7 @@ test(
 )
 
 test(
-	'std::uint128_t (emulate)',
+	'base/uint128 (emulate)',
 	executable(
 		'uint128-emulate-test',
 		sources: 'uint128_test.cc',
@@ -165,27 +185,47 @@ test(
 )
 
 test(
-	'paired_iterator',
+	'bits/paired_iterator',
 	executable(
-		'iterator-test',
-		sources: 'iterator_test.cc',
+		'paired-iterator-test',
+		sources: 'paired_iterator_test.cc',
 		include_directories: srcdir,
 		dependencies: gtest
 	)
 )
 
 test(
-	'random-test',
+	'it/queue_pusher',
 	executable(
-		'random-test',
-		sources: 'random_test.cc',
+		'queue-pusher-test',
+		sources: 'queue_pusher_test.cc',
 		include_directories: srcdir,
 		dependencies: gtest
 	)
 )
 
 test(
-	'cmdline-test',
+	'base/adapt_engine',
+	executable(
+		'adapt-engine-test',
+		sources: 'adapt_engine_test.cc',
+		include_directories: srcdir,
+		dependencies: gtest
+	)
+)
+
+test(
+	'base/n_random_bytes',
+	executable(
+		'n-random-bytes-test',
+		sources: 'n_random_bytes_test.cc',
+		include_directories: srcdir,
+		dependencies: gtest
+	)
+)
+
+test(
+	'base/cmdline',
 	executable(
 		'cmdline-test',
 		sources: 'cmdline_test.cc',

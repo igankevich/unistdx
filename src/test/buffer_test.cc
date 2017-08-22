@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "datum.hh"
-
+#include "make_types.hh"
 
 template <class T>
 struct BufferTest: public ::testing::Test {
@@ -26,12 +26,15 @@ struct BufferTest: public ::testing::Test {
 	std::default_random_engine rng;
 };
 
-#if defined(__clang__)
-typedef ::testing::Types<char> MyTypes;
-#else
-typedef ::testing::Types<char, unsigned char> MyTypes;
-#endif
-TYPED_TEST_CASE(BufferTest, MyTypes);
+TYPED_TEST_CASE(
+	BufferTest,
+	MAKE_TYPES(
+		char
+		#if !defined(__clang__)
+		, unsigned char
+		#endif
+	)
+);
 
 TYPED_TEST(BufferTest, FdStream) {
 

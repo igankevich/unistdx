@@ -10,72 +10,44 @@
 #include <algorithm>
 
 #include <unistdx/base/delete_each>
-#include <unistdx/base/spin_mutex>
 #include <unistdx/ipc/semaphore>
 
 #include <gtest/gtest.h>
 
+#include "basic_mutex_test.hh"
+#include "thread_mutex_test.hh"
+#include "semaphore_wait_test.hh"
+#include "make_types.hh"
 
-template <class T>
-struct MutexTest: public ::testing::Test {
+struct posix_process_semaphore: public sys::posix_semaphore {
+	inline
+	posix_process_semaphore():
+	sys::posix_semaphore(sys::semaphore_type::process)
+	{}
+};
 
-	template <class Func>
-	void
-	run(Func func) {
-		const unsigned max_threads = std::max(
-			std::thread::hardware_concurrency(),
-			2*this->_minthreads
-		);
-		for (unsigned j=_minthreads; j<=max_threads; ++j) {
-			for (uint64_t i=0; i<=_maxpower; ++i) {
-				func(j, uint64_t(1) << i);
-			}
-		}
-	}
-
-	const unsigned _minthreads = 2;
-	const uint64_t _maxpower = 10;
-
+struct posix_thread_semaphore: public sys::posix_semaphore {
+	inline
+	posix_thread_semaphore():
+	sys::posix_semaphore(sys::semaphore_type::thread)
+	{}
 };
 
 template <class T>
-struct SemaphoreTest: public MutexTest<T> {};
+struct SemaphoreTest: public BasicMutexTest<T> {};
 
-typedef ::testing::Types<sys::spin_mutex> MyTypes;
-TYPED_TEST_CASE(MutexTest, MyTypes);
-
-typedef ::testing::Types<
-std::condition_variable
-#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
-, sys::sysv_semaphore
-#endif
-#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
-, sys::thread_semaphore
-#endif
-> MyTypes2;
-TYPED_TEST_CASE(SemaphoreTest, MyTypes2);
-
-TYPED_TEST(MutexTest, Mutex) {
-	typedef TypeParam Mutex;
-	this->run([&] (unsigned nthreads, uint64_t increment) {
-		volatile unsigned counter = 0;
-		Mutex m;
-		std::vector<std::thread> threads;
-		for (unsigned i=0; i<nthreads; ++i) {
-			threads.push_back(std::thread([&counter, increment, &m] () {
-				for (unsigned j=0; j<increment; ++j) {
-					std::lock_guard<Mutex> lock(m);
-					++counter;
-				}
-			}));
-		}
-		for (std::thread& t : threads) {
-			t.join();
-		}
-		unsigned good_counter = nthreads*increment;
-		EXPECT_EQ(counter, good_counter);
-	});
-}
+TYPED_TEST_CASE(
+	SemaphoreTest,
+	MAKE_TYPES(
+		std::condition_variable
+		#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
+		, sys::sysv_semaphore
+		#endif
+		#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
+		, posix_process_semaphore
+		#endif
+	)
+);
 
 template<class Q, class Mutex, class Semaphore=std::condition_variable, class Thread=std::thread>
 struct Thread_pool {
@@ -168,6 +140,41 @@ TYPED_TEST(SemaphoreTest, Semaphore) {
 		EXPECT_EQ(expected_sum, sum);
 	});
 }
+
+TYPED_TEST_CASE(
+	SemaphoreWaitTest,
+	MAKE_TYPES(
+		std::condition_variable
+		#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES)
+		, posix_thread_semaphore
+		#endif
+		#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
+		, sys::sysv_semaphore
+		#endif
+	)
+);
+
+TYPED_TEST(SemaphoreWaitTest, WaitUntil) {
+	this->test_wait_until();
+}
+
+TYPED_TEST(SemaphoreWaitTest, ProducerConsumer) {
+	this->test_producer_consumer_thread();
+}
+
+#if defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
+template <class T>
+using SemaphoreProcessTest = SemaphoreWaitTest<T>;
+
+TYPED_TEST_CASE(
+	SemaphoreProcessTest,
+	MAKE_TYPES(sys::sysv_semaphore)
+);
+
+TYPED_TEST(SemaphoreProcessTest, ProducerConsumer) {
+	this->test_producer_consumer_process();
+}
+#endif
 
 //template<class Integer>
 //void test_perf_x(Integer m) {

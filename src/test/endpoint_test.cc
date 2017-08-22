@@ -4,6 +4,8 @@
 #include <unistdx/base/n_random_bytes>
 #include <unistdx/net/endpoint>
 
+#include "make_types.hh"
+
 void
 check_read(const char* str, sys::endpoint expected_result) {
 	sys::endpoint addr;
@@ -34,8 +36,7 @@ struct EndpointTest: public ::testing::Test {
 	std::random_device generator;
 };
 
-typedef ::testing::Types<sys::ipv4_addr, sys::ipv6_addr> MyTypes;
-TYPED_TEST_CASE(EndpointTest, MyTypes);
+TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_addr, sys::ipv6_addr));
 
 TYPED_TEST(EndpointTest, WriteReadSingle) {
 	sys::endpoint addr1 = this->random_addr();

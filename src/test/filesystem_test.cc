@@ -4,7 +4,6 @@
 #include <unistdx/base/make_object>
 
 #include <gtest/gtest.h>
-#include <unistdx/ipc/argstream>
 #include <unistdx/filesystem>
 
 const char*
@@ -244,26 +243,6 @@ TEST(DirTree, Iterator) {
 	typedef sys::idirtree_iterator<sys::direntry> direntry_iterator;
 	test_file_count<sys::idirtree, direntry_iterator>(tdir, all_files);
 	test_file_list<sys::idirtree, direntry_iterator>(tdir, all_files);
-}
-
-TEST(ArgStream, All) {
-	const std::string arg0 = "Hello!!!";
-	const std::string arg1 = "world";
-	const int arg2 = 123;
-	sys::argstream args;
-	EXPECT_EQ(args.argc(), 0);
-	args << arg0 << '\0' << arg1 << '\0' << arg2 << '\0';
-	EXPECT_EQ(args.argc(), 3);
-	EXPECT_EQ(args.argv()[0], arg0);
-	EXPECT_EQ(args.argv()[1], arg1);
-	EXPECT_EQ(args.argv()[2], std::to_string(arg2));
-	EXPECT_EQ(args.argv()[args.argc()], (char*)nullptr);
-	args.append(arg0, arg1, arg2);
-	EXPECT_EQ(args.argc(), 6);
-	EXPECT_EQ(args.argv()[3], arg0);
-	EXPECT_EQ(args.argv()[4], arg1);
-	EXPECT_EQ(args.argv()[5], std::to_string(arg2));
-	EXPECT_EQ(args.argv()[args.argc()], (char*)nullptr);
 }
 
 TEST(FileStat, Exists) {

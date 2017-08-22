@@ -8,24 +8,6 @@
 #include <unistdx/it/queue_pusher>
 #include <vector>
 
-TEST(PairedIteratorTest, Copy) {
-	typedef uint32_t T;
-	std::mt19937 rng;
-	std::vector<T> x(20), y(20);
-	std::vector<T> z(20), w(20);
-	std::generate(
-		x.begin(),
-		x.end(),
-		[&rng] () { return rng(); }
-	);
-	auto beg1 = sys::bits::make_paired(x.begin(), y.begin());
-	auto end1 = sys::bits::make_paired(x.end(), y.end());
-	auto beg2 = sys::bits::make_paired(z.begin(), w.begin());
-	std::copy(beg1, end1, beg2);
-	EXPECT_EQ(x, z);
-	EXPECT_EQ(y, w);
-}
-
 #define MAKE_QUEUE_PUSHER_TEST(Queue, Pusher) \
 	std::default_random_engine rng; \
 	Queue queue; \

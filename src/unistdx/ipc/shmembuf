@@ -2,7 +2,7 @@
 #define SYS_IPC_SHMEMBUF
 
 #include "sharedmem"
-#include "semaphore"
+#include "process_semaphore"
 #include <unistdx/base/packetbuf>
 #include <unistdx/base/log_message>
 
@@ -19,7 +19,8 @@ namespace sys {
 
 		typedef typename sys::shared_mem<char_type> shared_mem_type;
 		typedef typename shared_mem_type::size_type size_type;
-		typedef sysv_semaphore sem_type;
+		//typedef sysv_semaphore sem_type;
+		typedef process_semaphore sem_type;
 
 		struct shmem_header {
 			sem_type read_sem;

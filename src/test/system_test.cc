@@ -13,3 +13,11 @@ TEST(System, ThreadConcurrency) {
 	EXPECT_NE(-123, sys::thread_concurrency());
 	::unsetenv("UNISTDX_CONCURRENCY");
 }
+
+TEST(System, IOConcurrency) {
+	EXPECT_GT(sys::io_concurrency(), 0);
+}
+
+TEST(System, PageSize) {
+	EXPECT_GT(sys::page_size(), 0);
+}

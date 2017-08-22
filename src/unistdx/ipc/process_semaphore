@@ -1,0 +1,23 @@
+#ifndef UNISTDX_IPC_PROCESS_SEMAPHORE
+#define UNISTDX_IPC_PROCESS_SEMAPHORE
+
+#include "semaphore"
+
+namespace sys {
+
+	#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES) && !defined(__MACH__)
+	struct process_semaphore: public posix_semaphore {
+		inline
+		process_semaphore():
+		posix_semaphore(semaphore_type::process)
+		{}
+	};
+	#elif defined(UNISTDX_HAVE_SYSV_SEMAPHORES)
+	typedef sysv_semaphore process_semaphore;
+	#else
+	#error No process semaphore can be found.
+	#endif
+
+}
+
+#endif // UNISTDX_IPC_PROCESS_SEMAPHORE vim:filetype=cpp
