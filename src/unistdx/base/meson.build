@@ -5,6 +5,7 @@ libunistdx_src += files([
 
 install_headers(
 	'adapt_engine',
+	'cmdline',
 	'delete_each',
 	'ios_guard',
 	'log_message',

@@ -26,7 +26,7 @@ namespace sys {
 		{}
 
 		inline bool
-		operator()(int pos, const std::string& arg) {
+		operator()(int, const std::string& arg) {
 			bool success = false;
 			std::string::size_type eq_pos = arg.find('=');
 			if (eq_pos != std::string::npos) {
