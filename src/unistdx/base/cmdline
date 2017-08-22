@@ -2,7 +2,8 @@
 #define UNISTDX_BASE_CMDLINE
 
 #include <functional>
-#include <iosfwd>
+#include <istream>
+#include <sstream>
 #include <string>
 
 namespace sys {
@@ -25,10 +26,15 @@ namespace sys {
 		{}
 
 		inline bool
-		operator()(const key_type& key, std::istream& in) {
-			const bool success = key == this->_key;
-			if (success) {
-				in >> this->_value;
+		operator()(int pos, const std::string& arg) {
+			bool success = false;
+			std::string::size_type eq_pos = arg.find('=');
+			if (eq_pos != std::string::npos) {
+				if (arg.compare(0, eq_pos, this->_key) == 0) {
+					std::stringstream in(arg.substr(eq_pos+1));
+					in >> this->_value;
+					success = !in.fail();
+				}
 			}
 			return success;
 		}
@@ -41,7 +47,14 @@ namespace sys {
 		return key_value<T>(key, value);
 	}
 
-	typedef std::function<bool (const std::string&,std::istream&)>
+	struct ignore_first_argument {
+		inline bool
+		operator()(int pos, const std::string&) {
+			return pos == 0;
+		}
+	};
+
+	typedef std::function<bool (int,const std::string&)>
 	    input_operator_type;
 
 	void

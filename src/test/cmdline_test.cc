@@ -10,6 +10,7 @@ TEST(CommandLine, Parse) {
 	int arg1 = 0;
 	std::string arg2;
 	sys::input_operator_type options[] = {
+		sys::ignore_first_argument(),
 		sys::make_key_value("arg1", arg1),
 		sys::make_key_value("arg2", arg2),
 		nullptr
@@ -27,6 +28,7 @@ TEST(CommandLine, InvalidArgument) {
 	int arg1 = 0;
 	std::string arg2;
 	sys::input_operator_type options[] = {
+		sys::ignore_first_argument(),
 		sys::make_key_value("arg1", arg1),
 		sys::make_key_value("arg2", arg2),
 		nullptr
