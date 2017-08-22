@@ -15,10 +15,12 @@ install_headers(
 	'proc_status',
 	'process',
 	'process_group',
+	'process_semaphore',
 	'semaphore',
 	'sharedmem',
 	'shmembuf',
 	'signal',
+	'thread_semaphore',
 	subdir: join_paths(meson.project_name(), 'ipc')
 )
 
