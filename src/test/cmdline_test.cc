@@ -33,7 +33,7 @@ TEST(CommandLine, InvalidArgument) {
 		sys::make_key_value("arg2", arg2),
 		nullptr
 	};
-	EXPECT_THROW(sys::parse_arguments(2, argv, options), std::invalid_argument);
+	EXPECT_THROW(sys::parse_arguments(2, argv, options), sys::bad_argument);
 	EXPECT_EQ(0, arg1);
 	EXPECT_TRUE(arg2.empty());
 }
