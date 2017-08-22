@@ -2,10 +2,10 @@
 #define SYS_NET_SOCKET
 
 #include "endpoint"
-#include <bits/socket>
 #include <fcntl.h>
-#include <unistdx/fildes>
 #include <unistd.h>
+#include <unistdx/bits/socket>
+#include <unistdx/io/fildes>
 
 namespace sys {
 
