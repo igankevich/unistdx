@@ -4,7 +4,7 @@
 namespace sys {
 
 	void
-	backtrace(int fd);
+	backtrace(int fd) noexcept;
 
 }
 

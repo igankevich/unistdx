@@ -155,6 +155,16 @@ test(
 )
 
 test(
+	'net/ipv4_addr',
+	executable(
+		'ipv4-addr-test',
+		sources: 'ipv4_addr_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)
+
+test(
 	'net/endian',
 	executable(
 		'endian-test',

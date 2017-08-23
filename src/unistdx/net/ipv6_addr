@@ -22,6 +22,7 @@ namespace sys {
 	union ipv6_addr {
 
 		typedef uint16_t hex_type;
+		typedef uint8_t oct_type;
 		typedef addr6_type rep_type;
 
 		inline constexpr
@@ -61,6 +62,11 @@ namespace sys {
 		inline constexpr const addr6_type&
 		rep() const noexcept {
 			return this->addr;
+		}
+
+		inline constexpr oct_type
+		operator[](size_t i) const noexcept {
+			return this->_bytes[i];
 		}
 
 		inline constexpr bool
@@ -177,7 +183,7 @@ namespace sys {
 	template<>
 	struct ipaddr_traits<ipv6_addr> {
 
-		typedef ipv6_addr::hex_type oct_type;
+		typedef ipv6_addr::oct_type oct_type;
 
 		static constexpr const oct_type loopback_first_octet = 0;
 		static constexpr const sa_family_type family = AF_INET6;
