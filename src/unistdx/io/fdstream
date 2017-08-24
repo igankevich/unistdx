@@ -2,6 +2,7 @@
 #define SYS_FDSTREAM
 
 #include "fildesbuf"
+#include <istream>
 
 namespace sys {
 

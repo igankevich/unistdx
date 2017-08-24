@@ -243,3 +243,19 @@ test(
 		dependencies: [gtest,unistdx]
 	)
 )
+
+if config.get('UNISTDX_HAVE_BACKTRACE', false)
+	backtrace_test = executable(
+		'backtrace-test',
+		sources: 'backtrace_test.cc',
+		include_directories: srcdir,
+		dependencies: [unistdx],
+	)
+	foreach type : ['signal', 'terminate']
+		test(
+			'util/backtrace ' + type,
+			backtrace_test,
+			args: [type]
+		)
+	endforeach
+endif

@@ -2,6 +2,7 @@
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
 #include <unistdx/base/make_object>
+#include <unistdx/util/backtrace>
 
 volatile int caught = 0;
 
