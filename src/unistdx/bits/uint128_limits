@@ -1,5 +1,5 @@
-#ifndef BASE_BITS_UINT128_LIMITS
-#define BASE_BITS_UINT128_LIMITS
+#ifndef UNISTDX_BITS_UINT128_LIMITS
+#define UNISTDX_BITS_UINT128_LIMITS
 
 #include <limits>
 
@@ -93,4 +93,4 @@ namespace std {
 
 }
 
-#endif // BASE_BITS_UINT128_LIMITS vim:filetype=cpp
+#endif // vim:filetype=cpp

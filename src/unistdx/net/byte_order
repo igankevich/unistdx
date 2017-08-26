@@ -1,5 +1,5 @@
-#ifndef SYS_NET_BYTE_ORDER
-#define SYS_NET_BYTE_ORDER
+#ifndef UNISTDX_NET_BYTE_ORDER
+#define UNISTDX_NET_BYTE_ORDER
 
 #include <unistdx/config>
 #include <unistdx/net/byte_swap>
@@ -29,4 +29,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_BYTE_ORDER vim:ft=cpp
+#endif // vim:filetype=cpp

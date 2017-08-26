@@ -1,5 +1,5 @@
-#ifndef BASE_BITS_BASIC_UINT
-#define BASE_BITS_BASIC_UINT
+#ifndef UNISTDX_BITS_BASIC_UINT
+#define UNISTDX_BITS_BASIC_UINT
 
 #define UNISTDX_INTERNAL_UINT128_EMULATE
 
@@ -541,4 +541,4 @@ namespace sys {
 
 }
 
-#endif // BASE_BITS_BASIC_UINT vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef BASE_PACKETBUF
-#define BASE_PACKETBUF
+#ifndef UNISTDX_BASE_PACKETBUF
+#define UNISTDX_BASE_PACKETBUF
 
 #include <cassert>
 #include <streambuf>
@@ -133,4 +133,4 @@ namespace sys {
 
 }
 
-#endif // BASE_PACKETBUF vim:filetype=cpp
+#endif // vim:filetype=cpp

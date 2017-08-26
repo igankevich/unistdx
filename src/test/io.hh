@@ -21,4 +21,4 @@ namespace test {
 
 }
 
-#endif // TEST_IO_HH vim:filetype=cpp
+#endif // vim:filetype=cpp

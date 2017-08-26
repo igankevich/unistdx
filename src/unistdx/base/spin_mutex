@@ -1,5 +1,5 @@
-#ifndef BASE_SPIN_MUTEX
-#define BASE_SPIN_MUTEX
+#ifndef UNISTDX_BASE_SPIN_MUTEX
+#define UNISTDX_BASE_SPIN_MUTEX
 
 #include <atomic>
 
@@ -40,4 +40,4 @@ namespace sys {
 
 }
 
-#endif // BASE_SPIN_MUTEX vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef BASE_DELETE_EACH
-#define BASE_DELETE_EACH
+#ifndef UNISTDX_BASE_DELETE_EACH
+#define UNISTDX_BASE_DELETE_EACH
 
 namespace sys {
 
@@ -14,4 +14,4 @@ namespace sys {
 
 }
 
-#endif // BASE_DELETE_EACH vim:filetype=cpp
+#endif // vim:filetype=cpp

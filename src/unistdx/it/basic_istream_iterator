@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_BASIC_ISTREAM_ITERATOR
-#define SYS_BITS_BASIC_ISTREAM_ITERATOR
+#ifndef UNISTDX_IT_BASIC_ISTREAM_ITERATOR
+#define UNISTDX_IT_BASIC_ISTREAM_ITERATOR
 
 #include <iterator>
 
@@ -103,4 +103,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_BASIC_ISTREAM_ITERATOR vim:ft=cpp
+#endif // vim:filetype=cpp

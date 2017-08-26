@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_SHAREDMEM
-#define SYS_BITS_SHAREDMEM
+#ifndef UNISTDX_BITS_SHAREDMEM
+#define UNISTDX_BITS_SHAREDMEM
 
 #include <sys/shm.h>
 #include <unistdx/config>
@@ -24,4 +24,4 @@
 #define UNISTDX_SHM_NORESERVE 0
 #endif
 
-#endif // SYS_BITS_SHAREDMEM vim:ft=cpp
+#endif // vim:filetype=cpp

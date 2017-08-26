@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_POLL
-#define SYS_BITS_POLL
+#ifndef UNISTDX_BITS_POLL
+#define UNISTDX_BITS_POLL
 
 #include <poll.h>
 #include <unistdx/config>
@@ -9,4 +9,4 @@
 	#define UNISTDX_POLLRDHUP POLLRDHUP
 #endif
 
-#endif // SYS_BITS_POLL vim:ft=cpp
+#endif // vim:filetype=cpp

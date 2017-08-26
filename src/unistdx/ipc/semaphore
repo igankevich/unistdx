@@ -1,5 +1,5 @@
-#ifndef SYS_IPC_SEMAPHORE
-#define SYS_IPC_SEMAPHORE
+#ifndef UNISTDX_IPC_SEMAPHORE
+#define UNISTDX_IPC_SEMAPHORE
 
 #include <unistd.h>
 #include <signal.h>
@@ -321,4 +321,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IPC_SEMAPHORE vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -127,4 +127,4 @@ struct SemaphoreWaitTest: public ::testing::Test {
 
 };
 
-#endif // TEST_SEMAPHORE_WAIT_TEST_HH vim:filetype=cpp
+#endif // vim:filetype=cpp

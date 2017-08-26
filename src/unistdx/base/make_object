@@ -1,5 +1,5 @@
-#ifndef BASE_MAKE_OBJECT
-#define BASE_MAKE_OBJECT
+#ifndef UNISTDX_BASE_MAKE_OBJECT
+#define UNISTDX_BASE_MAKE_OBJECT
 
 #include <unistdx/bits/make_object>
 
@@ -31,4 +31,4 @@ namespace sys {
 
 }
 
-#endif // BASE_MAKE_OBJECT vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_NET_IPADDR_TRAITS
-#define SYS_NET_IPADDR_TRAITS
+#ifndef UNISTDX_NET_IPADDR_TRAITS
+#define UNISTDX_NET_IPADDR_TRAITS
 
 namespace sys {
 
@@ -8,4 +8,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_IPADDR_TRAITS
+#endif // vim:filetype=cpp

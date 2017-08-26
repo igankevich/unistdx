@@ -1,5 +1,5 @@
-#ifndef SYS_IO_POLLER
-#define SYS_IO_POLLER
+#ifndef UNISTDX_IO_POLLER
+#define UNISTDX_IO_POLLER
 
 #include <algorithm>
 #include <cassert>
@@ -453,4 +453,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IO_POLLER vim:filetype=cpp
+#endif // vim:filetype=cpp

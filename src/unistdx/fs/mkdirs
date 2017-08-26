@@ -1,5 +1,5 @@
-#ifndef SYS_FS_MKDIRS
-#define SYS_FS_MKDIRS
+#ifndef UNISTDX_FS_MKDIRS
+#define UNISTDX_FS_MKDIRS
 
 #include <unistdx/fs/path>
 
@@ -12,4 +12,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_MKDIRS vim:ft=cpp
+#endif // vim:filetype=cpp

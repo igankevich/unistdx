@@ -1,5 +1,5 @@
-#ifndef SYS_IPC_PROC_INFO
-#define SYS_IPC_PROC_INFO
+#ifndef UNISTDX_IPC_PROC_INFO
+#define UNISTDX_IPC_PROC_INFO
 
 #include <sys/wait.h>
 #include <unistdx/ipc/basic_status>
@@ -107,4 +107,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IPC_PROC_INFO vim:filetype=cpp
+#endif // vim:filetype=cpp

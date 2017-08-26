@@ -1,5 +1,5 @@
-#ifndef SYS_NET_FAMILY
-#define SYS_NET_FAMILY
+#ifndef UNISTDX_NET_FAMILY
+#define UNISTDX_NET_FAMILY
 
 #include <netinet/in.h>
 #include <unistdx/net/pstream>
@@ -21,4 +21,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_FAMILY vim:ft=cpp
+#endif // vim:filetype=cpp

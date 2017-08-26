@@ -1,5 +1,5 @@
-#ifndef SYS_NET_BYTE_SWAP
-#define SYS_NET_BYTE_SWAP
+#ifndef UNISTDX_NET_BYTE_SWAP
+#define UNISTDX_NET_BYTE_SWAP
 
 #include <algorithm>
 #include <unistdx/base/uint128>
@@ -101,4 +101,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_BYTE_SWAP vim:ft=cpp
+#endif // vim:filetype=cpp

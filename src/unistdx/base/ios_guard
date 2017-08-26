@@ -1,5 +1,5 @@
-#ifndef STDX_IOS_HH
-#define STDX_IOS_HH
+#ifndef UNISTDX_BASE_IOS_GUARD
+#define UNISTDX_BASE_IOS_GUARD
 
 #include <ios>
 

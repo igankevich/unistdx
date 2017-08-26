@@ -1,5 +1,5 @@
-#ifndef BASE_N_RANDOM_BYTES
-#define BASE_N_RANDOM_BYTES
+#ifndef UNISTDX_BASE_N_RANDOM_BYTES
+#define UNISTDX_BASE_N_RANDOM_BYTES
 
 #include <cstddef>
 
@@ -33,4 +33,4 @@ namespace sys {
 
 }
 
-#endif // BASE_N_RANDOM_BYTES vim:filetype=cpp
+#endif // vim:filetype=cpp

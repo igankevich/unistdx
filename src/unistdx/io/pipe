@@ -1,5 +1,5 @@
-#ifndef SYS_IO_PIPE
-#define SYS_IO_PIPE
+#ifndef UNISTDX_IO_PIPE
+#define UNISTDX_IO_PIPE
 
 #include <unistdx/io/fildes>
 
@@ -64,4 +64,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IO_PIPE vim:filetype=cpp
+#endif // vim:filetype=cpp

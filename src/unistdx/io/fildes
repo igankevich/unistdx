@@ -1,5 +1,5 @@
-#ifndef SYS_IO_FILDES
-#define SYS_IO_FILDES
+#ifndef UNISTDX_IO_FILDES
+#define UNISTDX_IO_FILDES
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -233,4 +233,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IO_FILDES vim:filetype=cpp
+#endif // vim:filetype=cpp

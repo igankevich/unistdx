@@ -1,5 +1,5 @@
-#ifndef BASE_BITS_UINT128_PARSE
-#define BASE_BITS_UINT128_PARSE
+#ifndef UNISTDX_BITS_UINT128_PARSE
+#define UNISTDX_BITS_UINT128_PARSE
 
 #include <ostream>
 #include <istream>
@@ -110,4 +110,4 @@ namespace sys {
 
 }
 
-#endif // BASE_BITS_UINT128_PARSE vim:filetype=cpp
+#endif // vim:filetype=cpp

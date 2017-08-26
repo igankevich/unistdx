@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_GROUP
-#define SYS_UTIL_GROUP
+#ifndef UNISTDX_UTIL_GROUP
+#define UNISTDX_UTIL_GROUP
 
 #include <grp.h>
 #include <iosfwd>
@@ -95,4 +95,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_GROUP vim:ft=cpp
+#endif // vim:filetype=cpp

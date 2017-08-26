@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_ADDR_PARSE
-#define SYS_BITS_ADDR_PARSE
+#ifndef UNISTDX_BITS_ADDR_PARSE
+#define UNISTDX_BITS_ADDR_PARSE
 
 #include <istream>
 #include <limits>
@@ -71,4 +71,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_ADDR_PARSE vim:ft=cpp
+#endif // vim:filetype=cpp

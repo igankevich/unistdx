@@ -1,5 +1,5 @@
-#ifndef SYS_FS_ODIRECTORY
-#define SYS_FS_ODIRECTORY
+#ifndef UNISTDX_FS_ODIRECTORY
+#define UNISTDX_FS_ODIRECTORY
 
 #include <fstream>
 
@@ -142,4 +142,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_ODIRECTORY vim:ft=cpp
+#endif // vim:filetype=cpp

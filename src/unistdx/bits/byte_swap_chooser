@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_BYTE_SWAP_CHOOSER
-#define SYS_BITS_BYTE_SWAP_CHOOSER
+#ifndef UNISTDX_BITS_BYTE_SWAP_CHOOSER
+#define UNISTDX_BITS_BYTE_SWAP_CHOOSER
 
 #include <unistdx/net/byte_swap>
 #include <unistdx/net/byte_order>
@@ -108,4 +108,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_BYTE_SWAP_CHOOSER vim:filetype=cpp
+#endif // vim:filetype=cpp

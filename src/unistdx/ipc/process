@@ -1,5 +1,5 @@
-#ifndef SYS_IPC_PROCESS
-#define SYS_IPC_PROCESS
+#ifndef UNISTDX_IPC_PROCESS
+#define UNISTDX_IPC_PROCESS
 
 #include <unistd.h>
 #include <unistdx/bits/safe_calls>
@@ -149,4 +149,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IPC_PROCESS vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -100,4 +100,4 @@ namespace sys {
 
 }
 
-#endif // UNISTDX_BASE_CMDLINE vim:filetype=cpp
+#endif // vim:filetype=cpp

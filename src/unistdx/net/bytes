@@ -1,5 +1,5 @@
-#ifndef SYS_NET_BYTES
-#define SYS_NET_BYTES
+#ifndef UNISTDX_NET_BYTES
+#define UNISTDX_NET_BYTES
 
 #include <ostream>
 #include <unistdx/base/ios_guard>
@@ -155,4 +155,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_BYTES vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_PAIRED_ITERATOR
-#define SYS_BITS_PAIRED_ITERATOR
+#ifndef UNISTDX_BITS_PAIRED_ITERATOR
+#define UNISTDX_BITS_PAIRED_ITERATOR
 
 #include <utility>
 #include <iterator>
@@ -185,4 +185,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_PAIRED_ITERATOR vim:filetype=cpp
+#endif // vim:filetype=cpp

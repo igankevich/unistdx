@@ -34,4 +34,4 @@ operator<<(std::ostream& os, Color rhs) {
     return os << "\033[" << static_cast<int>(rhs) << "m";
 }
 
-#endif // TEST_COLOR_HH
+#endif // vim:filetype=cpp

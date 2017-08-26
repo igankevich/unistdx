@@ -1,5 +1,5 @@
-#ifndef SYS_CONFIG_IN
-#define SYS_CONFIG_IN
+#ifndef UNISTDX_CONFIG_IN
+#define UNISTDX_CONFIG_IN
 
 #mesondefine UNISTDX_HAVE_BUILTIN_POPCOUNT
 #mesondefine UNISTDX_HAVE_BUILTIN_POPCOUNTL
@@ -51,4 +51,4 @@
 #mesondefine UNISTDX_HAVE_GETGRGID_R
 #mesondefine UNISTDX_HAVE_GETGRNAM_R
 
-#endif // SYS_CONFIG_IN vim:ft=cpp
+#endif // vim:filetype=cpp

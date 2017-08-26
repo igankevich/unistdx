@@ -1,5 +1,5 @@
-#ifndef SYS_ENDPOINT_HH
-#define SYS_ENDPOINT_HH
+#ifndef UNISTDX_NET_ENDPOINT
+#define UNISTDX_NET_ENDPOINT
 
 #include <netinet/in.h>
 #include <sys/types.h>
@@ -283,4 +283,4 @@ namespace std {
 
 }
 
-#endif // SYS_ENDPOINT_HH vim:ft=cpp
+#endif // vim:filetype=cpp

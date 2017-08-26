@@ -1,5 +1,5 @@
-#ifndef BASE_BITS_UINT128_HASH
-#define BASE_BITS_UINT128_HASH
+#ifndef UNISTDX_BITS_UINT128_HASH
+#define UNISTDX_BITS_UINT128_HASH
 
 namespace std {
 
@@ -25,4 +25,4 @@ namespace std {
 
 }
 
-#endif // BASE_BITS_UINT128_HASH vim:filetype=cpp
+#endif // vim:filetype=cpp

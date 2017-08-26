@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_SOCKET
-#define SYS_BITS_SOCKET
+#ifndef UNISTDX_BITS_SOCKET
+#define UNISTDX_BITS_SOCKET
 
 #include <sys/socket.h>
 #include <unistdx/config>
@@ -14,4 +14,4 @@
 	#define UNISTDX_SOCK_CLOEXEC SOCK_CLOEXEC
 #endif
 
-#endif // SYS_BITS_SOCKET vim:ft=cpp
+#endif // vim:filetype=cpp

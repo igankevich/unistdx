@@ -1,5 +1,5 @@
-#ifndef SYS_NETWORK
-#define SYS_NETWORK
+#ifndef UNISTDX_NETWORK
+#define UNISTDX_NETWORK
 
 #include <unistdx/config>
 #include <unistdx/net/byte_order>
@@ -14,4 +14,4 @@
 #include <unistdx/net/ifaddrs>
 #endif
 
-#endif // SYS_NETWORK vim:filetype=cpp
+#endif // vim:filetype=cpp

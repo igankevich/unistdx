@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_MAKE_OBJECT
-#define SYS_BITS_MAKE_OBJECT
+#ifndef UNISTDX_BITS_MAKE_OBJECT
+#define UNISTDX_BITS_MAKE_OBJECT
 
 #include <ostream>
 
@@ -132,4 +132,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_MAKE_OBJECT vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_IO_TWO_WAY_PIPE
-#define SYS_IO_TWO_WAY_PIPE
+#ifndef UNISTDX_IO_TWO_WAY_PIPE
+#define UNISTDX_IO_TWO_WAY_PIPE
 
 #include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
@@ -101,4 +101,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IO_TWO_WAY_PIPE vim:filetype=cpp
+#endif // vim:filetype=cpp

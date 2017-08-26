@@ -1,5 +1,5 @@
-#ifndef SYS_NET_ENDIAN
-#define SYS_NET_ENDIAN
+#ifndef UNISTDX_NET_ENDIAN
+#define UNISTDX_NET_ENDIAN
 
 namespace sys {
 
@@ -17,4 +17,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_ENDIAN vim:filetype=cpp
+#endif // vim:filetype=cpp

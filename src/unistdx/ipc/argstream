@@ -1,5 +1,5 @@
-#ifndef SYS_IPC_ARGSTREAM
-#define SYS_IPC_ARGSTREAM
+#ifndef UNISTDX_IPC_ARGSTREAM
+#define UNISTDX_IPC_ARGSTREAM
 
 #include <streambuf>
 #include <vector>
@@ -155,4 +155,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IPC_ARGSTREAM vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_NET_IFADDRS
-#define SYS_NET_IFADDRS
+#ifndef UNISTDX_NET_IFADDRS
+#define UNISTDX_NET_IFADDRS
 
 #include <unistdx/config>
 #if !defined(UNISTDX_HAVE_IFADDRS)
@@ -80,4 +80,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_IFADDRS vim:filetype=cpp
+#endif // vim:filetype=cpp

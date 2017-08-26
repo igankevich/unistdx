@@ -1,5 +1,5 @@
-#ifndef SYS_FDSTREAM
-#define SYS_FDSTREAM
+#ifndef UNISTDX_IO_FDSTREAM
+#define UNISTDX_IO_FDSTREAM
 
 #include <unistdx/io/fildesbuf>
 #include <istream>
@@ -130,4 +130,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FDSTREAM vim:ft=cpp
+#endif // vim:filetype=cpp

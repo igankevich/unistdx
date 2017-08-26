@@ -1,5 +1,5 @@
-#ifndef SYS_FS_PATHENTRY
-#define SYS_FS_PATHENTRY
+#ifndef UNISTDX_FS_PATHENTRY
+#define UNISTDX_FS_PATHENTRY
 
 #include <unistdx/fs/direntry>
 
@@ -68,4 +68,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_PATHENTRY vim:ft=cpp
+#endif // vim:filetype=cpp

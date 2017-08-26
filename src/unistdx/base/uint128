@@ -1,5 +1,5 @@
-#ifndef BASE_UINT128
-#define BASE_UINT128
+#ifndef UNISTDX_BASE_UINT128
+#define UNISTDX_BASE_UINT128
 
 #include <unistdx/config>
 #include <unistdx/bits/uint128_parse>
@@ -72,4 +72,4 @@ namespace sys {
 #include <unistdx/bits/uint128_limits>
 #include <unistdx/bits/uint128_hash>
 
-#endif // BASE_UINT128 vim:filetype=cpp
+#endif // vim:filetype=cpp

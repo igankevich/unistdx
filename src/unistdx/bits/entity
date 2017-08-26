@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_ENTITY
-#define SYS_BITS_ENTITY
+#ifndef UNISTDX_BITS_ENTITY
+#define UNISTDX_BITS_ENTITY
 
 #include <unistdx/base/check>
 #include <unistdx/config>
@@ -343,4 +343,4 @@ namespace {
 
 }
 
-#endif // SYS_BITS_ENTITY vim:ft=cpp
+#endif // vim:filetype=cpp

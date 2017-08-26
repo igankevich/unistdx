@@ -20,4 +20,4 @@ namespace sys {
 
 }
 
-#endif // UNISTDX_IPC_THREAD_SEMAPHORE vim:filetype=cpp
+#endif // vim:filetype=cpp

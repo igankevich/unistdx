@@ -35,4 +35,4 @@ struct ThreadMutexTest: public ::testing::Test {
 
 };
 
-#endif // TEST_THREAD_MUTEX_TEST_HH vim:filetype=cpp
+#endif // vim:filetype=cpp

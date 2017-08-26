@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_BACKTRACE
-#define SYS_UTIL_BACKTRACE
+#ifndef UNISTDX_UTIL_BACKTRACE
+#define UNISTDX_UTIL_BACKTRACE
 
 namespace sys {
 
@@ -8,4 +8,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_BACKTRACE vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_FS_FILE_TYPE
-#define SYS_FS_FILE_TYPE
+#ifndef UNISTDX_FS_FILE_TYPE
+#define UNISTDX_FS_FILE_TYPE
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -24,4 +24,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_FILE_TYPE vim:ft=cpp
+#endif // vim:filetype=cpp

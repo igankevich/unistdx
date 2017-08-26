@@ -1,5 +1,5 @@
-#ifndef SYS_NET_IFADDRS_ITERATOR
-#define SYS_NET_IFADDRS_ITERATOR
+#ifndef UNISTDX_NET_IFADDRS_ITERATOR
+#define UNISTDX_NET_IFADDRS_ITERATOR
 
 #include <unistdx/config>
 #if !defined(UNISTDX_HAVE_IFADDRS)
@@ -86,4 +86,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_IFADDRS_ITERATOR vim:filetype=cpp
+#endif // vim:filetype=cpp

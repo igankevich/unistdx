@@ -1,5 +1,5 @@
-#ifndef SYS_FILDES
-#define SYS_FILDES
+#ifndef UNISTDX_FILDES
+#define UNISTDX_FILDES
 
 #include <unistdx/io/fdstream>
 #include <unistdx/io/fildes>
@@ -8,4 +8,4 @@
 #include <unistdx/io/poller>
 #include <unistdx/io/two_way_pipe>
 
-#endif // SYS_FILDES vim:filetype=cpp
+#endif // vim:filetype=cpp

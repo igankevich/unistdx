@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_CSTRING_ITERATOR
-#define SYS_UTIL_CSTRING_ITERATOR
+#ifndef UNISTDX_IT_CSTRING_ITERATOR
+#define UNISTDX_IT_CSTRING_ITERATOR
 
 #include <iterator>
 
@@ -162,4 +162,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_CSTRING_ITERATOR vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_FS_ODIRTREE
-#define SYS_FS_ODIRTREE
+#ifndef UNISTDX_FS_ODIRTREE
+#define UNISTDX_FS_ODIRTREE
 
 #include <unistdx/fs/idirtree>
 #include <unistdx/fs/idirectory>
@@ -42,4 +42,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_ODIRTREE vim:ft=cpp
+#endif // vim:filetype=cpp

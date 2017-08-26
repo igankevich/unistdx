@@ -1,5 +1,5 @@
-#ifndef SYS_IO_POLL_EVENT
-#define SYS_IO_POLL_EVENT
+#ifndef UNISTDX_IO_POLL_EVENT
+#define UNISTDX_IO_POLL_EVENT
 
 #include <iosfwd>
 #include <unistdx/bits/poll>
@@ -182,4 +182,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IO_POLL_EVENT vim:filetype=cpp
+#endif // vim:filetype=cpp

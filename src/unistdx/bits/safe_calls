@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_SAFE_CALLS
-#define SYS_BITS_SAFE_CALLS
+#ifndef UNISTDX_BITS_SAFE_CALLS
+#define UNISTDX_BITS_SAFE_CALLS
 
 #include <fcntl.h>
 #include <mutex>
@@ -23,4 +23,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_SAFE_CALLS vim:ft=cpp
+#endif // vim:filetype=cpp

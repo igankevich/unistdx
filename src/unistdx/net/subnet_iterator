@@ -1,5 +1,5 @@
-#ifndef SYS_NET_SUBNET_ITERATOR
-#define SYS_NET_SUBNET_ITERATOR
+#ifndef UNISTDX_NET_SUBNET_ITERATOR
+#define UNISTDX_NET_SUBNET_ITERATOR
 
 #include <iterator>
 #include <unistdx/net/byte_order>
@@ -96,4 +96,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_SUBNET_ITERATOR vim:filetype=cpp
+#endif // vim:filetype=cpp

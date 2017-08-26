@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_INTERSPERSE_ITERATOR
-#define SYS_UTIL_INTERSPERSE_ITERATOR
+#ifndef UNISTDX_IT_INTERSPERSE_ITERATOR
+#define UNISTDX_IT_INTERSPERSE_ITERATOR
 
 #include <iterator>
 
@@ -75,4 +75,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_INTERSPERSE_ITERATOR vim:filetype=cpp
+#endif // vim:filetype=cpp

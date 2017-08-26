@@ -1,5 +1,5 @@
-#ifndef SYS_NET_SOCKET
-#define SYS_NET_SOCKET
+#ifndef UNISTDX_NET_SOCKET
+#define UNISTDX_NET_SOCKET
 
 #include <fcntl.h>
 #include <unistd.h>
@@ -137,4 +137,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_SOCKET vim:filetype=cpp
+#endif // vim:filetype=cpp

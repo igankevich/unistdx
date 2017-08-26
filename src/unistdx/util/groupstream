@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_GROUPSTREAM
-#define SYS_UTIL_GROUPSTREAM
+#ifndef UNISTDX_UTIL_GROUPSTREAM
+#define UNISTDX_UTIL_GROUPSTREAM
 
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/util/group>
@@ -41,4 +41,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_GROUPSTREAM vim:filetype=cpp
+#endif // vim:filetype=cpp

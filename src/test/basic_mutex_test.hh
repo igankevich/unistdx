@@ -1,5 +1,5 @@
-#ifndef TEST_MUTEX_TEST_HH
-#define TEST_MUTEX_TEST_HH
+#ifndef TEST_BASIC_MUTEX_TEST_HH
+#define TEST_BASIC_MUTEX_TEST_HH
 
 #include <gtest/gtest.h>
 #include <thread>
@@ -26,4 +26,4 @@ struct BasicMutexTest: public ::testing::Test {
 
 };
 
-#endif // TEST_MUTEX_TEST_HH vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_IT_QUEUE_PUSHER
-#define SYS_IT_QUEUE_PUSHER
+#ifndef UNISTDX_IT_QUEUE_PUSHER
+#define UNISTDX_IT_QUEUE_PUSHER
 
 #include <iterator>
 #include <unistdx/it/container_traits>
@@ -69,4 +69,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IT_QUEUE_PUSHER vim:filetype=cpp
+#endif // vim:filetype=cpp

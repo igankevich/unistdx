@@ -1,5 +1,5 @@
-#ifndef SYS_BITS_CHECK_HH
-#define SYS_BITS_CHECK_HH
+#ifndef UNISTDX_BASE_CHECK
+#define UNISTDX_BASE_CHECK
 
 #include <system_error>
 #include <iosfwd>
@@ -52,4 +52,4 @@ namespace sys {
 
 }
 
-#endif // SYS_BITS_CHECK_HH vim:ft=cpp
+#endif // vim:filetype=cpp

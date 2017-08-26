@@ -1,5 +1,5 @@
-#ifndef SYS_FS_CANONICAL_PATH
-#define SYS_FS_CANONICAL_PATH
+#ifndef UNISTDX_FS_CANONICAL_PATH
+#define UNISTDX_FS_CANONICAL_PATH
 
 #include <limits.h>
 #include <stdlib.h>
@@ -165,4 +165,4 @@ namespace std {
 
 }
 
-#endif // SYS_FS_CANONICAL_PATH vim:ft=cpp
+#endif // vim:filetype=cpp

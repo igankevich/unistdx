@@ -1,5 +1,5 @@
-#ifndef SYS_FILESYSTEM
-#define SYS_FILESYSTEM
+#ifndef UNISTDX_FILESYSTEM
+#define UNISTDX_FILESYSTEM
 
 #include <unistdx/fs/canonical_path>
 #include <unistdx/fs/directory>
@@ -18,4 +18,4 @@
 #include <unistdx/fs/path>
 #include <unistdx/fs/pathentry>
 
-#endif // SYS_FILESYSTEM vim:ft=cpp
+#endif // vim:filetype=cpp

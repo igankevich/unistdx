@@ -1,5 +1,5 @@
-#ifndef SYS_NET_IPV6_ADDR
-#define SYS_NET_IPV6_ADDR
+#ifndef UNISTDX_NET_IPV6_ADDR
+#define UNISTDX_NET_IPV6_ADDR
 
 #include <netinet/in.h>
 #include <functional>
@@ -233,4 +233,4 @@ namespace std {
 
 }
 
-#endif // SYS_NET_IPV6_ADDR vim:ft=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_USERSTREAM
-#define SYS_UTIL_USERSTREAM
+#ifndef UNISTDX_UTIL_USERSTREAM
+#define UNISTDX_UTIL_USERSTREAM
 
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/util/user>
@@ -41,4 +41,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_USERSTREAM vim:filetype=cpp
+#endif // vim:filetype=cpp

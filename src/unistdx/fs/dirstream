@@ -1,5 +1,5 @@
-#ifndef SYS_FS_DIRSTREAM
-#define SYS_FS_DIRSTREAM
+#ifndef UNISTDX_FS_DIRSTREAM
+#define UNISTDX_FS_DIRSTREAM
 
 namespace sys {
 
@@ -72,4 +72,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_DIRSTREAM vim:ft=cpp
+#endif // vim:filetype=cpp

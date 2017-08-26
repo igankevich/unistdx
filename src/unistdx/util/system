@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_SYSTEM
-#define SYS_UTIL_SYSTEM
+#ifndef UNISTDX_UTIL_SYSTEM
+#define UNISTDX_UTIL_SYSTEM
 
 #include <unistd.h>
 
@@ -38,4 +38,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_SYSTEM vim:filetype=cpp
+#endif // vim:filetype=cpp

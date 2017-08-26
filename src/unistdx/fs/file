@@ -1,5 +1,5 @@
-#ifndef SYS_FS_FILE
-#define SYS_FS_FILE
+#ifndef UNISTDX_FS_FILE
+#define UNISTDX_FS_FILE
 
 #include <unistdx/fs/direntry>
 
@@ -45,4 +45,4 @@ namespace sys {
 
 }
 
-#endif // SYS_FS_FILE vim:ft=cpp
+#endif // vim:filetype=cpp

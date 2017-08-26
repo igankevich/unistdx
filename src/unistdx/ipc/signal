@@ -1,5 +1,5 @@
-#ifndef SYS_IPC_SIGNAL
-#define SYS_IPC_SIGNAL
+#ifndef UNISTDX_IPC_SIGNAL
+#define UNISTDX_IPC_SIGNAL
 
 #include <iosfwd>
 #include <signal.h>
@@ -149,4 +149,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IPC_SIGNAL vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef BASE_ADAPT_ENGINE
-#define BASE_ADAPT_ENGINE
+#ifndef UNISTDX_BASE_ADAPT_ENGINE
+#define UNISTDX_BASE_ADAPT_ENGINE
 
 #include <limits>
 
@@ -80,4 +80,4 @@ namespace sys {
 
 }
 
-#endif // BASE_ADAPT_ENGINE vim:filetype=cpp
+#endif // vim:filetype=cpp

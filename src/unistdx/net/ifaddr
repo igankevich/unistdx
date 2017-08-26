@@ -1,5 +1,5 @@
-#ifndef SYS_NET_IFADDR
-#define SYS_NET_IFADDR
+#ifndef UNISTDX_NET_IFADDR
+#define UNISTDX_NET_IFADDR
 
 #include <unistdx/base/check>
 #include <unistdx/net/endpoint>
@@ -160,4 +160,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_IFADDR vim:filetype=cpp
+#endif // vim:filetype=cpp

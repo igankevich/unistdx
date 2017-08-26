@@ -1,5 +1,5 @@
-#ifndef SYS_NET_PSTREAM
-#define SYS_NET_PSTREAM
+#ifndef UNISTDX_NET_PSTREAM
+#define UNISTDX_NET_PSTREAM
 
 #include <cassert>
 #include <limits>
@@ -342,4 +342,4 @@ namespace sys {
 
 }
 
-#endif // SYS_NET_PSTREAM vim:filetype=cpp
+#endif // vim:filetype=cpp

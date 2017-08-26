@@ -1,5 +1,5 @@
-#ifndef SYS_IT_CONTAINER_TRAITS
-#define SYS_IT_CONTAINER_TRAITS
+#ifndef UNISTDX_IT_CONTAINER_TRAITS
+#define UNISTDX_IT_CONTAINER_TRAITS
 
 #include <stdexcept>
 
@@ -178,4 +178,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IT_CONTAINER_TRAITS vim:filetype=cpp
+#endif // vim:filetype=cpp

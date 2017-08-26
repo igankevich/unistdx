@@ -1,5 +1,5 @@
-#ifndef BASE_LOG_MESSAGE
-#define BASE_LOG_MESSAGE
+#ifndef UNISTDX_BASE_LOG_MESSAGE
+#define UNISTDX_BASE_LOG_MESSAGE
 
 #include <cassert>
 #include <iomanip>
@@ -135,4 +135,4 @@ namespace sys {
 
 }
 
-#endif // BASE_LOG_MESSAGE vim:filetype=cpp
+#endif // vim:filetype=cpp

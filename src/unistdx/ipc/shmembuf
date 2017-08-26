@@ -1,5 +1,5 @@
-#ifndef SYS_IPC_SHMEMBUF
-#define SYS_IPC_SHMEMBUF
+#ifndef UNISTDX_IPC_SHMEMBUF
+#define UNISTDX_IPC_SHMEMBUF
 
 #include <unistdx/base/log_message>
 #include <unistdx/base/packetbuf>
@@ -255,4 +255,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IPC_SHMEMBUF vim:filetype=cpp
+#endif // vim:filetype=cpp

@@ -1,5 +1,5 @@
-#ifndef BASE_UNLOCK_GUARD
-#define BASE_UNLOCK_GUARD
+#ifndef UNISTDX_BASE_UNLOCK_GUARD
+#define UNISTDX_BASE_UNLOCK_GUARD
 
 namespace sys {
 
@@ -54,4 +54,4 @@ namespace sys {
 
 }
 
-#endif // BASE_UNLOCK_GUARD vim:filetype=cpp
+#endif // vim:filetype=cpp

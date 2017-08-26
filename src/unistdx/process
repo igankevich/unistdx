@@ -1,5 +1,5 @@
-#ifndef SYS_PROCESS
-#define SYS_PROCESS
+#ifndef UNISTDX_PROCESS
+#define UNISTDX_PROCESS
 
 #include <unistdx/ipc/execute>
 #include <unistdx/ipc/identity>
@@ -10,4 +10,4 @@
 #include <unistdx/ipc/sharedmem>
 #include <unistdx/ipc/shmembuf>
 
-#endif // SYS_PROCESS vim:filetype=cpp
+#endif // vim:filetype=cpp

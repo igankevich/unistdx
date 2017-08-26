@@ -1,5 +1,5 @@
-#ifndef SYS_FS_PATH
-#define SYS_FS_PATH
+#ifndef UNISTDX_FS_PATH
+#define UNISTDX_FS_PATH
 
 #include <memory>
 #include <string>
@@ -197,4 +197,4 @@ namespace std {
 
 }
 
-#endif // SYS_FS_PATH vim:ft=cpp
+#endif // vim:filetype=cpp

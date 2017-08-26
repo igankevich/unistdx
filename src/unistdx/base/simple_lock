@@ -1,5 +1,5 @@
-#ifndef BASE_SIMPLE_LOCK
-#define BASE_SIMPLE_LOCK
+#ifndef UNISTDX_BASE_SIMPLE_LOCK
+#define UNISTDX_BASE_SIMPLE_LOCK
 
 namespace sys {
 
@@ -45,4 +45,4 @@ namespace sys {
 
 }
 
-#endif // BASE_SIMPLE_LOCK vim:filetype=cpp
+#endif // vim:filetype=cpp

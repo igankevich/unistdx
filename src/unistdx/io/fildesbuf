@@ -1,5 +1,5 @@
-#ifndef SYS_IO_FILDESBUF
-#define SYS_IO_FILDESBUF
+#ifndef UNISTDX_IO_FILDESBUF
+#define UNISTDX_IO_FILDESBUF
 
 #include <vector>
 #include <cassert>
@@ -283,4 +283,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IO_FILDESBUF vim:filetype=cpp
+#endif // vim:filetype=cpp

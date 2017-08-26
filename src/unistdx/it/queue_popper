@@ -1,5 +1,5 @@
-#ifndef SYS_IT_QUEUE_POPPER
-#define SYS_IT_QUEUE_POPPER
+#ifndef UNISTDX_IT_QUEUE_POPPER
+#define UNISTDX_IT_QUEUE_POPPER
 
 #include <unistdx/it/container_traits>
 #include <iterator>
@@ -100,4 +100,4 @@ namespace sys {
 
 }
 
-#endif // SYS_IT_QUEUE_POPPER vim:filetype=cpp
+#endif // vim:filetype=cpp

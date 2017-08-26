@@ -1,5 +1,5 @@
-#ifndef SYS_UTIL_USERS
-#define SYS_UTIL_USERS
+#ifndef UNISTDX_UTIL_USER
+#define UNISTDX_UTIL_USER
 
 #include <sys/types.h>
 #include <pwd.h>
@@ -122,4 +122,4 @@ namespace sys {
 
 }
 
-#endif // SYS_UTIL_USERS vim:filetype=cpp
+#endif // vim:filetype=cpp
