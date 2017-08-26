@@ -12,7 +12,6 @@ namespace sys {
 			unsigned int _val;
 
 			template <class T>
-			explicit
 			octet(T rhs):
 			_val(static_cast<unsigned char>(rhs)) {}
 

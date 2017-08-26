@@ -1,5 +1,5 @@
-#ifndef STDX_STREAMBUF_HH
-#define STDX_STREAMBUF_HH
+#ifndef UNISTDX_BASE_STREAMBUF_TRAITS
+#define UNISTDX_BASE_STREAMBUF_TRAITS
 
 #include <streambuf>
 
@@ -36,4 +36,4 @@ namespace sys {
 
 }
 
-#endif // STDX_STREAMBUF_HH
+#endif // vim:filetype=cpp

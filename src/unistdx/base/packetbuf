@@ -2,6 +2,7 @@
 #define BASE_PACKETBUF
 
 #include <cassert>
+#include <streambuf>
 
 namespace sys {
 
