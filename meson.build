@@ -128,3 +128,5 @@ pkgconfig.generate(
 	description: 'C++ wrappers for libc',
 	filebase: meson.project_name()
 )
+
+run_target('cppcheck', command: join_paths('targets', 'cppcheck'))

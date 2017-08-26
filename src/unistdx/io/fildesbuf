@@ -111,13 +111,13 @@ namespace sys {
 				ret = seekpos(off, which);
 			}
 			if (way == std::ios_base::cur) {
-				const pos_type pos = which & std::ios_base::in
+				const pos_type pos = (which & std::ios_base::in)
 					? static_cast<pos_type>(gptr() - eback())
 					: static_cast<pos_type>(pptr() - pbase());
 				ret = off == 0 ? pos : seekpos(pos + off, which);
 			}
 			if (way == std::ios_base::end) {
-				const pos_type pos = which & std::ios_base::in
+				const pos_type pos = (which & std::ios_base::in)
 					? static_cast<pos_type>(egptr() - eback())
 					: static_cast<pos_type>(epptr() - pbase());
 				ret = seekpos(pos + off, which);

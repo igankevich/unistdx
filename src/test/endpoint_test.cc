@@ -222,7 +222,6 @@ TEST(Endpoint, Literals) {
 	using sys::ipv6_addr;
 	constexpr ipv4_addr any4;
 	constexpr ipv6_addr any6;
-	constexpr sys::endpoint any;
 	constexpr sys::endpoint endpU(sys::endpoint(ipv6_addr(), 1234), 100);
 	constexpr sys::endpoint endpV(ipv6_addr(), 100);
 	EXPECT_EQ(endpU, endpV);

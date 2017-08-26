@@ -22,7 +22,7 @@ namespace sys {
 
 		basic_pstream() = default;
 
-		inline
+		inline explicit
 		basic_pstream(streambuf_type* buf):
 		_buf(buf) {}
 

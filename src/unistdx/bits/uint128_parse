@@ -21,8 +21,8 @@ namespace sys {
 
 		inline int
 		get_stream_radix(const std::ios_base& out) noexcept {
-			return out.flags() & std::ios_base::hex ? 16 :
-				out.flags() & std::ios_base::oct ? 8 : 10;
+			return (out.flags() & std::ios_base::hex) ? 16 :
+				(out.flags() & std::ios_base::oct) ? 8 : 10;
 		}
 
 		template<class Uint, unsigned int radix, class It>

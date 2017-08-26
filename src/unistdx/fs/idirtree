@@ -104,13 +104,13 @@ namespace sys {
 	struct ignore_hidden_dirs {
 
 		inline bool
-		operator()(const path& prefix, const direntry& rhs) const noexcept {
+		operator()(const path& prefix, const direntry& rhs) const {
 			return !rhs.is_hidden()
 			       && get_file_type(prefix, rhs) == file_type::directory;
 		}
 
 		inline bool
-		operator()(const path&, const pathentry& rhs) const noexcept {
+		operator()(const path&, const pathentry& rhs) const {
 			return !rhs.is_hidden() && get_file_type(rhs) == file_type::directory;
 		}
 

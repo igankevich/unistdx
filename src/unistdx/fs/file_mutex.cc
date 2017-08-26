@@ -11,6 +11,7 @@ namespace {
 	}
 
 	struct flock_wrapper: public ::flock {
+		inline explicit
 		flock_wrapper(sys::file_lock_type type) {
 			std::memset(this, 0, sizeof(struct ::flock));
 			this->l_type = type;

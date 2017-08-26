@@ -53,7 +53,7 @@ namespace sys {
 		}
 
 		inline queue_pop_iterator&
-		operator++(int) noexcept {
+		operator++(int) {
 			throw std::logic_error("can't post increment sys::queue_popper");
 			return *this;
 		}

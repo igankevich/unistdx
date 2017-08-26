@@ -7,17 +7,33 @@ namespace sys {
 
 	namespace bits {
 
-		template<class Int, bool integral>
+		template<class Int, bool network_order, bool integral>
 		struct byte_swap_chooser {};
 
 		template<class Int>
-		struct byte_swap_chooser<Int, true> {
+		struct byte_swap_chooser<Int, true, true> {
+
+			inline void
+			to_network_format() noexcept {}
+
+			inline void
+			to_host_format() noexcept {}
+
+			inline constexpr bool
+			operator==(const byte_swap_chooser& rhs) const noexcept {
+				return this->_intval == rhs._intval;
+			}
+
+		private:
+			Int _intval;
+		};
+
+		template<class Int>
+		struct byte_swap_chooser<Int, false, true> {
 
 			inline void
 			to_network_format() noexcept {
-				if (!is_network_byte_order()) {
-					_intval = byte_swap<Int>(_intval);
-				}
+				this->_intval = byte_swap<Int>(this->_intval);
 			}
 
 			inline void
@@ -35,13 +51,29 @@ namespace sys {
 		};
 
 		template<class Arr>
-		struct byte_swap_chooser<Arr, false> {
+		struct byte_swap_chooser<Arr, true, false> {
+
+			inline void
+			to_network_format() noexcept {}
+
+			inline void
+			to_host_format() noexcept {}
+
+			inline bool
+			operator==(const byte_swap_chooser& rhs) const noexcept {
+				return std::equal(this->_arr, this->_arr + sizeof(Arr), rhs._arr);
+			}
+
+		private:
+			Arr _arr;
+		};
+
+		template<class Arr>
+		struct byte_swap_chooser<Arr, false, false> {
 
 			inline void
 			to_network_format() noexcept {
-				if (!is_network_byte_order()) {
-					std::reverse(_arr, _arr + sizeof(Arr));
-				}
+				std::reverse(this->_arr, this->_arr + sizeof(Arr));
 			}
 
 			inline void
@@ -51,7 +83,7 @@ namespace sys {
 
 			inline bool
 			operator==(const byte_swap_chooser& rhs) const noexcept {
-				return std::equal(_arr, _arr + sizeof(Arr), rhs._arr);
+				return std::equal(this->_arr, this->_arr + sizeof(Arr), rhs._arr);
 			}
 
 		private:
@@ -59,17 +91,17 @@ namespace sys {
 		};
 
 		template<size_t bytes>
-		struct Integral: public byte_swap_chooser<uint8_t[bytes],false> {};
+		struct Integral: public byte_swap_chooser<uint8_t[bytes],is_network_byte_order(),false> {};
 		template<>
-		struct Integral<1>: public byte_swap_chooser<uint8_t,true> {};
+		struct Integral<1>: public byte_swap_chooser<uint8_t,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<2>: public byte_swap_chooser<uint16_t,true> {};
+		struct Integral<2>: public byte_swap_chooser<uint16_t,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<4>: public byte_swap_chooser<uint32_t,true> {};
+		struct Integral<4>: public byte_swap_chooser<uint32_t,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<8>: public byte_swap_chooser<uint64_t,true> {};
+		struct Integral<8>: public byte_swap_chooser<uint64_t,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<16>: public byte_swap_chooser<uint128_t,true> {};
+		struct Integral<16>: public byte_swap_chooser<uint128_t,is_network_byte_order(),true> {};
 
 	}
 

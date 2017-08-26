@@ -52,7 +52,7 @@ printval(const std::string& name, T val) {
 	if (val == -1) {
 		printval(name.c_str());
 	} else if (val == 0) {
-		might_be_supported(name.c_str());
+		might_be_supported(name);
 	} else {
 		std::cout << std::setw(40) << std::left << name;
 		if (name.find("VERSION") != std::string::npos) {

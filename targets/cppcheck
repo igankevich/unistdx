@@ -1,0 +1,13 @@
+#!/bin/sh
+
+cppcheck \
+	--enable=all \
+	--quiet \
+	--error-exitcode=1 \
+	--force \
+	--language=c++ \
+	--std=c++11 \
+	--template=gcc \
+	-I$MESON_SOURCE_ROOT/src \
+	-I$MESON_BUILD_ROOT/src \
+	$MESON_SOURCE_ROOT/src

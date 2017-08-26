@@ -11,8 +11,8 @@ sys::operator<<(std::ostream& out, const poll_event& rhs) {
 		0
 	};
 	const char ev[] = {
-		(rhs.events() & poll_event::In ? 'r' : '-'),
-		(rhs.events() & poll_event::Out ? 'w' : '-'),
+		((rhs.events() & poll_event::In) ? 'r' : '-'),
+		((rhs.events() & poll_event::Out) ? 'w' : '-'),
 		0
 	};
 	return out << make_object("fd", rhs.fd(), "rev", rev, "ev", ev);

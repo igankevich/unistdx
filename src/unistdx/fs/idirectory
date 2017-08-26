@@ -36,7 +36,8 @@ namespace sys {
 		basic_idirectory(basic_idirectory&& rhs):
 		dirstream(std::forward<dirstream>(rhs)),
 		_dirpath(std::move(rhs._dirpath)),
-		_dir(rhs._dir) {
+		_dir(rhs._dir),
+		_filepred(std::move(rhs._filepred)) {
 			rhs._dir = nullptr;
 		}
 

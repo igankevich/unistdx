@@ -13,7 +13,7 @@ namespace sys {
 		Mutex& _mtx;
 
 	public:
-		inline
+		inline explicit
 		unlock_guard(mutex_type& m) noexcept:
 		_mtx(m)
 		{ this->unlock(); }
