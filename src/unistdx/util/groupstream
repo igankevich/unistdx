@@ -2,7 +2,7 @@
 #define SYS_UTIL_GROUPSTREAM
 
 #include <unistdx/it/basic_istream_iterator>
-#include "group"
+#include <unistdx/util/group>
 
 namespace sys {
 

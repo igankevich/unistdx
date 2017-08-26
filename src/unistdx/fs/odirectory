@@ -3,9 +3,9 @@
 
 #include <fstream>
 
-#include "file"
-#include "idirtree"
-#include "idirectory"
+#include <unistdx/fs/file>
+#include <unistdx/fs/idirectory>
+#include <unistdx/fs/idirtree>
 #include <unistdx/it/basic_ostream_iterator>
 
 namespace sys {

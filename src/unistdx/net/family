@@ -2,7 +2,7 @@
 #define SYS_NET_FAMILY
 
 #include <netinet/in.h>
-#include "pstream"
+#include <unistdx/net/pstream>
 
 namespace sys {
 

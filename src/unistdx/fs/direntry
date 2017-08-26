@@ -3,8 +3,8 @@
 
 #include <dirent.h>
 #include <cstring>
-#include "path"
-#include "file_stat"
+#include <unistdx/fs/path>
+#include <unistdx/fs/file_stat>
 
 namespace sys {
 

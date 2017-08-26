@@ -5,10 +5,9 @@
 #include <chrono>
 #include <cstring>
 
+#include <unistd.h>
 #include <unistdx/base/make_object>
 #include <unistdx/bits/sharedmem>
-#include <unistd.h>
-
 #include <unistdx/check>
 
 namespace sys {

@@ -1,11 +1,11 @@
 #ifndef SYS_NET_SOCKET
 #define SYS_NET_SOCKET
 
-#include "endpoint"
 #include <fcntl.h>
 #include <unistd.h>
 #include <unistdx/bits/socket>
 #include <unistdx/io/fildes>
+#include <unistdx/net/endpoint>
 
 namespace sys {
 

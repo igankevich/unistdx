@@ -9,12 +9,12 @@
 #include <ostream>
 #include <tuple>
 
-#include "bit_count"
-#include "byte_order"
-#include "ipaddr_traits"
-#include "ipv4_addr"
-#include "ipv6_addr"
-#include "family"
+#include <unistdx/net/bit_count>
+#include <unistdx/net/byte_order>
+#include <unistdx/net/family>
+#include <unistdx/net/ipaddr_traits>
+#include <unistdx/net/ipv4_addr>
+#include <unistdx/net/ipv6_addr>
 
 namespace sys {
 

@@ -1,17 +1,17 @@
 #ifndef SYS_NETWORK
 #define SYS_NETWORK
 
-#include "net/byte_swap"
-#include "net/byte_order"
-#include "net/endian"
-#include "net/bytes"
-#include "net/subnet_iterator"
-#include "net/ifaddr"
-#include "net/socket"
-#include "net/pstream"
 #include <unistdx/config>
+#include <unistdx/net/byte_order>
+#include <unistdx/net/byte_swap>
+#include <unistdx/net/bytes>
+#include <unistdx/net/endian>
+#include <unistdx/net/ifaddr>
+#include <unistdx/net/pstream>
+#include <unistdx/net/socket>
+#include <unistdx/net/subnet_iterator>
 #if defined(UNISTDX_HAVE_IFADDRS)
-#include "net/ifaddrs"
+#include <unistdx/net/ifaddrs>
 #endif
 
 #endif // SYS_NETWORK vim:filetype=cpp

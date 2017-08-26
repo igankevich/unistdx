@@ -1,8 +1,8 @@
 #ifndef SYS_IO_TWO_WAY_PIPE
 #define SYS_IO_TWO_WAY_PIPE
 
+#include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
-#include "pipe"
 
 namespace sys {
 

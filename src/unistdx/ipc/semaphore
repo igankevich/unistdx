@@ -20,9 +20,8 @@
 #include <cmath>
 
 #include <unistdx/base/unlock_guard>
-
 #include <unistdx/io/fildes>
-#include "process"
+#include <unistdx/ipc/process>
 
 namespace sys {
 

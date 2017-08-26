@@ -1,7 +1,7 @@
 #ifndef SYS_UTILITY
 #define SYS_UTILITY
 
-#include "util/backtrace"
-#include "util/system"
+#include <unistdx/util/backtrace>
+#include <unistdx/util/system>
 
 #endif // SYS_UTILITY vim:filetype=cpp

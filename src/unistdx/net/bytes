@@ -1,13 +1,13 @@
 #ifndef SYS_NET_BYTES
 #define SYS_NET_BYTES
 
-#include "byte_order"
-#include "byte_swap"
-#include <unistdx/base/ios_guard>
 #include <ostream>
+#include <unistdx/base/ios_guard>
 #include <unistdx/bits/byte_swap_chooser>
 #include <unistdx/bits/octet>
 #include <unistdx/it/intersperse_iterator>
+#include <unistdx/net/byte_order>
+#include <unistdx/net/byte_swap>
 
 namespace sys {
 

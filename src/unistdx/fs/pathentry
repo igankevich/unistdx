@@ -1,7 +1,7 @@
 #ifndef SYS_FS_PATHENTRY
 #define SYS_FS_PATHENTRY
 
-#include "direntry"
+#include <unistdx/fs/direntry>
 
 namespace sys {
 

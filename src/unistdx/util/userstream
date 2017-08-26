@@ -2,7 +2,7 @@
 #define SYS_UTIL_USERSTREAM
 
 #include <unistdx/it/basic_istream_iterator>
-#include "user"
+#include <unistdx/util/user>
 
 namespace sys {
 

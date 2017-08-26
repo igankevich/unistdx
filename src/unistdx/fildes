@@ -1,11 +1,11 @@
 #ifndef SYS_FILDES
 #define SYS_FILDES
 
-#include "io/fildes"
-#include "io/pipe"
-#include "io/poller"
-#include "io/two_way_pipe"
-#include "io/fildesbuf"
-#include "io/fdstream"
+#include <unistdx/io/fdstream>
+#include <unistdx/io/fildes>
+#include <unistdx/io/fildesbuf>
+#include <unistdx/io/pipe>
+#include <unistdx/io/poller>
+#include <unistdx/io/two_way_pipe>
 
 #endif // SYS_FILDES vim:filetype=cpp

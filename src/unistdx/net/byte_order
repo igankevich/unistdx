@@ -1,8 +1,8 @@
 #ifndef SYS_NET_BYTE_ORDER
 #define SYS_NET_BYTE_ORDER
 
-#include "byte_swap"
 #include <unistdx/config>
+#include <unistdx/net/byte_swap>
 
 namespace sys {
 

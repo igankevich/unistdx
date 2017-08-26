@@ -4,9 +4,9 @@
 #include <unistd.h>
 #include <unistdx/bits/safe_calls>
 #include <unistdx/check>
-#include "signal"
-#include "proc_status"
-#include "proc_info"
+#include <unistdx/ipc/proc_info>
+#include <unistdx/ipc/proc_status>
+#include <unistdx/ipc/signal>
 
 namespace sys {
 

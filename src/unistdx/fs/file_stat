@@ -1,10 +1,9 @@
 #ifndef SYS_FS_FILE_STAT
 #define SYS_FS_FILE_STAT
 
-#include "file_type"
-#include "file_mode"
-
 #include <unistdx/check>
+#include <unistdx/fs/file_mode>
+#include <unistdx/fs/file_type>
 
 namespace sys {
 

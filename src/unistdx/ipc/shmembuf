@@ -1,10 +1,10 @@
 #ifndef SYS_IPC_SHMEMBUF
 #define SYS_IPC_SHMEMBUF
 
-#include "sharedmem"
-#include "process_semaphore"
-#include <unistdx/base/packetbuf>
 #include <unistdx/base/log_message>
+#include <unistdx/base/packetbuf>
+#include <unistdx/ipc/process_semaphore>
+#include <unistdx/ipc/sharedmem>
 
 namespace sys {
 

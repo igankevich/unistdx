@@ -1,10 +1,10 @@
 #ifndef SYS_FS_IDIRECTORY
 #define SYS_FS_IDIRECTORY
 
-#include "dirstream"
-#include "direntry"
-#include "pathentry"
-#include "file"
+#include <unistdx/fs/direntry>
+#include <unistdx/fs/dirstream>
+#include <unistdx/fs/file>
+#include <unistdx/fs/pathentry>
 #include <unistdx/it/basic_istream_iterator>
 
 namespace sys {

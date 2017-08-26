@@ -4,8 +4,8 @@
 #include <limits.h>
 #include <stdlib.h>
 
-#include "path"
 #include <unistdx/check>
+#include <unistdx/fs/path>
 
 namespace sys {
 

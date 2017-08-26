@@ -1,9 +1,9 @@
 #ifndef SYS_FS_ODIRTREE
 #define SYS_FS_ODIRTREE
 
-#include "idirtree"
-#include "idirectory"
-#include "odirectory"
+#include <unistdx/fs/idirtree>
+#include <unistdx/fs/idirectory>
+#include <unistdx/fs/odirectory>
 
 namespace sys {
 

@@ -5,10 +5,11 @@
 #include <functional>
 #include <istream>
 #include <ostream>
+
 #include <unistdx/base/uint128>
-#include "ipaddr_traits"
-#include "pstream"
-#include "bit_count"
+#include <unistdx/net/bit_count>
+#include <unistdx/net/ipaddr_traits>
+#include <unistdx/net/pstream>
 
 namespace sys {
 

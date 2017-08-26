@@ -1,7 +1,7 @@
 #ifndef SYS_FDSTREAM
 #define SYS_FDSTREAM
 
-#include "fildesbuf"
+#include <unistdx/io/fildesbuf>
 #include <istream>
 
 namespace sys {

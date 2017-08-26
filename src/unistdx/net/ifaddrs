@@ -6,8 +6,8 @@
 #error "ifaddrs.h header not found"
 #endif
 #include <ifaddrs.h>
-#include "ifaddrs_iterator"
-#include "ifaddr"
+#include <unistdx/net/ifaddrs_iterator>
+#include <unistdx/net/ifaddr>
 
 namespace sys {
 

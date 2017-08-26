@@ -1,8 +1,8 @@
 #ifndef SYS_FS_DIRECTORY
 #define SYS_FS_DIRECTORY
 
-#include "idirectory"
-#include "odirectory"
+#include <unistdx/fs/idirectory>
+#include <unistdx/fs/odirectory>
 
 namespace sys {
 

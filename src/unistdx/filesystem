@@ -1,21 +1,21 @@
 #ifndef SYS_FILESYSTEM
 #define SYS_FILESYSTEM
 
-#include "fs/canonical_path"
-#include "fs/directory"
-#include "fs/direntry"
-#include "fs/dirstream"
-#include "fs/file"
-#include "fs/file_mode"
-#include "fs/file_mutex"
-#include "fs/file_stat"
-#include "fs/file_type"
-#include "fs/idirectory"
-#include "fs/idirtree"
-#include "fs/odirectory"
-#include "fs/odirtree"
-#include "fs/path"
-#include "fs/pathentry"
-#include "fs/mkdirs"
+#include <unistdx/fs/canonical_path>
+#include <unistdx/fs/directory>
+#include <unistdx/fs/direntry>
+#include <unistdx/fs/dirstream>
+#include <unistdx/fs/file>
+#include <unistdx/fs/file_mode>
+#include <unistdx/fs/file_mutex>
+#include <unistdx/fs/file_stat>
+#include <unistdx/fs/file_type>
+#include <unistdx/fs/idirectory>
+#include <unistdx/fs/idirtree>
+#include <unistdx/fs/mkdirs>
+#include <unistdx/fs/odirectory>
+#include <unistdx/fs/odirtree>
+#include <unistdx/fs/path>
+#include <unistdx/fs/pathentry>
 
 #endif // SYS_FILESYSTEM vim:ft=cpp

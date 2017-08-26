@@ -3,8 +3,6 @@
 
 #include <cassert>
 
-#include "streambuf_traits"
-
 namespace sys {
 
 	template<class Ch, class Tr=std::char_traits<Ch> >

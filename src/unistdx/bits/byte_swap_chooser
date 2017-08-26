@@ -2,6 +2,7 @@
 #define SYS_BITS_BYTE_SWAP_CHOOSER
 
 #include <unistdx/net/byte_swap>
+#include <unistdx/net/byte_order>
 
 namespace sys {
 

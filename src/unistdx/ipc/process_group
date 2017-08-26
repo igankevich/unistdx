@@ -1,7 +1,7 @@
 #ifndef SYS_IPC_PROCESS_GROUP
 #define SYS_IPC_PROCESS_GROUP
 
-#include "process"
+#include <unistdx/ipc/process>
 #include <vector>
 
 namespace sys {

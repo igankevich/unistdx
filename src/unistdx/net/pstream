@@ -7,9 +7,9 @@
 #include <ostream>
 #include <stdexcept>
 
-#include "bytes"
 #include <unistdx/base/packetbuf>
 #include <unistdx/config>
+#include <unistdx/net/bytes>
 
 namespace sys {
 

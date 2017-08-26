@@ -1,7 +1,7 @@
 #ifndef UNISTDX_IPC_THREAD_SEMAPHORE
 #define UNISTDX_IPC_THREAD_SEMAPHORE
 
-#include "semaphore"
+#include <unistdx/ipc/semaphore>
 
 namespace sys {
 

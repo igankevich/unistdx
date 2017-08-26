@@ -2,8 +2,8 @@
 #define SYS_IPC_PROC_INFO
 
 #include <sys/wait.h>
-#include "signal"
-#include "basic_status"
+#include <unistdx/ipc/basic_status>
+#include <unistdx/ipc/signal>
 
 namespace sys {
 

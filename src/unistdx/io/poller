@@ -9,12 +9,10 @@
 
 #include <unistdx/base/unlock_guard>
 #include <unistdx/bits/paired_iterator>
-#include <unistdx/it/intersperse_iterator>
-
 #include <unistdx/check>
-
-#include "pipe"
-#include "poll_event"
+#include <unistdx/io/pipe>
+#include <unistdx/io/poll_event>
+#include <unistdx/it/intersperse_iterator>
 
 namespace sys {
 
