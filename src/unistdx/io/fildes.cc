@@ -9,8 +9,3 @@ sys::fildes::remap(fd_type new_fd) {
 	this->_fd = ret_fd;
 }
 
-std::ostream&
-sys::operator<<(std::ostream& out, const fildes& rhs) {
-	return out << make_object("fd", rhs._fd);
-}
-

@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include <unistdx/base/make_object>
 #include <unistdx/bits/sharedmem>
-#include <unistdx/check>
+#include <unistdx/base/check>
 
 namespace sys {
 

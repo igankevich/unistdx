@@ -1,7 +1,7 @@
 #ifndef STDX_IOS_HH
 #define STDX_IOS_HH
 
-#include <ostream>
+#include <ios>
 
 namespace sys {
 
@@ -34,4 +34,4 @@ namespace sys {
 
 }
 
-#endif // STDX_IOS_HH
+#endif // vim:filetype=cpp

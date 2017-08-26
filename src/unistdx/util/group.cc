@@ -1,8 +1,10 @@
 #include "group"
-#include <unistdx/it/intersperse_iterator>
+
 #include <algorithm>
-#include <unistdx/config>
+#include <ostream>
 #include <unistdx/bits/entity>
+#include <unistdx/config>
+#include <unistdx/it/intersperse_iterator>
 
 std::ostream&
 sys::operator<<(std::ostream& out, const group& rhs) {

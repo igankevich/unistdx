@@ -1,6 +1,6 @@
 #include "mkdirs"
 #include "file_stat"
-#include "check"
+#include <unistdx/base/check>
 
 void
 sys::mkdirs(const sys::path& root, const sys::path& relative_path) {

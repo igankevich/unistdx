@@ -1,7 +1,7 @@
 #ifndef SYS_IO_POLL_EVENT
 #define SYS_IO_POLL_EVENT
 
-#include <ostream>
+#include <iosfwd>
 #include <unistdx/bits/poll>
 #include <unistdx/bits/socket>
 

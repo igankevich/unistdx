@@ -2,9 +2,7 @@
 #define SYS_NET_PSTREAM
 
 #include <cassert>
-#include <istream>
 #include <limits>
-#include <ostream>
 #include <stdexcept>
 
 #include <unistdx/base/packetbuf>

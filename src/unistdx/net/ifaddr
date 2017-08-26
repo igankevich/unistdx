@@ -1,7 +1,7 @@
 #ifndef SYS_NET_IFADDR
 #define SYS_NET_IFADDR
 
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/net/endpoint>
 #include <unistdx/net/subnet_iterator>
 

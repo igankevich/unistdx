@@ -3,8 +3,7 @@
 
 #include <netinet/in.h>
 #include <functional>
-#include <istream>
-#include <ostream>
+#include <iosfwd>
 
 #include <unistdx/net/bit_count>
 #include <unistdx/net/ipaddr_traits>

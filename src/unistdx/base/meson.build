@@ -1,6 +1,7 @@
 libunistdx_src += files([
 	'log_message.cc',
 	'cmdline.cc',
+	'check.cc'
 ])
 
 install_headers(
@@ -17,5 +18,6 @@ install_headers(
 	'streambuf_traits',
 	'uint128',
 	'unlock_guard',
+	'check',
 	subdir: join_paths(meson.project_name(), 'base')
 )

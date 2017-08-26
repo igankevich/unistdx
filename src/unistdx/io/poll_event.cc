@@ -1,4 +1,6 @@
 #include "poll_event"
+
+#include <ostream>
 #include <unistdx/base/make_object>
 
 std::ostream&

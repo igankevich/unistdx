@@ -1,5 +1,7 @@
 #include "proc_info"
 
+#include <ostream>
+
 std::ostream&
 sys::operator<<(std::ostream& out, const proc_info& rhs) {
 	out << "pid=" << rhs.pid() << ',';

@@ -1,5 +1,7 @@
 #include "file_mode"
 
+#include <ostream>
+
 std::ostream&
 sys::operator<<(std::ostream& out, const file_mode& rhs) {
 	const mode_type s = rhs.special();

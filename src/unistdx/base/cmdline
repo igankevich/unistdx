@@ -2,7 +2,6 @@
 #define UNISTDX_BASE_CMDLINE
 
 #include <functional>
-#include <istream>
 #include <sstream>
 #include <string>
 #include <exception>

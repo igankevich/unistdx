@@ -1,6 +1,8 @@
 #include "user"
-#include <unistdx/config>
+
+#include <ostream>
 #include <unistdx/bits/entity>
+#include <unistdx/config>
 
 std::ostream&
 sys::operator<<(std::ostream& out, const user& rhs) {

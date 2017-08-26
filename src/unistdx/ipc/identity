@@ -2,7 +2,7 @@
 #define SYS_IPC_IDENTITY
 
 #include <unistd.h>
-#include <unistdx/check>
+#include <unistdx/base/check>
 
 namespace sys {
 

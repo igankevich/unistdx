@@ -1,12 +1,14 @@
 #ifndef SYS_UTIL_USERS
 #define SYS_UTIL_USERS
 
-#include <pwd.h>
 #include <sys/types.h>
-#include <unistdx/config>
-#include <ostream>
+#include <pwd.h>
+
 #include <cstddef>
+#include <iosfwd>
 #include <string>
+
+#include <unistdx/config>
 
 namespace sys {
 

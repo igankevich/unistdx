@@ -1,4 +1,7 @@
 #include "endpoint"
+
+#include <istream>
+#include <ostream>
 #include <sstream>
 #include <unistdx/base/ios_guard>
 #include <unistdx/bits/addr_parse>

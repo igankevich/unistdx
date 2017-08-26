@@ -45,7 +45,6 @@ install_headers(
 	'filesystem',
 	'process',
 	'utils',
-	'check',
 	'fildes',
 	subdir: join_paths(meson.project_name())
 )

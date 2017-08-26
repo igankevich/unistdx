@@ -7,7 +7,7 @@
 #if defined(UNISTDX_HAVE_FIONREAD)
 #include <sys/ioctl.h>
 #endif
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
 #include <ostream>
 
@@ -154,8 +154,10 @@ namespace sys {
 			return rhs._fd == lhs;
 		}
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const fildes& rhs);
+		inline friend std::ostream&
+		operator<<(std::ostream& out, const fildes& rhs) {
+			return out << rhs._fd;
+		}
 
 		void
 		remap(fd_type new_fd);
@@ -182,9 +184,6 @@ namespace sys {
 	protected:
 		fd_type _fd = bad;
 	};
-
-	std::ostream&
-	operator<<(std::ostream& out, const fildes& rhs);
 
 	static_assert(sizeof(fildes) == sizeof(fd_type), "bad fd size");
 

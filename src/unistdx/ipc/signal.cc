@@ -1,5 +1,7 @@
 #include "signal"
 
+#include <ostream>
+
 namespace {
 
 	constexpr const int nsignals = 32;

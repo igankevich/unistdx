@@ -1,7 +1,7 @@
 #ifndef SYS_BITS_ENTITY
 #define SYS_BITS_ENTITY
 
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/config>
 #include <unistdx/util/group>
 #include <unistdx/util/user>

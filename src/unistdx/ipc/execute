@@ -2,7 +2,7 @@
 #define SYS_IPC_EXECUTE
 
 #include <unistd.h>
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/ipc/argstream>
 
 namespace sys {

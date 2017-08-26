@@ -1,4 +1,7 @@
 #include "ipv4_addr"
+
+#include <istream>
+#include <ostream>
 #include <unistdx/bits/addr_parse>
 
 namespace {

@@ -1,5 +1,7 @@
 #include "file_type"
 
+#include <ostream>
+
 namespace {
 
 	inline char

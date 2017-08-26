@@ -2,7 +2,7 @@
 #define SYS_BITS_CHECK_HH
 
 #include <system_error>
-#include <ostream>
+#include <iosfwd>
 
 #define UNISTDX_THROW_BAD_CALL() \
 	throw ::sys::bad_call(__FILE__, __LINE__, __func__)
@@ -38,20 +38,17 @@ namespace sys {
 		_file(file), _line(line), _function(function)
 		{}
 
-		inline friend std::ostream&
-		operator<<(std::ostream& out, const bad_call& rhs) {
-			return out
-				<< rhs._file << ':'
-				<< rhs._line << ':'
-				<< rhs._function << ' '
-				<< rhs.what();
-		}
+		friend std::ostream&
+		operator<<(std::ostream& out, const bad_call& rhs);
 
 	private:
 		const char* _file;
 		const int _line;
 		const char* _function;
 	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const bad_call& rhs);
 
 }
 

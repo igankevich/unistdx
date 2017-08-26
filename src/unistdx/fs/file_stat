@@ -1,7 +1,7 @@
 #ifndef SYS_FS_FILE_STAT
 #define SYS_FS_FILE_STAT
 
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/fs/file_mode>
 #include <unistdx/fs/file_type>
 

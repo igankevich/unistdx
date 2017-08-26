@@ -2,7 +2,7 @@
 #define SYS_UTIL_GROUP
 
 #include <grp.h>
-#include <ostream>
+#include <iosfwd>
 #include <string>
 #include <unistdx/it/cstring_iterator>
 

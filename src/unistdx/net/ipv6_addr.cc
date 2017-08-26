@@ -1,6 +1,9 @@
 #include "ipv6_addr"
-#include <unistdx/bits/addr_parse>
+
+#include <istream>
+#include <ostream>
 #include <unistdx/base/ios_guard>
+#include <unistdx/bits/addr_parse>
 
 std::ostream&
 sys::operator<<(std::ostream& out, const ipv6_addr& rhs) {

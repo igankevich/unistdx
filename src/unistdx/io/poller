@@ -9,7 +9,7 @@
 
 #include <unistdx/base/unlock_guard>
 #include <unistdx/bits/paired_iterator>
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/io/pipe>
 #include <unistdx/io/poll_event>
 #include <unistdx/it/intersperse_iterator>

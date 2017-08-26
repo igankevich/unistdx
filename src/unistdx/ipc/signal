@@ -1,9 +1,9 @@
 #ifndef SYS_IPC_SIGNAL
 #define SYS_IPC_SIGNAL
 
+#include <iosfwd>
 #include <signal.h>
-#include <ostream>
-#include <unistdx/check>
+#include <unistdx/base/check>
 #include <unistdx/config>
 
 namespace sys {
@@ -44,7 +44,7 @@ namespace sys {
 		virtual_alarm = SIGVTALRM,
 		cpu_time_limit_exceeded = SIGXCPU,
 		file_size_limit_exceeded = SIGXFSZ
-		// non-standard
+		                           // non-standard
 		#if defined(UNISTDX_HAVE_SIGSTKFLT)
 		, coprocessor_stack_fault = SIGSTKFLT
 		#endif
@@ -145,7 +145,7 @@ namespace sys {
 
 		sigset_type _signals;
 	};
-	#endif
+	#endif // if !defined(__MACH__)
 
 }
 
