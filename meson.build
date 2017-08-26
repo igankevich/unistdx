@@ -129,4 +129,21 @@ pkgconfig.generate(
 	filebase: meson.project_name()
 )
 
-run_target('cppcheck', command: join_paths('targets', 'cppcheck'))
+cppcheck = find_program('cppcheck', required: false)
+if cppcheck.found()
+	run_target(
+		'cppcheck',
+		command: [
+			cppcheck,
+			'--enable=all',
+			'--quiet',
+			'--force',
+			'--language=c++',
+			'--std=c++11',
+			'--template=gcc',
+			'-I' + join_paths(meson.source_root(), 'src'),
+			'-I' + join_paths(meson.build_root(), 'src'),
+			join_paths(meson.source_root(), 'src'),
+		]
+	)
+endif
