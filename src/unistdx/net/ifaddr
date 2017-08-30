@@ -1,6 +1,7 @@
 #ifndef UNISTDX_NET_IFADDR
 #define UNISTDX_NET_IFADDR
 
+#include <tuple>
 #include <unistdx/base/check>
 #include <unistdx/net/endpoint>
 #include <unistdx/net/subnet_iterator>
@@ -30,10 +31,13 @@ namespace sys {
 
 		inline constexpr
 		ifaddr() noexcept = default;
+
 		inline constexpr
 		ifaddr(const ifaddr&) noexcept = default;
+
 		inline constexpr
 		ifaddr(ifaddr&&) noexcept = default;
+
 		inline ifaddr&
 		operator=(const ifaddr&) noexcept = default;
 
@@ -106,13 +110,19 @@ namespace sys {
 
 		inline constexpr bool
 		operator==(const ifaddr& rhs) const noexcept {
-			return this->_address == rhs._address && this->_netmask ==
-			       rhs._netmask;
+			return this->_address == rhs._address &&
+			       this->_netmask == rhs._netmask;
 		}
 
 		inline constexpr bool
 		operator!=(const ifaddr& rhs) const noexcept {
 			return !this->operator==(rhs);
+		}
+
+		inline constexpr bool
+		operator<(const ifaddr& rhs) const noexcept {
+			return std::tie(this->_address, this->_netmask) <
+			       std::tie(rhs._address, rhs._netmask);
 		}
 
 		template <class X>
@@ -146,6 +156,9 @@ namespace sys {
 			return to_host_format(this->_netmask.rep());
 		}
 
+		template<class X>
+		friend class std::hash;
+
 		addr_type _address;
 		addr_type _netmask;
 	};
@@ -157,6 +170,27 @@ namespace sys {
 	template <class Addr>
 	std::istream&
 	operator>>(std::istream& in, ifaddr<Addr>& rhs);
+
+}
+
+namespace std {
+
+	template<class Addr>
+	struct hash<sys::ifaddr<Addr> >: public std::hash<Addr> {
+
+		typedef size_t result_type;
+		typedef sys::ifaddr<Addr> argument_type;
+
+		inline size_t
+		operator()(const argument_type& rhs) const noexcept {
+			typedef std::hash<Addr> addr_hash;
+			return
+			    addr_hash::operator()(rhs._address) ^
+			    addr_hash::operator()(rhs._netmask);
+
+		}
+
+	};
 
 }
 

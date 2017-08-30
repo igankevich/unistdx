@@ -249,7 +249,7 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 		'backtrace-test',
 		sources: 'backtrace_test.cc',
 		include_directories: srcdir,
-		dependencies: [unistdx],
+		dependencies: [unistdx,threads],
 	)
 	foreach type : ['signal', 'terminate']
 		test(

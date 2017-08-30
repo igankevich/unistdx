@@ -1,17 +1,22 @@
-#include <unistdx/util/backtrace>
-#include <unistdx/io/pipe>
 #include <unistdx/io/fdstream>
+#include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
-#include <stdexcept>
+#include <unistdx/util/backtrace>
+
+#include <chrono>
 #include <iostream>
-#include <string>
 #include <sstream>
+#include <stdexcept>
+#include <string>
+#include <thread>
 #include <unistd.h>
 
 enum struct Test_type {
 	Signal,
-	Terminate
+	Terminate,
+	Signal_thread,
+	Terminate_thread
 };
 
 std::istream&
@@ -20,8 +25,12 @@ operator>>(std::istream& in, Test_type& rhs) {
 	in >> s;
 	if (s == "signal") {
 		rhs = Test_type::Signal;
+	} else if (s == "signal_thread") {
+		rhs = Test_type::Signal_thread;
 	} else if (s == "terminate") {
 		rhs = Test_type::Terminate;
+	} else if (s == "terminate_thread") {
+		rhs = Test_type::Terminate_thread;
 	} else {
 		throw std::invalid_argument("bad test type");
 	}
@@ -46,6 +55,7 @@ print_error() {
 			func2_found = true;
 		}
 	}
+	int ret = EXIT_SUCCESS;
 	if (!func1_found) {
 		std::cerr << "func1 not found" << std::endl;
 	}
@@ -53,9 +63,10 @@ print_error() {
 		std::cerr << "func2 not found" << std::endl;
 	}
 	if (!func1_found || !func2_found) {
+		ret = EXIT_FAILURE;
 		sys::backtrace(STDERR_FILENO);
 	}
-	std::exit(0);
+	std::exit(ret);
 }
 
 void
@@ -64,13 +75,24 @@ print_error_signal(int) {
 }
 
 void
-func2() {
-	throw std::runtime_error("...");
+func2(Test_type type) {
+	if (type == Test_type::Terminate) {
+		std::set_terminate(print_error);
+		throw std::runtime_error("...");
+	} else if (type == Test_type::Signal) {
+		using namespace sys::this_process;
+		bind_signal(sys::signal::segmentation_fault, print_error_signal);
+		send(sys::signal::segmentation_fault);
+	} else if (type == Test_type::Terminate_thread) {
+		std::set_terminate(print_error);
+		sys::backtrace(2);
+		throw std::runtime_error("...");
+	}
 }
 
 void
-func1() {
-	func2();
+func1(Test_type type) {
+	func2(type);
 }
 
 int main(int argc, char* argv[]) {
@@ -80,13 +102,20 @@ int main(int argc, char* argv[]) {
 	Test_type type = Test_type::Terminate;
 	std::stringstream str(argv[1]);
 	str >> type;
-	if (type == Test_type::Terminate) {
-		std::set_terminate(print_error);
-	} else if (type == Test_type::Signal) {
-		using namespace sys::this_process;
-		bind_signal(sys::signal::segmentation_fault, print_error_signal);
-		send(sys::signal::segmentation_fault);
+	if (type == Test_type::Terminate_thread || type == Test_type::Signal_thread) {
+		std::thread t(
+			[type] () {
+				func1(type);
+			}
+		);
+		if (t.joinable()) {
+			t.join();
+		}
+		using namespace std::this_thread;
+		using namespace std::chrono;
+		sleep_for(milliseconds(123));
+	} else {
+		func1(type);
 	}
-	func1();
 	return 1;
 }
