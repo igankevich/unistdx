@@ -12,6 +12,12 @@
 #include <thread>
 #include <unistd.h>
 
+#if defined(__GNUC__)
+#define NO_INLINE [[gnu::noinline]]
+#else
+#define NO_INLINE
+#endif
+
 enum struct Test_type {
 	Signal,
 	Terminate,
@@ -74,7 +80,7 @@ print_error_signal(int) {
 	print_error();
 }
 
-void
+NO_INLINE void
 func2(Test_type type) {
 	if (type == Test_type::Terminate) {
 		std::set_terminate(print_error);
@@ -90,7 +96,7 @@ func2(Test_type type) {
 	}
 }
 
-void
+NO_INLINE void
 func1(Test_type type) {
 	func2(type);
 }
