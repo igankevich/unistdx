@@ -7,6 +7,7 @@ install_headers(
 	'basic_uint',
 	'byte_swap_chooser',
 	'entity',
+	'for_each_file_descriptor',
 	'make_object',
 	'octet',
 	'paired_iterator',

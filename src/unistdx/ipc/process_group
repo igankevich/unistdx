@@ -126,6 +126,11 @@ namespace sys {
 			return this->_procs.back();
 		}
 
+		inline bool
+		empty() const noexcept {
+			return this->_procs.empty();
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const process_group& rhs);
 

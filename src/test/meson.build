@@ -259,3 +259,13 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 		)
 	endforeach
 endif
+
+test(
+	'io/fildes',
+	executable(
+		'fildes-test',
+		sources: 'fildes_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest,unistdx]
+	)
+)
