@@ -68,7 +68,7 @@ print_error() {
 	if (!func2_found) {
 		std::cerr << "func2 not found" << std::endl;
 	}
-	if (!func1_found || !func2_found) {
+	if (!func1_found && !func2_found) {
 		ret = EXIT_FAILURE;
 		sys::backtrace(STDERR_FILENO);
 	}
