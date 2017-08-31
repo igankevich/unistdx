@@ -50,14 +50,16 @@ template<sys::file_lock_type LockType>
 void
 sys::file_mutex<LockType>::lock() {
 	check_fd(*this);
-	this->call_fcntl(F_SETLKW);
+	::flock(this->_fd, LOCK_EX);
+//	this->call_fcntl(F_SETLKW);
 }
 
 template<sys::file_lock_type LockType>
 void
 sys::file_mutex<LockType>::unlock() {
 	check_fd(*this);
-	this->call_fcntl(F_UNLCK);
+	::flock(this->_fd, LOCK_UN);
+//	this->call_fcntl(F_UNLCK);
 }
 
 template<sys::file_lock_type LockType>
