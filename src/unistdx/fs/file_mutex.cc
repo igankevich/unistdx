@@ -37,14 +37,13 @@ namespace {
 
 template <sys::file_lock_type LockType>
 void
-sys::file_mutex<LockType>::open(const char* filename, mode_type mode) {
+sys::file_mutex<LockType>::open(const char* filename, mode_type mode) noexcept {
 	typedef lock_type_to_mode<LockType> open_mode;
 	this->_fd = ::open(
 		filename,
 		::sys::fildes::create | ::sys::fildes::close_on_exec | open_mode::value,
 		mode
 	);
-	check_fd(*this);
 }
 
 template<sys::file_lock_type LockType>

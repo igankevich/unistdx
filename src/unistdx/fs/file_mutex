@@ -51,7 +51,7 @@ namespace sys {
 		}
 
 		void
-		open(const char* filename, mode_type mode);
+		open(const char* filename, mode_type mode) noexcept;
 
 		// disallow copy & move operations
 		file_mutex(const file_mutex&) = delete;
