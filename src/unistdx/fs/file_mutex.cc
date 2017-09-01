@@ -1,5 +1,4 @@
 #include "file_mutex"
-#include <cstring>
 
 namespace {
 
@@ -16,7 +15,7 @@ void
 sys::file_mutex::open(const char* filename, mode_type mode) noexcept {
 	this->_fd = ::open(
 		filename,
-		::sys::fildes::create | ::sys::fildes::close_on_exec | O_RDWR,
+		fildes::create | fildes::close_on_exec | fildes::read_write,
 		mode
 	);
 }
@@ -42,7 +41,6 @@ sys::file_mutex::try_lock(file_lock_type tp) {
 		if (errno == EINTR || errno == EWOULDBLOCK) {
 			result = false;
 		} else {
-			perror("try_lock");
 			throw bad_file_lock();
 		}
 	}

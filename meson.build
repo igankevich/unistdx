@@ -64,6 +64,9 @@ endif
 if cpp.has_header_symbol('fcntl.h', 'F_SETNOSIGPIPE')
 	config.set('UNISTDX_HAVE_SETNOSIGPIPE', true)
 endif
+if cpp.has_header_symbol('fcntl.h', 'O_CLOEXEC')
+	config.set('UNISTDX_HAVE_O_CLOEXEC', true)
+endif
 foreach name : ['SHM_HUGETLB', 'SHM_HUGE_2MB', 'SHM_HUGE_1GB', 'SHM_NORESERVE']
 	if cpp.has_header_symbol('sys/shm.h', name)
 		config.set('UNISTDX_HAVE_' + name, true)

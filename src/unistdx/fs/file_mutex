@@ -12,6 +12,7 @@ namespace sys {
 
 	public:
 		bad_file_lock() noexcept = default;
+
 		~bad_file_lock() noexcept = default;
 
 		const char*
@@ -21,7 +22,7 @@ namespace sys {
 
 	};
 
-	enum struct file_lock_type : int {
+	enum struct file_lock_type: int {
 		read_lock = LOCK_SH,
 		write_lock = LOCK_EX
 	};
@@ -51,9 +52,12 @@ namespace sys {
 
 		// disallow copy & move operations
 		file_mutex(const file_mutex&) = delete;
+
 		file_mutex(file_mutex&&) = delete;
+
 		file_mutex&
 		operator=(const file_mutex&) = delete;
+
 		file_mutex&
 		operator=(file_mutex&&) = delete;
 

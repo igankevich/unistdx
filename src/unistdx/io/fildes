@@ -10,6 +10,11 @@
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
 #include <ostream>
+#if defined(UNISTDX_HAVE_O_CLOEXEC)
+#define UNISTDX_O_CLOEXEC O_CLOEXEC
+#else
+#define UNISTDX_O_CLOEXEC 0
+#endif
 
 namespace sys {
 
@@ -19,18 +24,22 @@ namespace sys {
 
 	struct fildes {
 
-		enum flag: flag_type {
+		enum open_flag: flag_type {
 			non_blocking = O_NONBLOCK,
 			append = O_APPEND,
 			async = O_ASYNC,
 			dsync = O_DSYNC,
 			sync = O_SYNC,
 			create = O_CREAT,
-			truncate = O_TRUNC
+			truncate = O_TRUNC,
+			read_only = O_RDONLY,
+			write_only = O_WRONLY,
+			read_write = O_RDWR,
+			close_on_exec = UNISTDX_O_CLOEXEC,
 		};
 
 		enum fd_flag: flag_type {
-			close_on_exec = FD_CLOEXEC
+			fd_close_on_exec = FD_CLOEXEC
 		};
 
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
