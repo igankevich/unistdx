@@ -10,87 +10,52 @@ namespace {
 		}
 	}
 
-	struct flock_wrapper: public ::flock {
-		inline explicit
-		flock_wrapper(sys::file_lock_type type) {
-			std::memset(this, 0, sizeof(struct ::flock));
-			this->l_type = type;
-			this->l_whence = SEEK_SET;
-		}
-	};
-
-
-	template<sys::file_lock_type LockType>
-	struct lock_type_to_mode;
-
-	template<>
-	struct lock_type_to_mode<sys::read_lock> {
-		constexpr static const int value = O_RDONLY;
-	};
-
-	template<>
-	struct lock_type_to_mode<sys::write_lock> {
-		constexpr static const int value = O_WRONLY;
-	};
-
 }
 
-template <sys::file_lock_type LockType>
 void
-sys::file_mutex<LockType>::open(const char* filename, mode_type mode) noexcept {
-	typedef lock_type_to_mode<LockType> open_mode;
+sys::file_mutex::open(const char* filename, mode_type mode) noexcept {
 	this->_fd = ::open(
 		filename,
-		::sys::fildes::create | ::sys::fildes::close_on_exec | open_mode::value,
+		::sys::fildes::create | ::sys::fildes::close_on_exec | O_RDWR,
 		mode
 	);
 }
 
-template<sys::file_lock_type LockType>
 void
-sys::file_mutex<LockType>::lock() {
+sys::file_mutex::lock(file_lock_type tp) {
 	check_fd(*this);
-	::flock(this->_fd, LOCK_EX);
-//	this->call_fcntl(F_SETLKW);
+	this->do_lock(int(tp));
 }
 
-template<sys::file_lock_type LockType>
 void
-sys::file_mutex<LockType>::unlock() {
+sys::file_mutex::unlock() {
 	check_fd(*this);
-	::flock(this->_fd, LOCK_UN);
-//	this->call_fcntl(F_UNLCK);
+	this->do_lock(LOCK_UN);
 }
 
-template<sys::file_lock_type LockType>
 bool
-sys::file_mutex<LockType>::try_lock() {
+sys::file_mutex::try_lock(file_lock_type tp) {
 	check_fd(*this);
-	flock_wrapper lk(LockType);
-	int ret = ::fcntl(this->_fd, F_SETLK, &lk);
+	int ret = ::flock(this->_fd, int(tp) | LOCK_NB);
 	bool result = true;
 	if (ret == -1) {
-		if (errno == EACCES || errno == EAGAIN) {
+		if (errno == EINTR || errno == EWOULDBLOCK) {
 			result = false;
 		} else {
+			perror("try_lock");
 			throw bad_file_lock();
 		}
 	}
 	return result;
 }
 
-template <sys::file_lock_type LockType>
 void
-sys::file_mutex<LockType>::call_fcntl(int cmd) {
-	flock_wrapper lk(LockType);
+sys::file_mutex::do_lock(int cmd) {
 	int ret = 0;
 	do {
-		ret = ::fcntl(this->_fd, cmd, &lk);
+		ret = ::flock(this->_fd, cmd);
 	} while (ret == -1 && errno == EINTR);
 	if (ret == -1) {
 		throw bad_file_lock();
 	}
 }
-
-template class sys::file_mutex<sys::file_lock_type::read_lock>;
-template class sys::file_mutex<sys::file_lock_type::write_lock>;

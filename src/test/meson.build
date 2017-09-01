@@ -104,15 +104,15 @@ test(
 	)
 )
 
-#test(
-#	'fs/file_mutex',
-#	executable(
-#		'file-mutex-test',
-#		sources: 'file_mutex_test.cc',
-#		include_directories: srcdir,
-#		dependencies: [gtest, unistdx],
-#	)
-#)
+test(
+	'fs/file_mutex',
+	executable(
+		'file-mutex-test',
+		sources: 'file_mutex_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx],
+	)
+)
 
 test(
 	'ipc/signal',

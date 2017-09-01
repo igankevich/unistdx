@@ -4,10 +4,6 @@
 #include <exception>
 #include <fcntl.h>
 #include <sys/file.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <unistd.h>
-
 #include <unistdx/io/fildes>
 
 namespace sys {
@@ -25,23 +21,22 @@ namespace sys {
 
 	};
 
-	enum file_lock_type : short {
-		read_lock = F_RDLCK,
-		write_lock = F_WRLCK
+	enum struct file_lock_type : int {
+		read_lock = LOCK_SH,
+		write_lock = LOCK_EX
 	};
 
-	template<file_lock_type LockType>
 	class file_mutex: public fildes {
 
 	public:
 		void
-		lock();
+		lock(file_lock_type tp=file_lock_type::write_lock);
 
 		void
 		unlock();
 
 		bool
-		try_lock();
+		try_lock(file_lock_type tp=file_lock_type::write_lock);
 
 		file_mutex() noexcept = default;
 
@@ -65,7 +60,7 @@ namespace sys {
 	private:
 
 		void
-		call_fcntl(int cmd);
+		do_lock(int cmd);
 
 	};
 
