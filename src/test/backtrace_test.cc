@@ -46,8 +46,8 @@ operator>>(std::istream& in, Test_type& rhs) {
 void
 print_error() {
 	sys::pipe p;
-	p.in().unsetf(sys::fildes::non_blocking);
-	p.out().unsetf(sys::fildes::non_blocking);
+	p.in().unsetf(sys::open_flag::non_blocking);
+	p.out().unsetf(sys::open_flag::non_blocking);
 	sys::backtrace(p.out().get_fd());
 	p.out().close();
 	bool func1_found = false;

@@ -10,6 +10,7 @@ install_headers(
 	'for_each_file_descriptor',
 	'make_object',
 	'octet',
+	'open_flag',
 	'paired_iterator',
 	'poll',
 	'safe_calls',

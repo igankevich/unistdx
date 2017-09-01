@@ -9,6 +9,7 @@ install_headers(
 	'fdstream',
 	'fildes',
 	'fildesbuf',
+	'open_flag',
 	'pipe',
 	'poll_event',
 	'poller',

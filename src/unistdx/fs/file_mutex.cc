@@ -15,7 +15,7 @@ void
 sys::file_mutex::open(const char* filename, mode_type mode) noexcept {
 	this->_fd = ::open(
 		filename,
-		fildes::create | fildes::close_on_exec | fildes::read_write,
+		open_flag::create | open_flag::close_on_exec | open_flag::read_write,
 		mode
 	);
 }

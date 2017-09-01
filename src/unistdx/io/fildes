@@ -9,34 +9,15 @@
 #endif
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
+#include <unistdx/io/open_flag>
 #include <ostream>
-#if defined(UNISTDX_HAVE_O_CLOEXEC)
-#define UNISTDX_O_CLOEXEC O_CLOEXEC
-#else
-#define UNISTDX_O_CLOEXEC 0
-#endif
 
 namespace sys {
 
 	typedef ::mode_t mode_type;
 	typedef int fd_type;
-	typedef int flag_type;
 
 	struct fildes {
-
-		enum open_flag: flag_type {
-			non_blocking = O_NONBLOCK,
-			append = O_APPEND,
-			async = O_ASYNC,
-			dsync = O_DSYNC,
-			sync = O_SYNC,
-			create = O_CREAT,
-			truncate = O_TRUNC,
-			read_only = O_RDONLY,
-			write_only = O_WRONLY,
-			read_write = O_RDWR,
-			close_on_exec = UNISTDX_O_CLOEXEC,
-		};
 
 		enum fd_flag: flag_type {
 			fd_close_on_exec = FD_CLOEXEC
@@ -101,7 +82,7 @@ namespace sys {
 			return this->_fd;
 		}
 
-		inline flag_type
+		inline open_flag
 		flags() const {
 			return this->get_flags(F_GETFL);
 		}
@@ -112,12 +93,12 @@ namespace sys {
 		}
 
 		inline void
-		setf(flag_type rhs) {
+		setf(open_flag rhs) {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) | rhs);
 		}
 
 		inline void
-		unsetf(flag_type rhs) {
+		unsetf(open_flag rhs) {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) & ~rhs);
 		}
 
