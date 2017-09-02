@@ -160,7 +160,7 @@ namespace sys {
 		operator>>(pstream& in, endpoint& rhs);
 
 		template <class Addr>
-		inline Addr
+		Addr
 		address() const noexcept;
 
 		inline constexpr port_type
@@ -173,7 +173,7 @@ namespace sys {
 		}
 
 		template <class Addr>
-		inline constexpr port_type
+		port_type
 		port() const noexcept;
 
 		inline constexpr family_type
@@ -245,30 +245,6 @@ namespace sys {
 
 		friend ipv4_addr;
 	};
-
-	template <>
-	inline addr4_type
-	endpoint::address<addr4_type>() const noexcept {
-		return to_host_format<addr4_type>(this->addr4().rep());
-	}
-
-	template <>
-	inline addr6_type
-	endpoint::address<addr6_type>() const noexcept {
-		return to_host_format<addr6_type>(this->addr6().rep());
-	}
-
-	template <>
-	inline constexpr port_type
-	endpoint::port<addr4_type>() const noexcept {
-		return this->port4();
-	}
-
-	template <>
-	inline constexpr port_type
-	endpoint::port<addr6_type>() const noexcept {
-		return this->port6();
-	}
 
 	std::ostream&
 	operator<<(std::ostream& out, const endpoint& rhs);

@@ -1,0 +1,58 @@
+#ifndef UNISTDX_IT_FIELD_ITERATOR
+#define UNISTDX_IT_FIELD_ITERATOR
+
+#include <tuple>
+#include <type_traits>
+
+namespace sys {
+
+	template <class Base, size_t N>
+	class field_iterator: public Base {
+
+	public:
+		typedef Base base_iterator;
+		typedef typename std::tuple_element<
+				N,
+				typename base_iterator::value_type
+		>::type value_type;
+		typedef value_type* pointer;
+		typedef const pointer const_pointer;
+		typedef value_type& reference;
+		typedef const reference const_reference;
+
+		field_iterator() = default;
+
+		field_iterator(base_iterator rhs):
+		base_iterator(rhs)
+		{}
+
+		field_iterator(const field_iterator& rhs):
+		base_iterator(rhs)
+		{}
+
+		const_pointer
+		operator->() const noexcept {
+			return &std::get<N>(*base_iterator::operator->());
+		}
+
+		pointer
+		operator->() noexcept {
+			return &std::get<N>(*base_iterator::operator->());
+		}
+
+		const_reference
+		operator*() const noexcept {
+			return std::get<N>(base_iterator::operator*());
+		}
+
+		reference
+		operator*() noexcept {
+			return std::get<N>(base_iterator::operator*());
+		}
+
+	};
+
+
+}
+
+#endif // vim:filetype=cpp
