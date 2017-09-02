@@ -3,6 +3,7 @@ install_headers(
 	'basic_ostream_iterator',
 	'container_traits',
 	'cstring_iterator',
+	'field_iterator',
 	'intersperse_iterator',
 	'queue_popper',
 	'queue_pusher',
