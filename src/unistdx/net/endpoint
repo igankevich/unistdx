@@ -159,10 +159,6 @@ namespace sys {
 		friend pstream&
 		operator>>(pstream& in, endpoint& rhs);
 
-		template <class Addr>
-		Addr
-		address() const noexcept;
-
 		inline constexpr port_type
 		port() const noexcept {
 			return to_host_format<port_type>(
@@ -171,10 +167,6 @@ namespace sys {
 				: this->port6()
 			);
 		}
-
-		template <class Addr>
-		port_type
-		port() const noexcept;
 
 		inline constexpr family_type
 		family() const noexcept {
@@ -196,6 +188,21 @@ namespace sys {
 		inline constexpr ipv4_addr
 		addr4() const noexcept {
 			return ipv4_addr(this->_addr4.sin_addr);
+		}
+
+		inline constexpr port_type
+		port4() const {
+			return this->_addr4.sin_port;
+		}
+
+		inline constexpr ipv6_addr
+		addr6() const {
+			return ipv6_addr(this->_addr6.sin6_addr);
+		}
+
+		inline constexpr port_type
+		port6() const {
+			return this->_addr6.sin6_port;
 		}
 
 	public:
@@ -220,21 +227,6 @@ namespace sys {
 		friend struct std::hash<sys::endpoint>;
 
 	private:
-
-		inline constexpr port_type
-		port4() const {
-			return this->_addr4.sin_port;
-		}
-
-		inline constexpr ipv6_addr
-		addr6() const {
-			return ipv6_addr(this->_addr6.sin6_addr);
-		}
-
-		inline constexpr port_type
-		port6() const {
-			return this->_addr6.sin6_port;
-		}
 
 		void
 		    addr(const char* host, port_type p);
@@ -267,6 +259,26 @@ namespace sys {
 	ipv4_addr::ipv4_addr(const sa_type& rhs) noexcept:
 	inaddr(sys::endpoint(rhs)._addr4.sin_addr)
 	{}
+
+	constexpr ipv4_addr
+	ipaddr_traits<ipv4_addr>::address(const endpoint& rhs) noexcept {
+		return rhs.addr4();
+	}
+
+	constexpr port_type
+	ipaddr_traits<ipv4_addr>::port(const endpoint& rhs) noexcept {
+		return to_host_format(rhs.port4());
+	}
+
+	constexpr ipv6_addr
+	ipaddr_traits<ipv6_addr>::address(const endpoint& rhs) noexcept {
+		return rhs.addr6();
+	}
+
+	constexpr port_type
+	ipaddr_traits<ipv6_addr>::port(const endpoint& rhs) noexcept {
+		return to_host_format(rhs.port6());
+	}
 
 }
 

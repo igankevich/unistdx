@@ -15,8 +15,11 @@ namespace sys {
 	typedef struct ::sockaddr_in sockinet4_type;
 	typedef struct ::in_addr inet4_type;
 	typedef ::in_addr_t addr4_type;
+	typedef ::in_port_t port_type;
 	typedef ::sa_family_t sa_family_type;
 	typedef unsigned int prefix_type;
+
+	union endpoint;
 
 	union ipv4_addr {
 
@@ -176,6 +179,12 @@ namespace sys {
 		widearea_mask() noexcept {
 			return ipv4_addr {255,255,255,255};
 		}
+
+		inline static constexpr ipv4_addr
+		address(const endpoint& rhs) noexcept;
+
+		inline static constexpr port_type
+		port(const endpoint& rhs) noexcept;
 
 	};
 

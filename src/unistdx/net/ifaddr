@@ -91,6 +91,17 @@ namespace sys {
 			return this->contains(to_host_format(rhs.rep()));
 		}
 
+		inline constexpr rep_type
+		first() const noexcept {
+			return (this->addr_long() & this->mask_long()) + 1;
+		}
+
+		inline constexpr rep_type
+		last() const noexcept {
+			return (this->addr_long() & this->mask_long()) +
+			       (~this->mask_long());
+		}
+
 		inline constexpr bool
 		is_loopback() const noexcept {
 			return this->_address[0] == traits_type::loopback_first_octet &&
@@ -143,17 +154,6 @@ namespace sys {
 		inline constexpr bool
 		contains(const rep_type& a) const noexcept {
 			return this->first() <= a && a < this->last();
-		}
-
-		inline constexpr rep_type
-		first() const noexcept {
-			return (this->addr_long() & this->mask_long()) + 1;
-		}
-
-		inline constexpr rep_type
-		last() const noexcept {
-			return (this->addr_long() & this->mask_long()) +
-			       (~this->mask_long());
 		}
 
 		inline constexpr const rep_type

@@ -15,9 +15,12 @@ namespace sys {
 	typedef struct ::sockaddr sa_type;
 	typedef struct ::sockaddr_in6 sockinet6_type;
 	typedef struct ::in6_addr inet6_type;
-	typedef ::sa_family_t sa_family_type;
 	typedef uint128_t addr6_type;
+	typedef ::in_port_t port_type;
+	typedef ::sa_family_t sa_family_type;
 	typedef unsigned int prefix_type;
+
+	union endpoint;
 
 	union ipv6_addr {
 
@@ -114,6 +117,25 @@ namespace sys {
 	    from_prefix(prefix_type prefix) noexcept;
 
 	private:
+
+		template<class Q>
+		inline constexpr static
+		Q
+		position_helper(const Q& a, const Q& netmask) noexcept {
+			return a - (a & netmask);
+		}
+
+	public:
+
+		inline constexpr addr6_type
+		position(const ipv6_addr& netmask) const noexcept {
+			return position_helper(
+				to_host_format(rep()),
+				to_host_format(netmask.rep())
+			);
+		}
+
+	private:
 		inline constexpr const hex_type*
 		begin() const noexcept {
 			return this->_hextets;
@@ -202,6 +224,12 @@ namespace sys {
 		widearea_mask() noexcept {
 			return ipv6_addr {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
 		}
+
+		inline static constexpr ipv6_addr
+		address(const endpoint& rhs) noexcept;
+
+		inline static constexpr port_type
+		port(const endpoint& rhs) noexcept;
 
 	};
 

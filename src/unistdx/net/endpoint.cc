@@ -121,27 +121,3 @@ sys::endpoint::addr(const char* host, port_type p) {
 		}
 	}
 }
-
-template <>
-sys::addr4_type
-sys::endpoint::address<sys::addr4_type>() const noexcept {
-	return to_host_format<addr4_type>(this->addr4().rep());
-}
-
-template <>
-sys::addr6_type
-sys::endpoint::address<sys::addr6_type>() const noexcept {
-	return to_host_format<addr6_type>(this->addr6().rep());
-}
-
-template <>
-sys::port_type
-sys::endpoint::port<sys::addr4_type>() const noexcept {
-	return this->port4();
-}
-
-template <>
-sys::port_type
-sys::endpoint::port<sys::addr6_type>() const noexcept {
-	return this->port6();
-}

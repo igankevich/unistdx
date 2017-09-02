@@ -2,6 +2,7 @@
 #include <unistdx/net/ifaddr>
 #include <sstream>
 #include <random>
+#include <cmath>
 
 #include "io.hh"
 #include "make_types.hh"
@@ -77,4 +78,11 @@ TEST(Ifaddr, ContainsIpV4) {
 	EXPECT_FALSE(ifa.contains(*ifa.end()));
 	EXPECT_FALSE(ifa.contains({127,0,0,0}));
 	EXPECT_FALSE(ifa.contains(*--ifa.begin()));
+}
+
+TEST(Ifaddr, CountIpv4) {
+	typedef sys::ifaddr<sys::ipv4_addr> ifaddr_type;
+	typedef sys::ipaddr_traits<sys::ipv4_addr> traits_type;
+	ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
+	EXPECT_EQ(std::pow(2, 24)-2, ifa.count());
 }
