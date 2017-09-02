@@ -66,3 +66,15 @@ TYPED_TEST(IfaddrTest, Loopback) {
 		).is_widearea()
 	);
 }
+
+TEST(Ifaddr, ContainsIpV4) {
+	typedef sys::ifaddr<sys::ipv4_addr> ifaddr_type;
+	typedef sys::ipaddr_traits<sys::ipv4_addr> traits_type;
+	ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
+	EXPECT_TRUE(ifa.contains({127,0,0,1}));
+	EXPECT_TRUE(ifa.contains({127,0,0,2}));
+	EXPECT_TRUE(ifa.contains(*ifa.begin()));
+	EXPECT_FALSE(ifa.contains(*ifa.end()));
+	EXPECT_FALSE(ifa.contains({127,0,0,0}));
+	EXPECT_FALSE(ifa.contains(*--ifa.begin()));
+}

@@ -67,6 +67,20 @@ namespace sys {
 			return tmp;
 		}
 
+		inline subnet_iterator&
+		operator--() noexcept {
+			--_idx;
+			this->_addr = this->make_addr();
+			return *this;
+		}
+
+		inline subnet_iterator&
+		operator--(int) noexcept {
+			subnet_iterator tmp(*this);
+			this->operator--();
+			return tmp;
+		}
+
 		inline constexpr subnet_iterator
 		operator+(difference_type rhs) const noexcept {
 			return subnet_iterator(this->_idx + rhs);

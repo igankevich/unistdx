@@ -63,7 +63,7 @@ namespace sys {
 
 		inline constexpr rep_type
 		position() const noexcept {
-			return this->_address.position(_netmask);
+			return this->_address.position(this->_netmask);
 		}
 
 		inline constexpr iterator
@@ -84,6 +84,11 @@ namespace sys {
 		inline constexpr rep_type
 		count() const noexcept {
 			return this->last() - this->first();
+		}
+
+		inline constexpr bool
+		contains(const addr_type& rhs) const noexcept {
+			return this->contains(to_host_format(rhs.rep()));
 		}
 
 		inline constexpr bool
@@ -134,6 +139,11 @@ namespace sys {
 		operator>>(std::istream& in, ifaddr<X>& rhs);
 
 	private:
+
+		inline constexpr bool
+		contains(const rep_type& a) const noexcept {
+			return this->first() <= a && a < this->last();
+		}
 
 		inline constexpr rep_type
 		first() const noexcept {
