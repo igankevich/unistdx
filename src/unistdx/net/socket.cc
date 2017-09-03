@@ -112,7 +112,7 @@ sys::socket::set_user_timeout(const duration& d) {
 #endif
 
 int
-sys::socket::error() const {
+sys::socket::error() const noexcept {
 	int ret = 0;
 	int opt = 0;
 	if (!*this) {

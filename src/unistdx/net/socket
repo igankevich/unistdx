@@ -89,7 +89,7 @@ namespace sys {
 
 		/// @deprecated We use event-based error notifications.
 		int
-		error() const;
+		error() const noexcept;
 
 		inline endpoint
 		bind_addr() const {
