@@ -2,6 +2,7 @@
 #include <unistdx/base/make_object>
 #include <unistdx/base/log_message>
 #include <unistdx/bits/safe_calls>
+#include <netinet/tcp.h>
 
 namespace {
 
@@ -95,15 +96,20 @@ void
 sys::socket::setopt(option opt) {
 	int one = 1;
 	UNISTDX_CHECK(
-		::setsockopt(
-			this->_fd,
-			SOL_SOCKET,
-			opt,
-			&one,
-			sizeof(one)
-		)
+		::setsockopt(this->_fd, SOL_SOCKET, opt, &one, sizeof(one))
 	);
 }
+
+#if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
+void
+sys::socket::set_user_timeout(const duration& d) {
+	using namespace std::chrono;
+	const unsigned int ms = duration_cast<milliseconds>(d).count();
+	UNISTDX_CHECK(
+		::setsockopt(this->_fd, IPPROTO_TCP, TCP_USER_TIMEOUT, &ms, sizeof(ms))
+	);
+}
+#endif
 
 int
 sys::socket::error() const {

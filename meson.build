@@ -61,6 +61,9 @@ endif
 if cpp.has_header_symbol('sys/socket.h', 'SOCK_CLOEXEC')
 	config.set('UNISTDX_HAVE_SOCK_CLOEXEC', true)
 endif
+if cpp.has_header_symbol('netinet/tcp.h', 'TCP_USER_TIMEOUT')
+	config.set('UNISTDX_HAVE_TCP_USER_TIMEOUT', true)
+endif
 if cpp.has_header_symbol('fcntl.h', 'F_SETNOSIGPIPE')
 	config.set('UNISTDX_HAVE_SETNOSIGPIPE', true)
 endif

@@ -3,6 +3,7 @@
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <chrono>
 #include <unistdx/bits/socket>
 #include <unistdx/io/fildes>
 #include <unistdx/net/endpoint>
@@ -12,10 +13,12 @@ namespace sys {
 	struct socket: public fildes {
 
 		typedef int opt_type;
+		typedef std::chrono::system_clock clock_type;
+		typedef clock_type::duration duration;
 
 		enum option : opt_type {
 			reuse_addr = SO_REUSEADDR,
-			keep_alive = SO_KEEPALIVE
+			keep_alive = SO_KEEPALIVE,
 		};
 
 		enum shutdown_how {
@@ -78,6 +81,11 @@ namespace sys {
 
 		void
 		setopt(option opt);
+
+		#if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
+		void
+		set_user_timeout(const duration& d);
+		#endif
 
 		/// @deprecated We use event-based error notifications.
 		int
