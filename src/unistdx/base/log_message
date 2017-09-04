@@ -114,10 +114,9 @@ namespace sys {
 		template<class T, class ... Args>
 		void
 		format_msg(const char* s, const T& value, const Args& ... args) {
-			while (*s != this->_spec) {
+			while (*s && *s != this->_spec) {
 				this->_log << *s++;
 			}
-			;
 			this->_log << value;
 			this->format_msg(++s, args ...);
 		}

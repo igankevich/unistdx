@@ -16,17 +16,15 @@ namespace sys {
 			str.append(args ...);
 			assert(str.argc() == sizeof ... (Args));
 			char** argv = str.argv();
-			char* const no_env[1] = {0};
 			int ret;
-			UNISTDX_CHECK(ret = ::execve(argv[0], argv, no_env));
+			UNISTDX_CHECK(ret = ::execv(argv[0], argv));
 			return ret;
 		}
 
 		inline int
 		execute(char* const argv[]) {
-			char* const no_env[1] = {0};
 			int ret;
-			UNISTDX_CHECK(ret = ::execve(argv[0], argv, no_env));
+			UNISTDX_CHECK(ret = ::execv(argv[0], argv));
 			return ret;
 		}
 
