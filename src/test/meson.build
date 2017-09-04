@@ -75,6 +75,7 @@ test(
 		sources: 'buffer_test.cc',
 		include_directories: srcdir,
 		dependencies: [gtest,unistdx],
+		cpp_args: ['-DUNISTDX_DEBUG_PACKETBUF']
 	)
 )
 

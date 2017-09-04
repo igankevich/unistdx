@@ -88,6 +88,11 @@ namespace sys {
 		}
 
 		inline void
+		skip_packet() {
+			this->_buf->skip_packet();
+		}
+
+		inline void
 		append_payload(basic_pstream& rhs) {
 			assert(this->_buf != nullptr);
 			assert(rhs._buf != nullptr);

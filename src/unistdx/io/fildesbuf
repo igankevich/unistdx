@@ -66,7 +66,10 @@ namespace sys {
 			setp(beg, beg + _pbuf.size());
 		}
 
-		basic_fildesbuf(basic_fildesbuf&& rhs) = default;
+		basic_fildesbuf(basic_fildesbuf&&) = delete;
+		basic_fildesbuf(const basic_fildesbuf&) = delete;
+		basic_fildesbuf& operator=(const basic_fildesbuf&) = delete;
+		basic_fildesbuf& operator=(basic_fildesbuf&&) = delete;
 
 		int_type
 		underflow() override {
