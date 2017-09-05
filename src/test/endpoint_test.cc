@@ -226,3 +226,8 @@ TEST(Endpoint, Literals) {
 	constexpr sys::endpoint endpV(ipv6_addr(), 100);
 	EXPECT_EQ(endpU, endpV);
 }
+
+TEST(Endpoint, UnixDomain) {
+	std::clog << sys::endpoint("/path/to/socket") << std::endl;
+	std::clog << sys::endpoint("\0/path/to/socket") << std::endl;
+}

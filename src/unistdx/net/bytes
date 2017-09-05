@@ -63,6 +63,11 @@ namespace sys {
 			return _bytes[idx];
 		}
 
+		inline value_type&
+		operator[](size_type idx) noexcept {
+			return _bytes[idx];
+		}
+
 		inline constexpr bool
 		operator==(const bytes& rhs) const noexcept {
 			return _intval == rhs._intval;
@@ -91,6 +96,11 @@ namespace sys {
 		inline constexpr const_iterator
 		end() const noexcept {
 			return _bytes + sizeof(T);
+		}
+
+		inline value_type&
+		back() noexcept {
+			return *(_bytes + sizeof(T) - 1);
 		}
 
 		inline constexpr const T&

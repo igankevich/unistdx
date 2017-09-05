@@ -69,6 +69,12 @@ namespace sys {
 			this->sa_handler = func;
 		}
 
+		inline
+		signal_action(void (*func)(int, siginfo_t*, void*)) noexcept {
+			this->sa_sigaction = func;
+			this->sa_flags = SA_SIGINFO;
+		}
+
 	};
 
 	namespace this_process {

@@ -1,5 +1,6 @@
 #include "endpoint"
 
+#include <cstring>
 #include <istream>
 #include <ostream>
 #include <sstream>
@@ -42,9 +43,17 @@ sys::operator<<(std::ostream& out, const endpoint& rhs) {
 			port_type port = to_host_format<port_type>(rhs.port6());
 			out << Left_br() << rhs.addr6() << Right_br()
 			    << Colon() << port;
-		} else {
+		} else if (rhs.family() == family_type::inet) {
 			port_type port = to_host_format<port_type>(rhs.port4());
 			out << rhs.addr4() << Colon() << port;
+		} else if (rhs.family() == family_type::unix) {
+			const char* unix_socket_path =
+				rhs._bytes.begin() + sizeof(sa_family_t);
+			if (!*unix_socket_path) {
+				out << "\\0";
+				++unix_socket_path;
+			}
+			out << unix_socket_path;
 		}
 	}
 	return out;
@@ -121,3 +130,23 @@ sys::endpoint::addr(const char* host, port_type p) {
 		}
 	}
 }
+
+sys::endpoint::endpoint(const char* unix_socket_path) noexcept:
+_sockaddr{AF_UNIX, 0} {
+	constexpr const int max_size = this->_bytes.size() - sizeof(sa_family_t) - 1;
+	const char* p = unix_socket_path;
+	int n = 0;
+	if (!*unix_socket_path) {
+		++p;
+		++n;
+	}
+	n += std::strlen(p);
+	n = std::min(max_size, n);
+	std::memcpy(
+		this->_bytes.begin() + sizeof(sa_family_t),
+		unix_socket_path,
+		n
+	);
+	this->_bytes[n] = 0;
+}
+

@@ -28,15 +28,8 @@ libunistdx_shared = shared_library(
 	include_directories: srcdir
 )
 
-libunistdx_static = static_library(
-	'unistdx',
-	sources: libunistdx_src,
-	install: true,
-	include_directories: srcdir
-)
-
 unistdx = declare_dependency(
-	link_with: libunistdx_static,
+	link_with: libunistdx_shared,
 	include_directories: srcdir
 )
 
