@@ -6,21 +6,28 @@ namespace {
 
 	enum struct portable_family_type: raw_family_type {
 		inet = 0,
-		inet6 = 1
+		inet6 = 1,
+		unix = 2
 	};
 
-	inline constexpr portable_family_type
+	inline portable_family_type
 	map_family_type(sys::family_type t) {
-		return t == sys::family_type::inet6
-		       ? portable_family_type::inet6
-			   : portable_family_type::inet;
+		switch (t) {
+			case sys::family_type::inet: return portable_family_type::inet;
+			case sys::family_type::inet6: return portable_family_type::inet6;
+			case sys::family_type::unix: return portable_family_type::unix;
+			default: return portable_family_type(0);
+		}
 	};
 
-	inline constexpr sys::family_type
+	inline sys::family_type
 	map_family_type(portable_family_type t) {
-		return t == portable_family_type::inet6
-		       ? sys::family_type::inet6
-			   : sys::family_type::inet;
+		switch (t) {
+			case portable_family_type::inet: return sys::family_type::inet;
+			case portable_family_type::inet6: return sys::family_type::inet6;
+			case portable_family_type::unix: return sys::family_type::unix;
+			default: return sys::family_type(0);
+		}
 	};
 
 }

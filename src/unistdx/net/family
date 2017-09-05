@@ -2,6 +2,8 @@
 #define UNISTDX_NET_FAMILY
 
 #include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <unistdx/net/pstream>
 
 namespace sys {
@@ -10,7 +12,8 @@ namespace sys {
 
 	enum struct family_type: sa_family_type {
 		inet = AF_INET,
-		inet6 = AF_INET6
+		inet6 = AF_INET6,
+		unix = AF_UNIX
 	};
 
 	pstream&

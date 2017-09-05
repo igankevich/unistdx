@@ -3,6 +3,7 @@
 
 #include <netinet/in.h>
 #include <sys/types.h>
+#include <sys/un.h>
 
 #include <functional>
 #include <iosfwd>
@@ -10,6 +11,7 @@
 
 #include <unistdx/net/bit_count>
 #include <unistdx/net/byte_order>
+#include <unistdx/net/bytes>
 #include <unistdx/net/family>
 #include <unistdx/net/ipaddr_traits>
 #include <unistdx/net/ipv4_addr>
@@ -20,6 +22,7 @@ namespace sys {
 	typedef struct ::sockaddr sa_type;
 	typedef ::socklen_t socklen_type;
 	typedef ::in_port_t port_type;
+	typedef struct ::sockaddr_un sockunix_type;
 
 	template<class Addr>
 	inline constexpr sockinet6_type
@@ -90,6 +93,9 @@ namespace sys {
 		inline constexpr
 		endpoint(const sa_type &rhs) noexcept:
 		_sockaddr(rhs) {}
+
+		explicit
+		endpoint(const char* unix_socket_path) noexcept;
 
 		inline constexpr
 		endpoint(const endpoint &rhs, const port_type newport) noexcept:
@@ -228,12 +234,12 @@ namespace sys {
 
 	private:
 
-		void
-		    addr(const char* host, port_type p);
+		void addr(const char* host, port_type p);
 
 		sockinet6_type _addr6 = {};
 		sockinet4_type _addr4;
 		sa_type _sockaddr;
+		bytes<sockinet6_type> _bytes;
 
 		friend ipv4_addr;
 	};
