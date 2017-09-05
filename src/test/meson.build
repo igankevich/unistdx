@@ -9,6 +9,16 @@ test(
 )
 
 test(
+	'net/socket',
+	executable(
+		'socket-test',
+		sources: 'socket_test.cc',
+		include_directories: srcdir,
+		dependencies: [threads,unistdx,gtest],
+	)
+)
+
+test(
 	'base/spin_mutex',
 	executable(
 		'spin-mutex-test',

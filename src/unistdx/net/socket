@@ -1,14 +1,22 @@
 #ifndef UNISTDX_NET_SOCKET
 #define UNISTDX_NET_SOCKET
 
+#include <chrono>
 #include <fcntl.h>
 #include <unistd.h>
-#include <chrono>
 #include <unistdx/bits/socket>
+#include <unistdx/config>
 #include <unistdx/io/fildes>
 #include <unistdx/net/endpoint>
 
 namespace sys {
+
+	typedef struct ::msghdr message_header;
+	typedef struct ::cmsghdr cmessage_header;
+	#if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
+	typedef struct ::ucred user_credentials;
+	#endif
+	typedef struct ::iovec io_vector;
 
 	struct socket: public fildes {
 
@@ -19,6 +27,7 @@ namespace sys {
 		enum option : opt_type {
 			reuse_addr = SO_REUSEADDR,
 			keep_alive = SO_KEEPALIVE,
+			pass_credentials = SO_PASSCRED,
 		};
 
 		enum shutdown_how {
@@ -120,6 +129,21 @@ namespace sys {
 			return this->_fd;
 		}
 
+		inline ssize_t
+		send(const message_header* hdr, int flags=0) const noexcept {
+			return ::sendmsg(this->_fd, hdr, flags);
+		}
+
+		inline ssize_t
+		receive(message_header* hdr, int flags=0) const noexcept {
+			return ::recvmsg(this->_fd, hdr, flags);
+		}
+
+		#if defined(UNISTDX_HAVE_SO_PEERCRED)
+		user_credentials
+		credentials() const;
+		#endif
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const socket& rhs);
 
@@ -137,6 +161,14 @@ namespace sys {
 
 	std::ostream&
 	operator<<(std::ostream& out, const socket& rhs);
+
+	#if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
+	void
+	send_credentials(socket& sock, const void* data, size_t n);
+
+	void
+	receive_credentials(socket& sock, message_header& h, void* data, size_t n);
+	#endif
 
 	template<>
 	struct streambuf_traits<sys::socket>:
