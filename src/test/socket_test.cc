@@ -9,13 +9,15 @@ TEST(Socket, GetCredentials) {
 	sys::endpoint e(path);
 	sys::socket sock;
 	sock.bind(e);
+	sock.setopt(sys::socket::pass_credentials);
 	sock.listen();
 	sys::process child([&] () {
-		sys::socket s;
+		sys::socket s(sys::family_type::unix);
+		s.setopt(sys::socket::pass_credentials);
 		s.connect(e);
 		return 0;
 	});
-	usleep(1000);
+	usleep(100000);
 	sys::endpoint client_end;
 	sys::socket client;
 	sock.accept(client, client_end);

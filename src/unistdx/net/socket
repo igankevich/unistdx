@@ -40,7 +40,9 @@ namespace sys {
 		    = SOCK_STREAM | UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
 
 		socket() = default;
+
 		socket(const socket&) = delete;
+
 		socket&
 		operator=(const socket&) = delete;
 
@@ -58,6 +60,8 @@ namespace sys {
 
 		/// Bind on @bind_addr and connect to a server on @conn_addr.
 		socket(const endpoint& bind_addr, const endpoint& conn_addr);
+
+		socket(family_type family, flag_type flags=default_flags);
 
 		inline
 		~socket() {
@@ -94,6 +98,7 @@ namespace sys {
 		#if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
 		void
 		set_user_timeout(const duration& d);
+
 		#endif
 
 		/// @deprecated We use event-based error notifications.
@@ -142,6 +147,7 @@ namespace sys {
 		#if defined(UNISTDX_HAVE_SO_PEERCRED)
 		user_credentials
 		credentials() const;
+
 		#endif
 
 		friend std::ostream&
@@ -168,6 +174,7 @@ namespace sys {
 
 	void
 	receive_credentials(socket& sock, message_header& h, void* data, size_t n);
+
 	#endif
 
 	template<>

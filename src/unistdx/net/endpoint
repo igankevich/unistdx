@@ -223,11 +223,14 @@ namespace sys {
 			return const_cast<sa_type*>(&this->_sockaddr);
 		}
 
-		inline constexpr socklen_type
+		inline socklen_type
 		sockaddrlen() const noexcept {
-			return this->family() == family_type::inet6
-			       ? sizeof(sockinet6_type)
-				   : sizeof(sockinet4_type);
+			switch (this->family()) {
+				case family_type::inet: return sizeof(sockinet4_type);
+				case family_type::inet6: return sizeof(sockinet6_type);
+				case family_type::unix: return sizeof(sockinet6_type);
+				default: return 0;
+			}
 		}
 
 		friend struct std::hash<sys::endpoint>;
@@ -256,10 +259,6 @@ namespace sys {
 	pstream&
 	operator>>(pstream& in, endpoint& rhs);
 
-	static_assert(
-		sizeof(endpoint) == sizeof(sockinet6_type),
-		"bad endpoint size"
-	);
 	static_assert(sizeof(port_type) == 2, "bad port_type size");
 
 	ipv4_addr::ipv4_addr(const sa_type& rhs) noexcept:

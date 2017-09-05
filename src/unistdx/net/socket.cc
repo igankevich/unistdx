@@ -38,6 +38,10 @@ sys::socket::socket(const endpoint& bind_addr, const endpoint& conn_addr) {
 	this->connect(conn_addr);
 }
 
+sys::socket::socket(family_type family, flag_type flags):
+sys::fildes(safe_socket(int(family), flags, 0))
+{}
+
 void
 sys::socket::bind(const endpoint& e) {
 	this->create_socket_if_necessary(e);
