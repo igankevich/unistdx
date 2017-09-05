@@ -165,3 +165,16 @@ if cppcheck.found()
 		]
 	)
 endif
+
+# doxygen {{{
+doxygen = find_program('doxygen', required: false)
+if doxygen.found()
+	run_target(
+		'doc',
+		command: [
+			doxygen,
+			join_paths(meson.source_root(), 'Doxyfile'),
+		]
+	)
+endif
+# }}}
