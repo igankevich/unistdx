@@ -46,7 +46,12 @@ namespace sys {
 		process(F f) {
 			this->_pid = this_process::fork();
 			if (this->_pid == 0) {
-				int ret = f();
+				int ret = 0;
+				try {
+					ret = f();
+				} catch (...) {
+					ret = 1;
+				}
 				std::exit(ret);
 			}
 		}
