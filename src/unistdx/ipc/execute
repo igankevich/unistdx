@@ -11,7 +11,7 @@ namespace sys {
 
 		template<class ... Args>
 		int
-		execute(const Args& ... args) {
+		exec(const Args& ... args) {
 			sys::argstream str;
 			str.append(args ...);
 			assert(str.argc() == sizeof ... (Args));
@@ -48,9 +48,16 @@ namespace sys {
 		}
 
 		inline int
-		execute_command(char* const argv[]) {
+		exec_command(char* const argv[]) {
 			int ret;
 			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
+			return ret;
+		}
+
+		inline int
+		exec_command(char* const argv[], char* const envp[]) {
+			int ret;
+			UNISTDX_CHECK(ret = ::execvpe(argv[0], argv, envp));
 			return ret;
 		}
 

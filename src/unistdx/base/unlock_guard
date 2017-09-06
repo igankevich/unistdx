@@ -42,6 +42,7 @@ namespace sys {
 
 	};
 
+	/// @deprecated
 	template<class Lock, class It, class Func>
 	inline void
 	for_each_unlock(Lock& lock, It first, It last, Func func) {

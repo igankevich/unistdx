@@ -4,6 +4,7 @@
 #include <istream>
 #include <ostream>
 #include <sstream>
+#include <string>
 #include <unistdx/base/ios_guard>
 #include <unistdx/bits/addr_parse>
 
@@ -167,6 +168,62 @@ sys::endpoint::sockaddrlen() const noexcept {
 			this->_bytes.begin() + sizeof(sa_family_t)
 		);
 		default: return 0;
+	}
+}
+
+bool
+sys::endpoint::operator<(const endpoint& rhs) const noexcept {
+	typedef std::char_traits<char> traits_type;
+	if (this->family() == rhs.family()) {
+		switch (this->family()) {
+			case family_type::unix: {
+				const int len1 = unix_sockaddr_len(this->unix_path());
+				const int len2 = unix_sockaddr_len(rhs.unix_path());
+				return traits_type::compare(
+					this->unix_path(),
+					rhs.unix_path(),
+					std::min(len1, len2)
+				) < 0;
+			}
+			case family_type::inet:
+			   return std::make_tuple(sa_family(), addr4(), port4()) <
+				   std::make_tuple(rhs.sa_family(), rhs.addr4(), rhs.port4());
+			case family_type::inet6:
+			   return std::make_tuple(sa_family(), addr6(), port6()) <
+				   std::make_tuple(rhs.sa_family(), rhs.addr6(), rhs.port6());
+			default:
+				return false;
+		}
+	} else {
+		return this->sa_family() < rhs.sa_family();
+	}
+}
+
+bool
+sys::endpoint::operator==(const endpoint& rhs) const noexcept {
+	typedef std::char_traits<char> traits_type;
+	if (this->family() != rhs.family() && this->sa_family() && rhs.sa_family()) {
+		return false;
+	}
+	switch (this->family()) {
+		case family_type::unix: {
+			const int len1 = unix_sockaddr_len(this->unix_path());
+			const int len2 = unix_sockaddr_len(rhs.unix_path());
+			return len1 == len2 && traits_type::compare(
+				this->unix_path(),
+				rhs.unix_path(),
+				len1
+			) == 0;
+		}
+		case family_type::inet:
+			return this->addr4() == rhs.addr4() &&
+				this->port4() == rhs.port4();
+		case family_type::inet6:
+			return this->addr6() == rhs.addr6() &&
+				this->port6() == rhs.port6();
+		default:
+			return this->sa_family() == 0 &&
+				rhs.sa_family() == 0;
 	}
 }
 

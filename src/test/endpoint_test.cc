@@ -230,4 +230,8 @@ TEST(Endpoint, Literals) {
 TEST(Endpoint, UnixDomain) {
 	std::clog << sys::endpoint("/path/to/socket") << std::endl;
 	std::clog << sys::endpoint("\0/path/to/socket") << std::endl;
+	EXPECT_EQ(sys::endpoint("/path"), sys::endpoint("/path"));
+	EXPECT_EQ(sys::endpoint("\0/path"), sys::endpoint("\0/path"));
+	EXPECT_NE(sys::endpoint("\0/path"), sys::endpoint("/path"));
+	EXPECT_NE(sys::endpoint("/path"), sys::endpoint("\0/path"));
 }

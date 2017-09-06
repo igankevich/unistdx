@@ -113,30 +113,18 @@ namespace sys {
 			)
 		) {}
 
-		inline bool
-		operator<(const endpoint& rhs) const noexcept {
-			return family() == family_type::inet
-			       ? std::make_tuple(sa_family(), addr4(), port4())
-			       < std::make_tuple(rhs.sa_family(), rhs.addr4(), rhs.port4())
-				   : std::make_tuple(sa_family(), addr6(), port6())
-			       < std::make_tuple(rhs.sa_family(), rhs.addr6(), rhs.port6());
-		}
+		bool
+		operator<(const endpoint& rhs) const noexcept;
 
-		inline constexpr bool
-		operator==(const endpoint& rhs) const noexcept {
-			return (sa_family() == rhs.sa_family() || sa_family() == 0 ||
-			        rhs.sa_family() == 0)
-			       && (family() == family_type::inet
-			           ? addr4() == rhs.addr4() && port4() == rhs.port4()
-					   : addr6() == rhs.addr6() && port6() == rhs.port6());
-		}
+		bool
+		operator==(const endpoint& rhs) const noexcept;
 
 		inline bool
 		operator>=(const endpoint& rhs) const noexcept {
 			return !operator<(rhs);
 		}
 
-		inline constexpr bool
+		inline bool
 		operator!=(const endpoint& rhs) const noexcept {
 			return !operator==(rhs);
 		}
@@ -229,6 +217,11 @@ namespace sys {
 		friend struct std::hash<sys::endpoint>;
 
 	private:
+
+		inline const char*
+		unix_path() const noexcept {
+			return this->_bytes.begin() + sizeof(sa_family_t);
+		}
 
 		void addr(const char* host, port_type p);
 
