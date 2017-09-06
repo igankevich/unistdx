@@ -223,15 +223,8 @@ namespace sys {
 			return const_cast<sa_type*>(&this->_sockaddr);
 		}
 
-		inline socklen_type
-		sockaddrlen() const noexcept {
-			switch (this->family()) {
-				case family_type::inet: return sizeof(sockinet4_type);
-				case family_type::inet6: return sizeof(sockinet6_type);
-				case family_type::unix: return sizeof(sockinet6_type);
-				default: return 0;
-			}
-		}
+		socklen_type
+		sockaddrlen() const noexcept;
 
 		friend struct std::hash<sys::endpoint>;
 

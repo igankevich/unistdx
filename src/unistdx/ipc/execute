@@ -22,6 +22,13 @@ namespace sys {
 		}
 
 		inline int
+		execute(char* const argv[], char* const envp[]) {
+			int ret;
+			UNISTDX_CHECK(ret = ::execve(argv[0], argv, envp));
+			return ret;
+		}
+
+		inline int
 		execute(char* const argv[]) {
 			int ret;
 			UNISTDX_CHECK(ret = ::execv(argv[0], argv));

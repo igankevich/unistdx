@@ -341,7 +341,7 @@ namespace sys {
 				throw std::invalid_argument("string is too long");
 			}
 			rhs.resize(length);
-			this->read(rhs.data(), length);
+			this->read(&rhs[0], length);
 			return *this;
 		}
 

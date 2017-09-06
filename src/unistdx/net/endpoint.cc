@@ -32,6 +32,17 @@ namespace {
 		addr6.sin6_port = to_network_format<port_type>(p);
 	}
 
+	int
+	unix_sockaddr_len(const char* p) {
+		int n = sizeof(sa_family_t);
+		if (!*p) {
+			++p;
+			++n;
+		}
+		n += std::strlen(p);
+		return n;
+	}
+
 }
 
 std::ostream&
@@ -145,5 +156,17 @@ _sockaddr{AF_UNIX, 0} {
 	n = std::min(max_size, n);
 	std::memcpy(this->_bytes.begin() + offset, unix_socket_path, n);
 	this->_bytes[n+offset] = 0;
+}
+
+sys::socklen_type
+sys::endpoint::sockaddrlen() const noexcept {
+	switch (this->family()) {
+		case family_type::inet: return sizeof(sockinet4_type);
+		case family_type::inet6: return sizeof(sockinet6_type);
+		case family_type::unix: return unix_sockaddr_len(
+			this->_bytes.begin() + sizeof(sa_family_t)
+		);
+		default: return 0;
+	}
 }
 
