@@ -1,6 +1,7 @@
 #ifndef UNISTDX_IPC_IDENTITY
 #define UNISTDX_IPC_IDENTITY
 
+#include <sys/types.h>
 #include <unistd.h>
 #include <unistdx/base/check>
 
@@ -40,8 +41,10 @@ namespace sys {
 		inline gid_type
 		effective_group() noexcept { return ::getegid(); }
 
-	}
+		void
+		set_identity(uid_type uid, gid_type gid);
 
+	}
 
 }
 

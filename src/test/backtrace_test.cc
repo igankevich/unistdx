@@ -18,6 +18,12 @@
 #define NO_INLINE
 #endif
 
+#if defined(__SANITIZE_ADDRESS__)
+#define NO_SANITIZE [[gnu::no_sanitize("address")]]
+#else
+#define NO_SANITIZE
+#endif
+
 enum struct Test_type {
 	Signal,
 	Terminate,
@@ -43,7 +49,7 @@ operator>>(std::istream& in, Test_type& rhs) {
 	return in;
 }
 
-void
+void NO_SANITIZE
 print_error() {
 	sys::pipe p;
 	p.in().unsetf(sys::open_flag::non_blocking);
@@ -75,20 +81,20 @@ print_error() {
 	std::exit(ret);
 }
 
-void
+void NO_SANITIZE
 print_error_signal(int) {
 	print_error();
 }
 
-NO_INLINE void
+NO_INLINE void NO_SANITIZE
 func2(Test_type type) {
 	if (type == Test_type::Terminate) {
 		std::set_terminate(print_error);
 		throw std::runtime_error("...");
 	} else if (type == Test_type::Signal) {
 		using namespace sys::this_process;
-		bind_signal(sys::signal::segmentation_fault, print_error_signal);
-		send(sys::signal::segmentation_fault);
+		bind_signal(sys::signal::user_defined_1, print_error_signal);
+		send(sys::signal::user_defined_1);
 	} else if (type == Test_type::Terminate_thread) {
 		std::set_terminate(print_error);
 		sys::backtrace(2);
@@ -96,7 +102,7 @@ func2(Test_type type) {
 	}
 }
 
-NO_INLINE void
+NO_INLINE void NO_SANITIZE
 func1(Test_type type) {
 	func2(type);
 }

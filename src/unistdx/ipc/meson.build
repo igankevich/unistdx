@@ -1,4 +1,5 @@
 libunistdx_src += files([
+	'identity.cc',
 	'proc_info.cc',
 	'proc_status.cc',
 	'process.cc',

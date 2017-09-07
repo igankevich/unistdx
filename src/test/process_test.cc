@@ -2,6 +2,7 @@
 #include <unistdx/base/make_object>
 #include <unistdx/ipc/argstream>
 #include <unistdx/ipc/execute>
+#include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
 
 TEST(Process, Fork) {
@@ -47,4 +48,27 @@ TEST(ArgStream, All) {
 	EXPECT_EQ(args.argv()[4], arg1);
 	EXPECT_EQ(args.argv()[5], std::to_string(arg2));
 	EXPECT_EQ(args.argv()[args.argc()], (char*)nullptr);
+}
+
+TEST(SetIdentity, Exceptions) {
+	using namespace sys::this_process;
+	sys::uid_type other_uid = user() + 1;
+	sys::gid_type other_gid = group() + 1;
+	sys::uid_type old_uid = user();
+	sys::gid_type old_gid = group();
+	EXPECT_THROW(
+		set_identity(other_uid, other_gid),
+		std::system_error
+	);
+	EXPECT_EQ(old_uid, user());
+	EXPECT_EQ(old_gid, group());
+	EXPECT_THROW(
+		set_identity(1000, other_gid),
+		std::system_error
+	);
+	EXPECT_EQ(old_uid, user());
+	EXPECT_EQ(old_gid, group());
+	EXPECT_NO_THROW(set_identity(user(), group()));
+	EXPECT_EQ(old_uid, user());
+	EXPECT_EQ(old_gid, group());
 }

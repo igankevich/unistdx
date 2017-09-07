@@ -79,6 +79,16 @@ test(
 )
 
 test(
+	'ipc/identity',
+	executable(
+		'identity-test',
+		sources: 'identity_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest,unistdx],
+	)
+)
+
+test(
 	'io/fildesbuf',
 	executable(
 		'buffer-test',
@@ -100,7 +110,7 @@ test(
 )
 
 executable(
-	'POSIX compliance',
+	'POSIX',
 	sources: 'posix_test.cc',
 	include_directories: srcdir,
 )
