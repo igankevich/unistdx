@@ -47,6 +47,11 @@ namespace sys {
 		}
 
 		inline
+		fildes(const char* filename, open_flag flags, mode_type mode) {
+			this->open(filename, flags, mode);
+		}
+
+		inline
 		~fildes() {
 			try {
 				this->close();
@@ -150,11 +155,19 @@ namespace sys {
 		}
 
 		void
+		remap();
+
+		void
 		remap(fd_type new_fd);
 
 		inline void
 		validate() {
 			this->get_flags(F_GETFD);
+		}
+
+		inline void
+		open(const char* filename, open_flag flags, mode_type mode) {
+			this->_fd = ::open(filename, flags, mode);
 		}
 
 	private:

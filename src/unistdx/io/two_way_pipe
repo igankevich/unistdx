@@ -80,6 +80,9 @@ namespace sys {
 		close_unused();
 
 		void
+		remap_in_child();
+
+		void
 		remap_in_child(fd_type in, fd_type out);
 
 		void
