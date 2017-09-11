@@ -190,6 +190,15 @@ namespace sys {
 		}
 
 		inline void
+		enqueue_emplace(poll_event ev, handler_type handler) {
+			this->_newevents.push_back(ev);
+			this->_newhandlers.emplace_back(handler);
+			#ifndef NDEBUG
+			assert_invariant(__func__);
+			#endif
+		}
+
+		inline void
 		disable(fd_type fd) noexcept {
 			events_type::iterator pos = this->find(poll_event {fd});
 			if (pos != this->_events.end()) {
@@ -367,6 +376,23 @@ namespace sys {
 			#endif
 		}
 
+		inline void
+		insert_pending_events_and_handlers() {
+			this->_events.insert(
+				this->_events.end(),
+				this->_newevents.begin(),
+				this->_newevents.end()
+			);
+			this->_newevents.clear();
+			for (const handler_type& h : this->_newhandlers) {
+				this->_handlers.emplace_back(std::move(h));
+			}
+			this->_newhandlers.clear();
+			#ifndef NDEBUG
+			assert_invariant(__func__);
+			#endif
+		}
+
 		inline int
 		do_poll(int timeout_millis) {
 			if (timeout_millis != no_timeout) {
@@ -374,15 +400,18 @@ namespace sys {
 			}
 			this->remove_fds_if(std::logical_not<poll_event>());
 			this->insert_pending_specials();
+			this->insert_pending_events_and_handlers();
+			auto nevents = this->_events.size();
 			int ret;
 			UNISTDX_CHECK_IF_NOT(
 				EINTR,
 				ret = ::poll(
 					this->_events.data(),
-					this->_events.size(),
+					nevents,
 					timeout_millis
 				      )
 			);
+			assert(this->_events.size() == nevents);
 			if (ret > 0) {
 				#if !defined(UNISTDX_HAVE_POLLRDHUP)
 				this->check_hup(this->_events.begin(), this->_events.end());
@@ -437,6 +466,7 @@ namespace sys {
 				_handlers.begin()
 			);
 			assert(ordinary_begin() <= ordinary_end());
+			assert(_newevents.size() == _newhandlers.size());
 		}
 
 		#endif
@@ -445,6 +475,8 @@ namespace sys {
 		events_type _events;
 		handlers_type _handlers;
 		std::vector<poll_event> _specials;
+		events_type _newevents;
+		handlers_type _newhandlers;
 		size_type _nspecials = 0;
 
 		static constexpr const size_type NPIPES = 1;
