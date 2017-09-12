@@ -22,6 +22,17 @@ sys::operator>>(std::istream& in, ifaddr<Addr>& rhs) {
 	return in;
 }
 
+template <class Addr>
+sys::pstream&
+sys::operator<<(pstream& out, const ifaddr<Addr>& rhs) {
+	return out << rhs._address << rhs._netmask;
+}
+
+template <class Addr>
+sys::pstream&
+sys::operator>>(pstream& in, ifaddr<Addr>& rhs) {
+	return in >> rhs._address >> rhs._netmask;
+}
 
 template std::ostream&
 sys::operator<<(std::ostream& out, const ifaddr<sys::ipv4_addr>& rhs);
@@ -34,3 +45,15 @@ sys::operator>>(std::istream& in, ifaddr<ipv4_addr>& rhs);
 
 template std::istream&
 sys::operator>>(std::istream& in, ifaddr<ipv6_addr>& rhs);
+
+template sys::pstream&
+sys::operator<<(pstream& out, const ifaddr<ipv4_addr>& rhs);
+
+template sys::pstream&
+sys::operator<<(pstream& out, const ifaddr<ipv6_addr>& rhs);
+
+template sys::pstream&
+sys::operator>>(pstream& in, ifaddr<ipv4_addr>& rhs);
+
+template sys::pstream&
+sys::operator>>(pstream& in, ifaddr<ipv6_addr>& rhs);
