@@ -70,10 +70,15 @@ namespace sys {
 		}
 
 		inline void
-		terminate() {
+		send(signal s) {
 			if (this->_gid > 0) {
-		    	UNISTDX_CHECK(::kill(this->_gid, SIGTERM));
+		    	UNISTDX_CHECK(::killpg(this->_gid, signal_type(s)));
 			}
+		}
+
+		inline void
+		terminate() {
+			this->send(signal::terminate);
 		}
 
 		inline pid_type
