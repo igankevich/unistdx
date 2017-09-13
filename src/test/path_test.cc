@@ -28,3 +28,10 @@ TEST(Path, Equals) {
 	EXPECT_NE(std::string("/tmpx"), p);
 	EXPECT_NE(p, std::string("/tmpx"));
 }
+
+TEST(Path, VariadicConstructor) {
+	EXPECT_EQ("a", sys::path("a"));
+	EXPECT_EQ("a/b", sys::path("a", "b"));
+	EXPECT_EQ("a/b/c", sys::path("a", "b", "c"));
+	EXPECT_EQ("a/b/c/d", sys::path("a", "b", "c", "d"));
+}

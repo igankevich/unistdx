@@ -105,8 +105,32 @@ namespace sys {
 		inline
 		basic_path(A&& dir, B&& filename):
 		string_type(std::forward<A>(dir)) {
+			this->add(std::forward<B>(filename));
+		}
+
+		template <class A, class B, class ... Args>
+		inline
+		basic_path(A&& dir, B&& filename, Args&& ... more_filenames):
+		string_type(std::forward<A>(dir)) {
+			this->add(
+				std::forward<B>(filename),
+				std::forward<Args>(more_filenames)...
+			);
+		}
+
+		template <class T>
+		inline void
+		add(T&& filename) {
 			this->push_back(file_separator);
-			this->append(std::forward<B>(filename));
+			this->append(std::forward<T>(filename));
+		}
+
+		template <class T, class ... Args>
+		inline void
+		add(T&& filename, Args&& ... components) {
+			this->push_back(file_separator);
+			this->append(std::forward<T>(filename));
+			this->add(std::forward<Args>(components)...);
 		}
 
 		inline
