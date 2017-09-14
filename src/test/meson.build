@@ -194,6 +194,17 @@ test(
 		dependencies: [gtest, unistdx],
 	)
 )
+
+test(
+	'net/base64',
+	executable(
+		'base64-test',
+		sources: ['base64_test.cc'],
+		include_directories: srcdir,
+		dependencies: [gtest, unistdx]
+	)
+)
+
 test(
 	'base/uint128 (builtin)',
 	executable(

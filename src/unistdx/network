@@ -2,6 +2,7 @@
 #define UNISTDX_NETWORK
 
 #include <unistdx/config>
+#include <unistdx/net/base64>
 #include <unistdx/net/byte_order>
 #include <unistdx/net/byte_swap>
 #include <unistdx/net/bytes>

@@ -1,4 +1,5 @@
 libunistdx_src += files([
+	'base64.cc',
 	'endian.cc',
 	'endpoint.cc',
 	'family.cc',
@@ -9,6 +10,7 @@ libunistdx_src += files([
 ])
 
 install_headers(
+	'base64',
 	'bit_count',
 	'byte_order',
 	'byte_swap',

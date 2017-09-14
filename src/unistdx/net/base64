@@ -1,0 +1,41 @@
+#ifndef UNISTDX_NET_BASE64
+#define UNISTDX_NET_BASE64
+
+#include <cstddef>
+#include <limits>
+#include <stdexcept>
+
+namespace sys {
+
+	inline size_t
+	base64_encoded_size(size_t len) {
+		if (len > std::numeric_limits<size_t>::max()/4u*3u-2u) {
+			throw std::length_error("base64 length is too large");
+		}
+		return ((len + 2u) / 3u) * 4u;
+	}
+
+	inline constexpr size_t
+	base64_max_decoded_size(size_t len) noexcept {
+		return (len / 4u) * 3u;
+	}
+
+	void
+	base64_encode(const char* first, size_t n, char* result);
+
+	inline void
+	base64_encode(const char* first, const char* last, char* result) {
+		base64_encode(first, last-first, result);
+	}
+
+	size_t
+	base64_decode(const char* first, size_t n, char* result);
+
+	inline size_t
+	base64_decode(const char* first, const char* last, char* result) {
+		return base64_decode(first, last-first, result);
+	}
+
+}
+
+#endif // vim:filetype=cpp
