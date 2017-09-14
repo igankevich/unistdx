@@ -1,11 +1,13 @@
 libunistdx_src += files([
-	'log_message.cc',
+	'check.cc',
 	'cmdline.cc',
-	'check.cc'
+	'log_message.cc',
+	'sha1.cc',
 ])
 
 install_headers(
 	'adapt_engine',
+	'check',
 	'cmdline',
 	'delete_each',
 	'ios_guard',
@@ -13,11 +15,11 @@ install_headers(
 	'make_object',
 	'n_random_bytes',
 	'packetbuf',
+	'sha1',
 	'simple_lock',
 	'spin_mutex',
 	'streambuf_traits',
 	'uint128',
 	'unlock_guard',
-	'check',
 	subdir: join_paths(meson.project_name(), 'base')
 )

@@ -276,6 +276,16 @@ test(
 	)
 )
 
+test(
+	'base/sha1',
+	executable(
+		'sha1-test',
+		sources: 'sha1_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest,unistdx]
+	)
+)
+
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	backtrace_test = executable(
 		'backtrace-test',
