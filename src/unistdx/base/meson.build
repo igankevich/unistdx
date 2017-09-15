@@ -4,6 +4,7 @@ libunistdx_src += files([
 	'cmdline.cc',
 	'log_message.cc',
 	'sha1.cc',
+	'websocket.cc',
 ])
 
 install_headers(
@@ -23,5 +24,6 @@ install_headers(
 	'streambuf_traits',
 	'uint128',
 	'unlock_guard',
+	'websocket',
 	subdir: join_paths(meson.project_name(), 'base')
 )

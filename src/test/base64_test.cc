@@ -1,22 +1,8 @@
 #include <unistdx/base/base64>
 
-#include <algorithm>
-#include <functional>
-#include <random>
-#include <string>
-
 #include <gtest/gtest.h>
 
-std::default_random_engine rng;
-
-template <class T>
-std::basic_string<T>
-random_string(size_t n) {
-	std::uniform_int_distribution<T> dist('a', 'z');
-	std::basic_string<T> str(n, '_');
-	std::generate(str.begin(), str.end(), std::bind(dist, rng));
-	return str;
-}
+#include "random_string.hh"
 
 using sys::base64_decode;
 using sys::base64_encode;

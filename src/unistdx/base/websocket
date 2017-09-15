@@ -1,0 +1,266 @@
+#ifndef UNISTDX_BASE_WEBSOCKET
+#define UNISTDX_BASE_WEBSOCKET
+
+#include <algorithm>
+#include <cstddef>
+#include <iosfwd>
+#include <stdexcept>
+
+#include <unistdx/base/base64>
+#include <unistdx/base/log_message>
+#include <unistdx/base/n_random_bytes>
+#include <unistdx/net/bytes>
+
+namespace sys {
+
+	enum class opcode_type : int8_t {
+		cont_frame   = 0x0,
+		text_frame   = 0x1,
+		binary_frame = 0x2,
+		conn_close   = 0x8,
+		ping         = 0x9,
+		pong         = 0xa
+	};
+
+	union websocket_frame {
+
+	private:
+		static const uint16_t length16_tag = 126;
+		static const uint16_t length64_tag = 127;
+		static const size_t mask_size = 4;
+		static const size_t base_size = 2;
+
+	public:
+		typedef uint32_t mask_type;
+		typedef uint16_t length16_type;
+		typedef uint64_t length64_type;
+
+		struct {
+			uint16_t opcode  : 4;
+			uint16_t rsv3    : 1;
+			uint16_t rsv2    : 1;
+			uint16_t rsv1    : 1;
+			uint16_t fin     : 1;
+			uint8_t          : 0;
+			uint16_t len     : 7;
+			uint16_t maskbit : 1;
+			uint8_t          : 0;
+			uint16_t extlen;
+			uint8_t          : 0;
+			uint32_t extlen2;
+			uint8_t          : 0;
+			uint64_t footer;        /// extlen3 (16) + mask (32) + padding (16)
+		} _hdr = {};
+		unsigned char _bytes[sizeof(_hdr)];
+
+		// check if header fields are aligned properly
+		static_assert(
+			offsetof(decltype(_hdr), extlen)  == 2,
+			"bad offset of hdr.extlen"
+		);
+		static_assert(
+			offsetof(decltype(_hdr), extlen2) == 4,
+			"bad offset of hdr.extlen2"
+		);
+		static_assert(
+			offsetof(decltype(_hdr), footer)  == 8,
+			"bad offset of hdr.footer"
+		);
+		static_assert(sizeof(_hdr) == 16, "bad websocket frame header size");
+
+		template<class It>
+		std::pair<It,It>
+		decode(It first, It last) {
+			// read first two bytes of a frame
+			size_t input_size = last - first;
+			if (input_size < base_size)
+				return std::make_pair(first,last);
+			std::copy(first, first + base_size, this->_bytes);
+			// keep reading until the end of the header
+			size_t hdrsz = header_size();
+			if (input_size < hdrsz) return std::make_pair(first,last);
+			if (hdrsz > base_size) {
+				std::copy(
+					first + base_size,
+					first + hdrsz,
+					this->_bytes + base_size
+				);
+			}
+			size_t payload_sz = payload_size();
+			if (input_size < payload_sz + hdrsz) {
+				return std::make_pair(first,last);
+			}
+			return std::make_pair(first + hdrsz, first + hdrsz + payload_sz);
+		}
+
+		template<class It>
+		size_t
+		decode_header(It first, It last) {
+			// read first two bytes of a frame
+			size_t input_size = last - first;
+			if (input_size < base_size)
+				return 0;
+			std::copy(first, first + base_size, this->_bytes);
+			// keep reading until the end of the header
+			size_t hdrsz = header_size();
+			if (input_size < hdrsz) return 0;
+			if (hdrsz > base_size) {
+				std::copy(
+					first + base_size,
+					first + hdrsz,
+					this->_bytes + base_size
+				);
+			}
+			return hdrsz;
+		}
+
+		template<class Res>
+		void
+		encode(Res result) const {
+			std::copy(this->_bytes, this->_bytes + header_size(), result);
+		}
+
+		inline void
+		fin(int rhs) noexcept {
+			this->_hdr.fin = rhs;
+		}
+
+		inline void
+		opcode(opcode_type rhs) noexcept {
+			this->_hdr.opcode = static_cast<uint16_t>(rhs);
+		}
+
+		inline opcode_type
+		opcode() const noexcept {
+			return static_cast<opcode_type>(this->_hdr.opcode);
+		}
+
+		inline bool
+		is_masked() const noexcept {
+			return this->_hdr.maskbit == 1;
+		}
+
+		inline bool
+		is_binary() const noexcept{
+			return this->opcode() == opcode_type::binary_frame;
+		}
+
+		inline bool
+		has_valid_opcode() const noexcept {
+			return this->_hdr.opcode >= 0x0 && this->_hdr.opcode <= 0xf;
+		}
+
+		inline size_t
+		extlen_size() const noexcept {
+			return this->_hdr.len == length16_tag ? sizeof(length16_type) :
+			       this->_hdr.len == length64_tag ? sizeof(length64_type) : 0;
+		}
+
+		length64_type
+		payload_size() const noexcept;
+
+		void
+		payload_size(length64_type rhs) noexcept;
+
+		inline size_t
+		header_size() const noexcept {
+			return base_size + this->extlen_size()
+				+ (this->is_masked() ? mask_size : 0);
+		}
+
+		mask_type
+		mask() const noexcept;
+
+		void
+		mask(mask_type rhs) noexcept;
+
+		template<class It, class Res>
+		void
+		copy_payload(It first, It last, Res result) const {
+			if (this->is_masked()) {
+				bytes<mask_type> m = this->mask();
+				size_t i = 0;
+				std::transform(
+					first,
+					last,
+					result,
+					[&i,&m] (char ch) {
+					    ch ^= m[i%4]; ++i; return ch;
+					}
+				);
+			} else {
+				std::copy(first, last, result);
+			}
+		}
+
+		template<class It, class Res>
+		char
+		getpayloadc(It first, size_t nread) const {
+			if (this->is_masked()) {
+				bytes<mask_type> m = this->mask();
+				return *first ^ m[nread%4];
+			} else {
+				return *first;
+			}
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const websocket_frame& rhs);
+
+	};
+
+	std::ostream&
+	operator<<(std::ostream& out, const websocket_frame& rhs);
+
+	template<class It, class Res, class Random>
+	void
+	websocket_encode(It first, It last, Res result, Random& rng) {
+		size_t input_size = last - first;
+		if (input_size == 0) return;
+		websocket_frame frame;
+		frame.opcode(opcode_type::binary_frame);
+		frame.fin(1);
+		frame.payload_size(input_size);
+		frame.mask(n_random_bytes<websocket_frame::mask_type>(rng));
+		frame.encode(result);
+		frame.copy_payload(first, last, result);
+		#ifndef NDEBUG
+		log_message("wbs", "send _", frame);
+		#endif
+	}
+
+	template<class It, class Res>
+	size_t
+	websocket_decode(It first, It last, Res output, opcode_type* opcode) {
+		websocket_frame frame;
+		std::pair<It,It> payload = frame.decode(first, last);
+		if (payload.first == first) return 0;
+		#ifndef NDEBUG
+		log_message("wbs", "recv _", frame);
+		#endif
+		*opcode = frame.opcode();
+		// ignore invalid frames
+		if (!frame.has_valid_opcode()) {
+			throw std::invalid_argument("bad opcode");
+		}
+		// ignore non-binary
+		if (!frame.is_binary()) {
+			throw std::invalid_argument("non-binary frames are not supported");
+		}
+		frame.copy_payload(payload.first, payload.second, output);
+		return payload.second - first;
+	}
+
+	void
+	websocket_accept_header(const std::string& web_socket_key, char* result);
+
+	template<class Res, class Random>
+	void
+	websocket_key(Res key, Random& rng) {
+		bytes<uint128_t> buf = n_random_bytes<uint128_t>(rng);
+		base64_encode(buf.begin(), buf.end(), key);
+	}
+
+}
+
+#endif // vim:filetype=cpp
