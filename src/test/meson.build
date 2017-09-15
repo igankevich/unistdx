@@ -286,6 +286,16 @@ test(
 	)
 )
 
+benchmark(
+	'base/sha1',
+	executable(
+		'sha1-benchmark',
+		sources: 'sha1_benchmark.cc',
+		include_directories: srcdir,
+		dependencies: [unistdx]
+	)
+)
+
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	backtrace_test = executable(
 		'backtrace-test',

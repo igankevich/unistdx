@@ -13,6 +13,11 @@
 #define ALWAYS_INLINE inline
 #endif
 
+// enable full optimisation
+#if defined(__GNUC__)
+#pragma GCC optimize("O3", "unroll-all-loops")
+#endif
+
 namespace {
 
 	const uint32_t k_0_19 = 0x5a827999;
