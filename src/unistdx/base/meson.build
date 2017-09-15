@@ -1,4 +1,5 @@
 libunistdx_src += files([
+	'base64.cc',
 	'check.cc',
 	'cmdline.cc',
 	'log_message.cc',
@@ -7,6 +8,7 @@ libunistdx_src += files([
 
 install_headers(
 	'adapt_engine',
+	'base64',
 	'check',
 	'cmdline',
 	'delete_each',
