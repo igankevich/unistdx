@@ -137,6 +137,7 @@ endif
 if cpp.has_argument('-Wextra')
 	add_global_arguments('-Wextra', language: 'cpp')
 endif
+config.set('UNISTDX_VERSION', meson.project_version())
 # }}}
 
 threads = dependency('threads')

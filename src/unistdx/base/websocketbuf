@@ -1,0 +1,201 @@
+#ifndef UNISTDX_BASE_WEBSOCKETBUF
+#define UNISTDX_BASE_WEBSOCKETBUF
+
+#include <streambuf>
+#include <string>
+#include <unordered_map>
+
+#include <unistdx/io/fildesbuf>
+
+namespace sys {
+
+	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
+	class basic_websocketbuf: public basic_fildesbuf<Ch,Tr,Fd> {
+
+	public:
+		using typename std::basic_streambuf<Ch,Tr>::pos_type;
+		using typename std::basic_streambuf<Ch,Tr>::off_type;
+		using typename std::basic_streambuf<Ch,Tr>::char_type;
+		using typename std::basic_streambuf<Ch,Tr>::traits_type;
+
+		enum struct role_type {
+			server,
+			client
+		};
+
+	private:
+
+		enum struct server_state {
+			initial,
+			parsing_http_method,
+			parsing_http_headers,
+			validating_headers,
+			writing_handshake,
+			end,
+		};
+
+		enum struct client_state {
+			initial,
+			writing_handshake,
+			reading_handshake,
+			validating_headers,
+			end
+		};
+
+		enum struct parse_state {
+			initial,
+			parsing_http_method,
+			parsing_http_status,
+			parsing_http_headers,
+			end,
+		};
+
+		typedef std::unordered_map<std::string, std::string> map_type;
+
+	private:
+		client_state _cstate = client_state::initial;
+		server_state _sstate = server_state::initial;
+		parse_state _pstate = parse_state::initial;
+		role_type _role = role_type::client;
+		map_type _headers;
+		bool _valid = true;
+
+	public:
+
+		void
+		read_frame() {
+			server_state old_state;
+			do {
+				this->sync();
+				old_state = this->_sstate;
+				switch (this->_sstate) {
+				case server_state::initial:
+					this->setstate(server_state::parsing_http_method);
+					break;
+				case server_state::parsing_http_method:
+					this->parse_http_method();
+					break;
+				case server_state::parsing_http_headers:
+					this->parse_http_headers();
+					break;
+				case server_state::validating_headers:
+					this->validate_http_headers();
+					break;
+				case server_state::writing_handshake:
+					this->write_handshake();
+					break;
+				case server_state::end:
+					break;
+				}
+			} while (old_state != this->_sstate);
+		}
+
+		void
+		write_frame() {
+			client_state old_state;
+			do {
+				old_state = this->_cstate;
+				switch (this->_cstate) {
+				case client_state::initial:
+					this->initiate_handshake();
+					break;
+				case client_state::writing_handshake:
+					this->write_handshake();
+					break;
+				case client_state::reading_handshake:
+					this->client_read_handshake();
+					break;
+				case client_state::validating_headers:
+					this->validate_http_headers();
+					break;
+				case client_state::end:
+					break;
+				}
+			} while (old_state != this->_cstate);
+		}
+
+		inline void
+		set_role(role_type r) noexcept {
+			this->_role = r;
+		}
+
+	private:
+
+		void
+		initiate_handshake();
+
+		void
+		write_handshake();
+
+		void
+		client_read_handshake();
+
+		void
+		put_websocket_key();
+
+		void
+		put_websocket_accept_header();
+
+		void
+		parse_http_status();
+
+		void
+		parse_http_method();
+
+		void
+		parse_http_headers();
+
+		void
+		validate_http_headers();
+
+		inline bool
+		has_header(const std::string& key) {
+			return this->_headers.find(key) != this->_headers.end();
+		}
+
+		inline bool
+		has_header(const std::string& key, const std::string& value) {
+			auto result = this->_headers.find(key);
+			return result != this->_headers.end() && result->second == value;
+		}
+
+		#ifndef NDEBUG
+		void
+		setstate(server_state s);
+
+		#else
+		inline void
+		setstate(server_state s) noexcept {
+			this->_sstate = s;
+		}
+
+		#endif
+
+		#ifndef NDEBUG
+		void
+		setstate(client_state s);
+
+		#else
+		inline void
+		setstate(client_state s) noexcept {
+			this->_sstate = s;
+		}
+
+		#endif
+
+		#ifndef NDEBUG
+		void
+		setstate(parse_state s);
+
+		#else
+		inline void
+		setstate(parse_state s) noexcept {
+			this->_pstate = s;
+		}
+
+		#endif
+	};
+
+}
+
+#endif // vim:filetype=cpp

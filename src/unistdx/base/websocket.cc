@@ -3,14 +3,6 @@
 #include <limits>
 #include <ostream>
 
-#include <unistdx/base/sha1>
-
-namespace {
-
-	const std::string websocket_guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
-
-}
-
 sys::websocket_frame::length64_type
 sys::websocket_frame::payload_size() const noexcept {
 	switch (this->_hdr.len) {
@@ -103,20 +95,4 @@ sys::operator<<(std::ostream& out, const websocket_frame& rhs) {
 		    << "header_size=" << rhs.header_size();
 	}
 	return out;
-}
-
-void
-sys::websocket_accept_header(const std::string& web_socket_key, char* result) {
-	bytes<uint32_t[5]> hash;
-	sha1 sha;
-	sha.put(web_socket_key.data(), web_socket_key.size());
-	sha.put(websocket_guid.data(), websocket_guid.size());
-	sha.compute();
-	sha.digest(hash.value());
-	#if !defined(UNISTDX_BIG_ENDIAN)
-	for (uint32_t& i : hash.value()) {
-		i = to_network_format(i);
-	}
-	#endif
-	base64_encode(hash.begin(), hash.end(), result);
 }

@@ -22,9 +22,7 @@ namespace sys {
 		using typename std::basic_streambuf<Ch,Tr>::pos_type;
 		using typename std::basic_streambuf<Ch,Tr>::off_type;
 		using typename std::basic_streambuf<Ch,Tr>::char_type;
-		using std::basic_streambuf<Ch,Tr>::eback;
-		using std::basic_streambuf<Ch,Tr>::egptr;
-		using std::basic_streambuf<Ch,Tr>::setg;
+		using typename std::basic_streambuf<Ch,Tr>::traits_type;
 
 	private:
 		enum struct state_type {
@@ -70,12 +68,23 @@ namespace sys {
 
 		void
 		end_packet() {
-			const std::streamsize s = this->opacketsize();
-			if (s == this->_oheadersize) {
+			const std::streamsize ps = this->opacketsize();
+			const std::streamsize hs = this->_oheadersize;
+			if (ps == hs) {
 				// ignore empty packets
-				this->pbump(-std::streamsize(s));
+				this->pbump(-std::streamsize(ps));
 			} else {
-				this->overwrite_header(s);
+				// check if the header size has changed
+				// depending on the length of the payload
+				const std::streamsize new_hs = this->xgetheadersize(ps);
+				if (new_hs != hs) {
+					// move payload to match new header size
+					const std::streamsize delta = new_hs - hs;
+					char_type* src = this->opacket_begin();
+					this->pbump(delta);
+					traits_type::move(src + delta, src, ps);
+				}
+				this->overwrite_header(ps);
 			}
 			this->_ofinished = true;
 		}
@@ -127,6 +136,17 @@ namespace sys {
 		/// @return packet size
 		virtual std::streamsize
 		xgetheader() { return this->gptr() - this->egptr(); }
+
+		virtual std::streamsize
+		xgetheadersize(std::streamsize) {
+			return this->oheadersize();
+		}
+
+		inline void
+		resize_header(std::streamsize new_size) {
+			if (this->_oheadersize != new_size) {
+			}
+		}
 
 		inline state_type
 		state() const noexcept {

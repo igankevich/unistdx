@@ -251,16 +251,6 @@ namespace sys {
 		return payload.second - first;
 	}
 
-	void
-	websocket_accept_header(const std::string& web_socket_key, char* result);
-
-	template<class Res, class Random>
-	void
-	websocket_key(Res key, Random& rng) {
-		bytes<uint128_t> buf = n_random_bytes<uint128_t>(rng);
-		base64_encode(buf.begin(), buf.end(), key);
-	}
-
 }
 
 #endif // vim:filetype=cpp

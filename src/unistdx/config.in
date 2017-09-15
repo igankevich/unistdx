@@ -64,4 +64,6 @@
 #mesondefine UNISTDX_HAVE_GETGRGID_R
 #mesondefine UNISTDX_HAVE_GETGRNAM_R
 
+#define UNISTDX_VERSION "@UNISTDX_VERSION@"
+
 #endif // vim:filetype=cpp
