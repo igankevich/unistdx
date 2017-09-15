@@ -8,6 +8,7 @@
 
 #include <unistdx/base/websocket>
 #include <unistdx/base/websocketbuf>
+#include <unistdx/io/fildesbuf>
 #include <unistdx/io/pipe>
 
 #include "random_string.hh"
@@ -40,14 +41,20 @@ TEST(WebSocketBuf, Write) {
 	typedef char T;
 	typedef std::char_traits<T> Tr;
 	typedef std::basic_stringbuf<T> Fd;
-	typedef sys::basic_websocketbuf<T,Tr,Fd> packetbuf_type;
-	typedef Fd sink_type;
+	class websocketbuf:
+		public sys::basic_websocketbuf<T,Tr>,
+		public sys::basic_fildesbuf<T,Tr,Fd> {};
+	typedef websocketbuf packetbuf_type;
 	typedef typename packetbuf_type::role_type role;
 
 	packetbuf_type buf;
-	buf.set_role(role::client);
-	buf.write_frame();
-	buf.set_role(role::server);
-	buf.read_frame();
+	buf.role(role::client);
+	buf.update_client_state();
+	buf.pubsync();
+	buf.role(role::server);
+	buf.update_server_state();
+	buf.pubsync();
+	buf.role(role::client);
+	buf.update_client_state();
 
 }

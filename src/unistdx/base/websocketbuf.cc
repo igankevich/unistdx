@@ -13,7 +13,7 @@
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
 #include <unistdx/base/log_message>
 #endif
 
@@ -86,67 +86,97 @@ namespace {
 
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
+bool
+sys::basic_websocketbuf<Ch,Tr>::update_server_state() {
+	server_state old_state;
+	do {
+		old_state = this->_sstate;
+		switch (this->_sstate) {
+		case server_state::initial:
+			this->setstate(server_state::parsing_http_method);
+			break;
+		case server_state::parsing_http_method:
+			this->parse_http_method();
+			break;
+		case server_state::parsing_http_headers:
+			this->parse_http_headers();
+			break;
+		case server_state::validating_headers:
+			this->validate_http_headers();
+			break;
+		case server_state::writing_handshake:
+			this->write_handshake();
+			break;
+		case server_state::end:
+			this->_headers.clear();
+			break;
+		}
+	} while (old_state != this->_sstate);
+	return this->_valid;
+}
+
+template<class Ch, class Tr>
+bool
+sys::basic_websocketbuf<Ch,Tr>::update_client_state() {
+	client_state old_state;
+	do {
+		old_state = this->_cstate;
+		switch (this->_cstate) {
+		case client_state::initial:
+			this->initiate_handshake();
+			break;
+		case client_state::writing_handshake:
+			this->write_handshake();
+			break;
+		case client_state::parsing_http_status:
+			this->parse_http_status();
+			break;
+		case client_state::parsing_http_headers:
+			this->parse_http_headers();
+			break;
+		case client_state::validating_headers:
+			this->validate_http_headers();
+			break;
+		case client_state::end:
+			this->_headers.clear();
+			break;
+		}
+	} while (old_state != this->_cstate);
+	return this->_valid;
+}
+
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::initiate_handshake() {
+sys::basic_websocketbuf<Ch,Tr>::initiate_handshake() {
 	this->sputn(websocket_request, sizeof(websocket_request)-1);
 	this->put_websocket_key();
 	this->sputn("\r\n\r\n", 4);
 	this->setstate(client_state::writing_handshake);
-	#ifndef NDEBUG
-	log_message("ws", ">\n_", std::string(this->pbase(), this->pptr()));
-	this->sync();
-	log_message("ws", ">\n_", std::string(this->gptr(), this->egptr()));
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+	log_message(
+		"ws",
+		"client request >\n_",
+		std::string(this->pbase(), this->pptr())
+	);
 	#endif
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::write_handshake() {
-	this->sync();
+sys::basic_websocketbuf<Ch,Tr>::write_handshake() {
 	if (this->pptr() == this->pbase()) {
 		if (this->_role == role_type::server) {
 			this->setstate(server_state::end);
 		} else {
-			this->setstate(client_state::reading_handshake);
-			this->setstate(parse_state::parsing_http_status);
+			this->setstate(client_state::parsing_http_status);
 		}
 	}
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::client_read_handshake() {
-	this->sync();
-	parse_state old;
-	do {
-		old = this->_pstate;
-		switch (this->_pstate) {
-		case parse_state::initial:
-			if (this->_role == role_type::server) {
-				this->setstate(parse_state::parsing_http_method);
-			} else {
-				this->setstate(parse_state::parsing_http_status);
-			}
-			break;
-		case parse_state::parsing_http_method:
-			break;
-		case parse_state::parsing_http_status:
-			this->parse_http_status();
-			break;
-		case parse_state::parsing_http_headers:
-			this->parse_http_headers();
-			break;
-		case parse_state::end:
-			this->setstate(client_state::validating_headers);
-			break;
-		}
-	} while (old != this->_pstate);
-}
-
-template<class Ch, class Tr, class Fd>
-void
-sys::basic_websocketbuf<Ch,Tr,Fd>::put_websocket_key() {
+sys::basic_websocketbuf<Ch,Tr>::put_websocket_key() {
 	engine_type eng(rng);
 	char key[16], encoded[24];
 	std::generate_n(key, 16, std::ref(eng));
@@ -156,27 +186,18 @@ sys::basic_websocketbuf<Ch,Tr,Fd>::put_websocket_key() {
 	this->_headers["sec-websocket-key"].assign(encoded, 24);
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::put_websocket_accept_header() {
-	char encoded[24];
+sys::basic_websocketbuf<Ch,Tr>::put_websocket_accept_header() {
+	char encoded[28];
 	websocket_accept_header(this->_headers["sec-websocket-key"], encoded);
-	this->sputn(encoded, 24);
+	this->sputn(encoded, 28);
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::parse_http_method() {
-	#ifndef NDEBUG
-	sys::log_message("ws", "<\n_", std::string(this->gptr(), this->egptr()));
-	#endif
-	// find the end of the line
-	char_type* result = std::search(
-		this->gptr(),
-		this->egptr(),
-		http_header_separator,
-		http_header_separator + sizeof(http_header_separator)-1
-	                    );
+sys::basic_websocketbuf<Ch,Tr>::parse_http_method() {
+	char_type* result = this->find_the_end_of_the_line();
 	if (result != this->egptr()) {
 		int cmp;
 		const std::streamsize n = result - this->gptr();
@@ -190,25 +211,25 @@ sys::basic_websocketbuf<Ch,Tr,Fd>::parse_http_method() {
 			if (cmp != 0) {
 				throw 1;
 			}
-			this->setstate(parse_state::parsing_http_headers);
+			this->setstate(server_state::parsing_http_headers);
 		} catch (...) {
 			this->_valid = false;
 		}
 		this->gbump(n+sizeof(http_header_separator)-1);
 	}
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+	log_message("ws", "_ _", __func__, this->_valid);
+	#endif
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::parse_http_status() {
-	// find the end of the line
-	char_type* result = std::search(
-		this->gptr(),
-		this->egptr(),
-		http_header_separator,
-		http_header_separator + sizeof(http_header_separator)-1
-	                    );
+sys::basic_websocketbuf<Ch,Tr>::parse_http_status() {
+	char_type* result = this->find_the_end_of_the_line();
 	if (result != this->egptr()) {
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+		log_message("ws", "_ _", __func__, std::string(this->gptr(), result));
+	#endif
 		int cmp;
 		const std::streamsize n = result - this->gptr();
 		try {
@@ -229,36 +250,43 @@ sys::basic_websocketbuf<Ch,Tr,Fd>::parse_http_status() {
 			if (this->egptr() - result2 < 3) {
 				throw 3;
 			}
-			cmp = traits_type::compare(result2, "101", 3);
+			cmp = traits_type::compare(result2+1, "101", 3);
 			if (cmp != 0) {
 				throw 4;
 			}
-			this->setstate(parse_state::parsing_http_headers);
+			this->setstate(client_state::parsing_http_headers);
 		} catch (...) {
 			this->_valid = false;
 		}
 		this->gbump(n+sizeof(http_header_separator)-1);
 	}
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+	log_message("ws", "_ _", __func__, this->_valid);
+	#endif
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::parse_http_headers() {
-	// find the end of the line
-	char_type* result = std::search(
-		this->gptr(),
-		this->egptr(),
-		http_header_separator,
-		http_header_separator + sizeof(http_header_separator)-1
-	                    );
-	if (result != this->egptr()) {
-		const std::streamsize n = result - this->gptr();
-		if (n > sizeof(http_header_separator)-1) {
+sys::basic_websocketbuf<Ch,Tr>::parse_http_headers() {
+	bool finished = false;
+	while (!finished) {
+		char_type* result = this->find_the_end_of_the_line();
+		const size_t n = result - this->gptr();
+		if (result == this->egptr()) {
+			finished = true;
+		} else if (n > sizeof(http_header_separator)-1) {
 			try {
 				const char_type* sep = traits_type::find(this->gptr(), n, ':');
 				if (sep == this->egptr()) {
 					throw 0;
 				}
+				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+				log_message(
+					"ws",
+					"header _",
+					std::string(this->gptr(), result)
+				);
+				#endif
 				this->_headers.emplace(
 					lowercase_string(ccast(this->gptr()), sep),
 					std::string(sep+2, ccast(result))
@@ -266,33 +294,38 @@ sys::basic_websocketbuf<Ch,Tr,Fd>::parse_http_headers() {
 			} catch (...) {
 				this->_valid = false;
 			}
-			this->gbump(n+sizeof(http_header_separator)-1);
-		}
-		if (this->_role == role_type::server) {
-			this->setstate(server_state::validating_headers);
 		} else {
-			this->setstate(client_state::validating_headers);
+			if (this->_role == role_type::server) {
+				this->setstate(server_state::validating_headers);
+			} else {
+				this->setstate(client_state::validating_headers);
+			}
+			finished = true;
 		}
+		this->gbump(n+sizeof(http_header_separator)-1);
 	}
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+	log_message("ws", "_ _", __func__, this->_valid);
+	#endif
 }
 
-template<class Ch, class Tr, class Fd>
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::validate_http_headers() {
+sys::basic_websocketbuf<Ch,Tr>::validate_http_headers() {
 	bool success = false;
 	if (this->_valid) {
 		if (this->_role == role_type::server) {
 			success = this->has_header("sec-websocket-key") &&
 			          this->has_header("sec-websocket-version");
 		} else {
-			char encoded[24];
+			char encoded[28];
 			websocket_accept_header(
 				this->_headers["sec-websocket-key"],
 				encoded
 			);
 			success = this->has_header(
 				"sec-websocket-accept",
-				std::string(encoded, 24)
+				std::string(encoded, 28)
 			          );
 		}
 		success = success &&
@@ -300,48 +333,70 @@ sys::basic_websocketbuf<Ch,Tr,Fd>::validate_http_headers() {
 		          this->has_header("upgrade", "websocket") &&
 		          this->has_header("connection", "Upgrade");
 	}
-	if (success) {
-		this->sputn(websocket_response, sizeof(websocket_response)-1);
-		this->put_websocket_accept_header();
-		this->sputn("\r\n\r\n", 4);
+	if (this->_role == role_type::server) {
+		if (success) {
+			this->sputn(websocket_response, sizeof(websocket_response)-1);
+			this->put_websocket_accept_header();
+			this->sputn("\r\n\r\n", 4);
+		} else {
+			this->_valid = false;
+			this->sputn(
+				websocket_bad_response,
+				sizeof(websocket_bad_response)-
+				1
+			);
+		}
+		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+		log_message(
+			"ws",
+			"server response >\n_",
+			std::string(this->pbase(), this->pptr())
+		);
+		#endif
+		this->setstate(server_state::writing_handshake);
 	} else {
-		this->_valid = false;
-		this->sputn(websocket_bad_response, sizeof(websocket_bad_response)-1);
+		if (success) {
+			this->setstate(client_state::end);
+		} else {
+			this->_valid = false;
+		}
 	}
-	this->setstate(server_state::writing_handshake);
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+	log_message("ws", "_ _", __func__, this->_valid);
+	#endif
 }
 
-#ifndef NDEBUG
-template<class Ch, class Tr, class Fd>
+#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::setstate(server_state s) {
+sys::basic_websocketbuf<Ch,Tr>::setstate(server_state s) {
 	server_state old = this->_sstate;
 	this->_sstate = s;
-	sys::log_message("ws", "server state change: _ -> _", int(old), int(s));
+	log_message("ws", "server state change: _ -> _", int(old), int(s));
 }
+
 #endif
 
-#ifndef NDEBUG
-template<class Ch, class Tr, class Fd>
+#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+template<class Ch, class Tr>
 void
-sys::basic_websocketbuf<Ch,Tr,Fd>::setstate(client_state s) {
+sys::basic_websocketbuf<Ch,Tr>::setstate(client_state s) {
 	client_state old = this->_cstate;
 	this->_cstate = s;
-	sys::log_message("ws", "client state change: _ -> _", int(old), int(s));
+	log_message("ws", "client state change: _ -> _", int(old), int(s));
 }
+
 #endif
 
-#ifndef NDEBUG
-template<class Ch, class Tr, class Fd>
-void
-sys::basic_websocketbuf<Ch,Tr,Fd>::setstate(parse_state s) {
-	parse_state old = this->_pstate;
-	this->_pstate = s;
-	sys::log_message("ws", "parse state change: _ -> _", int(old), int(s));
+template<class Ch, class Tr>
+typename sys::basic_websocketbuf<Ch,Tr>::char_type*
+sys::basic_websocketbuf<Ch,Tr>::find_the_end_of_the_line() noexcept {
+	return std::search(
+		this->gptr(),
+		this->egptr(),
+		http_header_separator,
+		http_header_separator + sizeof(http_header_separator)-1
+	);
 }
-#endif
 
 template class sys::basic_websocketbuf<char,std::char_traits<char> >;
-#ifndef NDEBUG
-template class sys::basic_websocketbuf<char,std::char_traits<char>,std::stringbuf >;
-#endif

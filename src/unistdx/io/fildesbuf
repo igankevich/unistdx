@@ -13,7 +13,7 @@
 namespace sys {
 
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	class basic_fildesbuf: public basic_packetbuf<Ch,Tr> {
+	class basic_fildesbuf: public virtual basic_packetbuf<Ch,Tr> {
 
 		typedef streambuf_traits<Fd> streambuf_traits_type;
 

@@ -4,13 +4,14 @@
 #include <streambuf>
 #include <string>
 #include <unordered_map>
-
-#include <unistdx/io/fildesbuf>
+#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+#include <unistdx/base/log_message>
+#endif
 
 namespace sys {
 
-	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	class basic_websocketbuf: public basic_fildesbuf<Ch,Tr,Fd> {
+	template<class Ch, class Tr=std::char_traits<Ch> >
+	class basic_websocketbuf: public virtual std::basic_streambuf<Ch,Tr> {
 
 	public:
 		using typename std::basic_streambuf<Ch,Tr>::pos_type;
@@ -37,17 +38,10 @@ namespace sys {
 		enum struct client_state {
 			initial,
 			writing_handshake,
-			reading_handshake,
-			validating_headers,
-			end
-		};
-
-		enum struct parse_state {
-			initial,
-			parsing_http_method,
 			parsing_http_status,
 			parsing_http_headers,
-			end,
+			validating_headers,
+			end
 		};
 
 		typedef std::unordered_map<std::string, std::string> map_type;
@@ -55,69 +49,37 @@ namespace sys {
 	private:
 		client_state _cstate = client_state::initial;
 		server_state _sstate = server_state::initial;
-		parse_state _pstate = parse_state::initial;
-		role_type _role = role_type::client;
+		role_type _role = role_type::server;
 		map_type _headers;
 		bool _valid = true;
 
 	public:
 
-		void
-		read_frame() {
-			server_state old_state;
-			do {
-				this->sync();
-				old_state = this->_sstate;
-				switch (this->_sstate) {
-				case server_state::initial:
-					this->setstate(server_state::parsing_http_method);
-					break;
-				case server_state::parsing_http_method:
-					this->parse_http_method();
-					break;
-				case server_state::parsing_http_headers:
-					this->parse_http_headers();
-					break;
-				case server_state::validating_headers:
-					this->validate_http_headers();
-					break;
-				case server_state::writing_handshake:
-					this->write_handshake();
-					break;
-				case server_state::end:
-					break;
-				}
-			} while (old_state != this->_sstate);
-		}
-
-		void
-		write_frame() {
-			client_state old_state;
-			do {
-				old_state = this->_cstate;
-				switch (this->_cstate) {
-				case client_state::initial:
-					this->initiate_handshake();
-					break;
-				case client_state::writing_handshake:
-					this->write_handshake();
-					break;
-				case client_state::reading_handshake:
-					this->client_read_handshake();
-					break;
-				case client_state::validating_headers:
-					this->validate_http_headers();
-					break;
-				case client_state::end:
-					break;
-				}
-			} while (old_state != this->_cstate);
-		}
-
 		inline void
-		set_role(role_type r) noexcept {
+		role(role_type r) noexcept {
 			this->_role = r;
 		}
+
+		inline role_type
+		role() const noexcept {
+			return this->_role;
+		}
+
+		inline bool
+		update_state() {
+			if (this->_role == role_type::server) {
+				this->update_server_state();
+			} else {
+				this->update_client_state();
+			}
+			return this->_valid;
+		}
+
+		bool
+		update_server_state();
+
+		bool
+		update_client_state();
 
 	private:
 
@@ -126,9 +88,6 @@ namespace sys {
 
 		void
 		write_handshake();
-
-		void
-		client_read_handshake();
 
 		void
 		put_websocket_key();
@@ -159,7 +118,7 @@ namespace sys {
 			return result != this->_headers.end() && result->second == value;
 		}
 
-		#ifndef NDEBUG
+		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
 		void
 		setstate(server_state s);
 
@@ -171,29 +130,21 @@ namespace sys {
 
 		#endif
 
-		#ifndef NDEBUG
+		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
 		void
 		setstate(client_state s);
 
 		#else
 		inline void
 		setstate(client_state s) noexcept {
-			this->_sstate = s;
+			this->_cstate = s;
 		}
 
 		#endif
 
-		#ifndef NDEBUG
-		void
-		setstate(parse_state s);
+		char_type*
+		find_the_end_of_the_line() noexcept;
 
-		#else
-		inline void
-		setstate(parse_state s) noexcept {
-			this->_pstate = s;
-		}
-
-		#endif
 	};
 
 }

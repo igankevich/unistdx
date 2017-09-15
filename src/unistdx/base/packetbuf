@@ -16,7 +16,7 @@
 namespace sys {
 
 	template<class Ch, class Tr=std::char_traits<Ch> >
-	class basic_packetbuf: public std::basic_streambuf<Ch,Tr> {
+	class basic_packetbuf: public virtual std::basic_streambuf<Ch,Tr> {
 
 	public:
 		using typename std::basic_streambuf<Ch,Tr>::pos_type;

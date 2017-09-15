@@ -302,7 +302,7 @@ test(
 		'websocket-test',
 		sources: 'websocket_test.cc',
 		include_directories: srcdir,
-		dependencies: [gtest,unistdx]
+		dependencies: [gtest,unistdx],
 	)
 )
 
