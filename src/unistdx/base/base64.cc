@@ -63,7 +63,7 @@ sys::base64_encode(
 	const size_t rem = n%3;
 	const size_t m = (rem == 0) ? n : (n-rem);
 	for (size_t i=0; i<m; i+=3) {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.bytes[2] = *first;
 		bits.bytes[1] = *++first;
 		bits.bytes[0] = *++first;
@@ -74,14 +74,14 @@ sys::base64_encode(
 		++first;
 	}
 	if (rem == 1) {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.bytes[2] = *first;
 		*result++ = base64_alphabet[bits.i0];
 		*result++ = base64_alphabet[bits.i1];
 		*result++ = pad_character;
 		*result++ = pad_character;
 	} else if (rem == 2) {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.bytes[2] = *first;
 		bits.bytes[1] = *++first;
 		*result++ = base64_alphabet[bits.i0];
@@ -106,7 +106,7 @@ sys::base64_decode(
 	}
 	n -= 4;
 	for (size_t i=0; i<n; i+=4) {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.i0 = char_to_index(*first);
 		bits.i1 = char_to_index(*++first);
 		bits.i2 = char_to_index(*++first);
@@ -118,19 +118,19 @@ sys::base64_decode(
 	}
 	// process last four bytes
 	if (first[2] == pad_character) {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.i0 = char_to_index(*first);
 		bits.i1 = char_to_index(*++first);
 		*result++ = bits.bytes[2];
 	} else if (first[3] == pad_character) {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.i0 = char_to_index(*first);
 		bits.i1 = char_to_index(*++first);
 		bits.i2 = char_to_index(*++first);
 		*result++ = bits.bytes[2];
 		*result++ = bits.bytes[1];
 	} else {
-		bits24 bits = {0};
+		bits24 bits{};
 		bits.i0 = char_to_index(*first);
 		bits.i1 = char_to_index(*++first);
 		bits.i2 = char_to_index(*++first);
