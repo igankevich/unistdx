@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <streambuf>
+#define UNISTDX_DEBUG_PACKETBUF
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 #define UNISTDX_FUNC , __func__
 #include <iomanip>
@@ -55,14 +56,26 @@ namespace sys {
 		~basic_packetbuf() = default;
 
 		basic_packetbuf(basic_packetbuf&&) = delete;
+
 		basic_packetbuf(const basic_packetbuf&) = delete;
-		basic_packetbuf& operator=(const basic_packetbuf&) = delete;
-		basic_packetbuf& operator=(basic_packetbuf&&) = delete;
+
+		basic_packetbuf&
+		operator=(const basic_packetbuf&) = delete;
+
+		basic_packetbuf&
+		operator=(basic_packetbuf&&) = delete;
+
+		virtual bool
+		handshake() {
+			return true;
+		}
 
 		void
 		begin_packet() {
 			this->set_opacket(this->pptr() - this->pbase());
 			this->put_header();
+			const pos_type cur = this->pptr() - this->pbase();
+			this->_oheadersize = cur - this->_opacketpos;
 			this->_ofinished = false;
 		}
 
@@ -70,32 +83,17 @@ namespace sys {
 		end_packet() {
 			const std::streamsize ps = this->opacketsize();
 			const std::streamsize hs = this->_oheadersize;
-			if (ps == hs) {
-				// ignore empty packets
-				this->pbump(-std::streamsize(ps));
-			} else {
-				// check if the header size has changed
-				// depending on the length of the payload
-				const std::streamsize new_hs = this->xgetheadersize(ps);
-				if (new_hs != hs) {
-					const std::streamsize delta = new_hs - hs;
-					const std::streamsize delta2 = this->epptr() - this->pptr();
-					char_type* src = this->opacket_begin();
-					if (delta2 >= delta) {
-						// advance put pointer
-						this->pbump(delta);
-					} else {
-						// add dummy characters
-						const std::streamsize m = delta - delta2;
-						char_type ch = 0;
-						for (int i=0; i<m; ++i) {
-							this->sputn(&ch, 1);
-						}
-					}
-					// move payload to match new header size
-					traits_type::move(src + delta, src, ps);
-				}
-				this->overwrite_header(ps);
+			// check if the header size has changed
+			// depending on the length of the payload
+			const std::streamsize new_hs = this->overwrite_header(ps);
+			assert(new_hs <= hs);
+			if (new_hs < hs) {
+				const std::streamsize delta = new_hs - hs;
+				char_type* src = this->opacket_begin();
+				// move payload to match new header size
+				traits_type::move(src + new_hs, src + hs, ps - hs);
+				// advance put pointer
+				this->pbump(delta);
 			}
 			this->_ofinished = true;
 		}
@@ -116,9 +114,15 @@ namespace sys {
 			do {
 				old_state = this->_state;
 				switch (this->_state) {
-					case state_type::initial: this->getheader(); break;
-					case state_type::header_is_ready: this->getpayload(); break;
-					case state_type::payload_is_ready: this->finish(); break;
+				case state_type::initial: this->getheader(); break;
+				case state_type::header_is_ready: this->getpayload(); break;
+				case state_type::payload_is_ready:
+					const bool empty_payload = this->ipayloadsize() == 0;
+					this->finish();
+					if (empty_payload) {
+						return true;
+					}
+					break;
 				}
 			} while (old_state != this->_state);
 			return this->_state == state_type::payload_is_ready;
@@ -141,23 +145,22 @@ namespace sys {
 		virtual void
 		put_header() {}
 
+		virtual std::streamsize
+		overwrite_header(std::streamsize) {
+			return this->_oheadersize;
+		}
+
+		virtual bool
+		xgetheader(
+			std::streamsize&,
+			std::streamsize& payload_size
+		) {
+			payload_size = this->egptr() - this->gptr();
+			return true;
+		}
+
 		virtual void
-		overwrite_header(std::streamsize) {}
-
-		/// @return packet size
-		virtual std::streamsize
-		xgetheader() { return this->gptr() - this->egptr(); }
-
-		virtual std::streamsize
-		xgetheadersize(std::streamsize) {
-			return this->oheadersize();
-		}
-
-		inline void
-		resize_header(std::streamsize new_size) {
-			if (this->_oheadersize != new_size) {
-			}
-		}
+		on_payload() {}
 
 		inline state_type
 		state() const noexcept {
@@ -181,7 +184,8 @@ namespace sys {
 
 		inline std::streamsize
 		ipayloadsize() const noexcept {
-			return this->_ipacketsize - (this->_ipayloadpos - this->_ipacketpos);
+			return this->_ipacketsize - (this->_ipayloadpos -
+			                             this->_ipacketpos);
 		}
 
 		inline char_type*
@@ -279,18 +283,14 @@ namespace sys {
 	private:
 		void
 		getheader() {
-			const std::streamsize n = this->egptr() - this->gptr();
-			if (!(n < this->_iheadersize)) {
-				const std::streamsize ps = this->xgetheader(); // packet size
-				const std::streamsize hs = this->_oheadersize; // header size
-				if (ps >= hs) {
-					const pos_type p = this->gptr() - this->eback();
-					this->set_ipacket(p, p + pos_type(hs), ps);
-					this->gbump(hs);
-					this->setstate(state_type::header_is_ready UNISTDX_FUNC);
-				} else {
-					this->gbump(hs);
-				}
+			std::streamsize hs = 0;
+			std::streamsize payload_size = 0;
+			if (this->xgetheader(hs, payload_size)) {
+				const std::streamsize ps = hs + payload_size;
+				const pos_type p = this->gptr() - this->eback();
+				this->set_ipacket(p, p + pos_type(hs), ps);
+				this->gbump(hs);
+				this->setstate(state_type::header_is_ready UNISTDX_FUNC);
 			}
 		}
 
@@ -307,6 +307,7 @@ namespace sys {
 					this->ipayload_end()
 				);
 				this->setstate(state_type::payload_is_ready UNISTDX_FUNC);
+				this->on_payload();
 			}
 		}
 
@@ -336,10 +337,10 @@ namespace sys {
 		friend std::ostream&
 		operator<<(std::ostream& out, state_type rhs) {
 			switch (rhs) {
-				case state_type::initial: out << "initial"; break;
-				case state_type::header_is_ready: out << "header_is_ready"; break;
-				case state_type::payload_is_ready: out << "payload_is_ready"; break;
-				default: break;
+			case state_type::initial: out << "initial"; break;
+			case state_type::header_is_ready: out << "header_is_ready"; break;
+			case state_type::payload_is_ready: out << "payload_is_ready"; break;
+			default: break;
 			}
 			return out;
 		}
@@ -353,7 +354,12 @@ namespace sys {
 
 		public:
 			inline
-			transition(const char* where, state_type olds, state_type news, basic_packetbuf& buf):
+			transition(
+				const char* where,
+				state_type olds,
+				state_type news,
+				basic_packetbuf& buf
+			):
 			_where(where), _oldstate(olds), _newstate(news), _buf(buf)
 			{}
 
@@ -362,8 +368,8 @@ namespace sys {
 				std::stringstream msg;
 				msg << rhs._oldstate << "->" << rhs._newstate;
 				return out
-					<< std::setw(20) << std::left << rhs._where
-					<< std::setw(40) << std::left << msg.str() << rhs._buf;
+				       << std::setw(20) << std::left << rhs._where
+				       << std::setw(40) << std::left << msg.str() << rhs._buf;
 			}
 
 		};
@@ -381,14 +387,16 @@ namespace sys {
 
 		void
 		dump_state(std::ostream& out) {
-			out << "put={" << this->pptr() - this->pbase() << ',' << this->epptr() - this->pbase() << '}'
-				<< ",get={" << this->gptr() - this->eback() << ',' << this->egptr() - this->eback() << '}'
-				<< ",packet={"
-				<< this->ipacket_begin() - this->eback() << ','
-				<< this->ipayload_begin() - this->eback() << ','
-				<< this->ipacket_end() - this->eback()
-				<< '}'
-				<< ",save_egptr=" << this->_oldendpos;
+			out << "put={" << this->pptr() - this->pbase() << ',' <<
+			    this->epptr() - this->pbase() << '}'
+			    << ",get={" << this->gptr() - this->eback() << ',' <<
+			    this->egptr() - this->eback() << '}'
+			    << ",packet={"
+			    << this->ipacket_begin() - this->eback() << ','
+			    << this->ipayload_begin() - this->eback() << ','
+			    << this->ipacket_end() - this->eback()
+			    << '}'
+			    << ",save_egptr=" << this->_oldendpos;
 		}
 
 		friend std::ostream&
@@ -397,19 +405,13 @@ namespace sys {
 			return out;
 		}
 
-		int
-		sync() override {
-			int ret = std::basic_streambuf<Ch,Tr>::sync();
-			this->setstate(this->_state, __func__);
-			return ret;
-		}
-
 		#else
 		inline void
 		setstate(state_type rhs) {
 			this->_state = rhs;
 		}
-		#endif
+
+		#endif // if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 
 	};
 

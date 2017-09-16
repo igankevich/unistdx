@@ -1,6 +1,7 @@
 #include "websocketbuf"
 
 #include <algorithm>
+#include <cassert>
 #include <functional>
 #include <ostream>
 #include <random>
@@ -9,7 +10,9 @@
 #include <unistdx/base/adapt_engine>
 #include <unistdx/base/base64>
 #include <unistdx/base/log_message>
+#include <unistdx/base/n_random_bytes>
 #include <unistdx/base/sha1>
+#include <unistdx/base/websocket>
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
@@ -44,7 +47,8 @@ namespace {
 
 	const char http_header_separator[] = "\r\n";
 
-	const std::string websocket_guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+	const std::string websocket_guid =
+		"258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
 
 	template <class T>
 	inline const T*
@@ -87,8 +91,111 @@ namespace {
 }
 
 template<class Ch, class Tr>
+void
+sys::basic_websocketbuf<Ch,Tr>::put_header() {
+	assert(this->_valid);
+	assert(
+		(this->_role == role_type::server &&
+		 this->_sstate == server_state::end) ||
+		(this->_role == role_type::client &&
+		 this->_cstate == client_state::end)
+	);
+	// put dummy frame with the max length
+	constexpr const size_t n = websocket_frame::max_size();
+	char buf[n] = {0};
+	this->sputn(buf, n);
+}
+
+template<class Ch, class Tr>
+std::streamsize
+sys::basic_websocketbuf<Ch,Tr>::overwrite_header(std::streamsize n) {
+	assert(this->_valid);
+	assert(
+		(this->_role == role_type::server &&
+		 this->_sstate == server_state::end) ||
+		(this->_role == role_type::client &&
+		 this->_cstate == client_state::end)
+	);
+	// put real frame with the correct length
+	constexpr const size_t max_hs = websocket_frame::max_size();
+	websocket_frame frame;
+	frame.opcode(opcode_type::binary_frame);
+	frame.fin(1);
+	frame.payload_size(n - max_hs);
+	frame.mask(n_random_bytes<websocket_frame::mask_type>(rng));
+	const size_t hs = frame.size();
+	traits_type::copy(this->opacket_begin(), frame.begin(), hs);
+	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+	log_message("ws", "put _", frame);
+	#endif
+	// mask the payload
+	frame.mask_payload(this->opacket_begin() + max_hs, this->opacket_end());
+	return hs;
+}
+
+template<class Ch, class Tr>
 bool
-sys::basic_websocketbuf<Ch,Tr>::update_server_state() {
+sys::basic_websocketbuf<Ch,Tr>::xgetheader(
+	std::streamsize& header_size,
+	std::streamsize& payload_size
+) {
+	assert(this->_valid);
+	assert(
+		(this->_role == role_type::server &&
+		 this->_sstate == server_state::end) ||
+		(this->_role == role_type::client &&
+		 this->_cstate == client_state::end)
+	);
+	bool success = false;
+	const size_t n = this->egptr() - this->gptr();
+	constexpr const size_t min_hs = websocket_frame::min_size();
+	if (n >= min_hs) {
+		websocket_frame& frame = this->_iframe;
+		frame.clear();
+		// read minimal header to determine its
+		// full size
+		traits_type::copy(frame.begin(), this->gptr(), min_hs);
+		const size_t hs = frame.size();
+		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+		log_message("ws", "get min frame _", frame);
+		#endif
+		if (n >= hs) {
+			// read full header
+			traits_type::copy(
+				frame.begin() + min_hs,
+				this->gptr() + min_hs,
+				hs - min_hs
+			);
+			header_size = hs;
+			payload_size = frame.payload_size();
+			success = true;
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+			log_message("ws", "get _", frame);
+			#endif
+		}
+	}
+	return success;
+}
+
+template<class Ch, class Tr>
+void
+sys::basic_websocketbuf<Ch,Tr>::on_payload() {
+	assert(this->_valid);
+	assert(
+		(this->_role == role_type::server &&
+		 this->_sstate == server_state::end) ||
+		(this->_role == role_type::client &&
+		 this->_cstate == client_state::end)
+	);
+	this->_iframe.mask_payload(this->ipayload_begin(), this->ipayload_end());
+}
+
+template<class Ch, class Tr>
+bool
+sys::basic_websocketbuf<Ch,Tr>::server_handshake() {
+	if (this->_sstate == server_state::end) {
+		return this->_valid;
+	}
 	server_state old_state;
 	do {
 		old_state = this->_sstate;
@@ -113,12 +220,15 @@ sys::basic_websocketbuf<Ch,Tr>::update_server_state() {
 			break;
 		}
 	} while (old_state != this->_sstate);
-	return this->_valid;
+	return this->_valid && this->_sstate == server_state::end;
 }
 
 template<class Ch, class Tr>
 bool
-sys::basic_websocketbuf<Ch,Tr>::update_client_state() {
+sys::basic_websocketbuf<Ch,Tr>::client_handshake() {
+	if (this->_cstate == client_state::end) {
+		return this->_valid;
+	}
 	client_state old_state;
 	do {
 		old_state = this->_cstate;
@@ -143,7 +253,7 @@ sys::basic_websocketbuf<Ch,Tr>::update_client_state() {
 			break;
 		}
 	} while (old_state != this->_cstate);
-	return this->_valid;
+	return this->_valid && this->_cstate == client_state::end;
 }
 
 template<class Ch, class Tr>

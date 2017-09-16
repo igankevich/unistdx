@@ -35,7 +35,13 @@ namespace sys {
 		template<class It>
 		inline
 		bytes(It first, It last) noexcept {
-			std::copy(first, last, _bytes);
+			std::copy(first, last, this->_bytes);
+		}
+
+		template<class It>
+		inline
+		bytes(It first, size_type n) noexcept {
+			std::copy_n(first, n, this->_bytes);
 		}
 
 		inline void

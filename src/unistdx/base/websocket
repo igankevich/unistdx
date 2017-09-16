@@ -1,10 +1,8 @@
 #ifndef UNISTDX_BASE_WEBSOCKET
 #define UNISTDX_BASE_WEBSOCKET
 
-#include <algorithm>
 #include <cstddef>
 #include <iosfwd>
-#include <stdexcept>
 
 #include <unistdx/base/base64>
 #include <unistdx/base/log_message>
@@ -24,7 +22,7 @@ namespace sys {
 
 	union websocket_frame {
 
-	private:
+	public:
 		static const uint16_t length16_tag = 126;
 		static const uint16_t length64_tag = 127;
 		static const size_t mask_size = 4;
@@ -51,7 +49,7 @@ namespace sys {
 			uint8_t          : 0;
 			uint64_t footer;        /// extlen3 (16) + mask (32) + padding (16)
 		} _hdr = {};
-		unsigned char _bytes[sizeof(_hdr)];
+		char _bytes[sizeof(_hdr)];
 
 		// check if header fields are aligned properly
 		static_assert(
@@ -67,58 +65,6 @@ namespace sys {
 			"bad offset of hdr.footer"
 		);
 		static_assert(sizeof(_hdr) == 16, "bad websocket frame header size");
-
-		template<class It>
-		std::pair<It,It>
-		decode(It first, It last) {
-			// read first two bytes of a frame
-			size_t input_size = last - first;
-			if (input_size < base_size)
-				return std::make_pair(first,last);
-			std::copy(first, first + base_size, this->_bytes);
-			// keep reading until the end of the header
-			size_t hdrsz = header_size();
-			if (input_size < hdrsz) return std::make_pair(first,last);
-			if (hdrsz > base_size) {
-				std::copy(
-					first + base_size,
-					first + hdrsz,
-					this->_bytes + base_size
-				);
-			}
-			size_t payload_sz = payload_size();
-			if (input_size < payload_sz + hdrsz) {
-				return std::make_pair(first,last);
-			}
-			return std::make_pair(first + hdrsz, first + hdrsz + payload_sz);
-		}
-
-		template<class It>
-		size_t
-		decode_header(It first, It last) {
-			// read first two bytes of a frame
-			size_t input_size = last - first;
-			if (input_size < base_size)
-				return 0;
-			std::copy(first, first + base_size, this->_bytes);
-			// keep reading until the end of the header
-			size_t hdrsz = header_size();
-			if (input_size < hdrsz) return 0;
-			if (hdrsz > base_size) {
-				std::copy(
-					first + base_size,
-					first + hdrsz,
-					this->_bytes + base_size
-				);
-			}
-			return hdrsz;
-		}
-
-		template<class Res>
-		void
-		encode(Res result) const {
-			std::copy(this->_bytes, this->_bytes + header_size(), result);
-		}
 
 		inline void
 		fin(int rhs) noexcept {
@@ -156,16 +102,66 @@ namespace sys {
 			       this->_hdr.len == length64_tag ? sizeof(length64_type) : 0;
 		}
 
+		inline void
+		len(uint16_t rhs) noexcept {
+			this->_hdr.len = rhs;
+		}
+
+		inline void
+		maskbit(uint16_t rhs) noexcept {
+			this->_hdr.maskbit = rhs;
+		}
+
 		length64_type
 		payload_size() const noexcept;
 
 		void
 		payload_size(length64_type rhs) noexcept;
 
+		inline char*
+		begin() noexcept {
+			return this->_bytes;
+		}
+
+		inline const char*
+		begin() const noexcept {
+			return this->_bytes;
+		}
+
+		inline char*
+		end() noexcept {
+			return this->_bytes + this->size();
+		}
+
+		inline const char*
+		end() const noexcept {
+			return this->_bytes + this->size();
+		}
+
+		inline char*
+		base() noexcept {
+			return this->_bytes + base_size;
+		}
+
+		inline const char*
+		base() const noexcept {
+			return this->_bytes + base_size;
+		}
+
 		inline size_t
-		header_size() const noexcept {
+		size() const noexcept {
 			return base_size + this->extlen_size()
 				+ (this->is_masked() ? mask_size : 0);
+		}
+
+		static constexpr inline size_t
+		max_size() noexcept {
+			return base_size + sizeof(length64_type) + mask_size;
+		}
+
+		static constexpr inline size_t
+		min_size() noexcept {
+			return base_size;
 		}
 
 		mask_type
@@ -174,35 +170,11 @@ namespace sys {
 		void
 		mask(mask_type rhs) noexcept;
 
-		template<class It, class Res>
 		void
-		copy_payload(It first, It last, Res result) const {
-			if (this->is_masked()) {
-				bytes<mask_type> m = this->mask();
-				size_t i = 0;
-				std::transform(
-					first,
-					last,
-					result,
-					[&i,&m] (char ch) {
-					    ch ^= m[i%4]; ++i; return ch;
-					}
-				);
-			} else {
-				std::copy(first, last, result);
-			}
-		}
+		mask_payload(char* first, char* last) const noexcept;
 
-		template<class It, class Res>
-		char
-		getpayloadc(It first, size_t nread) const {
-			if (this->is_masked()) {
-				bytes<mask_type> m = this->mask();
-				return *first ^ m[nread%4];
-			} else {
-				return *first;
-			}
-		}
+		void
+		clear() noexcept;
 
 		friend std::ostream&
 		operator<<(std::ostream& out, const websocket_frame& rhs);
@@ -211,45 +183,6 @@ namespace sys {
 
 	std::ostream&
 	operator<<(std::ostream& out, const websocket_frame& rhs);
-
-	template<class It, class Res, class Random>
-	void
-	websocket_encode(It first, It last, Res result, Random& rng) {
-		size_t input_size = last - first;
-		if (input_size == 0) return;
-		websocket_frame frame;
-		frame.opcode(opcode_type::binary_frame);
-		frame.fin(1);
-		frame.payload_size(input_size);
-		frame.mask(n_random_bytes<websocket_frame::mask_type>(rng));
-		frame.encode(result);
-		frame.copy_payload(first, last, result);
-		#ifndef NDEBUG
-		log_message("wbs", "send _", frame);
-		#endif
-	}
-
-	template<class It, class Res>
-	size_t
-	websocket_decode(It first, It last, Res output, opcode_type* opcode) {
-		websocket_frame frame;
-		std::pair<It,It> payload = frame.decode(first, last);
-		if (payload.first == first) return 0;
-		#ifndef NDEBUG
-		log_message("wbs", "recv _", frame);
-		#endif
-		*opcode = frame.opcode();
-		// ignore invalid frames
-		if (!frame.has_valid_opcode()) {
-			throw std::invalid_argument("bad opcode");
-		}
-		// ignore non-binary
-		if (!frame.is_binary()) {
-			throw std::invalid_argument("non-binary frames are not supported");
-		}
-		frame.copy_payload(payload.first, payload.second, output);
-		return payload.second - first;
-	}
 
 }
 

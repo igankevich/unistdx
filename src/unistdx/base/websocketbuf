@@ -4,14 +4,17 @@
 #include <streambuf>
 #include <string>
 #include <unordered_map>
+#define UNISTDX_DEBUG_WEBSOCKETBUF
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
 #include <unistdx/base/log_message>
 #endif
+#include <unistdx/base/packetbuf>
+#include <unistdx/base/websocket>
 
 namespace sys {
 
 	template<class Ch, class Tr=std::char_traits<Ch> >
-	class basic_websocketbuf: public virtual std::basic_streambuf<Ch,Tr> {
+	class basic_websocketbuf: public virtual basic_packetbuf<Ch,Tr> {
 
 	public:
 		using typename std::basic_streambuf<Ch,Tr>::pos_type;
@@ -52,6 +55,7 @@ namespace sys {
 		role_type _role = role_type::server;
 		map_type _headers;
 		bool _valid = true;
+		websocket_frame _iframe;
 
 	public:
 
@@ -66,22 +70,34 @@ namespace sys {
 		}
 
 		inline bool
-		update_state() {
-			if (this->_role == role_type::server) {
-				this->update_server_state();
-			} else {
-				this->update_client_state();
-			}
-			return this->_valid;
+		handshake() override {
+			return (this->_role == role_type::server)
+			       ? this->server_handshake()
+				   : this->client_handshake();
 		}
 
 		bool
-		update_server_state();
+		server_handshake();
 
 		bool
-		update_client_state();
+		client_handshake();
 
 	private:
+
+		void
+		put_header() override;
+
+		std::streamsize
+		overwrite_header(std::streamsize n) override;
+
+		virtual bool
+		xgetheader(
+			std::streamsize& header_size,
+			std::streamsize& payload_size
+		) override;
+
+		void
+		on_payload() override;
 
 		void
 		initiate_handshake();
