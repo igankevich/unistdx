@@ -78,10 +78,21 @@ namespace sys {
 				// depending on the length of the payload
 				const std::streamsize new_hs = this->xgetheadersize(ps);
 				if (new_hs != hs) {
-					// move payload to match new header size
 					const std::streamsize delta = new_hs - hs;
+					const std::streamsize delta2 = this->epptr() - this->pptr();
 					char_type* src = this->opacket_begin();
-					this->pbump(delta);
+					if (delta2 >= delta) {
+						// advance put pointer
+						this->pbump(delta);
+					} else {
+						// add dummy characters
+						const std::streamsize m = delta - delta2;
+						char_type ch = 0;
+						for (int i=0; i<m; ++i) {
+							this->sputn(&ch, 1);
+						}
+					}
+					// move payload to match new header size
 					traits_type::move(src + delta, src, ps);
 				}
 				this->overwrite_header(ps);
