@@ -4,7 +4,6 @@
 #include <streambuf>
 #include <string>
 #include <unordered_map>
-#define UNISTDX_DEBUG_WEBSOCKETBUF
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
 #include <unistdx/base/log_message>
 #endif

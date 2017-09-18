@@ -3,7 +3,6 @@
 
 #include <cassert>
 #include <streambuf>
-#define UNISTDX_DEBUG_PACKETBUF
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 #define UNISTDX_FUNC , __func__
 #include <iomanip>
