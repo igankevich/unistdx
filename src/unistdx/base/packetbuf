@@ -36,7 +36,6 @@ namespace sys {
 		pos_type _ipacketpos = 0;
 		pos_type _ipayloadpos = 0;
 		std::streamsize _ipacketsize = 0;
-		std::streamsize _iheadersize = 0;
 		std::streamsize _oheadersize = 0;
 		// Saved position of egptr that may be larger than ipacket_end.
 		pos_type _oldendpos = 0;
@@ -144,8 +143,12 @@ namespace sys {
 		virtual void
 		put_header() {}
 
+		/*
+		@param ps packet size
+		@return header size
+		*/
 		virtual std::streamsize
-		overwrite_header(std::streamsize) {
+		overwrite_header(std::streamsize ps) {
 			return this->_oheadersize;
 		}
 
@@ -232,19 +235,9 @@ namespace sys {
 			return this->_oheadersize;
 		}
 
-		inline std::streamsize
-		iheadersize() const noexcept {
-			return this->_iheadersize;
-		}
-
 		inline void
 		set_oheader(std::streamsize size) noexcept {
 			this->_oheadersize = size;
-		}
-
-		inline void
-		set_iheader(std::streamsize size) noexcept {
-			this->_iheadersize = size;
 		}
 
 		inline void
