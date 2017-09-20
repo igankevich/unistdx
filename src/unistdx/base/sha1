@@ -1,27 +1,27 @@
 #ifndef UNISTDX_BASE_SHA1
 #define UNISTDX_BASE_SHA1
 
-#include <cstdint>
+#include <unistdx/base/types>
 
 namespace sys {
 
 	class sha1 {
 
 	private:
-		static const uint32_t h0 = 0x67452301;
-		static const uint32_t h1 = 0xefcdab89;
-		static const uint32_t h2 = 0x98badcfe;
-		static const uint32_t h3 = 0x10325476;
-		static const uint32_t h4 = 0xc3d2e1f0;
+		static const u32 h0 = 0x67452301;
+		static const u32 h1 = 0xefcdab89;
+		static const u32 h2 = 0x98badcfe;
+		static const u32 h3 = 0x10325476;
+		static const u32 h4 = 0xc3d2e1f0;
 
 	private:
 		union {
 			unsigned char _block[64];
-			uint32_t _words[80];
-			uint64_t _dwords[8];
+			u32 _words[80];
+			u64 _dwords[8];
 		};
 		union {
-			uint32_t _digest[5];
+			u32 _digest[5];
 			unsigned char _bytes[20];
 		};
 		unsigned char* _blockptr;
@@ -71,13 +71,13 @@ namespace sys {
 		}
 
 		inline void
-		digest(uint32_t* result) noexcept {
+		digest(u32* result) noexcept {
 			for (int i=0; i<5; ++i) {
 				result[i] = this->_digest[i];
 			}
 		}
 
-		inline const uint32_t*
+		inline const u32*
 		digest() const noexcept {
 			return this->_digest;
 		}

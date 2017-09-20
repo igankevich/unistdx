@@ -9,7 +9,6 @@ libunistdx_src += files([
 ])
 
 install_headers(
-	'adapt_engine',
 	'base64',
 	'check',
 	'cmdline',
@@ -17,7 +16,6 @@ install_headers(
 	'ios_guard',
 	'log_message',
 	'make_object',
-	'n_random_bytes',
 	'packetbuf',
 	'sha1',
 	'simple_lock',

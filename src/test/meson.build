@@ -247,26 +247,6 @@ test(
 )
 
 test(
-	'base/adapt_engine',
-	executable(
-		'adapt-engine-test',
-		sources: 'adapt_engine_test.cc',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
-	'base/n_random_bytes',
-	executable(
-		'n-random-bytes-test',
-		sources: 'n_random_bytes_test.cc',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
 	'base/cmdline',
 	executable(
 		'cmdline-test',

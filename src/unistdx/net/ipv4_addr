@@ -23,7 +23,7 @@ namespace sys {
 
 	union ipv4_addr {
 
-		typedef uint8_t oct_type;
+		typedef u8 oct_type;
 		typedef addr4_type rep_type;
 
 		inline constexpr

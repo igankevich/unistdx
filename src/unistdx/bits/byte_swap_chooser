@@ -92,15 +92,15 @@ namespace sys {
 		};
 
 		template<size_t bytes>
-		struct Integral: public byte_swap_chooser<uint8_t[bytes],is_network_byte_order(),false> {};
+		struct Integral: public byte_swap_chooser<u8[bytes],is_network_byte_order(),false> {};
 		template<>
-		struct Integral<1>: public byte_swap_chooser<uint8_t,is_network_byte_order(),true> {};
+		struct Integral<1>: public byte_swap_chooser<u8,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<2>: public byte_swap_chooser<uint16_t,is_network_byte_order(),true> {};
+		struct Integral<2>: public byte_swap_chooser<u16,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<4>: public byte_swap_chooser<uint32_t,is_network_byte_order(),true> {};
+		struct Integral<4>: public byte_swap_chooser<u32,is_network_byte_order(),true> {};
 		template<>
-		struct Integral<8>: public byte_swap_chooser<uint64_t,is_network_byte_order(),true> {};
+		struct Integral<8>: public byte_swap_chooser<u64,is_network_byte_order(),true> {};
 		template<>
 		struct Integral<16>: public byte_swap_chooser<uint128_t,is_network_byte_order(),true> {};
 

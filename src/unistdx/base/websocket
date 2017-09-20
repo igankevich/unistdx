@@ -1,17 +1,12 @@
 #ifndef UNISTDX_BASE_WEBSOCKET
 #define UNISTDX_BASE_WEBSOCKET
 
-#include <cstddef>
 #include <iosfwd>
-
-#include <unistdx/base/base64>
-#include <unistdx/base/log_message>
-#include <unistdx/base/n_random_bytes>
-#include <unistdx/net/bytes>
+#include <unistdx/base/types>
 
 namespace sys {
 
-	enum class opcode_type : int8_t {
+	enum class opcode_type : u8 {
 		cont_frame   = 0x0,
 		text_frame   = 0x1,
 		binary_frame = 0x2,
@@ -23,31 +18,31 @@ namespace sys {
 	union websocket_frame {
 
 	public:
-		static const uint16_t length16_tag = 126;
-		static const uint16_t length64_tag = 127;
+		static const u16 length16_tag = 126;
+		static const u16 length64_tag = 127;
 		static const size_t mask_size = 4;
 		static const size_t base_size = 2;
 
 	public:
-		typedef uint32_t mask_type;
-		typedef uint16_t length16_type;
-		typedef uint64_t length64_type;
+		typedef u32 mask_type;
+		typedef u16 length16_type;
+		typedef u64 length64_type;
 
 		struct {
-			uint16_t opcode  : 4;
-			uint16_t rsv3    : 1;
-			uint16_t rsv2    : 1;
-			uint16_t rsv1    : 1;
-			uint16_t fin     : 1;
-			uint8_t          : 0;
-			uint16_t len     : 7;
-			uint16_t maskbit : 1;
-			uint8_t          : 0;
-			uint16_t extlen;
-			uint8_t          : 0;
-			uint32_t extlen2;
-			uint8_t          : 0;
-			uint64_t footer;        /// extlen3 (16) + mask (32) + padding (16)
+			u16 opcode  : 4;
+			u16 rsv3    : 1;
+			u16 rsv2    : 1;
+			u16 rsv1    : 1;
+			u16 fin     : 1;
+			u8          : 0;
+			u16 len     : 7;
+			u16 maskbit : 1;
+			u8          : 0;
+			u16 extlen;
+			u8          : 0;
+			u32 extlen2;
+			u8          : 0;
+			u64 footer;        /// extlen3 (16) + mask (32) + padding (16)
 		} _hdr = {};
 		char _bytes[sizeof(_hdr)];
 
@@ -73,7 +68,7 @@ namespace sys {
 
 		inline void
 		opcode(opcode_type rhs) noexcept {
-			this->_hdr.opcode = static_cast<uint16_t>(rhs);
+			this->_hdr.opcode = static_cast<u16>(rhs);
 		}
 
 		inline opcode_type
@@ -87,7 +82,7 @@ namespace sys {
 		}
 
 		inline bool
-		is_binary() const noexcept{
+		is_binary() const noexcept {
 			return this->opcode() == opcode_type::binary_frame;
 		}
 
@@ -103,20 +98,20 @@ namespace sys {
 		}
 
 		inline void
-		len(uint16_t rhs) noexcept {
+		len(u16 rhs) noexcept {
 			this->_hdr.len = rhs;
 		}
 
 		inline void
-		maskbit(uint16_t rhs) noexcept {
+		maskbit(u16 rhs) noexcept {
 			this->_hdr.maskbit = rhs;
 		}
 
 		length64_type
-		payload_size() const noexcept;
+		    payload_size() const noexcept;
 
 		void
-		payload_size(length64_type rhs) noexcept;
+		    payload_size(length64_type rhs) noexcept;
 
 		inline char*
 		begin() noexcept {
@@ -151,7 +146,7 @@ namespace sys {
 		inline size_t
 		size() const noexcept {
 			return base_size + this->extlen_size()
-				+ (this->is_masked() ? mask_size : 0);
+			       + (this->is_masked() ? mask_size : 0);
 		}
 
 		static constexpr inline size_t

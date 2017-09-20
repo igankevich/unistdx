@@ -2,6 +2,8 @@
 
 #include <istream>
 #include <ostream>
+
+#include <unistdx/base/types>
 #include <unistdx/bits/addr_parse>
 
 namespace {
@@ -53,7 +55,7 @@ sys::operator<<(std::ostream& out, ipv4_addr rhs) {
 
 std::istream&
 sys::operator>>(std::istream& in, ipv4_addr& rhs) {
-	typedef bits::Num<uint8_t, uint32_t> Octet;
+	typedef bits::Num<u8, u32> Octet;
 	using bits::Dot;
 	Octet o1, o2, o3, o4;
 	in >> o1 >> Dot() >> o2 >> Dot() >> o3 >> Dot() >> o4;

@@ -5,6 +5,7 @@
 #include <functional>
 #include <iosfwd>
 
+#include <unistdx/base/types>
 #include <unistdx/base/uint128>
 #include <unistdx/net/bit_count>
 #include <unistdx/net/ipaddr_traits>
@@ -24,8 +25,8 @@ namespace sys {
 
 	union ipv6_addr {
 
-		typedef uint16_t hex_type;
-		typedef uint8_t oct_type;
+		typedef u16 hex_type;
+		typedef u8 oct_type;
 		typedef addr6_type rep_type;
 
 		inline constexpr

@@ -5,6 +5,8 @@
 #include <mutex>
 #include <unistdx/base/spin_mutex>
 
+using sys::u64;
+
 template <class T>
 struct MutexTest: public BasicMutexTest<T> {};
 
@@ -13,7 +15,7 @@ TYPED_TEST_CASE(MutexTest, MAKE_TYPES(sys::spin_mutex));
 TYPED_TEST(MutexTest, Mutex) {
 	typedef TypeParam Mutex;
 	this->run(
-		[&] (unsigned nthreads, uint64_t increment) {
+		[&] (unsigned nthreads, u64 increment) {
 		    volatile unsigned counter = 0;
 		    Mutex m;
 		    std::vector<std::thread> threads;

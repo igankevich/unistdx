@@ -1,8 +1,10 @@
 #include "family"
 
+#include <unistdx/base/types>
+
 namespace {
 
-	typedef uint8_t raw_family_type;
+	typedef sys::u8 raw_family_type;
 
 	enum struct portable_family_type: raw_family_type {
 		inet = 0,

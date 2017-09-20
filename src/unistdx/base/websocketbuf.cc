@@ -7,11 +7,10 @@
 #include <random>
 #include <sstream>
 
-#include <unistdx/base/adapt_engine>
 #include <unistdx/base/base64>
 #include <unistdx/base/log_message>
-#include <unistdx/base/n_random_bytes>
 #include <unistdx/base/sha1>
+#include <unistdx/base/types>
 #include <unistdx/base/websocket>
 #include <unistdx/config>
 #include <unistdx/net/bytes>
@@ -22,9 +21,17 @@
 
 namespace {
 
-	typedef sys::adapt_engine<std::random_device,char> engine_type;
+	typedef std::independent_bits_engine<std::random_device,8,unsigned char>
+		key_engine_type;
 
-	std::random_device rng;
+	typedef std::independent_bits_engine<
+		std::random_device,
+		8*sizeof(sys::websocket_frame::mask_type),
+		sys::websocket_frame::mask_type
+	> mask_engine_type;
+
+	key_engine_type key_rng;
+	mask_engine_type mask_rng;
 
 	const char websocket_request[] =
 		"GET / HTTP/1.1\r\n"
@@ -74,14 +81,14 @@ namespace {
 		char* result
 	) {
 		using namespace sys;
-		bytes<uint32_t[5]> hash;
+		bytes<u32[5]> hash;
 		sha1 sha;
 		sha.put(web_socket_key.data(), web_socket_key.size());
 		sha.put(websocket_guid.data(), websocket_guid.size());
 		sha.compute();
 		sha.digest(hash.value());
 		#if !defined(UNISTDX_BIG_ENDIAN)
-		for (uint32_t& i : hash.value()) {
+		for (u32& i : hash.value()) {
 			i = to_network_format(i);
 		}
 		#endif
@@ -122,7 +129,7 @@ sys::basic_websocketbuf<Ch,Tr>::overwrite_header(std::streamsize n) {
 	frame.opcode(opcode_type::binary_frame);
 	frame.fin(1);
 	frame.payload_size(n - max_hs);
-	frame.mask(n_random_bytes<websocket_frame::mask_type>(rng));
+	frame.mask(mask_rng());
 	const size_t hs = frame.size();
 	traits_type::copy(this->opacket_begin(), frame.begin(), hs);
 	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
@@ -287,9 +294,8 @@ sys::basic_websocketbuf<Ch,Tr>::write_handshake() {
 template<class Ch, class Tr>
 void
 sys::basic_websocketbuf<Ch,Tr>::put_websocket_key() {
-	engine_type eng(rng);
 	char key[16], encoded[24];
-	std::generate_n(key, 16, std::ref(eng));
+	std::generate_n(key, 16, std::ref(key_rng));
 	sys::base64_encode(key, 16, encoded);
 	this->sputn(encoded, 24);
 	// save websocket key for validation

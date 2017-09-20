@@ -14,6 +14,8 @@
 
 #include "random_string.hh"
 
+using sys::u16;
+
 struct PacketSizeTest: public ::testing::TestWithParam<size_t> {};
 
 std::vector<size_t> packet_sizes{
@@ -27,9 +29,9 @@ std::vector<size_t> packet_sizes{
 	4095,
 	4096,
 	4097,
-	std::numeric_limits<uint16_t>::max()-1,
-	std::numeric_limits<uint16_t>::max(),
-	std::numeric_limits<uint16_t>::max()+1,
+	std::numeric_limits<u16>::max()-1,
+	std::numeric_limits<u16>::max(),
+	std::numeric_limits<u16>::max()+1,
 	0
 };
 

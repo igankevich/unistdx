@@ -2,7 +2,9 @@
 
 #include <istream>
 #include <ostream>
+
 #include <unistdx/base/ios_guard>
+#include <unistdx/base/types>
 #include <unistdx/bits/addr_parse>
 
 std::ostream&
@@ -29,7 +31,7 @@ sys::operator>>(std::istream& in, ipv6_addr& rhs) {
 		return in;
 	}
 	typedef ipv6_addr::hex_type hex_type;
-	typedef bits::Num<uint16_t, uint32_t> Hextet;
+	typedef bits::Num<u16, u32> Hextet;
 	ios_guard g(in);
 	in.setf(std::ios::hex, std::ios::basefield);
 	int field_no = 0;

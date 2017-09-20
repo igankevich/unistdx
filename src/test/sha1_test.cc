@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+using sys::u32;
+
 typedef std::tuple<std::string, std::string> hash_tuple;
 
 struct SHA1Test: public ::testing::TestWithParam<hash_tuple> {};
@@ -36,10 +38,10 @@ const std::vector<std::tuple<std::string, std::string>> KNOWN_HASHES = {
 
 const std::string SHA_OF_ONE_MILLION_OF_A = "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f";
 
-std::string sha1_digest_to_string(const std::vector<uint32_t>& result) {
+std::string sha1_digest_to_string(const std::vector<u32>& result) {
 	std::stringstream str;
 	str << std::hex << std::setfill('0');
-	std::for_each(result.begin(), result.end(), [&str] (uint32_t n) {
+	std::for_each(result.begin(), result.end(), [&str] (u32 n) {
 		str << std::setw(8) << n << ' ';
 	});
 	std::string output = str.str();
@@ -50,7 +52,7 @@ std::string sha1_digest_to_string(const std::vector<uint32_t>& result) {
 TEST_P(SHA1Test, All) {
 	const std::string& input = std::get<0>(GetParam());
 	const std::string& expected_output = std::get<1>(GetParam());
-	std::vector<uint32_t> result(5);
+	std::vector<u32> result(5);
 	sys::sha1 sha;
 	sha.put(input.data(), input.size());
 	sha.compute();
@@ -72,7 +74,7 @@ TEST(SHA1, OneMillionOfAs) {
     for (int i=0; i<100000; i++) {
 		sha.put(a.data(), a.size());
 	}
-	std::vector<uint32_t> result(5);
+	std::vector<u32> result(5);
 	sha.compute();
 	sha.digest(result.data());
 	std::string output = sha1_digest_to_string(result);

@@ -4,6 +4,8 @@
 #include <limits>
 #include <ostream>
 
+#include <unistdx/net/bytes>
+
 sys::websocket_frame::length64_type
 sys::websocket_frame::payload_size() const noexcept {
 	switch (this->_hdr.len) {

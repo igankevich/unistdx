@@ -6,12 +6,13 @@
 #include <stdexcept>
 
 #include <unistdx/base/packetbuf>
+#include <unistdx/base/types>
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
 namespace sys {
 
-	template<class Ch, class Tr=std::char_traits<Ch>, class Size=uint32_t>
+	template<class Ch, class Tr=std::char_traits<Ch>, class Size=u32>
 	struct basic_pstream {
 
 		typedef basic_packetbuf<Ch,Tr> streambuf_type;
@@ -119,73 +120,33 @@ namespace sys {
 			return this->write(rhs ? char(1) : char(0));
 		}
 
-		inline basic_pstream&
-		operator<<(char rhs) {
-			return this->write(rhs);
-		}
+		#define MAKE_INOUT_OPERATOR(tp) \
+			inline basic_pstream& \
+			operator<<(tp rhs) { \
+				return this->write(rhs); \
+			} \
+			inline basic_pstream& \
+			operator>>(tp& rhs) { \
+				return this->read(rhs); \
+			}
 
-		inline basic_pstream&
-		operator<<(int8_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(int16_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(int32_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(int64_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(uint8_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(uint16_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(uint32_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(uint64_t rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(float rhs) {
-			return this->write(rhs);
-		}
-
-		inline basic_pstream&
-		operator<<(double rhs) {
-			return this->write(rhs);
-		}
-
+		MAKE_INOUT_OPERATOR(char)
+		MAKE_INOUT_OPERATOR(i8)
+		MAKE_INOUT_OPERATOR(i16)
+		MAKE_INOUT_OPERATOR(i32)
+		MAKE_INOUT_OPERATOR(i64)
+		MAKE_INOUT_OPERATOR(u8)
+		MAKE_INOUT_OPERATOR(u16)
+		MAKE_INOUT_OPERATOR(u32)
+		MAKE_INOUT_OPERATOR(u64)
+		MAKE_INOUT_OPERATOR(f32)
+		MAKE_INOUT_OPERATOR(f64)
 		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
-		inline basic_pstream&
-		operator<<(long double rhs) {
-			return this->write(rhs);
-		}
-
+		MAKE_INOUT_OPERATOR(f128)
 		#endif
+		MAKE_INOUT_OPERATOR(string_type)
 
-		inline basic_pstream&
-		operator<<(const string_type& rhs) {
-			return this->write(rhs);
-		}
+		#undef MAKE_INOUT_OPERATOR
 
 		template<class T>
 		inline basic_pstream&
@@ -199,73 +160,6 @@ namespace sys {
 			this->read(c);
 			rhs = c == 1;
 			return *this;
-		}
-
-		inline basic_pstream&
-		operator>>(char& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(int8_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(int16_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(int32_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(int64_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(uint8_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(uint16_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(uint32_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(uint64_t& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(float& rhs) {
-			return this->read(rhs);
-		}
-
-		inline basic_pstream&
-		operator>>(double& rhs) {
-			return this->read(rhs);
-		}
-
-		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
-		inline basic_pstream&
-		operator>>(long double& rhs) {
-			return this->read(rhs);
-		}
-
-		#endif
-		inline basic_pstream&
-		operator>>(string_type& rhs) {
-			return this->read(rhs);
 		}
 
 		template<class T>

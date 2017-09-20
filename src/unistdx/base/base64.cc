@@ -1,5 +1,7 @@
 #include "base64"
 
+#include <unistdx/base/types>
+
 namespace {
 
 	const unsigned char base64_alphabet[64] = {
@@ -25,13 +27,16 @@ namespace {
 
 	const unsigned char pad_character = '=';
 
+	using sys::u8;
+	using sys::u32;
+
 	union bits24 {
 		struct {
-			uint32_t i3 : 6;
-			uint32_t i2 : 6;
-			uint32_t i1 : 6;
-			uint32_t i0 : 6;
-			uint8_t : 0;
+			u32 i3 : 6;
+			u32 i2 : 6;
+			u32 i1 : 6;
+			u32 i0 : 6;
+			u8 : 0;
 		};
 		struct {
 			unsigned char bytes[4];

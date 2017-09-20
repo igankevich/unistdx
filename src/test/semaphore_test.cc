@@ -19,6 +19,8 @@
 #include "semaphore_wait_test.hh"
 #include "make_types.hh"
 
+using sys::u64;
+
 struct posix_process_semaphore: public sys::posix_semaphore {
 	inline
 	posix_process_semaphore():
@@ -105,8 +107,8 @@ private:
 TYPED_TEST(SemaphoreTest, Semaphore) {
 	typedef std::mutex Mutex;
 	typedef TypeParam Semaphore;
-	this->run([&] (unsigned nthreads, uint64_t max) {
-		typedef uint64_t I;
+	this->run([&] (unsigned nthreads, u64 max) {
+		typedef u64 I;
 		typedef Thread_pool<I, Mutex, Semaphore> Pool;
 		std::vector<Pool*> thread_pool(nthreads);
 		std::for_each(thread_pool.begin(), thread_pool.end(), [] (Pool*& ptr) {
@@ -175,30 +177,3 @@ TYPED_TEST(SemaphoreProcessTest, ProducerConsumer) {
 	this->test_producer_consumer_process();
 }
 #endif
-
-//template<class Integer>
-//void test_perf_x(Integer m) {
-//	Time t0 = current_time_nano();
-//	run_multiple_times<Integer>(Test_semaphore<Integer, spin_mutex>, 1, m);
-//	run_multiple_times<Integer>(Test_semaphore<Integer, spin_mutex>, 1, m);
-//	Time t1 = current_time_nano();
-//	run_multiple_times<Integer>(Test_semaphore<Integer, std::mutex>, 1, m);
-//	run_multiple_times<Integer>(Test_semaphore<Integer, std::mutex>, 1, m);
-//	Time t2 = current_time_nano();
-//	std::cout << "Time(spin_mutex, " << m << ") = " << t1-t0 << "ns" << std::endl;
-//	std::cout << "Time(std::mutex, " << m << ") = " << t2-t1 << "ns" << std::endl;
-//}
-
-//template<class Mutex, class Integer=uint64_t>
-//void
-//test_perf(Integer m) {
-//	Time t0 = current_time_nano();
-//	run_multiple_times<Integer>(Test_semaphore<Integer, Mutex>, 1, m);
-//	run_multiple_times<Integer>(Test_semaphore<Integer, Mutex>, 1, m);
-//	Time t1 = current_time_nano();
-//	std::cout
-//		<< "mutex=" << typeid(Mutex).name()
-//		<< ", int_type=" << typeid(Integer).name()
-//		<< ", time=" << t1-t0 << "ns"
-//		<< std::endl;
-//}

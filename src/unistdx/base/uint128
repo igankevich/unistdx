@@ -1,12 +1,14 @@
 #ifndef UNISTDX_BASE_UINT128
 #define UNISTDX_BASE_UINT128
 
-#include <unistdx/config>
+#include <unistdx/base/types>
 #include <unistdx/bits/uint128_parse>
+#include <unistdx/config>
 
 #if defined(UNISTDX_HAVE_INT128)
 namespace sys {
 	typedef unsigned __int128 uint128_t;
+	typedef uint128_t u128;
 }
 
 // Attempt to simulate useful behaviour for ``unsigned __int128''
@@ -35,7 +37,8 @@ namespace std {
 #else
 #include <unistdx/bits/basic_uint>
 namespace sys {
-	typedef bits::basic_uint<uint64_t> uint128_t;
+	typedef bits::basic_uint<u64> uint128_t;
+	typedef uint128_t u128;
 }
 #endif
 

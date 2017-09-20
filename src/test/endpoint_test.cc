@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <random>
-#include <unistdx/base/n_random_bytes>
 #include <unistdx/net/endpoint>
 
 #include "make_types.hh"
@@ -18,9 +17,15 @@ check_read(const char* str, sys::endpoint expected_result) {
 template <class T>
 struct EndpointTest: public ::testing::Test {
 
+	typedef typename T::rep_type int_type;
+	typedef std::independent_bits_engine<
+		std::random_device,
+		8*sizeof(int_type),
+		int_type> engine_type;
+
 	sys::endpoint
 	random_addr() {
-		return sys::endpoint(sys::n_random_bytes<T>(generator), 0);
+		return sys::endpoint(T(generator()), 0);
 	}
 
 	template <class Iterator>
@@ -33,7 +38,7 @@ struct EndpointTest: public ::testing::Test {
 		);
 	}
 
-	std::random_device generator;
+	engine_type generator;
 };
 
 TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_addr, sys::ipv6_addr));

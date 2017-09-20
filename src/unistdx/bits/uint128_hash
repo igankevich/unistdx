@@ -11,13 +11,14 @@ namespace std {
 
 		inline size_t
 		operator()(const sys::uint128_t& rhs) const noexcept {
-			std::hash<uint64_t> h;
+			using ::sys::u64;
+			std::hash<u64> h;
 			#if defined(UNISTDX_INTERNAL_UINT128_EMULATE)
 			return h(rhs.lo) ^ h(rhs.hi);
 			#else
 			using namespace sys::literals;
-			return h(uint64_t(rhs & 0xffffffffffffffff_u128)) ^
-			       h(uint64_t((rhs >> 64) & 0xffffffffffffffff_u128));
+			return h(u64(rhs & 0xffffffffffffffff_u128)) ^
+			       h(u64((rhs >> 64) & 0xffffffffffffffff_u128));
 			#endif
 		}
 

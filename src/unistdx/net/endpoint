@@ -60,7 +60,7 @@ namespace sys {
 
 	union endpoint {
 
-		typedef uint16_t portable_family_type;
+		typedef u16 portable_family_type;
 
 		inline constexpr
 		endpoint() noexcept {}

@@ -20,35 +20,37 @@
 
 namespace {
 
-	const uint32_t k_0_19 = 0x5a827999;
-	const uint32_t k_20_39 = 0x6ed9eba1;
-	const uint32_t k_40_59 = 0x8f1bbcdc;
-	const uint32_t k_60_79 = 0xca62c1d6;
+	using sys::u32;
+
+	const u32 k_0_19 = 0x5a827999u;
+	const u32 k_20_39 = 0x6ed9eba1u;
+	const u32 k_40_59 = 0x8f1bbcdcu;
+	const u32 k_60_79 = 0xca62c1d6u;
 
 	// circular left shift
-	ALWAYS_INLINE uint32_t
-	cls(int n, uint32_t x) noexcept {
+	ALWAYS_INLINE u32
+	cls(int n, u32 x) noexcept {
 		return (x << n) | (x >> (32-n));
 	}
 
 	// logical functions {{{
-	ALWAYS_INLINE uint32_t
-	f_0_19(uint32_t b, uint32_t c, uint32_t d) noexcept {
+	ALWAYS_INLINE u32
+	f_0_19(u32 b, u32 c, u32 d) noexcept {
 		return (b & c) | ((~b) & d);
 	}
 
-	ALWAYS_INLINE uint32_t
-	f_20_39(uint32_t b, uint32_t c, uint32_t d) noexcept {
+	ALWAYS_INLINE u32
+	f_20_39(u32 b, u32 c, u32 d) noexcept {
 		return b ^ c ^ d;
 	}
 
-	ALWAYS_INLINE uint32_t
-	f_40_59(uint32_t b, uint32_t c, uint32_t d) noexcept {
+	ALWAYS_INLINE u32
+	f_40_59(u32 b, u32 c, u32 d) noexcept {
 		return (b & c) | (b & d) | (c & d);
 	}
 
-	ALWAYS_INLINE uint32_t
-	f_60_79(uint32_t b, uint32_t c, uint32_t d) noexcept {
+	ALWAYS_INLINE u32
+	f_60_79(u32 b, u32 c, u32 d) noexcept {
 		return f_20_39(b, c, d);
 	}
 
@@ -70,7 +72,7 @@ namespace {
 void
 sys::sha1::process_block() noexcept {
 	// init words
-	uint32_t* w = this->_words;
+	u32* w = this->_words;
 	#if !defined(UNISTDX_BIG_ENDIAN)
 	for (int i=0; i<16; ++i) {
 		w[i] = to_host_format(w[i]);
@@ -80,12 +82,12 @@ sys::sha1::process_block() noexcept {
 		w[i] = cls(1, w[i-3] ^ w[i-8] ^ w[i-14] ^ w[i-16]);
 	}
 	// process the block
-	uint32_t a=this->_digest[0];
-	uint32_t b=this->_digest[1];
-	uint32_t c=this->_digest[2];
-	uint32_t d=this->_digest[3];
-	uint32_t e=this->_digest[4];
-	uint32_t temp;
+	u32 a=this->_digest[0];
+	u32 b=this->_digest[1];
+	u32 c=this->_digest[2];
+	u32 d=this->_digest[3];
+	u32 e=this->_digest[4];
+	u32 temp;
 	MAKE_LOOP(0, 19);
 	MAKE_LOOP(20, 39);
 	MAKE_LOOP(40, 59);
@@ -122,8 +124,8 @@ sys::sha1::xput(const char* s, const char* sn, std::size_t n) {
 
 void
 sys::sha1::pad_block() noexcept {
-	const uint64_t orig_length = this->_length;
-	const int bytes_needed = sizeof(unsigned char) + sizeof(uint64_t);
+	const u64 orig_length = this->_length;
+	const int bytes_needed = sizeof(unsigned char) + sizeof(u64);
 	const int bytes_avail = this->block_end() - this->_blockptr;
 	*this->_blockptr++ = 0x80;
 	if (bytes_avail < bytes_needed) {
@@ -133,7 +135,7 @@ sys::sha1::pad_block() noexcept {
 		this->_blockptr = this->_block;
 	}
 	// pad the block
-	std::fill(this->_blockptr, this->block_end() - sizeof(uint64_t), '\0');
+	std::fill(this->_blockptr, this->block_end() - sizeof(u64), '\0');
 	// store the size of the original message
 	// in the last double word
 	this->_dwords[7] = to_network_format(orig_length);

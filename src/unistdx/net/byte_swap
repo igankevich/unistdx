@@ -2,6 +2,7 @@
 #define UNISTDX_NET_BYTE_SWAP
 
 #include <algorithm>
+#include <unistdx/base/types>
 #include <unistdx/base/uint128>
 #include <unistdx/config>
 
@@ -12,7 +13,7 @@ namespace sys {
 	/// @{
 	template<class T>
 	inline T
-	byte_swap (T n) noexcept {
+	byte_swap(T n) noexcept {
 		union {
 			T x;
 			unsigned char y[sizeof(T)];
@@ -23,14 +24,14 @@ namespace sys {
 	}
 
 	template<>
-	inline constexpr uint8_t
-	byte_swap<uint8_t>(uint8_t n) noexcept {
+	inline constexpr u8
+	byte_swap<u8>(u8 n) noexcept {
 		return n;
 	}
 
 	template<>
-	inline constexpr uint16_t
-	byte_swap<uint16_t>(uint16_t n) noexcept {
+	inline constexpr u16
+	byte_swap<u16>(u16 n) noexcept {
 		#if defined(UNISTDX_HAVE_BUILTIN_SWAP16)
 		return __builtin_bswap16(n);
 		#else
@@ -39,8 +40,8 @@ namespace sys {
 	}
 
 	template<>
-	inline constexpr uint32_t
-	byte_swap<uint32_t>(uint32_t n) noexcept {
+	inline constexpr u32
+	byte_swap<u32>(u32 n) noexcept {
 		#if defined(UNISTDX_HAVE_BUILTIN_SWAP32)
 		return __builtin_bswap32(n);
 		#else
@@ -52,8 +53,8 @@ namespace sys {
 	}
 
 	template<>
-	inline constexpr uint64_t
-	byte_swap<uint64_t>(uint64_t n) noexcept {
+	inline constexpr u64
+	byte_swap<u64>(u64 n) noexcept {
 		#if defined(UNISTDX_HAVE_BUILTIN_SWAP64)
 		return __builtin_bswap64(n);
 		#else
@@ -82,17 +83,17 @@ namespace sys {
 
 	// compile-time unit tests for byte swapping
 	static_assert(
-		byte_swap<uint16_t>(UINT16_C(0xABCD)) == UINT16_C(0xCDAB),
+		byte_swap<u16>(UINT16_C(0xABCD)) == UINT16_C(0xCDAB),
 		"byte swap failed for u16"
 	);
 
 	static_assert(
-		byte_swap<uint32_t>(UINT32_C(0xABCDDCBA)) == UINT32_C(0xBADCCDAB),
+		byte_swap<u32>(UINT32_C(0xABCDDCBA)) == UINT32_C(0xBADCCDAB),
 		"byte swap failed for u32"
 	);
 
 	static_assert(
-		byte_swap<uint64_t>(UINT64_C(0xABCDDCBA12344321)) == UINT64_C(
+		byte_swap<u64>(UINT64_C(0xABCDDCBA12344321)) == UINT64_C(
 			0x21433412BADCCDAB
 		),
 		"byte swap failed for u64"

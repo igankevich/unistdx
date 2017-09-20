@@ -3,6 +3,8 @@
 
 #include <random>
 #include <chrono>
+
+#include <unistdx/base/types>
 #include <unistdx/net/pstream>
 
 typedef std::chrono::nanoseconds::rep Time;
@@ -30,8 +32,8 @@ struct Datum {
 		x(0), y(0), z(0),
 		u(0), v(0), w(0)
 	{
-		rnd(x); rnd(y); rnd(static_cast<float&>(z));
-		rnd(static_cast<double&>(u)); rnd(v); rnd(w);
+		rnd(x); rnd(y); rnd(static_cast<sys::f32&>(z));
+		rnd(static_cast<sys::f64&>(u)); rnd(v); rnd(w);
 	}
 
 	constexpr
@@ -117,12 +119,12 @@ private:
 		rhs = raw;
 	}
 
-	int64_t x;
-	int32_t y;
-	sys::bytes<float> z;
-	sys::bytes<double> u;
-	int16_t v;
-	int8_t w;
+	sys::i64 x;
+	sys::i32 y;
+	sys::bytes<sys::f32> z;
+	sys::bytes<sys::f64> u;
+	sys::i16 v;
+	sys::i8 w;
 	char padding[5] = {};
 };
 
