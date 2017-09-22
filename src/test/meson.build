@@ -49,6 +49,16 @@ test(
 )
 
 test(
+	'net/byte_swap',
+	executable(
+		'byte-swap-test',
+		sources: 'byte_swap_test.cc',
+		include_directories: srcdir,
+		dependencies: [gtest,unistdx],
+	)
+)
+
+test(
 	'io/poller',
 	executable(
 		'poller-test',

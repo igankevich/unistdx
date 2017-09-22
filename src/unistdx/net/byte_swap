@@ -1,7 +1,8 @@
 #ifndef UNISTDX_NET_BYTE_SWAP
 #define UNISTDX_NET_BYTE_SWAP
 
-#include <algorithm>
+#include <utility>
+
 #include <unistdx/base/types>
 #include <unistdx/base/uint128>
 #include <unistdx/config>
@@ -13,15 +14,7 @@ namespace sys {
 	/// @{
 	template<class T>
 	inline T
-	byte_swap(T n) noexcept {
-		union {
-			T x;
-			unsigned char y[sizeof(T)];
-		} tmp;
-		tmp.x = n;
-		std::reverse(tmp.y, tmp.y + sizeof(T));
-		return tmp.x;
-	}
+	byte_swap(T n) noexcept;
 
 	template<>
 	inline constexpr u8
@@ -75,29 +68,14 @@ namespace sys {
 		union {
 			uint128_t n;
 			unsigned char raw[sizeof(uint128_t)];
+			u64 words[2];
 		} tmp;
 		tmp.n = x;
-		std::reverse(tmp.raw, tmp.raw + sizeof(uint128_t));
+		tmp.words[0] = byte_swap<u64>(tmp.words[0]);
+		tmp.words[1] = byte_swap<u64>(tmp.words[1]);
+		std::swap(tmp.words[0], tmp.words[1]);
 		return tmp.n;
 	}
-
-	// compile-time unit tests for byte swapping
-	static_assert(
-		byte_swap<u16>(UINT16_C(0xABCD)) == UINT16_C(0xCDAB),
-		"byte swap failed for u16"
-	);
-
-	static_assert(
-		byte_swap<u32>(UINT32_C(0xABCDDCBA)) == UINT32_C(0xBADCCDAB),
-		"byte swap failed for u32"
-	);
-
-	static_assert(
-		byte_swap<u64>(UINT64_C(0xABCDDCBA12344321)) == UINT64_C(
-			0x21433412BADCCDAB
-		),
-		"byte swap failed for u64"
-	);
 	/// @}
 
 }

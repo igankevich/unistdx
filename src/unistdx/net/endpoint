@@ -60,8 +60,6 @@ namespace sys {
 
 	union endpoint {
 
-		typedef u16 portable_family_type;
-
 		inline constexpr
 		endpoint() noexcept {}
 

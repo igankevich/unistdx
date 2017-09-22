@@ -1,7 +1,9 @@
 #ifndef UNISTDX_NET_BYTES
 #define UNISTDX_NET_BYTES
 
+#include <algorithm>
 #include <ostream>
+
 #include <unistdx/base/ios_guard>
 #include <unistdx/bits/byte_swap_chooser>
 #include <unistdx/bits/octet>

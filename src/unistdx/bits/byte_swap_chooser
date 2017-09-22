@@ -1,6 +1,8 @@
 #ifndef UNISTDX_BITS_BYTE_SWAP_CHOOSER
 #define UNISTDX_BITS_BYTE_SWAP_CHOOSER
 
+#include <algorithm>
+
 #include <unistdx/net/byte_swap>
 #include <unistdx/net/byte_order>
 
