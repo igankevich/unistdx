@@ -21,6 +21,7 @@ install_headers(
 	'simple_lock',
 	'spin_mutex',
 	'streambuf_traits',
+	'types',
 	'uint128',
 	'unlock_guard',
 	'websocket',
