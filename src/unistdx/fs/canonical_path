@@ -145,6 +145,15 @@ namespace sys {
 
 	typedef basic_canonical_path<char> canonical_path;
 
+	namespace this_process {
+
+		inline sys::canonical_path
+		workdir() {
+			return sys::canonical_path(".");
+		}
+
+	}
+
 }
 
 namespace std {

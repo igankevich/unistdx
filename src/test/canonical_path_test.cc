@@ -17,6 +17,8 @@ TEST(CanonicalPath, EqualsCurrentWorkingDirectory) {
 	EXPECT_NE(nullptr, ::getcwd(buf, sizeof(buf)));
 	sys::canonical_path dir2(buf);
 	EXPECT_EQ(dir1, dir2);
+	sys::canonical_path dir3 = sys::this_process::workdir();
+	EXPECT_EQ(dir2, dir3);
 }
 
 TEST(CanonicalPath, Assign) {
