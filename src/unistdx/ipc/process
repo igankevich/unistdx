@@ -31,6 +31,11 @@ namespace sys {
 			UNISTDX_CHECK(::kill(::sys::this_process::id(), signal_type(sig)));
 		}
 
+		inline void
+		workdir(const char* wd) {
+			UNISTDX_CHECK(::chdir(wd));
+		}
+
 	}
 
 	enum wait_flags {
