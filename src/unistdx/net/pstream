@@ -98,11 +98,24 @@ namespace sys {
 			this->_buf->cancel_packet();
 		}
 
+		/// Append packet payload starting from the beginning.
 		inline void
 		append_payload(basic_pstream& rhs) {
-			assert(this->_buf != nullptr);
-			assert(rhs._buf != nullptr);
+			assert(this->_buf);
+			assert(rhs._buf);
 			::sys::append_payload(*this->_buf, *rhs._buf);
+		}
+
+		/// Append packet payload starting from the current position.
+		inline void
+		append_payload_cur(basic_pstream& src) {
+			assert(this->_buf);
+			assert(src._buf);
+			::sys::append_payload(
+				*this->_buf,
+				*src._buf,
+				src._buf->ipayload_offset()
+			);
 		}
 
 		inline explicit

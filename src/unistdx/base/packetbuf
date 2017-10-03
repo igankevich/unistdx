@@ -138,6 +138,12 @@ namespace sys {
 			return this->pptr() != this->pbase();
 		}
 
+		/// Get pointer offset within the payload.
+		inline std::streamsize
+		ipayload_offset() const noexcept {
+			return this->gptr() - this->ipayload_begin();
+		}
+
 	protected:
 
 		virtual void
@@ -171,6 +177,11 @@ namespace sys {
 
 		inline char_type*
 		ipayload_begin() noexcept {
+			return this->eback() + this->_ipayloadpos;
+		}
+
+		inline const char_type*
+		ipayload_begin() const noexcept {
 			return this->eback() + this->_ipayloadpos;
 		}
 
@@ -269,7 +280,8 @@ namespace sys {
 		friend void
 		append_payload(
 			basic_packetbuf<Ch1,Tr1>& buf,
-			basic_packetbuf<Ch1,Tr1>& rhs
+			basic_packetbuf<Ch1,Tr1>& rhs,
+			std::streamsize off
 		);
 
 	private:
@@ -409,10 +421,14 @@ namespace sys {
 
 	template<class Ch, class Tr>
 	void
-	append_payload(basic_packetbuf<Ch,Tr>& buf, basic_packetbuf<Ch,Tr>& rhs) {
-		const std::streamsize n = rhs.ipayloadsize();
-		buf.sputn(rhs.ipayload_begin(), n);
-		rhs.seek_ipayloadpos(n);
+	append_payload(
+		basic_packetbuf<Ch, Tr>& dest,
+		basic_packetbuf<Ch, Tr>& src,
+		std::streamsize off=0
+	) {
+		const std::streamsize n = src.ipayloadsize();
+		dest.sputn(src.ipayload_begin()+off, n-off);
+		src.seek_ipayloadpos(n);
 	}
 
 	typedef basic_packetbuf<char> packetbuf;
