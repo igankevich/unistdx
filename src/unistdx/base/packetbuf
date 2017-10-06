@@ -2,7 +2,9 @@
 #define UNISTDX_BASE_PACKETBUF
 
 #include <cassert>
+#include <stdexcept>
 #include <streambuf>
+
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 #define UNISTDX_FUNC , __func__
 #include <iomanip>
@@ -290,6 +292,12 @@ namespace sys {
 			std::streamsize hs = 0;
 			std::streamsize payload_size = 0;
 			if (this->xgetheader(hs, payload_size)) {
+				if (hs < 0) {
+					throw std::invalid_argument("header size is less than nought");
+				}
+				if (payload_size < 0) {
+					throw std::invalid_argument("payload size is less than nought");
+				}
 				const std::streamsize ps = hs + payload_size;
 				const pos_type p = this->gptr() - this->eback();
 				this->set_ipacket(p, p + pos_type(hs), ps);

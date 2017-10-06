@@ -6,7 +6,7 @@ project(
 	default_options: ['cpp_std=c++11']
 )
 
-if get_option('buildtype') == 'release'
+if get_option('buildtype') != 'debug'
 	add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
 
