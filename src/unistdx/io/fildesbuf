@@ -95,6 +95,25 @@ namespace sys {
 			return c;
 		}
 
+		std::streamsize
+		xsgetn(char_type* s, std::streamsize n) override {
+			while (this->egptr() - this->gptr() < n && this->do_fill() > 0) {}
+			const std::streamsize m = std::min(n, this->egptr() - this->gptr());
+			traits_type::copy(s, this->gptr(), m);
+			this->gbump(m);
+			return m;
+		}
+
+		std::streamsize
+		xsputn(const char_type* s, std::streamsize n) override {
+			while (this->epptr() - this->pptr() < n) {
+				this->pgrow();
+			}
+			traits_type::copy(this->pptr(), s, n);
+			this->pbump(n);
+			return n;
+		}
+
 		int
 		sync() override {
 			int ret = 0;
@@ -259,12 +278,17 @@ namespace sys {
 		}
 
 		inline void
-		pgrow() {
+		pgrow(std::streamsize new_size) {
 			const pos_type pptr_offset = pptr() - pbase();
 			const pos_type pbase_offset = pbase() - pfirst();
-			this->_pbuf.resize(_pbuf.size() * 2);
+			this->_pbuf.resize(new_size);
 			setp(pfirst() + pbase_offset, plast());
 			pbump(pbase_offset + pptr_offset);
+		}
+
+		inline void
+		pgrow() {
+			this->pgrow(this->_pbuf.size() * 2);
 		}
 
 		inline signed_size_type
