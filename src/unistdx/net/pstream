@@ -15,9 +15,11 @@ namespace sys {
 	template<class Ch, class Tr=std::char_traits<Ch>, class Size=u32>
 	struct basic_pstream {
 
+	public:
 		typedef basic_packetbuf<Ch,Tr> streambuf_type;
 		typedef Ch char_type;
 		typedef std::basic_string<Ch,Tr> string_type;
+		typedef typename streambuf_type::ipacket_guard ipacket_guard;
 
 		basic_pstream() = default;
 
@@ -256,32 +258,7 @@ namespace sys {
 	};
 
 	typedef basic_pstream<char> pstream;
-
-	template<class Stream>
-	class ipacket_guard {
-
-	private:
-		Stream& _stream;
-
-	public:
-		inline explicit
-		ipacket_guard(Stream& m) noexcept:
-		_stream(m)
-		{}
-
-		inline
-		~ipacket_guard() noexcept {
-			this->_stream.skip_packet();
-		}
-
-		// disallow copy & move operations
-		ipacket_guard() = delete;
-		ipacket_guard(const ipacket_guard&) = delete;
-		ipacket_guard(ipacket_guard&&) = delete;
-		ipacket_guard& operator=(const ipacket_guard&) = delete;
-		ipacket_guard& operator=(ipacket_guard&&) = delete;
-
-	};
+	typedef pstream::ipacket_guard ipacket_guard;
 
 	template<class Stream>
 	class opacket_guard {
