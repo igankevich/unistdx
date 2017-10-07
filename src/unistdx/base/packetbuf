@@ -21,7 +21,6 @@ namespace sys {
 	class basic_packetbuf: public virtual std::basic_streambuf<Ch,Tr> {
 
 	public:
-		using typename std::basic_streambuf<Ch,Tr>::pos_type;
 		using typename std::basic_streambuf<Ch,Tr>::off_type;
 		using typename std::basic_streambuf<Ch,Tr>::char_type;
 		using typename std::basic_streambuf<Ch,Tr>::traits_type;
@@ -34,13 +33,13 @@ namespace sys {
 		};
 
 	private:
-		pos_type _opacketpos = 0;
-		pos_type _ipacketpos = 0;
-		pos_type _ipayloadpos = 0;
+		off_type _opacketpos = 0;
+		off_type _ipacketpos = 0;
+		off_type _ipayloadpos = 0;
 		std::streamsize _ipacketsize = 0;
 		std::streamsize _oheadersize = 0;
 		// Saved position of egptr that may be larger than ipacket_end.
-		pos_type _oldendpos = 0;
+		off_type _oldendpos = 0;
 		state_type _state = state_type::initial;
 		/// Output packet finished.
 		bool _ofinished = false;
@@ -74,7 +73,7 @@ namespace sys {
 		begin_packet() {
 			this->set_opacket(this->pptr() - this->pbase());
 			this->put_header();
-			const pos_type cur = this->pptr() - this->pbase();
+			const off_type cur = this->pptr() - this->pbase();
 			this->_oheadersize = cur - this->_opacketpos;
 			this->_ofinished = false;
 		}
@@ -101,7 +100,7 @@ namespace sys {
 		void
 		cancel_packet() {
 			if (!this->_ofinished) {
-				pos_type offset = this->pptr() - this->pbase();
+				off_type offset = this->pptr() - this->pbase();
 				this->pbump(this->_opacketpos - offset);
 				assert(this->pbase() + this->_opacketpos == this->pptr());
 				this->_opacketpos = 0;
@@ -192,7 +191,7 @@ namespace sys {
 			return this->ipayload_begin() + this->ipayloadsize();
 		}
 
-		inline pos_type
+		inline off_type
 		ipayloadpos() const noexcept {
 			return this->_ipayloadpos;
 		}
@@ -213,7 +212,7 @@ namespace sys {
 			return this->ipacket_begin() + this->_ipacketsize;
 		}
 
-		inline pos_type
+		inline off_type
 		ipacketpos() const noexcept {
 			return this->_ipacketpos;
 		}
@@ -233,7 +232,7 @@ namespace sys {
 			return this->pptr();
 		}
 
-		inline pos_type
+		inline off_type
 		opacketpos() const noexcept {
 			return this->_opacketpos;
 		}
@@ -254,17 +253,17 @@ namespace sys {
 		}
 
 		inline void
-		set_opacket(pos_type pos1) noexcept {
+		set_opacket(off_type pos1) noexcept {
 			this->_opacketpos = pos1;
 		}
 
 		inline void
-		set_ipacket(pos_type pos1, pos_type pos2, std::streamsize n) noexcept {
+		set_ipacket(off_type pos1, off_type pos2, std::streamsize n) noexcept {
 			this->_ipacketpos = pos1;
 			this->_ipayloadpos = pos2;
 			this->_ipacketsize = n;
 			assert(this->_ipacketpos <= this->_ipayloadpos);
-			assert(this->_ipayloadpos <= this->_ipacketpos + pos_type(n));
+			assert(this->_ipayloadpos <= this->_ipacketpos + n);
 		}
 
 		inline void
@@ -299,8 +298,8 @@ namespace sys {
 					throw std::invalid_argument("payload size is less than nought");
 				}
 				const std::streamsize ps = hs + payload_size;
-				const pos_type p = this->gptr() - this->eback();
-				this->set_ipacket(p, p + pos_type(hs), ps);
+				const off_type p = this->gptr() - this->eback();
+				this->set_ipacket(p, p + hs, ps);
 				this->gbump(hs);
 				this->setstate(state_type::header_is_ready UNISTDX_FUNC);
 			}
@@ -308,7 +307,7 @@ namespace sys {
 
 		void
 		getpayload() {
-			const pos_type endpos = this->egptr() - this->eback();
+			const off_type endpos = this->egptr() - this->eback();
 			if (this->_oldendpos < endpos) {
 				this->_oldendpos = endpos;
 			}
@@ -332,7 +331,7 @@ namespace sys {
 
 		void
 		reset_ipacket() {
-			const pos_type endpos = this->egptr() - this->eback();
+			const off_type endpos = this->egptr() - this->eback();
 			if (this->_oldendpos > endpos) {
 				this->setg(
 					this->eback(),
