@@ -6,7 +6,7 @@ project(
 	default_options: ['cpp_std=c++11']
 )
 
-if get_option('buildtype') != 'debug'
+if not get_option('buildtype').contains('debug')
 	add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
 
@@ -145,6 +145,7 @@ gtest = dependency('gtest', main: true)
 
 subdir('src')
 
+# pkgconfig {{{
 pkgconfig = import('pkgconfig')
 pkgconfig.generate(
 	libraries: libunistdx_shared,
@@ -153,7 +154,8 @@ pkgconfig.generate(
 	description: 'C++ wrappers for libc',
 	filebase: meson.project_name()
 )
-
+# }}}
+# cppcheck {{{
 cppcheck = find_program('cppcheck', required: false)
 if cppcheck.found()
 	run_target(
@@ -172,7 +174,7 @@ if cppcheck.found()
 		]
 	)
 endif
-
+# }}}
 # doxygen {{{
 doxygen = find_program('doxygen', required: false)
 if doxygen.found()
@@ -184,4 +186,19 @@ if doxygen.found()
 		]
 	)
 endif
+# }}}
+# archive {{{
+archive_name = meson.project_name() + '-' + meson.project_version()
+run_target(
+	'archive',
+	command: [
+		'git',
+		'archive',
+		'-o',
+		join_paths(meson.build_root(), archive_name + '.tar.xz'),
+		'--prefix',
+		archive_name + '/',
+		'HEAD'
+	]
+)
 # }}}
