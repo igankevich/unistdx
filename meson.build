@@ -138,6 +138,9 @@ if cpp.has_argument('-Wextra')
 	add_global_arguments('-Wextra', language: 'cpp')
 endif
 config.set('UNISTDX_VERSION', meson.project_version())
+if cpp.has_header_symbol('sys/mman.h', 'mmap')
+	config.set('UNISTDX_HAVE_MMAP', true)
+endif
 # }}}
 
 threads = dependency('threads')

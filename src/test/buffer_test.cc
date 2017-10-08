@@ -28,12 +28,7 @@ struct BufferTest: public ::testing::Test {
 
 TYPED_TEST_CASE(
 	BufferTest,
-	MAKE_TYPES(
-		char
-		#if !defined(__clang__)
-		, unsigned char
-		#endif
-	)
+	MAKE_TYPES(char)
 );
 
 TYPED_TEST(BufferTest, FdStream) {

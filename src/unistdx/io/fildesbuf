@@ -2,8 +2,8 @@
 #define UNISTDX_IO_FILDESBUF
 
 #include <cassert>
-#include <vector>
 
+#include <unistdx/base/byte_buffer>
 #include <unistdx/base/packetbuf>
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/io/fildes>
@@ -24,7 +24,7 @@ namespace sys {
 		typedef streambuf_traits<Fd> streambuf_traits_type;
 		typedef std::ios_base::openmode openmode;
 		typedef std::ios_base::seekdir seekdir;
-		typedef std::vector<Ch> buffer_type;
+		typedef byte_buffer buffer_type;
 		typedef typename buffer_type::size_type size_type;
 
 	protected:
@@ -127,10 +127,10 @@ namespace sys {
 		int
 		sync() override {
 			int ret = 0;
-			if (has_pbuf()) {
+			if (this->_pbuf) {
 				ret |= do_flush()==-1 ? -1 : 0;
 			}
-			if (has_gbuf()) {
+			if (this->_gbuf) {
 				ret |= do_fill()==-1 ? -1 : 0;
 			}
 			return ret;
@@ -282,11 +282,6 @@ namespace sys {
 			);
 		}
 
-		inline bool
-		has_gbuf() const noexcept {
-			return !this->_gbuf.empty();
-		}
-
 		inline void
 		ggrow() {
 			this->_gbuf.resize(_gbuf.size() * 2);
@@ -301,11 +296,6 @@ namespace sys {
 		inline char_type*
 		plast() noexcept {
 			return this->_pbuf.data() + this->_pbuf.size();
-		}
-
-		inline bool
-		has_pbuf() const noexcept {
-			return !this->_pbuf.empty();
 		}
 
 		inline void

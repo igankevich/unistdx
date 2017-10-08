@@ -43,7 +43,13 @@
 
 #mesondefine UNISTDX_HAVE_SHM_HUGETLB
 #mesondefine UNISTDX_HAVE_SHM_HUGE_2MB
+#if !defined(SHM_HUGE_2MB)
+#define SHM_HUGE_2MB (21 << SHM_HUGE_SHIFT)
+#endif
 #mesondefine UNISTDX_HAVE_SHM_HUGE_1GB
+#if !defined(SHM_HUGE_1GB)
+#define SHM_HUGE_1GB (30 << SHM_HUGE_SHIFT)
+#endif
 #mesondefine UNISTDX_HAVE_SHM_NORESERVE
 
 #mesondefine UNISTDX_HAVE_SIGPOLL
@@ -63,6 +69,8 @@
 #mesondefine UNISTDX_HAVE_GETPWUID_R
 #mesondefine UNISTDX_HAVE_GETGRGID_R
 #mesondefine UNISTDX_HAVE_GETGRNAM_R
+
+#mesondefine UNISTDX_HAVE_MMAP
 
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 

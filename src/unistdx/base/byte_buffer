@@ -1,0 +1,93 @@
+#ifndef UNISTDX_BASE_BYTE_BUFFER
+#define UNISTDX_BASE_BYTE_BUFFER
+
+#include <unistdx/base/types>
+
+namespace sys {
+
+	class byte_buffer {
+
+	public:
+		typedef char value_type;
+		typedef value_type* iterator;
+		typedef const value_type* const_iterator;
+		typedef std::size_t size_type;
+
+	private:
+		value_type* _data = nullptr;
+		size_type _size = 0;
+
+	public:
+
+		byte_buffer() = default;
+
+		byte_buffer(const byte_buffer&) = delete;
+
+		byte_buffer&
+		operator=(const byte_buffer&) = delete;
+
+		inline
+		byte_buffer(byte_buffer&& rhs):
+		_data(rhs._data),
+		_size(rhs._size) {
+			rhs._data = nullptr;
+		}
+
+		explicit
+		byte_buffer(size_type size);
+
+		~byte_buffer();
+
+		inline iterator
+		data() noexcept {
+			return this->_data;
+		}
+
+		inline const_iterator
+		data() const noexcept {
+			return this->_data;
+		}
+
+		inline iterator
+		begin() noexcept {
+			return this->_data;
+		}
+
+		inline const_iterator
+		begin() const noexcept {
+			return this->_data;
+		}
+
+		inline iterator
+		end() noexcept {
+			return this->_data + this->_size;
+		}
+
+		inline const_iterator
+		end() const noexcept {
+			return this->_data + this->_size;
+		}
+
+		inline size_type
+		size() const noexcept {
+			return this->_size;
+		}
+
+		inline explicit
+		operator bool() const noexcept {
+			return this->_data;
+		}
+
+		inline bool
+		operator!() const noexcept {
+			return !this->operator bool();
+		}
+
+		void
+		resize(size_type new_size);
+
+	};
+
+}
+
+#endif // vim:filetype=cpp

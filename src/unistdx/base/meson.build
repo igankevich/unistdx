@@ -1,5 +1,6 @@
 libunistdx_src += files([
 	'base64.cc',
+	'byte_buffer.cc',
 	'check.cc',
 	'cmdline.cc',
 	'log_message.cc',
@@ -10,6 +11,7 @@ libunistdx_src += files([
 
 install_headers(
 	'base64',
+	'byte_buffer',
 	'check',
 	'cmdline',
 	'delete_each',
