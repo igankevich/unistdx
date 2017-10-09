@@ -45,7 +45,10 @@ namespace sys {
 
 		basic_pstream() = default;
 
-		basic_pstream(basic_pstream&&) = delete;
+		basic_pstream(basic_pstream&& rhs):
+		_buf(rhs._buf) {
+			rhs._buf = nullptr;
+		}
 
 		basic_pstream(const basic_pstream&) = delete;
 
@@ -64,13 +67,13 @@ namespace sys {
 		/// Flush output buffer.
 		inline void
 		flush() {
-			this->_buf->pubflush();
+			this->_buf->pubsync();
 		}
 
 		/// Synchronise input buffer.
 		inline void
 		sync() {
-			this->_buf->pubfill();
+			this->_buf->pubsync();
 		}
 
 		inline streambuf_type*
