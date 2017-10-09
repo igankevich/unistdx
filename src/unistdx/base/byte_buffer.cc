@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include <unistdx/base/check>
+#include <unistdx/base/log_message>
 #include <unistdx/config>
 
 #if !defined(UNISTDX_HAVE_MMAP)
@@ -47,7 +48,13 @@ sys::byte_buffer::~byte_buffer() {
 	if (this->_data) {
 		int ret = ::munmap(this->_data, this->_size);
 		if (ret == -1) {
-			std::terminate();
+			sys::log_message(
+				"_:_:_: _",
+				__FILE__,
+				__LINE__,
+				__func__,
+				std::error_code(errno, std::system_category()).message()
+			);
 		}
 	}
 }
