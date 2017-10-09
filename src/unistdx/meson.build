@@ -32,12 +32,3 @@ unistdx = declare_dependency(
 	link_with: libunistdx_shared,
 	include_directories: srcdir
 )
-
-install_headers(
-	'network',
-	'filesystem',
-	'process',
-	'utils',
-	'fildes',
-	subdir: join_paths(meson.project_name())
-)

@@ -93,6 +93,7 @@ namespace sys {
 
 		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
 		typedef std::basic_iostream<Ch,Tr> iostream_type;
+		typedef typename fildesbuf_type::fd_type fd_type;
 
 		inline explicit
 		basic_fdstream(Fd&& fd):
@@ -119,6 +120,16 @@ namespace sys {
 		inline fd_type&
 		fd() {
 			return this->_fildesbuf.fd();
+		}
+
+		inline const fildesbuf_type&
+		fdbuf() const noexcept {
+			return this->_fildesbuf;
+		}
+
+		inline fildesbuf_type&
+		fdbuf() noexcept {
+			return this->_fildesbuf;
 		}
 
 	private:

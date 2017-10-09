@@ -10,6 +10,7 @@
 
 #include "datum.hh"
 #include "make_types.hh"
+#include "random_buffer.hh"
 
 template <class T>
 struct BufferTest: public ::testing::Test {
@@ -35,13 +36,14 @@ TYPED_TEST(BufferTest, FdStream) {
 
 	typedef TypeParam T;
 	typedef std::char_traits<T> Tr;
-	typedef std::basic_stringbuf<T> Fd;
+	typedef test::random_buffer Fd;
 	typedef sys::basic_fdstream<T,Tr,Fd> stream_type;
 	typedef Fd sink_type;
 	for (std::streamsize k : this->_sizes) {
 		std::basic_string<T> expected_contents = this->random_string(k);
 		stream_type s {sink_type {}};
-		s << expected_contents << std::flush;
+		s << expected_contents;
+		while (s.fdbuf().pubflush() > 0) {}
 		std::basic_stringstream<T> contents;
 		contents << s.rdbuf();
 		std::basic_string<T> result = contents.str();
@@ -53,7 +55,7 @@ TYPED_TEST(BufferTest, FildesBuf) {
 
 	typedef TypeParam T;
 	typedef std::char_traits<T> Tr;
-	typedef std::basic_stringbuf<T> Fd;
+	typedef test::random_buffer Fd;
 	typedef sys::basic_fildesbuf<T,Tr,Fd> packetbuf_type;
 	typedef Fd sink_type;
 
@@ -64,10 +66,10 @@ TYPED_TEST(BufferTest, FildesBuf) {
 		buf.begin_packet();
 		out << contents;
 		buf.end_packet();
-		buf.pubsync();
+		while (buf.pubflush() > 0) {}
 		std::basic_istream<T> in(&buf);
 		std::basic_string<T> result(k, '_');
-		buf.pubsync();
+		while (buf.pubfill() > 0) {}
 		buf.read_packet();
 		in.read(&result[0], k);
 		if (in.gcount() < k) {
@@ -83,7 +85,7 @@ TYPED_TEST(BufferTest, PacketStream) {
 
 	typedef TypeParam T;
 	typedef std::char_traits<T> Tr;
-	typedef std::basic_stringbuf<T> Fd;
+	typedef test::random_buffer Fd;
 	typedef Fd sink_type;
 	typedef sys::basic_fildesbuf<T,Tr,Fd> basebuf;
 
@@ -95,7 +97,6 @@ TYPED_TEST(BufferTest, PacketStream) {
 		basebuf buf {sink_type {}};
 		sys::basic_pstream<T> str(&buf);
 
-		EXPECT_EQ(0, str.tellp()) << "buffer is not empty before write";
 		std::for_each(
 			input.begin(),
 			input.end(),
@@ -105,11 +106,9 @@ TYPED_TEST(BufferTest, PacketStream) {
 			    str.end_packet();
 			}
 		);
-		str.flush();
+		while (buf.pubflush() > 0) {}
 
-		EXPECT_EQ(0, str.tellg()) << "buffer is not empty before read";
-
-		str.sync();
+		while (buf.pubfill() > 0) {}
 		std::for_each(
 			output.begin(),
 			output.end(),

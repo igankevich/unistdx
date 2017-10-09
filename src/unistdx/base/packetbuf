@@ -50,6 +50,7 @@ namespace sys {
 		off_type _opacketpos = 0;
 		off_type _ipacketpos = 0;
 		off_type _ipayloadpos = 0;
+		std::streamsize _iheadersize = 0;
 		std::streamsize _ipacketsize = 0;
 		std::streamsize _oheadersize = 0;
 		state_type _state = state_type::initial;
@@ -314,6 +315,9 @@ namespace sys {
 			std::streamsize hs = 0;
 			std::streamsize payload_size = 0;
 			if (this->xgetheader(hs, payload_size)) {
+				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
+				sys::log_message("packetbuf", "_ hs=_,ps=_", __func__, hs, payload_size);
+				#endif
 				if (hs < 0) {
 					throw std::invalid_argument("header size is less than nought");
 				}
@@ -323,7 +327,7 @@ namespace sys {
 				const std::streamsize ps = hs + payload_size;
 				const off_type p = this->gptr() - this->eback();
 				this->set_ipacket(p, p + hs, ps);
-				this->gbump(hs);
+				this->_iheadersize = hs;
 				this->setstate(state_type::header_is_ready UNISTDX_FUNC);
 			}
 		}
@@ -331,6 +335,7 @@ namespace sys {
 		void
 		getpayload() {
 			if (this->egptr() >= this->ipacket_end()) {
+				this->gbump(this->_iheadersize);
 				this->setstate(state_type::payload_is_ready UNISTDX_FUNC);
 				this->on_payload();
 			}

@@ -1,6 +1,9 @@
 #ifndef UNISTDX_BASE_BYTE_BUFFER
 #define UNISTDX_BASE_BYTE_BUFFER
 
+#include <limits>
+#include <stdexcept>
+
 #include <unistdx/base/types>
 
 namespace sys {
@@ -85,6 +88,19 @@ namespace sys {
 
 		void
 		resize(size_type new_size);
+
+		inline void
+		grow() {
+			if (this->max_size() / 2 < this->_size) {
+				throw std::length_error("byte_buffer size is too large");
+			}
+			this->resize(this->_size*2);
+		}
+
+		inline static size_type
+		max_size() noexcept {
+			return std::numeric_limits<size_type>::max();
+		}
 
 	};
 

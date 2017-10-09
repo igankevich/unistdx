@@ -1,7 +1,0 @@
-#ifndef UNISTDX_UTILS
-#define UNISTDX_UTILS
-
-#include <unistdx/util/backtrace>
-#include <unistdx/util/system>
-
-#endif // vim:filetype=cpp

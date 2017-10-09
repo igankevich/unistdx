@@ -10,47 +10,67 @@
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
+#define UNISTDX_MAKE_INOUT_OPERATOR(tp) \
+	inline basic_pstream & \
+	operator<<(tp rhs) { \
+		return this->write(rhs); \
+	} \
+	inline basic_pstream& \
+	operator>>(tp& rhs) { \
+		return this->read(rhs); \
+	}
+
 namespace sys {
 
 	template<class Ch, class Tr=std::char_traits<Ch>, class Size=u32>
-	struct basic_pstream {
+	class basic_pstream {
 
 	public:
-		typedef basic_packetbuf<Ch,Tr> streambuf_type;
 		typedef Ch char_type;
+		typedef Tr traits_type;
+		typedef Size size_type;
+		typedef basic_packetbuf<Ch,Tr> streambuf_type;
 		typedef std::basic_string<Ch,Tr> string_type;
 		typedef typename streambuf_type::ipacket_guard ipacket_guard;
 
+	private:
+		typedef std::numeric_limits<Size> size_type_limits;
+		typedef std::numeric_limits<typename string_type::size_type>
+		    string_size_type_limits;
+
+	private:
+		streambuf_type* _buf = nullptr;
+
+	public:
+
 		basic_pstream() = default;
+
+		basic_pstream(basic_pstream&&) = delete;
+
+		basic_pstream(const basic_pstream&) = delete;
+
+		basic_pstream&
+		operator=(const basic_pstream&) = delete;
+
+		basic_pstream&
+		operator=(basic_pstream&&) = delete;
+
+		~basic_pstream() = default;
 
 		inline explicit
 		basic_pstream(streambuf_type* buf):
 		_buf(buf) {}
 
-		// @deprecated
+		/// Flush output buffer.
 		inline void
 		flush() {
-			this->_buf->pubsync();
+			this->_buf->pubflush();
 		}
 
-		// @deprecated
-		inline std::streamsize
-		tellp() {
-			return this->_buf->pubseekoff(
-				0,
-				std::ios_base::cur,
-				std::ios_base::out
-			);
-		}
-
-		// @deprecated
-		inline std::streamsize
-		tellg() {
-			return this->_buf->pubseekoff(
-				0,
-				std::ios_base::cur,
-				std::ios_base::in
-			);
+		/// Synchronise input buffer.
+		inline void
+		sync() {
+			this->_buf->pubfill();
 		}
 
 		inline streambuf_type*
@@ -68,11 +88,6 @@ namespace sys {
 			streambuf_type* old = this->_buf;
 			this->_buf = rhs;
 			return old;
-		}
-
-		inline void
-		sync() {
-			this->_buf->pubsync();
 		}
 
 		inline void
@@ -135,33 +150,21 @@ namespace sys {
 			return this->write(rhs ? char(1) : char(0));
 		}
 
-		#define MAKE_INOUT_OPERATOR(tp) \
-			inline basic_pstream& \
-			operator<<(tp rhs) { \
-				return this->write(rhs); \
-			} \
-			inline basic_pstream& \
-			operator>>(tp& rhs) { \
-				return this->read(rhs); \
-			}
-
-		MAKE_INOUT_OPERATOR(char)
-		MAKE_INOUT_OPERATOR(i8)
-		MAKE_INOUT_OPERATOR(i16)
-		MAKE_INOUT_OPERATOR(i32)
-		MAKE_INOUT_OPERATOR(i64)
-		MAKE_INOUT_OPERATOR(u8)
-		MAKE_INOUT_OPERATOR(u16)
-		MAKE_INOUT_OPERATOR(u32)
-		MAKE_INOUT_OPERATOR(u64)
-		MAKE_INOUT_OPERATOR(f32)
-		MAKE_INOUT_OPERATOR(f64)
+		UNISTDX_MAKE_INOUT_OPERATOR(char)
+		UNISTDX_MAKE_INOUT_OPERATOR(i8)
+		UNISTDX_MAKE_INOUT_OPERATOR(i16)
+		UNISTDX_MAKE_INOUT_OPERATOR(i32)
+		UNISTDX_MAKE_INOUT_OPERATOR(i64)
+		UNISTDX_MAKE_INOUT_OPERATOR(u8)
+		UNISTDX_MAKE_INOUT_OPERATOR(u16)
+		UNISTDX_MAKE_INOUT_OPERATOR(u32)
+		UNISTDX_MAKE_INOUT_OPERATOR(u64)
+		UNISTDX_MAKE_INOUT_OPERATOR(f32)
+		UNISTDX_MAKE_INOUT_OPERATOR(f64)
 		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
-		MAKE_INOUT_OPERATOR(f128)
+		UNISTDX_MAKE_INOUT_OPERATOR(f128)
 		#endif
-		MAKE_INOUT_OPERATOR(string_type)
-
-		#undef MAKE_INOUT_OPERATOR
+		UNISTDX_MAKE_INOUT_OPERATOR(string_type)
 
 		template<class T>
 		inline basic_pstream&
@@ -223,10 +226,10 @@ namespace sys {
 
 		inline basic_pstream&
 		write(const string_type& rhs) {
-			if (rhs.size() > std::numeric_limits<Size>::max()) {
+			if (rhs.size() > size_type_limits::max()) {
 				throw std::invalid_argument("string is too long");
 			}
-			Size length = static_cast<Size>(rhs.size());
+			const size_type length = static_cast<size_type>(rhs.size());
 			this->write(length);
 			this->_buf->sputn(rhs.c_str(), length);
 			return *this;
@@ -244,9 +247,9 @@ namespace sys {
 
 		inline basic_pstream&
 		read(string_type& rhs) {
-			Size length = 0;
+			size_type length = 0;
 			this->read(length);
-			if (length > std::numeric_limits<typename string_type::size_type>::max()) {
+			if (length > string_size_type_limits::max()) {
 				throw std::invalid_argument("string is too long");
 			}
 			rhs.resize(length);
@@ -254,7 +257,6 @@ namespace sys {
 			return *this;
 		}
 
-		streambuf_type* _buf = nullptr;
 	};
 
 	typedef basic_pstream<char> pstream;
@@ -279,13 +281,21 @@ namespace sys {
 
 		// disallow copy & move operations
 		opacket_guard() = delete;
+
 		opacket_guard(const opacket_guard&) = delete;
+
 		opacket_guard(opacket_guard&&) = delete;
-		opacket_guard& operator=(const opacket_guard&) = delete;
-		opacket_guard& operator=(opacket_guard&&) = delete;
+
+		opacket_guard&
+		operator=(const opacket_guard&) = delete;
+
+		opacket_guard&
+		operator=(opacket_guard&&) = delete;
 
 	};
 
 }
+
+#undef UNISTDX_MAKE_INOUT_OPERATOR
 
 #endif // vim:filetype=cpp

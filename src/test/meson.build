@@ -105,7 +105,10 @@ test(
 		sources: 'buffer_test.cc',
 		include_directories: srcdir,
 		dependencies: [gtest,unistdx],
-		cpp_args: ['-DUNISTDX_DEBUG_PACKETBUF']
+		cpp_args: [
+			'-DUNISTDX_DEBUG_PACKETBUF',
+			'-DUNISTDX_DEBUG_FILDESBUF'
+		]
 	)
 )
 
@@ -216,7 +219,7 @@ test(
 )
 
 test(
-	'base/uint128 (builtin)',
+	'base/uint128-builtin',
 	executable(
 		'uint128-test',
 		sources: 'uint128_test.cc',
@@ -226,7 +229,7 @@ test(
 )
 
 test(
-	'base/uint128 (emulate)',
+	'base/uint128-emulate',
 	executable(
 		'uint128-emulate-test',
 		sources: 'uint128_test.cc',
@@ -305,7 +308,7 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	)
 	foreach type : ['signal', 'terminate']
 		test(
-			'util/backtrace ' + type,
+			'util/backtrace-' + type,
 			backtrace_test,
 			args: [type]
 		)

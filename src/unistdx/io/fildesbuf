@@ -47,6 +47,18 @@ namespace sys {
 	public:
 		typedef Fd fd_type;
 
+	private:
+		/// File descriptor playing the role of a sink and a source. Any
+		/// class for which specialisation of streambuf_traits exists
+		/// can be used here.
+		fd_type _fd;
+		/// A byte buffer for \em get operations.
+		buffer_type _gbuf;
+		/// A byte buffer for \em put operations.
+		buffer_type _pbuf;
+
+	public:
+
 		inline
 		basic_fildesbuf():
 		basic_fildesbuf(std::move(fd_type()), page_size())
@@ -65,10 +77,8 @@ namespace sys {
 		inline
 		basic_fildesbuf(fd_type&& fd, size_type gbufsize, size_type pbufsize):
 		_fd(std::move(fd)), _gbuf(gbufsize), _pbuf(pbufsize) {
-			char_type* g = _gbuf.data();
-			setg(g, g, g);
-			char_type* p = _pbuf.data();
-			setp(p, p + _pbuf.size());
+			this->reset_gbuf();
+			this->reset_pbuf();
 		}
 
 		basic_fildesbuf(basic_fildesbuf&&) = delete;
@@ -84,8 +94,8 @@ namespace sys {
 		int_type
 		underflow() override {
 			assert(gptr() == egptr());
-			setg(eback(), eback(), eback());
-			return do_fill() == 0
+			this->reset_gbuf();
+			return this->fill() == 0
 			       ? traits_type::eof()
 				   : traits_type::to_int_type(*gptr());
 		}
@@ -100,14 +110,14 @@ namespace sys {
 					pbump(1);
 				}
 			} else {
-				do_flush();
+				flush();
 			}
 			return c;
 		}
 
 		std::streamsize
 		xsgetn(char_type* s, std::streamsize n) override {
-			while (this->egptr() - this->gptr() < n && this->do_fill() > 0) {}
+			while (this->egptr() - this->gptr() < n && this->fill() > 0) {}
 			const std::streamsize m = std::min(n, this->egptr() - this->gptr());
 			traits_type::copy(s, this->gptr(), m);
 			this->gbump(m);
@@ -116,8 +126,14 @@ namespace sys {
 
 		std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
-			while (epptr() - pptr() < n) {
-				this->pgrow();
+			const std::streamsize remaining = epptr() - pptr();
+			if (remaining < n) {
+				std::streamsize new_size = this->_pbuf.size();
+				const std::streamsize offset = new_size - remaining;
+				while (new_size - offset < n) {
+					new_size *= 2;
+				}
+				this->pgrow(new_size);
 			}
 			traits_type::copy(pptr(), s, n);
 			pbump(n);
@@ -128,53 +144,22 @@ namespace sys {
 		sync() override {
 			int ret = 0;
 			if (this->_pbuf) {
-				ret |= do_flush()==-1 ? -1 : 0;
+				ret |= this->flush()==-1 ? -1 : 0;
 			}
 			if (this->_gbuf) {
-				ret |= do_fill()==-1 ? -1 : 0;
+				ret |= this->fill()==-1 ? -1 : 0;
 			}
 			return ret;
 		}
 
-		pos_type
-		seekoff(off_type off, seekdir way, openmode which) override {
-			pos_type ret(off_type(-1));
-			if (way == std::ios_base::beg) {
-				ret = seekpos(off, which);
-			}
-			if (way == std::ios_base::cur) {
-				const pos_type pos = (which& std::ios_base::in)
-				                     ? static_cast<pos_type>(gptr() - eback())
-									 : static_cast<pos_type>(pptr() - pbase());
-				ret = off == 0 ? pos : seekpos(pos + off, which);
-			}
-			if (way == std::ios_base::end) {
-				const pos_type pos = (which& std::ios_base::in)
-				                     ? static_cast<pos_type>(egptr() - eback())
-									 : static_cast<pos_type>(epptr() - pbase());
-				ret = seekpos(pos + off, which);
-			}
-			return ret;
+		inline int
+		pubflush() {
+			return this->flush();
 		}
 
-		pos_type
-		seekpos(pos_type pos, openmode mode) override {
-			pos_type ret(off_type(-1));
-			if (mode & std::ios_base::in) {
-				const std::streamsize size = egptr() - eback();
-				if (pos >= 0 && pos <= size) {
-					setg(eback(), eback()+pos, egptr());
-					ret = pos;
-				}
-			}
-			if (mode & std::ios_base::out) {
-				if (pos >= 0 && pos <= psize()) {
-					setp(pbase(), epptr());
-					pbump(pos);
-					ret = pos;
-				}
-			}
-			return ret;
+		inline int
+		pubfill() {
+			return this->fill();
 		}
 
 		std::streamsize
@@ -205,12 +190,10 @@ namespace sys {
 	private:
 
 		inline std::streamsize
-		do_fill() {
-			if (this->gptr() != this->eback()) {
-				const std::streamsize n = this->egptr() - this->gptr();
-				char_type* g = this->eback();
-				traits_type::move(g, this->gptr(), n);
-				this->setg(g, g, g + n);
+		fill() {
+			// reset gbuf if it was fully read
+			if (gptr() == egptr()) {
+				this->reset_gbuf();
 			}
 			// TODO 2016-03-09 this is not optimal solution,
 			// but i don't know a better alternative
@@ -239,17 +222,18 @@ namespace sys {
 		}
 
 		inline std::streamsize
-		do_flush() {
+		flush() {
 			const std::streamsize m = pptr() - pbase();
 			if (m == 0) return 0;
-			const std::streamsize n = streambuf_traits_type::write(
-				this->_fd,
-				pbase(),
-				m
-			                          );
+			const std::streamsize n =
+				streambuf_traits_type::write(
+					this->_fd,
+					pbase(),
+					m
+				);
 			const bool success = n==m;
 			if (success) {
-				setp(pfirst(), plast());
+				this->reset_pbuf();
 			} else if (n > 0) {
 				setp(pbase()+n, epptr());
 				pbump(m-n);
@@ -260,21 +244,34 @@ namespace sys {
 			return n==-1 ? 0 : n;
 		}
 
-	protected:
+		void
+		reset_gbuf() {
+			char_type* g = this->gfirst();
+			setg(g, g, g);
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
+			sys::log_message("fdbuf", "reset gptr");
+			#endif
+		}
+
+		void
+		reset_pbuf() {
+			setp(pfirst(), plast());
+		}
 
 		inline char_type*
 		gfirst() noexcept {
-			return this->_gbuf.data();
+			return this->_gbuf.begin();
 		}
 
 		inline char_type*
 		glast() noexcept {
-			return this->_gbuf.data() + this->_gbuf.size();
+			return this->_gbuf.end();
 		}
 
 		inline void
-		rebase() noexcept {
-			char_type* base = this->_gbuf.data();
+		ggrow() {
+			this->_gbuf.grow();
+			char_type* base = this->gfirst();
 			setg(
 				base,
 				base + (gptr()-eback()),
@@ -282,20 +279,14 @@ namespace sys {
 			);
 		}
 
-		inline void
-		ggrow() {
-			this->_gbuf.resize(_gbuf.size() * 2);
-			rebase();
-		}
-
 		inline char_type*
 		pfirst() noexcept {
-			return this->_pbuf.data();
+			return this->_pbuf.begin();
 		}
 
 		inline char_type*
 		plast() noexcept {
-			return this->_pbuf.data() + this->_pbuf.size();
+			return this->_pbuf.end();
 		}
 
 		inline void
@@ -315,19 +306,6 @@ namespace sys {
 			this->pgrow(this->_pbuf.size() * 2);
 		}
 
-		inline std::streamsize
-		psize() const {
-			return this->_pbuf.size();
-		}
-
-		inline std::streamsize
-		gsize() const {
-			return this->_gbuf.size();
-		}
-
-		fd_type _fd;
-		buffer_type _gbuf;
-		buffer_type _pbuf;
 	};
 
 	typedef basic_fildesbuf<char> fildesbuf;
