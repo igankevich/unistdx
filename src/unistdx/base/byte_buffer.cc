@@ -49,6 +49,7 @@ sys::byte_buffer::~byte_buffer() {
 		int ret = ::munmap(this->_data, this->_size);
 		if (ret == -1) {
 			sys::log_message(
+				"unistdx",
 				"_:_:_: _",
 				__FILE__,
 				__LINE__,
