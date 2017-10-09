@@ -3,8 +3,15 @@
 #include <set>
 #include <unistdx/base/make_object>
 
+#include <unistdx/fs/canonical_path>
+#include <unistdx/fs/file>
+#include <unistdx/fs/idirectory>
+#include <unistdx/fs/idirtree>
+#include <unistdx/fs/odirectory>
+#include <unistdx/fs/odirtree>
+#include <unistdx/fs/path>
+
 #include <gtest/gtest.h>
-#include <unistdx/filesystem>
 
 const char*
 current_test_name() {
