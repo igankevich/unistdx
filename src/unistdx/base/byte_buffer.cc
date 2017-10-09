@@ -3,7 +3,6 @@
 #include <cassert>
 
 #include <unistdx/base/check>
-#include <unistdx/base/log_message>
 #include <unistdx/config>
 
 #if !defined(UNISTDX_HAVE_MMAP)
@@ -16,7 +15,6 @@ namespace {
 
 	void
 	init_pages(void* addr, size_t n) {
-		UNISTDX_CHECK(::mlock(addr, n));
 		UNISTDX_CHECK(::madvise(addr, n, MADV_SEQUENTIAL));
 		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTFORK));
 		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTDUMP));
@@ -48,14 +46,7 @@ sys::byte_buffer::~byte_buffer() {
 	if (this->_data) {
 		int ret = ::munmap(this->_data, this->_size);
 		if (ret == -1) {
-			sys::log_message(
-				"unistdx",
-				"_:_:_: _",
-				__FILE__,
-				__LINE__,
-				__func__,
-				std::error_code(errno, std::system_category()).message()
-			);
+			std::terminate();
 		}
 	}
 }
