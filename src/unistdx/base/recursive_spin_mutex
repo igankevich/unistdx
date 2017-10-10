@@ -15,7 +15,7 @@ namespace sys {
 
 	private:
 		std::atomic<id_type> _owner;
-		int _counter = 0;
+		volatile int _counter = 0;
 
 	public:
 
@@ -25,6 +25,7 @@ namespace sys {
 			if (tid != this->_owner) {
 				this->spin_mutex::lock();
 				this->_owner = tid;
+				this->_counter = 1;
 			} else {
 				++this->_counter;
 			}
@@ -34,8 +35,8 @@ namespace sys {
 		unlock() noexcept {
 			if (std::this_thread::get_id() == this->_owner) {
 				if (--this->_counter == 0) {
-					this->spin_mutex::unlock();
 					this->_owner = id_type();
+					this->spin_mutex::unlock();
 				}
 			}
 		}

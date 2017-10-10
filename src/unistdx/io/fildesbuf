@@ -216,7 +216,7 @@ namespace sys {
 			}
 			std::streamsize ret = first - (eback() + old_egptr_offset);
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message("fdbuf", "fill _, state=_", ret, strerror(errno));
+			sys::log_message(this->_name, "fill _, state=_", ret, strerror(errno));
 			#endif
 			return ret;
 		}
@@ -239,7 +239,13 @@ namespace sys {
 				pbump(m-n);
 			}
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message("fdbuf", "flush _, state=_", n, strerror(errno));
+			sys::log_message(
+				this->_name,
+				"flush _,remaining=_,state=_",
+				n,
+				m-n,
+				strerror(errno)
+			);
 			#endif
 			return n==-1 ? 0 : n;
 		}
@@ -249,7 +255,7 @@ namespace sys {
 			char_type* g = this->gfirst();
 			setg(g, g, g);
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message("fdbuf", "reset gptr");
+			sys::log_message(this->_name, "reset gptr");
 			#endif
 		}
 
@@ -270,13 +276,15 @@ namespace sys {
 
 		inline void
 		ggrow() {
+			#ifndef NDEBUG
+			const off_type gptr_offset = gptr()-eback();
+			const off_type egptr_offset = egptr()-eback();
+			#endif
 			this->_gbuf.grow();
 			char_type* base = this->gfirst();
-			setg(
-				base,
-				base + (gptr()-eback()),
-				base + (egptr()-eback())
-			);
+			setg(base, base + gptr_offset, base + egptr_offset);
+			assert(gptr() - eback() == gptr_offset);
+			assert(egptr() - eback() == egptr_offset);
 		}
 
 		inline char_type*
@@ -291,14 +299,17 @@ namespace sys {
 
 		inline void
 		pgrow(std::streamsize new_size) {
+			assert(new_size > this->_pbuf.size());
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message("fdbuf", "pgrow size=_", new_size);
+			sys::log_message(this->_name, "pgrow size=_", new_size);
 			#endif
 			const off_type pptr_offset = pptr() - pbase();
 			const off_type pbase_offset = pbase() - pfirst();
 			this->_pbuf.resize(new_size);
 			setp(pfirst() + pbase_offset, plast());
 			pbump(pptr_offset);
+			assert(pptr() - pbase() == pptr_offset);
+			assert(pbase() - pfirst() == pbase_offset);
 		}
 
 		inline void

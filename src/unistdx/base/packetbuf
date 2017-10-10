@@ -50,12 +50,17 @@ namespace sys {
 		off_type _opacketpos = 0;
 		off_type _ipacketpos = 0;
 		off_type _ipayloadpos = 0;
-		std::streamsize _iheadersize = 0;
+//		std::streamsize _iheadersize = 0;
 		std::streamsize _ipacketsize = 0;
 		std::streamsize _oheadersize = 0;
 		state_type _state = state_type::initial;
 		/// Output packet finished.
 		bool _ofinished = false;
+
+	#if !defined(NDEBUG)
+	protected:
+		const char* _name = "packetbuf";
+	#endif
 
 	public:
 
@@ -108,7 +113,7 @@ namespace sys {
 			}
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 			sys::log_message(
-				"packetbuf",
+				this->_name,
 				"end {hs=_,ps=_}",
 				hs,
 				ps-hs
@@ -168,6 +173,13 @@ namespace sys {
 		}
 
 		template<class Ch2, class Tr2> friend class basic_ipacket_guard;
+
+		#if !defined(NDEBUG)
+		inline void
+		set_name(const char* rhs) noexcept {
+			this->_name = rhs;
+		}
+		#endif
 
 	protected:
 
@@ -316,7 +328,7 @@ namespace sys {
 			std::streamsize payload_size = 0;
 			if (this->xgetheader(hs, payload_size)) {
 				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
-				sys::log_message("packetbuf", "_ hs=_,ps=_", __func__, hs, payload_size);
+				sys::log_message(this->_name, "_ hs=_,ps=_", __func__, hs, payload_size);
 				#endif
 				if (hs < 0) {
 					throw std::invalid_argument("header size is less than nought");
@@ -327,7 +339,8 @@ namespace sys {
 				const std::streamsize ps = hs + payload_size;
 				const off_type p = this->gptr() - this->eback();
 				this->set_ipacket(p, p + hs, ps);
-				this->_iheadersize = hs;
+				//this->_iheadersize = hs;
+				this->gbump(hs);
 				this->setstate(state_type::header_is_ready UNISTDX_FUNC);
 			}
 		}
@@ -335,7 +348,7 @@ namespace sys {
 		void
 		getpayload() {
 			if (this->egptr() >= this->ipacket_end()) {
-				this->gbump(this->_iheadersize);
+				//this->gbump(this->_iheadersize);
 				this->setstate(state_type::payload_is_ready UNISTDX_FUNC);
 				this->on_payload();
 			}
@@ -400,7 +413,7 @@ namespace sys {
 			const state_type olds = this->_state;
 			this->_state = rhs;
 			sys::log_message(
-				"packetbuf",
+				this->_name,
 				"_",
 				transition(where, olds, this->_state, *this)
 			);
@@ -435,7 +448,9 @@ namespace sys {
 
 		void
 		setgptr(const streamptr<Ch>& rhs) {
-			this->setg(rhs._eback, this->ipayload_end(), rhs._egptr);
+			assert(this->gptr() <= this->ipayload_end());
+			assert(this->egptr() <= rhs._egptr);
+			this->setg(this->eback(), this->ipayload_end(), rhs._egptr);
 		}
 
 		void

@@ -3,6 +3,7 @@
 #include "make_types.hh"
 
 #include <mutex>
+#include <unistdx/base/recursive_spin_mutex>
 #include <unistdx/base/spin_mutex>
 
 using sys::u64;
@@ -42,4 +43,12 @@ TYPED_TEST_CASE(ThreadMutexTest, MAKE_TYPES(std::mutex,sys::spin_mutex));
 
 TYPED_TEST(ThreadMutexTest, SpinMutex) {
 	this->test_thread();
+}
+
+TEST(RecursiveSpinMutex, LockLock) {
+	sys::recursive_spin_mutex mtx;
+	mtx.lock();
+	mtx.lock();
+	mtx.unlock();
+	mtx.unlock();
 }
