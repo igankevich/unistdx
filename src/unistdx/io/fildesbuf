@@ -276,10 +276,8 @@ namespace sys {
 
 		inline void
 		ggrow() {
-			#ifndef NDEBUG
 			const off_type gptr_offset = gptr()-eback();
 			const off_type egptr_offset = egptr()-eback();
-			#endif
 			this->_gbuf.grow();
 			char_type* base = this->gfirst();
 			setg(base, base + gptr_offset, base + egptr_offset);
