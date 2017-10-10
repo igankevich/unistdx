@@ -1,0 +1,56 @@
+#ifndef UNISTDX_BASE_RECURSIVE_SPIN_MUTEX
+#define UNISTDX_BASE_RECURSIVE_SPIN_MUTEX
+
+#include <thread>
+
+#include <unistdx/base/spin_mutex>
+
+namespace sys {
+
+	/// Spin mutex that can be lock multiple times by the same thread.
+	class recursive_spin_mutex: public spin_mutex {
+
+	private:
+		typedef std::thread::id id_type;
+
+	private:
+		std::atomic<id_type> _owner;
+		int _counter = 0;
+
+	public:
+
+		inline void
+		lock() noexcept {
+			const id_type tid = std::this_thread::get_id();
+			if (tid != this->_owner) {
+				this->spin_mutex::lock();
+				this->_owner = tid;
+			} else {
+				++this->_counter;
+			}
+		}
+
+		inline void
+		unlock() noexcept {
+			if (std::this_thread::get_id() == this->_owner) {
+				if (--this->_counter == 0) {
+					this->spin_mutex::unlock();
+					this->_owner = id_type();
+				}
+			}
+		}
+
+		inline
+		recursive_spin_mutex() noexcept = default;
+
+		// disallow copy & move operations
+		recursive_spin_mutex(const recursive_spin_mutex&) = delete;
+		recursive_spin_mutex(recursive_spin_mutex&&) = delete;
+		recursive_spin_mutex& operator=(const recursive_spin_mutex&) = delete;
+		recursive_spin_mutex& operator=(recursive_spin_mutex&&) = delete;
+
+	};
+
+}
+
+#endif // vim:filetype=cpp
