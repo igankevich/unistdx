@@ -1,6 +1,7 @@
 #ifndef UNISTDX_UTIL_USERSTREAM
 #define UNISTDX_UTIL_USERSTREAM
 
+#include <unistdx/bits/no_copy_and_move>
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/util/user>
 
@@ -12,11 +13,7 @@ namespace sys {
 
 		~userstream();
 
-		userstream(const userstream&) = delete;
-		userstream(userstream&&) = delete;
-
-		userstream&
-		operator=(const userstream&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(userstream)
 
 		inline explicit
 		operator bool() const noexcept {

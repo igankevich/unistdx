@@ -1,9 +1,12 @@
 #ifndef UNISTDX_FS_FILE_MUTEX
 #define UNISTDX_FS_FILE_MUTEX
 
-#include <exception>
 #include <fcntl.h>
 #include <sys/file.h>
+
+#include <exception>
+
+#include <unistdx/bits/no_copy_and_move>
 #include <unistdx/io/fildes>
 
 namespace sys {
@@ -50,16 +53,7 @@ namespace sys {
 		void
 		open(const char* filename, mode_type mode) noexcept;
 
-		// disallow copy & move operations
-		file_mutex(const file_mutex&) = delete;
-
-		file_mutex(file_mutex&&) = delete;
-
-		file_mutex&
-		operator=(const file_mutex&) = delete;
-
-		file_mutex&
-		operator=(file_mutex&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(file_mutex)
 
 	private:
 

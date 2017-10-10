@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <streambuf>
 
+#include <unistdx/bits/no_copy_and_move>
+
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 #define UNISTDX_FUNC , __func__
 #include <iomanip>
@@ -72,15 +74,7 @@ namespace sys {
 		virtual
 		~basic_packetbuf() = default;
 
-		basic_packetbuf(basic_packetbuf&&) = delete;
-
-		basic_packetbuf(const basic_packetbuf&) = delete;
-
-		basic_packetbuf&
-		operator=(const basic_packetbuf&) = delete;
-
-		basic_packetbuf&
-		operator=(basic_packetbuf&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(basic_packetbuf)
 
 		virtual bool
 		handshake() {
@@ -522,12 +516,7 @@ namespace sys {
 			this->_buf->skip_packet();
 		}
 
-		// disallow copy & move operations
-		basic_ipacket_guard() = delete;
-		basic_ipacket_guard(const basic_ipacket_guard&) = delete;
-		basic_ipacket_guard(basic_ipacket_guard&&) = delete;
-		basic_ipacket_guard& operator=(const basic_ipacket_guard&) = delete;
-		basic_ipacket_guard& operator=(basic_ipacket_guard&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(basic_ipacket_guard)
 
 	};
 

@@ -1,6 +1,7 @@
 #ifndef UNISTDX_UTIL_GROUPSTREAM
 #define UNISTDX_UTIL_GROUPSTREAM
 
+#include <unistdx/bits/no_copy_and_move>
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/util/group>
 
@@ -12,11 +13,7 @@ namespace sys {
 
 		~groupstream();
 
-		groupstream(const groupstream&) = delete;
-		groupstream(groupstream&&) = delete;
-
-		groupstream&
-		operator=(const groupstream&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(groupstream)
 
 		inline explicit
 		operator bool() const noexcept {

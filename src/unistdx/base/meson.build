@@ -19,6 +19,7 @@ install_headers(
 	'log_message',
 	'make_object',
 	'packetbuf',
+	'recursive_spin_mutex',
 	'sha1',
 	'simple_lock',
 	'spin_mutex',

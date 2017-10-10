@@ -6,6 +6,7 @@
 #include <unistdx/base/byte_buffer>
 #include <unistdx/base/packetbuf>
 #include <unistdx/base/streambuf_traits>
+#include <unistdx/bits/no_copy_and_move>
 #include <unistdx/io/fildes>
 #include <unistdx/util/system>
 
@@ -81,15 +82,7 @@ namespace sys {
 			this->reset_pbuf();
 		}
 
-		basic_fildesbuf(basic_fildesbuf&&) = delete;
-
-		basic_fildesbuf(const basic_fildesbuf&) = delete;
-
-		basic_fildesbuf&
-		operator=(const basic_fildesbuf&) = delete;
-
-		basic_fildesbuf&
-		operator=(basic_fildesbuf&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(basic_fildesbuf)
 
 		int_type
 		underflow() override {

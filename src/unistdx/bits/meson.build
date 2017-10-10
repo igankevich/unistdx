@@ -9,6 +9,7 @@ install_headers(
 	'entity',
 	'for_each_file_descriptor',
 	'make_object',
+	'no_copy_and_move',
 	'octet',
 	'open_flag',
 	'paired_iterator',

@@ -3,6 +3,8 @@
 
 #include <atomic>
 
+#include <unistdx/bits/no_copy_and_move>
+
 namespace sys {
 
 	/// Fast mutex for scheduling.
@@ -30,11 +32,7 @@ namespace sys {
 		inline
 		spin_mutex() noexcept = default;
 
-		// disallow copy & move operations
-		spin_mutex(const spin_mutex&) = delete;
-		spin_mutex(spin_mutex&&) = delete;
-		spin_mutex& operator=(const spin_mutex&) = delete;
-		spin_mutex& operator=(spin_mutex&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(spin_mutex)
 
 	};
 

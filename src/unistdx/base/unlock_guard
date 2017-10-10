@@ -1,6 +1,8 @@
 #ifndef UNISTDX_BASE_UNLOCK_GUARD
 #define UNISTDX_BASE_UNLOCK_GUARD
 
+#include <unistdx/bits/no_copy_and_move>
+
 namespace sys {
 
 	template<class Mutex>
@@ -33,12 +35,7 @@ namespace sys {
 			this->_mtx.unlock();
 		}
 
-		// disallow copy & move operations
-		unlock_guard() = delete;
-		unlock_guard(const unlock_guard&) = delete;
-		unlock_guard(unlock_guard&&) = delete;
-		unlock_guard& operator=(const unlock_guard&) = delete;
-		unlock_guard& operator=(unlock_guard&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(unlock_guard)
 
 	};
 

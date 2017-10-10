@@ -4,6 +4,7 @@
 #include <thread>
 
 #include <unistdx/base/spin_mutex>
+#include <unistdx/bits/no_copy_and_move>
 
 namespace sys {
 
@@ -41,14 +42,16 @@ namespace sys {
 			}
 		}
 
+		inline bool
+		try_lock() noexcept {
+			return std::this_thread::get_id() == this->_owner
+				|| this->spin_mutex::try_lock();
+		}
+
 		inline
 		recursive_spin_mutex() noexcept = default;
 
-		// disallow copy & move operations
-		recursive_spin_mutex(const recursive_spin_mutex&) = delete;
-		recursive_spin_mutex(recursive_spin_mutex&&) = delete;
-		recursive_spin_mutex& operator=(const recursive_spin_mutex&) = delete;
-		recursive_spin_mutex& operator=(recursive_spin_mutex&&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(recursive_spin_mutex)
 
 	};
 
