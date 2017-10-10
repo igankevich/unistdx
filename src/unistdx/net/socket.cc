@@ -74,10 +74,12 @@ sys::socket::connect(const endpoint& e) {
 
 void
 sys::socket::accept(socket& sock, endpoint& addr) {
+	using namespace bits;
 	socklen_type len = sizeof(endpoint);
 	sock.close();
+	global_lock_type lock(__forkmutex);
 	UNISTDX_CHECK(sock._fd = ::accept(this->_fd, addr.sockaddr(), &len));
-	bits::set_mandatory_flags(sock._fd);
+	set_mandatory_flags(sock._fd);
 	#ifndef NDEBUG
 	log_message("sys", "accept connection from _", addr);
 	#endif
