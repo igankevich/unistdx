@@ -1,7 +1,6 @@
 #include "process_group"
 #include <unistdx/base/log_message>
 #include <unistdx/it/intersperse_iterator>
-#include <algorithm>
 
 int
 sys::process_group::wait() {
@@ -14,23 +13,6 @@ sys::process_group::wait() {
 		ret |= x.exit_code() | signal_type(x.term_signal());
 	}
 	return ret;
-}
-
-void
-sys::process_group::do_wait(
-	wait_flags flags,
-	sys::proc_info& status,
-	const_iterator& result
-) const {
-	sys::siginfo_type info;
-	UNISTDX_CHECK_IF_NOT(EINTR, ::waitid(P_PGID, this->_gid, &info, flags));
-	status = sys::proc_info(info);
-	result = std::find_if(
-		_procs.begin(), _procs.end(),
-		[&status] (const process& p) {
-			return p.id() == status.pid();
-		}
-	);
 }
 
 std::ostream&
