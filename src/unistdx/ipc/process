@@ -36,6 +36,11 @@ namespace sys {
 			UNISTDX_CHECK(::chdir(wd));
 		}
 
+		inline void
+		set_group_id(pid_type rhs) {
+			UNISTDX_CHECK(::setpgid(::sys::this_process::id(), rhs));
+		}
+
 	}
 
 	enum wait_flags {

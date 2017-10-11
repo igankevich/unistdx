@@ -5,6 +5,7 @@
 #include <vector>
 
 #include <unistdx/base/unlock_guard>
+#include <unistdx/bits/no_copy_and_move>
 #include <unistdx/ipc/process>
 
 namespace sys {
@@ -21,10 +22,17 @@ namespace sys {
 
 	}
 
-	struct process_group {
+	class process_group {
 
+	public:
 		typedef std::vector<process>::iterator iterator;
 		typedef std::vector<process>::const_iterator const_iterator;
+
+	private:
+		std::vector<process> _procs;
+		pid_type _gid = 0;
+
+	public:
 
 		template<class ... Args>
 		inline explicit
@@ -32,20 +40,24 @@ namespace sys {
 			this->emplace(std::forward<Args>(args)...);
 		}
 
-		inline process_group() = default;
-		process_group(const process_group&) = delete;
-		inline process_group(process_group&&) = default;
-		inline ~process_group() = default;
+		process_group() = default;
+		~process_group() = default;
+
+		UNISTDX_NO_COPY_AND_MOVE(process_group)
 
 		template<class F>
 		const process&
 		emplace(F&& childmain) {
-			this->_procs.emplace_back(std::forward<F>(childmain));
+			this->_procs.emplace_back([this,&childmain] () {
+				this_process::set_group_id(
+					this->_gid > 0 ? this->_gid : this_process::id()
+				);
+				return childmain();
+			});
 			process& proc = this->_procs.back();
 			if (this->_procs.size() == 1) {
 				this->_gid = proc.id();
 			}
-			proc.set_group_id(_gid);
 			return proc;
 		}
 
@@ -157,10 +169,6 @@ namespace sys {
 		friend std::ostream&
 		operator<<(std::ostream& out, const process_group& rhs);
 
-	private:
-
-		std::vector<process> _procs;
-		pid_type _gid = 0;
 	};
 
 	std::ostream&
