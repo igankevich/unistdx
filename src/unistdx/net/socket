@@ -1,9 +1,11 @@
 #ifndef UNISTDX_NET_SOCKET
 #define UNISTDX_NET_SOCKET
 
-#include <chrono>
 #include <fcntl.h>
 #include <unistd.h>
+
+#include <chrono>
+
 #include <unistdx/bits/socket>
 #include <unistdx/config>
 #include <unistdx/io/fildes>

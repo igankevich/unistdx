@@ -71,6 +71,7 @@
 #mesondefine UNISTDX_HAVE_GETGRNAM_R
 
 #mesondefine UNISTDX_HAVE_MMAP
+#mesondefine UNISTDX_HAVE_ACCEPT4
 
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 

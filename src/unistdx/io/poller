@@ -440,7 +440,7 @@ namespace sys {
 		inline static void
 		consume(const poll_event& ev) noexcept {
 			if (ev.in()) {
-				const size_t n = 20;
+				const size_t n = 1;
 				char tmp[n];
 				ssize_t c;
 				while ((c = ::read(ev.fd(), tmp, n)) != -1) ;

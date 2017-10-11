@@ -1,15 +1,20 @@
 #include "socket"
-#include <unistdx/base/make_object>
-#include <unistdx/base/log_message>
-#include <unistdx/bits/safe_calls>
+
 #include <netinet/tcp.h>
+
+#include <unistdx/base/log_message>
+#include <unistdx/base/make_object>
+#include <unistdx/bits/safe_calls>
 
 namespace {
 
 	int
 	safe_socket(int domain, int type, int protocol) {
 		using namespace sys::bits;
+		#if !defined(UNISTDX_HAVE_SOCK_NONBLOCK) || \
+		!defined(UNISTDX_HAVE_SOCK_CLOEXEC)
 		global_lock_type lock(__forkmutex);
+		#endif
 		int sock;
 		UNISTDX_CHECK(sock = ::socket(domain, type, protocol));
 		#if !defined(UNISTDX_HAVE_SOCK_NONBLOCK) || \
@@ -39,7 +44,7 @@ sys::socket::socket(const endpoint& bind_addr, const endpoint& conn_addr) {
 }
 
 sys::socket::socket(family_type family, flag_type flags):
-sys::fildes(safe_socket(int(family), flags, 0))
+sys::fildes(safe_socket(int (family), flags, 0))
 {}
 
 void
@@ -77,9 +82,23 @@ sys::socket::accept(socket& sock, endpoint& addr) {
 	using namespace bits;
 	socklen_type len = sizeof(endpoint);
 	sock.close();
+	#if defined(UNISTDX_HAVE_ACCEPT4) && \
+	defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
+	defined(UNISTDX_HAVE_SOCK_CLOEXEC)
+	UNISTDX_CHECK(
+		sock._fd =
+			::accept4(
+				this->_fd,
+				addr.sockaddr(),
+				&len,
+				UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC
+			)
+	);
+	#else
 	global_lock_type lock(__forkmutex);
 	UNISTDX_CHECK(sock._fd = ::accept(this->_fd, addr.sockaddr(), &len));
 	set_mandatory_flags(sock._fd);
+	#endif
 	#ifndef NDEBUG
 	log_message("sys", "accept connection from _", addr);
 	#endif
@@ -115,6 +134,7 @@ sys::socket::set_user_timeout(const duration& d) {
 		::setsockopt(this->_fd, IPPROTO_TCP, TCP_USER_TIMEOUT, &ms, sizeof(ms))
 	);
 }
+
 #endif
 
 int
@@ -149,7 +169,7 @@ sys::socket::error() const noexcept {
 		   port of the service. If this happens the socket connects to itself
 		   and sends and replies to its own messages (at least on Linux). This
 		   conditional solves the issue.
-		*/
+		 */
 		try {
 			if (ret == 0 && this->name() == this->peer_name()) {
 				ret = -1;
@@ -183,9 +203,9 @@ union user_credentials_message {
 void
 sys::send_credentials(socket& sock, const void* data, size_t n) {
 	message_header h;
-	io_vector v{const_cast<void*>(data), n};
+	io_vector v {const_cast<void*>(data), n};
 	h.msg_iov = &v;
-    h.msg_iovlen = 1;
+	h.msg_iovlen = 1;
 	h.msg_name = nullptr;
 	h.msg_namelen = 0;
 	h.msg_control = nullptr;
@@ -194,31 +214,38 @@ sys::send_credentials(socket& sock, const void* data, size_t n) {
 }
 
 void
-sys::receive_credentials(socket& sock, message_header& h, void* data, size_t n) {
+sys::receive_credentials(
+	socket& sock,
+	message_header& h,
+	void* data,
+	size_t
+	n
+) {
 	user_credentials_message m;
 	m.h.cmsg_len = CMSG_LEN(sizeof(m));
 	m.h.cmsg_level = SOL_SOCKET;
 	m.h.cmsg_type = SCM_CREDENTIALS;
-	io_vector v{data, n};
+	io_vector v {data, n};
 	h.msg_iov = &v;
-    h.msg_iovlen = 1;
+	h.msg_iovlen = 1;
 	h.msg_name = nullptr;
 	h.msg_namelen = 0;
 	h.msg_control = m.bytes;
 	h.msg_controllen = sizeof(m.bytes);
 	sock.receive(&h, 0);
 }
-#endif
+
+#endif // if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
 
 #if defined(UNISTDX_HAVE_SO_PEERCRED)
 sys::user_credentials
 sys::socket::credentials() const {
-	user_credentials uc{};
+	user_credentials uc {};
 	socklen_type n = sizeof(uc);
 	UNISTDX_CHECK(
 		::getsockopt(this->_fd, SOL_SOCKET, SO_PEERCRED, &uc, &n)
 	);
 	return uc;
 }
-#endif
 
+#endif
