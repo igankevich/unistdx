@@ -5,11 +5,12 @@
 #include <cassert>
 #include <chrono>
 #include <condition_variable>
+#include <mutex>
 #include <vector>
 
+#include <unistdx/base/check>
 #include <unistdx/base/unlock_guard>
 #include <unistdx/bits/paired_iterator>
-#include <unistdx/base/check>
 #include <unistdx/io/pipe>
 #include <unistdx/io/poll_event>
 #include <unistdx/it/intersperse_iterator>
@@ -27,6 +28,8 @@ namespace sys {
 		typedef std::chrono::system_clock clock_type;
 		template<class Duration>
 		using time_point = std::chrono::time_point<clock_type, Duration>;
+		typedef std::mutex mutex_type;
+		typedef std::lock_guard<mutex_type> lock_type;
 
 		inline
 		event_poller():
@@ -52,7 +55,8 @@ namespace sys {
 		_pipe(std::move(rhs._pipe)),
 		_events(std::move(rhs._events)),
 		_handlers(std::move(rhs._handlers)),
-		_specials(std::move(rhs._specials)) {
+		_specials(std::move(rhs._specials)),
+		_mutex() {
 			#ifndef NDEBUG
 			assert_invariant(__func__);
 			#endif
@@ -75,8 +79,7 @@ namespace sys {
 			this->insert_pending_specials();
 			int ret = -1;
 			while (ret <= 0 && !pred()) {
-				unlock_guard<Lock> g(lock);
-				ret = do_poll(no_timeout);
+				ret = do_poll(lock, no_timeout);
 			}
 		}
 
@@ -90,9 +93,8 @@ namespace sys {
 		inline std::cv_status
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
 			using namespace std::chrono;
-			unlock_guard<Lock> unlock(lock);
 			const auto d = duration_cast<milliseconds>(dur);
-			int ret = do_poll(static_cast<int>(d.count()));
+			int ret = do_poll(lock, static_cast<int>(d.count()));
 			return ret == 0 ? std::cv_status::timeout :
 			       std::cv_status::no_timeout;
 		}
@@ -167,6 +169,7 @@ namespace sys {
 
 		inline void
 		clear() noexcept {
+			lock_type lock(this->_mutex);
 			this->_events.erase(this->special_begin(), this->_events.end());
 			this->_nspecials = 0;
 			this->_handlers.clear();
@@ -177,11 +180,13 @@ namespace sys {
 
 		inline void
 		insert_special(poll_event ev) {
+			lock_type lock(this->_mutex);
 			this->_specials.push_back(ev);
 		}
 
 		inline void
 		emplace(poll_event ev, handler_type handler) {
+			lock_type lock(this->_mutex);
 			this->_events.push_back(ev);
 			this->_handlers.emplace_back(handler);
 			#ifndef NDEBUG
@@ -200,6 +205,7 @@ namespace sys {
 
 		inline void
 		disable(fd_type fd) noexcept {
+			lock_type lock(this->_mutex);
 			events_type::iterator pos = this->find(poll_event {fd});
 			if (pos != this->_events.end()) {
 				pos->disable();
@@ -393,24 +399,29 @@ namespace sys {
 			#endif
 		}
 
-		inline int
-		do_poll(int timeout_millis) {
+		template <class Lock>
+		int
+		do_poll(Lock& lock, int timeout_millis) {
 			if (timeout_millis != no_timeout) {
 				timeout_millis = std::max(timeout_millis, 0);
 			}
+			lock_type g1(this->_mutex);
 			this->remove_fds_if(std::logical_not<poll_event>());
 			this->insert_pending_specials();
 			this->insert_pending_events_and_handlers();
 			auto nevents = this->_events.size();
 			int ret;
-			UNISTDX_CHECK_IF_NOT(
-				EINTR,
-				ret = ::poll(
-					this->_events.data(),
-					nevents,
-					timeout_millis
-				      )
-			);
+			{
+				unlock_guard<Lock> g2(lock);
+				UNISTDX_CHECK_IF_NOT(
+					EINTR,
+					ret = ::poll(
+						this->_events.data(),
+						nevents,
+						timeout_millis
+					      )
+				);
+			}
 			assert(this->_events.size() == nevents);
 			if (ret > 0) {
 				#if !defined(UNISTDX_HAVE_POLLRDHUP)
@@ -478,6 +489,7 @@ namespace sys {
 		events_type _newevents;
 		handlers_type _newhandlers;
 		size_type _nspecials = 0;
+		mutex_type _mutex;
 
 		static constexpr const size_type NPIPES = 1;
 		static const int no_timeout = -1;
