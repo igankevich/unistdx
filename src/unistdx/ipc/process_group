@@ -48,14 +48,15 @@ namespace sys {
 		template<class F>
 		const process&
 		emplace(F&& childmain) {
-			this->_procs.emplace_back([this,&childmain] () {
+			const bool has_gid = !this->_procs.empty();
+			this->_procs.emplace_back([this,&childmain,has_gid] () {
 				this_process::set_group_id(
-					this->_gid > 0 ? this->_gid : this_process::id()
+					has_gid ? this->_gid : this_process::id()
 				);
 				return childmain();
 			});
 			process& proc = this->_procs.back();
-			if (this->_procs.size() == 1) {
+			if (!has_gid) {
 				this->_gid = proc.id();
 			}
 			return proc;
