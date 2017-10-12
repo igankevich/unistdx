@@ -2,36 +2,48 @@
 #define UNISTDX_IO_POLLER2
 
 #include <chrono>
+#include <condition_variable>
+#include <vector>
 
+#include <unistdx/base/check>
+#include <unistdx/base/unlock_guard>
 #include <unistdx/bits/no_copy_and_move>
-#include <unistdx/check>
 #include <unistdx/io/epoll_event>
 #include <unistdx/io/fildes>
 #include <unistdx/io/pipe>
 
 namespace sys {
 
-
-	template <class Handler>
 	class event_poller2 {
 
-	public:
-		typedef Handler handler_type;
+	private:
 		typedef std::chrono::steady_clock clock_type;
 		template<class Duration>
 		using time_point = std::chrono::time_point<clock_type, Duration>;
+		typedef std::vector<epoll_event> container_type;
+
+	public:
+		typedef typename container_type::value_type value_type;
+		typedef value_type* iterator;
+		typedef const value_type* const_iterator;
 
 	private:
+		static const int no_timeout = -1;
 		fildes _epollfd;
 		/// Notification pipe.
 		pipe _pipe;
+		container_type _events;
+		/// The number of events after the last wait operation.
+		int _nevents = 0;
 
 	public:
 
-		event_poller2():
+		explicit
+		event_poller2(int maxevents=4096/sizeof(epoll_event)):
 		_epollfd(::epoll_create1(EPOLL_CLOEXEC)),
-		_pipe() {
-			this->xadd(this->pipe_in(), event::in);
+		_pipe(),
+		_events(std::max(maxevents, 1)) {
+			this->xadd(epoll_event(this->pipe_in(), event::in));
 		}
 
 		~event_poller2() = default;
@@ -49,9 +61,34 @@ namespace sys {
 			this->notify_one();
 		}
 
-		inline fd_type
-		pipe_in() const noexcept {
-			return this->_pipe.in().get_fd();
+		inline const_iterator
+		begin() const noexcept {
+			return this->_events.data();
+		}
+
+		inline const_iterator
+		end() const noexcept {
+			return this->_events.data() + this->_nevents;
+		}
+
+		inline void
+		emplace(fd_type fd, event ev) {
+			this->xadd(epoll_event(fd, ev));
+		}
+
+		inline void
+		emplace(const epoll_event& ev) {
+			this->xadd(ev);
+		}
+
+		inline void
+		erase(fd_type fd) {
+			this->xdel(fd);
+		}
+
+		inline void
+		erase(epoll_event ev) {
+			this->xdel(ev.fd());
 		}
 
 		template<class Lock>
@@ -65,7 +102,7 @@ namespace sys {
 		wait(Lock& lock, Pred pred) {
 			int ret = -1;
 			while (ret <= 0 && !pred()) {
-				ret = do_poll(lock, no_timeout);
+				ret = this->poll_wait(lock, no_timeout);
 			}
 		}
 
@@ -74,7 +111,7 @@ namespace sys {
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
 			using namespace std::chrono;
 			const auto d = duration_cast<milliseconds>(dur);
-			int ret = do_poll(lock, static_cast<int>(d.count()));
+			int ret = this->poll_wait(lock, static_cast<int>(d.count()));
 			return ret == 0 ? std::cv_status::timeout :
 			       std::cv_status::no_timeout;
 		}
@@ -147,22 +184,62 @@ namespace sys {
 		void
 		xadd(epoll_event ev) {
 			UNISTDX_CHECK(
-				::epoll_ctl(this->_epollfd.get_fd(), EPOLL_CTL_ADD, ev.fd(), &ev)
+				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_ADD, ev.fd(), &ev)
 			);
 		}
 
 		void
 		xmod(epoll_event ev) {
 			UNISTDX_CHECK(
-				::epoll_ctl(this->_epollfd.get_fd(), EPOLL_CTL_MOD, ev.fd(), &ev)
+				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_MOD, ev.fd(), &ev)
 			);
 		}
 
 		void
 		xdel(fd_type fd) {
 			UNISTDX_CHECK(
-				::epoll_ctl(this->_epollfd.get_fd(), EPOLL_CTL_DEL, fd, nullptr)
+				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_DEL, fd, nullptr)
 			);
+		}
+
+		template <class Lock>
+		int
+		poll_wait(Lock& lock, int timeout_millis) {
+			int nfds;
+			unlock_guard<Lock> g2(lock);
+			UNISTDX_CHECK_IF_NOT(
+				EINTR,
+				nfds = ::epoll_wait(
+					this->_epollfd.get_fd(),
+					this->_events.data(),
+					this->_events.size(),
+					timeout_millis
+				      )
+			);
+			if (nfds > 0) {
+				this->_nevents = std::max(nfds, 0);
+				this->consume_pipe();
+			}
+			return nfds;
+		}
+
+		void
+		consume_pipe() {
+			const size_t n = 20;
+			fd_type fd = this->pipe_in();
+			char tmp[n];
+			ssize_t c;
+			while ((c = ::read(fd, tmp, n)) != -1) ;
+		}
+
+		inline fd_type
+		epoll_fd() noexcept {
+			return this->_epollfd.get_fd();
+		}
+
+		inline fd_type
+		pipe_in() const noexcept {
+			return this->_pipe.in().get_fd();
 		}
 
 	};

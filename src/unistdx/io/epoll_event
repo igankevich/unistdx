@@ -71,7 +71,8 @@ namespace sys {
 	public:
 
 		inline
-		epoll_event(fd_type f=-1, E ev=0) noexcept {
+		epoll_event(fd_type f=-1, event ev=event(0)) noexcept:
+		poll_event_base{} {
 			this->poll_event_base::events = E(ev | event::def);
 			this->poll_event_base::data.fd = f;
 		}
@@ -88,7 +89,7 @@ namespace sys {
 
 		inline fd_type
 		fd() const noexcept {
-			return this->poll_event_base::events;
+			return this->poll_event_base::data.fd;
 		}
 
 		inline void
