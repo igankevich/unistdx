@@ -50,6 +50,11 @@ namespace sys {
 
 		UNISTDX_NO_COPY_AND_MOVE(event_poller2);
 
+		inline fd_type
+		pipe_in() const noexcept {
+			return this->_pipe.in().get_fd();
+		}
+
 		inline void
 		notify_one() noexcept {
 			char c = '!';
@@ -218,6 +223,7 @@ namespace sys {
 			);
 			if (nfds > 0) {
 				this->_nevents = std::max(nfds, 0);
+				// TODO this is inefficient
 				this->consume_pipe();
 			}
 			return nfds;
@@ -235,11 +241,6 @@ namespace sys {
 		inline fd_type
 		epoll_fd() noexcept {
 			return this->_epollfd.get_fd();
-		}
-
-		inline fd_type
-		pipe_in() const noexcept {
-			return this->_pipe.in().get_fd();
 		}
 
 	};

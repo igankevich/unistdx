@@ -15,6 +15,7 @@ install_headers(
 	'pipe',
 	'poll_event',
 	'poller',
+	'poller2',
 	'two_way_pipe',
 	subdir: join_paths(meson.project_name(), 'io')
 )
