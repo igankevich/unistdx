@@ -73,6 +73,8 @@
 #mesondefine UNISTDX_HAVE_MMAP
 #mesondefine UNISTDX_HAVE_ACCEPT4
 
+#mesondefine UNISTDX_HAVE_EPOLL
+
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 
 #endif // vim:filetype=cpp

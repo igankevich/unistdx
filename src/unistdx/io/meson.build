@@ -1,4 +1,5 @@
 libunistdx_src += files([
+	'epoll_event.cc',
 	'fildes.cc',
 	'pipe.cc',
 	'poll_event.cc',
@@ -6,6 +7,7 @@ libunistdx_src += files([
 ])
 
 install_headers(
+	'epoll_event',
 	'fdstream',
 	'fildes',
 	'fildesbuf',

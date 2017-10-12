@@ -144,6 +144,9 @@ endif
 if cpp.has_header_symbol('sys/socket.h', 'accept4')
 	config.set('UNISTDX_HAVE_ACCEPT4', true)
 endif
+if cpp.has_header_symbol('sys/epoll.h', 'epoll_create')
+	config.set('UNISTDX_HAVE_EPOLL', true)
+endif
 # }}}
 
 threads = dependency('threads')
