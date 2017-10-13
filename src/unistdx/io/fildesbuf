@@ -290,7 +290,7 @@ namespace sys {
 
 		inline void
 		pgrow(std::streamsize new_size) {
-			assert(new_size > this->_pbuf.size());
+			assert(new_size > std::streamsize(this->_pbuf.size()));
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
 			sys::log_message(this->_name, "pgrow size=_", new_size);
 			#endif

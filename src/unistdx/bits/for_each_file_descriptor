@@ -2,9 +2,12 @@
 #define UNISTDX_BITS_FOR_EACH_OPEN_FILE_DESCRIPTOR
 
 #include <sys/resource.h>
+
+#include <algorithm>
 #include <vector>
+
 #include <unistdx/base/check>
-#include <unistdx/io/poller>
+#include <unistdx/io/poll_event>
 
 namespace sys {
 

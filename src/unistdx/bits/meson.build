@@ -12,7 +12,6 @@ install_headers(
 	'no_copy_and_move',
 	'octet',
 	'open_flag',
-	'paired_iterator',
 	'poll',
 	'safe_calls',
 	'sharedmem',

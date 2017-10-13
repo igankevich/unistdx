@@ -1,69 +1,69 @@
 #ifndef UNISTDX_IO_POLLER
 #define UNISTDX_IO_POLLER
 
-#include <algorithm>
-#include <cassert>
 #include <chrono>
 #include <condition_variable>
-#include <mutex>
 #include <vector>
 
 #include <unistdx/base/check>
 #include <unistdx/base/unlock_guard>
-#include <unistdx/bits/paired_iterator>
+#include <unistdx/bits/no_copy_and_move>
+#include <unistdx/io/epoll_event>
+#include <unistdx/io/fildes>
 #include <unistdx/io/pipe>
-#include <unistdx/io/poll_event>
-#include <unistdx/it/intersperse_iterator>
+
+#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
+#include <unistdx/base/log_message>
+#endif
 
 namespace sys {
 
-	template<class Handler>
-	struct event_poller {
+	class event_poller {
 
-		typedef Handler handler_type;
-		typedef std::vector<poll_event> events_type;
-		typedef std::vector<handler_type> handlers_type;
-		typedef events_type::size_type size_type;
-		typedef typename handlers_type::const_iterator const_iterator;
-		typedef std::chrono::system_clock clock_type;
+	private:
+		typedef std::chrono::steady_clock clock_type;
 		template<class Duration>
 		using time_point = std::chrono::time_point<clock_type, Duration>;
-		typedef std::mutex mutex_type;
-		typedef std::lock_guard<mutex_type> lock_type;
+		typedef std::vector<epoll_event> container_type;
 
-		inline
-		event_poller():
+	public:
+		typedef typename container_type::value_type value_type;
+		typedef value_type* iterator;
+		typedef const value_type* const_iterator;
+
+	private:
+		static const int no_timeout = -1;
+		fildes _epollfd;
+		/// Notification pipe.
+		pipe _pipe;
+		container_type _events;
+		/// The number of events after the last wait operation.
+		int _nevents = 0;
+
+	public:
+
+		explicit
+		event_poller(int maxevents=4096/sizeof(epoll_event)):
+		_epollfd(::epoll_create1(EPOLL_CLOEXEC)),
 		_pipe(),
-		_events{poll_event {
-		            this->_pipe.in().get_fd(), poll_event::In
-				}}
-		{
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
+		_events(std::max(maxevents, 1)) {
+			this->xadd(epoll_event(this->pipe_in(), event::in));
 		}
 
 		~event_poller() = default;
 
-		event_poller(const event_poller&) = delete;
+		UNISTDX_NO_COPY_AND_MOVE(event_poller);
 
-		event_poller&
-		operator=(const event_poller&) = delete;
-
-		inline
-		event_poller(event_poller&& rhs) noexcept:
-		_pipe(std::move(rhs._pipe)),
-		_events(std::move(rhs._events)),
-		_handlers(std::move(rhs._handlers)),
-		_specials(std::move(rhs._specials)),
-		_mutex() {
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
+		inline fd_type
+		pipe_in() const noexcept {
+			return this->_pipe.in().get_fd();
 		}
 
 		inline void
 		notify_one() noexcept {
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
+			sys::log_message("poller", "notify_one");
+			#endif
 			char c = '!';
 			this->_pipe.out().write(&c, sizeof(char));
 		}
@@ -73,14 +73,44 @@ namespace sys {
 			this->notify_one();
 		}
 
-		template<class Lock, class Pred>
+		inline const_iterator
+		begin() const noexcept {
+			return this->_events.data();
+		}
+
+		inline const_iterator
+		end() const noexcept {
+			return this->_events.data() + this->_nevents;
+		}
+
 		inline void
-		wait(Lock& lock, Pred pred) {
-			this->insert_pending_specials();
-			int ret = -1;
-			while (ret <= 0 && !pred()) {
-				ret = do_poll(lock, no_timeout);
-			}
+		emplace(fd_type fd, event ev) {
+			this->xadd(epoll_event(fd, ev));
+		}
+
+		inline void
+		insert(const epoll_event& ev) {
+			this->xadd(ev);
+		}
+
+		inline void
+		replace(const epoll_event& ev) {
+			this->xmod(ev);
+		}
+
+		inline void
+		erase(fd_type fd) {
+			this->xdel(fd);
+		}
+
+		inline void
+		erase(epoll_event ev) {
+			this->xdel(ev.fd());
+		}
+
+		inline void
+		resize(int new_size) {
+			this->_events.resize(new_size);
 		}
 
 		template<class Lock>
@@ -89,12 +119,21 @@ namespace sys {
 			this->wait(lock, [] () { return false; });
 		}
 
+		template<class Lock, class Pred>
+		inline void
+		wait(Lock& lock, Pred pred) {
+			int ret = -1;
+			while (ret <= 0 && !pred()) {
+				ret = this->poll_wait(lock, no_timeout);
+			}
+		}
+
 		template<class Lock, class Rep, class Period>
 		inline std::cv_status
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
 			using namespace std::chrono;
 			const auto d = duration_cast<milliseconds>(dur);
-			int ret = do_poll(lock, static_cast<int>(d.count()));
+			int ret = this->poll_wait(lock, static_cast<int>(d.count()));
 			return ret == 0 ? std::cv_status::timeout :
 			       std::cv_status::no_timeout;
 		}
@@ -162,334 +201,71 @@ namespace sys {
 			return this->wait_until(lock, new_tp, pred);
 		}
 
-		inline fd_type
-		pipe_in() const noexcept {
-			return this->_pipe.in().get_fd();
-		}
-
-		inline void
-		clear() noexcept {
-			this->_events.erase(this->special_begin(), this->_events.end());
-			this->_nspecials = 0;
-			this->_handlers.clear();
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-		}
-
-		inline void
-		insert_special(poll_event ev) {
-			this->_specials.push_back(ev);
-		}
-
-		inline void
-		emplace(poll_event ev, handler_type handler) {
-			this->_events.push_back(ev);
-			this->_handlers.emplace_back(handler);
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-		}
-
-		inline void
-		enqueue_emplace(poll_event ev, handler_type handler) {
-//			lock_type lock(this->_mutex);
-			this->_newevents.push_back(ev);
-			this->_newhandlers.emplace_back(handler);
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-		}
-
-		inline void
-		disable(fd_type fd) noexcept {
-			events_type::iterator pos = this->find(poll_event {fd});
-			if (pos != this->_events.end()) {
-				pos->disable();
-			}
-		}
-
-		template<class Func>
-		inline void
-		for_each_ordinary_fd(Func func) {
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-			std::for_each(
-				bits::make_paired(ordinary_begin(), _handlers.begin()),
-				bits::make_paired(_events.end(), _handlers.end()),
-				[&func] (const bits::pair<poll_event&,handler_type&>& rhs) {
-				    func(rhs.first, rhs.second);
-				}
-			);
-		}
-
-		template<class Func>
-		inline void
-		for_each_special_fd(Func func) {
-			std::for_each(special_begin(), special_end(), func);
-		}
-
-		template<class Func>
-		inline void
-		for_each_pipe_fd(Func func) {
-			std::for_each(pipes_begin(), pipes_end(), func);
-		}
-
-		inline const_iterator
-		begin() const noexcept {
-			return this->_handlers.begin();
-		}
-
-		inline const_iterator
-		end() const noexcept {
-			return this->_handlers.end();
-		}
-
 	private:
 
-		inline events_type::iterator
-		pipes_begin() noexcept {
-			return this->_events.begin();
-		}
-
-		inline events_type::const_iterator
-		pipes_begin() const noexcept {
-			return this->_events.begin();
-		}
-
-		inline events_type::iterator
-		pipes_end() noexcept {
-			return this->_events.begin() + NPIPES;
-		}
-
-		inline events_type::const_iterator
-		pipes_end() const noexcept {
-			return this->_events.begin() + NPIPES;
-		}
-
-		inline events_type::const_iterator
-		ordinary_begin() const noexcept {
-			return this->_events.begin() + NPIPES + _nspecials;
-		}
-
-		inline events_type::iterator
-		ordinary_begin() noexcept {
-			return this->_events.begin() + NPIPES + _nspecials;
-		}
-
-		inline events_type::const_iterator
-		ordinary_end() const noexcept {
-			return this->_events.end();
-		}
-
-		inline events_type::iterator
-		ordinary_end() noexcept {
-			return this->_events.end();
-		}
-
-		inline events_type::iterator
-		special_begin() noexcept {
-			return this->_events.begin() + NPIPES;
-		}
-
-		inline events_type::const_iterator
-		special_begin() const noexcept {
-			return this->_events.begin() + NPIPES;
-		}
-
-		inline events_type::iterator
-		special_end() noexcept {
-			return this->_events.begin() + NPIPES + this->_nspecials;
-		}
-
-		inline events_type::const_iterator
-		special_end() const noexcept {
-			return this->_events.begin() + NPIPES + this->_nspecials;
-		}
-
-		inline events_type::iterator
-		find(const poll_event& ev) noexcept {
-			return std::find(
-				this->_events.begin() + NPIPES,
-				this->_events.end(),
-				ev
+		void
+		xadd(epoll_event ev) {
+			UNISTDX_CHECK(
+				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_ADD, ev.fd(), &ev)
 			);
 		}
 
-		template<class It, class Pred>
-		inline void
-		remove_ordinary_if(It first, It last, Pred pred) {
-			It result = std::remove_if(first, last, pred);
-			this->_events.erase(result.first(), last.first());
-			this->_handlers.erase(result.second(), last.second());
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-		}
-
-		template<class It, class Pred>
-		inline void
-		remove_specials_if(It first, It last, Pred pred) {
-			const size_type old_size = _events.size();
-			this->_events.erase(std::remove_if(first, last, pred), last);
-			this->_nspecials -= old_size - this->_events.size();
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-		}
-
-		template<class Pred>
-		inline void
-		remove_fds_if(Pred pred) {
-			this->remove_specials_if(
-				this->special_begin(),
-				this->special_end(),
-				pred
-			);
-			this->remove_ordinary_if(
-				bits::make_paired(ordinary_begin(), this->_handlers.begin()),
-				bits::make_paired(this->_events.end(), this->_handlers.end()),
-				bits::apply_to<0>(pred)
+		void
+		xmod(epoll_event ev) {
+			UNISTDX_CHECK(
+				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_MOD, ev.fd(), &ev)
 			);
 		}
 
-		template<class It>
-		inline void
-		check_hup(It first, It last) {
-			while (first != last) {
-				if (first->probe() == 0) {
-					first->setrev(poll_event::Hup);
-				}
-				++first;
-			}
-		}
-
-		inline void
-		insert_pending_specials() {
-			this->_events.insert(
-				this->ordinary_begin(),
-				this->_specials.begin(),
-				this->_specials.end()
+		void
+		xdel(fd_type fd) {
+			UNISTDX_CHECK(
+				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_DEL, fd, nullptr)
 			);
-			this->_nspecials += this->_specials.size();
-			this->_specials.clear();
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
-		}
-
-		inline void
-		insert_pending_events_and_handlers() {
-//			lock_type g1(this->_mutex);
-			this->_events.insert(
-				this->_events.end(),
-				this->_newevents.begin(),
-				this->_newevents.end()
-			);
-			this->_newevents.clear();
-			for (const handler_type& h : this->_newhandlers) {
-				this->_handlers.emplace_back(std::move(h));
-			}
-			this->_newhandlers.clear();
-			#ifndef NDEBUG
-			assert_invariant(__func__);
-			#endif
 		}
 
 		template <class Lock>
 		int
-		do_poll(Lock& lock, int timeout_millis) {
-			if (timeout_millis != no_timeout) {
-				timeout_millis = std::max(timeout_millis, 0);
-			}
-			this->remove_fds_if(std::logical_not<poll_event>());
-			this->insert_pending_specials();
-			this->insert_pending_events_and_handlers();
-			auto nevents = this->_events.size();
-			int ret;
-			{
-				unlock_guard<Lock> g2(lock);
-				UNISTDX_CHECK_IF_NOT(
-					EINTR,
-					ret = ::poll(
-						this->_events.data(),
-						nevents,
-						timeout_millis
-					      )
-				);
-			}
-			assert(this->_events.size() == nevents);
-			if (ret > 0) {
-				#if !defined(UNISTDX_HAVE_POLLRDHUP)
-				this->check_hup(this->_events.begin(), this->_events.end());
-				#endif
-				this->for_each_pipe_fd(&event_poller::consume);
-			}
-
-			return ret;
-		}
-
-		inline friend std::ostream&
-		operator<<(std::ostream& out, const event_poller& rhs) {
-			std::ostream::sentry s(out);
-			if (s) {
-				out << '{';
-				std::copy(
-					rhs._events.begin(),
-					rhs._events.end(),
-					intersperse_iterator<poll_event,char>(out, ',')
-				);
-				out << '}';
-			}
-			return out;
-		}
-
-		inline static void
-		consume(const poll_event& ev) noexcept {
-			if (ev.in()) {
-				const size_t n = 1;
-				char tmp[n];
-				ssize_t c;
-				while ((c = ::read(ev.fd(), tmp, n)) != -1) ;
-			}
-		}
-
-		#ifndef NDEBUG
-		inline void
-		assert_invariant(const char*) const {
-			assert(pipes_begin() == _events.begin());
-			assert(pipes_begin() <= pipes_end());
-			assert(pipes_end() == special_begin());
-			assert(special_begin() <= special_end());
-			assert(special_end() == ordinary_begin());
-			assert(ordinary_end() == _events.end());
-			assert(
-				special_end() - special_begin() ==
-				static_cast<std::make_signed<size_type>::type>(_nspecials)
+		poll_wait(Lock& lock, int timeout_millis) {
+			int nfds;
+			unlock_guard<Lock> g2(lock);
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
+			sys::log_message("poller", "wait");
+			#endif
+			UNISTDX_CHECK_IF_NOT(
+				EINTR,
+				nfds = ::epoll_wait(
+					this->_epollfd.get_fd(),
+					this->_events.data(),
+					this->_events.size(),
+					timeout_millis
+				      )
 			);
-			assert(pipes_end() - pipes_begin() == NPIPES);
-			assert(
-				ordinary_end() - ordinary_begin() == _handlers.end() -
-				_handlers.begin()
-			);
-			assert(ordinary_begin() <= ordinary_end());
-			assert(_newevents.size() == _newhandlers.size());
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
+			sys::log_message("poller", "wake up nfds=_", nfds);
+			#endif
+			if (nfds > 0) {
+				this->_nevents = std::max(nfds, 0);
+				// TODO this is inefficient
+				this->consume_pipe();
+			}
+			return nfds;
 		}
 
-		#endif
+		void
+		consume_pipe() {
+			const size_t n = 20;
+			fd_type fd = this->pipe_in();
+			char tmp[n];
+			ssize_t c;
+			while ((c = ::read(fd, tmp, n)) != -1) ;
+		}
 
-		pipe _pipe;
-		events_type _events;
-		handlers_type _handlers;
-		std::vector<poll_event> _specials;
-		events_type _newevents;
-		handlers_type _newhandlers;
-		size_type _nspecials = 0;
-		mutex_type _mutex;
+		inline fd_type
+		epoll_fd() noexcept {
+			return this->_epollfd.get_fd();
+		}
 
-		static constexpr const size_type NPIPES = 1;
-		static const int no_timeout = -1;
 	};
 
 }
