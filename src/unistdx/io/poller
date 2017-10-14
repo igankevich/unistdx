@@ -219,7 +219,8 @@ namespace sys {
 
 		void
 		xdel(fd_type fd) {
-			UNISTDX_CHECK(
+			UNISTDX_CHECK_IF_NOT(
+				ENOENT,
 				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_DEL, fd, nullptr)
 			);
 		}
