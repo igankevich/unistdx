@@ -240,16 +240,6 @@ test(
 )
 
 test(
-	'bits/paired_iterator',
-	executable(
-		'paired-iterator-test',
-		sources: 'paired_iterator_test.cc',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
 	'it/queue_pusher',
 	executable(
 		'queue-pusher-test',

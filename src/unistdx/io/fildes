@@ -3,14 +3,17 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+
+#include <ostream>
+
 #include <unistdx/config>
 #if defined(UNISTDX_HAVE_FIONREAD)
 #include <sys/ioctl.h>
 #endif
+
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/io/open_flag>
-#include <ostream>
 
 namespace sys {
 

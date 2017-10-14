@@ -1,6 +1,7 @@
 #include "user"
 
 #include <ostream>
+
 #include <unistdx/bits/entity>
 #include <unistdx/config>
 

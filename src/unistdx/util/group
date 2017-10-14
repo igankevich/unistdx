@@ -2,8 +2,10 @@
 #define UNISTDX_UTIL_GROUP
 
 #include <grp.h>
+
 #include <iosfwd>
 #include <string>
+
 #include <unistdx/it/cstring_iterator>
 
 namespace sys {

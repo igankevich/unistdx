@@ -1,11 +1,12 @@
 #ifndef UNISTDX_IPC_SHAREDMEM
 #define UNISTDX_IPC_SHAREDMEM
 
+#include <unistd.h>
+
 #include <algorithm>
 #include <chrono>
 #include <cstring>
 
-#include <unistd.h>
 #include <unistdx/base/make_object>
 #include <unistdx/bits/sharedmem>
 #include <unistdx/base/check>

@@ -1,8 +1,9 @@
 #ifndef UNISTDX_IT_QUEUE_POPPER
 #define UNISTDX_IT_QUEUE_POPPER
 
-#include <unistdx/it/container_traits>
 #include <iterator>
+
+#include <unistdx/it/container_traits>
 
 namespace sys {
 

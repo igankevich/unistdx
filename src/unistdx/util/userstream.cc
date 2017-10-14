@@ -1,4 +1,5 @@
 #include "userstream"
+
 #include <mutex>
 
 namespace {

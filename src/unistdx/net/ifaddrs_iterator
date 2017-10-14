@@ -1,25 +1,29 @@
 #ifndef UNISTDX_NET_IFADDRS_ITERATOR
 #define UNISTDX_NET_IFADDRS_ITERATOR
 
-#include <unistdx/config>
-#if !defined(UNISTDX_HAVE_IFADDRS)
-#error "ifaddrs.h header not found"
-#endif
-#include <ifaddrs.h>
+#include <unistdx/bits/ifaddrs>
 
 namespace sys {
 
 	typedef struct ::ifaddrs ifaddrs_type;
 
-	struct ifaddrs_iterator: public std::iterator<std::input_iterator_tag, ifaddrs_type> {
+	class ifaddrs_iterator:
+		public std::iterator<std::input_iterator_tag, ifaddrs_type> {
 
+	public:
 		typedef ifaddrs_type* pointer;
 		typedef const ifaddrs_type* const_pointer;
 		typedef ifaddrs_type& reference;
 		typedef const ifaddrs_type& const_reference;
 
+	private:
+		pointer _ifa = nullptr;
+
+	public:
+
 		inline explicit constexpr
-		ifaddrs_iterator(pointer rhs) noexcept: _ifa(rhs) {}
+		ifaddrs_iterator(pointer rhs) noexcept:
+		_ifa(rhs) {}
 
 		inline constexpr
 		ifaddrs_iterator() noexcept = default;
@@ -80,7 +84,6 @@ namespace sys {
 			this->_ifa = this->_ifa->ifa_next;
 		}
 
-		pointer _ifa = nullptr;
 	};
 
 

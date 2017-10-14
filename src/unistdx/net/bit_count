@@ -2,6 +2,7 @@
 #define UNISTDX_NET_BIT_COUNT
 
 #include <type_traits>
+
 #include <unistdx/config>
 
 namespace sys {

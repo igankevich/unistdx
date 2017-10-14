@@ -1,10 +1,10 @@
 #ifndef UNISTDX_IPC_ARGSTREAM
 #define UNISTDX_IPC_ARGSTREAM
 
-#include <streambuf>
-#include <vector>
 #include <cassert>
 #include <ostream>
+#include <streambuf>
+#include <vector>
 
 namespace sys {
 

@@ -1,26 +1,25 @@
 #ifndef UNISTDX_BITS_ENTITY
 #define UNISTDX_BITS_ENTITY
 
+#include <grp.h>
+#include <pwd.h>
+#include <unistd.h>
+
+#include <algorithm>
+#include <stdexcept>
+#include <vector>
+
 #include <unistdx/base/check>
 #include <unistdx/config>
 #include <unistdx/util/group>
 #include <unistdx/util/user>
-//#undef UNISTDX_HAVE_GETPWNAM_R
-//#undef UNISTDX_HAVE_GETPWUID_R
-//#undef UNISTDX_HAVE_GETGRNAM_R
-//#undef UNISTDX_HAVE_GETGRGID_R
+
 #if !defined(UNISTDX_HAVE_GETPWUID_R) || \
     !defined(UNISTDX_HAVE_GETPWNAM_R) || \
     !defined(UNISTDX_HAVE_GETGRGID_R) || \
     !defined(UNISTDX_HAVE_GETGRNAM_R)
 #include <mutex>
 #endif
-#include <algorithm>
-#include <grp.h>
-#include <pwd.h>
-#include <stdexcept>
-#include <unistd.h>
-#include <vector>
 
 namespace {
 

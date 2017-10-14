@@ -2,6 +2,7 @@
 #define UNISTDX_NET_IPV4_ADDR
 
 #include <netinet/in.h>
+
 #include <functional>
 #include <iosfwd>
 

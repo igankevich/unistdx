@@ -3,7 +3,6 @@
 #include <gtest/gtest.h>
 #include <queue>
 #include <random>
-#include <unistdx/bits/paired_iterator>
 #include <unistdx/it/queue_popper>
 #include <unistdx/it/queue_pusher>
 #include <vector>

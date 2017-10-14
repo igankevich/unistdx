@@ -1,8 +1,9 @@
 #ifndef UNISTDX_IO_FDSTREAM
 #define UNISTDX_IO_FDSTREAM
 
-#include <unistdx/io/fildesbuf>
 #include <istream>
+
+#include <unistdx/io/fildesbuf>
 
 namespace sys {
 
@@ -16,8 +17,9 @@ namespace sys {
 		inline explicit
 		basic_ifdstream(Fd&& fd):
 		istream_type(nullptr),
-		_fildesbuf(std::move(fd), page_size(), 0)
-		{ this->init(&this->_fildesbuf); }
+		_fildesbuf(std::move(fd), page_size(), 0) {
+			this->init(&this->_fildesbuf);
+		}
 
 		inline void
 		open(fd_type&& rhs) {
@@ -54,14 +56,16 @@ namespace sys {
 		inline
 		basic_ofdstream():
 		ostream_type(nullptr),
-		_fildesbuf()
-		{ this->init(&_fildesbuf); }
+		_fildesbuf() {
+			this->init(&_fildesbuf);
+		}
 
 		inline explicit
 		basic_ofdstream(Fd&& fd):
 		ostream_type(nullptr),
-		_fildesbuf(std::move(fd), 0, page_size())
-		{ this->init(&_fildesbuf); }
+		_fildesbuf(std::move(fd), 0, page_size()) {
+			this->init(&_fildesbuf);
+		}
 
 		inline void
 		open(fd_type&& rhs) {
@@ -98,8 +102,9 @@ namespace sys {
 		inline explicit
 		basic_fdstream(Fd&& fd):
 		iostream_type(nullptr),
-		_fildesbuf(std::move(fd), page_size())
-		{ this->init(&_fildesbuf); }
+		_fildesbuf(std::move(fd), page_size()) {
+			this->init(&_fildesbuf);
+		}
 
 		inline void
 		open(fd_type&& rhs) {

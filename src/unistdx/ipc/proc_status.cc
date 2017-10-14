@@ -1,4 +1,5 @@
 #include "proc_status"
+
 #include <unistdx/base/make_object>
 
 std::ostream&

@@ -2,6 +2,7 @@
 #define UNISTDX_IPC_PROC_STATUS
 
 #include <sys/wait.h>
+
 #include <unistdx/ipc/basic_status>
 #include <unistdx/ipc/signal>
 

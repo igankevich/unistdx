@@ -2,8 +2,10 @@
 #define UNISTDX_FS_DIRENTRY
 
 #include <dirent.h>
+
 #include <cstring>
 #include <ostream>
+
 #include <unistdx/fs/path>
 #include <unistdx/fs/file_stat>
 

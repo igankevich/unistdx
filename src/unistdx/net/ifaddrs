@@ -1,11 +1,7 @@
 #ifndef UNISTDX_NET_IFADDRS
 #define UNISTDX_NET_IFADDRS
 
-#include <unistdx/config>
-#if !defined(UNISTDX_HAVE_IFADDRS)
-#error "ifaddrs.h header not found"
-#endif
-#include <ifaddrs.h>
+#include <unistdx/bits/ifaddrs>
 #include <unistdx/net/ifaddrs_iterator>
 #include <unistdx/net/ifaddr>
 

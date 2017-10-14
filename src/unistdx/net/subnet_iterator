@@ -2,6 +2,7 @@
 #define UNISTDX_NET_SUBNET_ITERATOR
 
 #include <iterator>
+
 #include <unistdx/net/byte_order>
 
 namespace sys {

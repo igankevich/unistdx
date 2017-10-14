@@ -1,8 +1,10 @@
 #ifndef UNISTDX_IPC_SIGNAL
 #define UNISTDX_IPC_SIGNAL
 
-#include <iosfwd>
 #include <signal.h>
+
+#include <iosfwd>
+
 #include <unistdx/base/check>
 #include <unistdx/config>
 

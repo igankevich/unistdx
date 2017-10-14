@@ -1,4 +1,5 @@
 #include "groupstream"
+
 #include <mutex>
 
 namespace {

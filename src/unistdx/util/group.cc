@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <ostream>
+
 #include <unistdx/bits/entity>
 #include <unistdx/config>
 #include <unistdx/it/intersperse_iterator>

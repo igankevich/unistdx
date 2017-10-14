@@ -1,9 +1,9 @@
 #include "pipe"
 
-#include <unistdx/bits/safe_calls>
-#include <unistdx/base/make_object>
-#include <unistdx/config>
 #include <unistdx/base/check>
+#include <unistdx/base/make_object>
+#include <unistdx/bits/safe_calls>
+#include <unistdx/config>
 
 namespace {
 

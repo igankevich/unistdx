@@ -1,4 +1,5 @@
 #include "ifaddr"
+
 #include <unistdx/bits/addr_parse>
 
 namespace {

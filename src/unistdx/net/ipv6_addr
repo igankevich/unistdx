@@ -2,6 +2,7 @@
 #define UNISTDX_NET_IPV6_ADDR
 
 #include <netinet/in.h>
+
 #include <functional>
 #include <iosfwd>
 

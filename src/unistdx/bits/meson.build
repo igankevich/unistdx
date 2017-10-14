@@ -8,6 +8,7 @@ install_headers(
 	'byte_swap_chooser',
 	'entity',
 	'for_each_file_descriptor',
+	'ifaddrs',
 	'make_object',
 	'no_copy_and_move',
 	'octet',
