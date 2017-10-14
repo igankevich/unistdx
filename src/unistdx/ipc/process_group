@@ -34,12 +34,6 @@ namespace sys {
 
 	public:
 
-		template<class ... Args>
-		inline explicit
-		process_group(Args&& ... args) {
-			this->emplace(std::forward<Args>(args)...);
-		}
-
 		process_group() = default;
 		~process_group() = default;
 
@@ -47,26 +41,19 @@ namespace sys {
 
 		template<class F>
 		const process&
-		emplace(F&& childmain) {
+		emplace(F&& childmain, process_flag pf=process_flag::fork) {
 			const bool has_gid = !this->_procs.empty();
 			this->_procs.emplace_back([this,&childmain,has_gid] () {
 				this_process::set_group_id(
 					has_gid ? this->_gid : this_process::id()
 				);
 				return childmain();
-			});
+			}, pf);
 			process& proc = this->_procs.back();
 			if (!has_gid) {
 				this->_gid = proc.id();
 			}
 			return proc;
-		}
-
-		template<class Func, class ... Args>
-		void
-		emplace(Func&& main, Args&& ... args) {
-			this->emplace(std::forward<Func>(main));
-			this->emplace(std::forward<Args>(args)...);
 		}
 
 		int

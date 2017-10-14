@@ -2,9 +2,13 @@
 #define UNISTDX_IPC_PROCESS
 
 #include <unistd.h>
+#if defined(UNISTDX_HAVE_CLONE)
+#include <sched.h>
+#endif
 
 #include <unistdx/base/check>
 #include <unistdx/bits/safe_calls>
+#include <unistdx/config>
 #include <unistdx/ipc/proc_info>
 #include <unistdx/ipc/proc_status>
 #include <unistdx/ipc/signal>
@@ -50,20 +54,53 @@ namespace sys {
 		proc_continued = WCONTINUED
 	};
 
+	enum class process_flag {
+		fork
+		#if defined(UNISTDX_HAVE_CLONE)
+		, wait_for_exec
+		#endif
+	};
+
+	template <class F>
+	int
+	child_main(void* arg) {
+		F* func = reinterpret_cast<F*>(arg);
+		int ret;
+		try {
+			ret = (*func)();
+		} catch (...) {
+			ret = 1;
+		}
+		std::exit(ret);
+	}
+
+
 	struct process {
 
 		template<class F>
 		inline explicit
-		process(F f) {
-			this->_pid = this_process::fork();
-			if (this->_pid == 0) {
-				int ret = 0;
-				try {
-					ret = f();
-				} catch (...) {
-					ret = 1;
+		process(F f, process_flag pf=process_flag::fork) {
+			if (pf == process_flag::fork) {
+				this->_pid = this_process::fork();
+				if (this->_pid == 0) {
+					int ret;
+					try {
+						ret = f();
+					} catch (...) {
+						ret = 1;
+					}
+					std::exit(ret);
 				}
-				std::exit(ret);
+			#if defined(UNISTDX_HAVE_CLONE)
+			} else if (pf == process_flag::wait_for_exec) {
+				char stack[4096] = {0};
+				UNISTDX_CHECK(this->_pid = ::clone(
+					&child_main<F>,
+					stack + sizeof(stack),
+					CLONE_VFORK | SIGCHLD,
+					&f
+				));
+			#endif
 			}
 		}
 

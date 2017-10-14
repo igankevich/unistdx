@@ -131,12 +131,6 @@ endif
 if cpp.has_header_symbol('grp.h', 'getgrgid_r')
 	config.set('UNISTDX_HAVE_GETGRGID_R', true)
 endif
-if cpp.has_argument('-Wall')
-	add_global_arguments('-Wall', language: 'cpp')
-endif
-if cpp.has_argument('-Wextra')
-	add_global_arguments('-Wextra', language: 'cpp')
-endif
 config.set('UNISTDX_VERSION', meson.project_version())
 if cpp.has_header_symbol('sys/mman.h', 'mmap')
 	config.set('UNISTDX_HAVE_MMAP', true)
@@ -152,6 +146,9 @@ if cpp.has_header_symbol('sys/sendfile.h', 'sendfile')
 endif
 if cpp.has_header_symbol('sys/syscall.h', '__NR_copy_file_range')
 	config.set('UNISTDX_HAVE_COPY_FILE_RANGE', true)
+endif
+if cpp.has_header_symbol('sched.h', 'clone')
+	config.set('UNISTDX_HAVE_CLONE', true)
 endif
 # }}}
 
