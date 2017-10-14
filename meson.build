@@ -147,6 +147,12 @@ endif
 if cpp.has_header_symbol('sys/epoll.h', 'epoll_create')
 	config.set('UNISTDX_HAVE_EPOLL', true)
 endif
+if cpp.has_header_symbol('sys/sendfile.h', 'sendfile')
+	config.set('UNISTDX_HAVE_SENDFILE', true)
+endif
+if cpp.has_header_symbol('sys/syscall.h', '__NR_copy_file_range')
+	config.set('UNISTDX_HAVE_COPY_FILE_RANGE', true)
+endif
 # }}}
 
 threads = dependency('threads')

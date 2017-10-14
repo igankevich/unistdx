@@ -1,0 +1,13 @@
+#ifndef UNISTDX_FS_COPY_FILE
+#define UNISTDX_FS_COPY_FILE
+
+#include <unistdx/fs/path>
+
+namespace sys {
+
+	void
+	copy_file(const path& src, const path& dest);
+
+}
+
+#endif // vim:filetype=cpp

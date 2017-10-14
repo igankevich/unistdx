@@ -75,6 +75,9 @@
 
 #mesondefine UNISTDX_HAVE_EPOLL
 
+#mesondefine UNISTDX_HAVE_SENDFILE
+#mesondefine UNISTDX_HAVE_COPY_FILE_RANGE
+
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 
 #endif // vim:filetype=cpp

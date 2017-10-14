@@ -1,8 +1,7 @@
 #ifndef UNISTDX_FS_ODIRECTORY
 #define UNISTDX_FS_ODIRECTORY
 
-#include <fstream>
-
+#include <unistdx/fs/copy_file>
 #include <unistdx/fs/file>
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/idirtree>
@@ -23,6 +22,7 @@ namespace sys {
 
 	public:
 		basic_odirectory() = default;
+
 		~basic_odirectory() = default;
 
 		inline explicit
@@ -30,6 +30,7 @@ namespace sys {
 		_dirpath(dir) {}
 
 		basic_odirectory(basic_odirectory&&) = default;
+
 		basic_odirectory(const basic_odirectory&) = delete;
 
 		inline void
@@ -64,8 +65,8 @@ namespace sys {
 
 		inline basic_odirectory&
 		operator<<(const direntry& rhs) {
-			this->copy_file(
-				rhs.name(),
+			copy_file(
+				path(rhs.name()),
 				path(this->_dirpath, this->_trans(rhs))
 			);
 			return *this;
@@ -75,7 +76,7 @@ namespace sys {
 		operator<<(const pathentry& rhs) {
 			path p(this->_dirpath, this->_trans(rhs));
 			if (get_file_type(rhs) != sys::file_type::directory) {
-				this->copy_file(rhs.getpath(), p);
+				copy_file(rhs.getpath(), p);
 			} else {
 				this->make_directory(p);
 			}
@@ -86,7 +87,7 @@ namespace sys {
 		operator<<(const file& rhs) {
 			path p(this->_dirpath, this->_trans(rhs));
 			if (!rhs.is_directory()) {
-				this->copy_file(rhs, p);
+				copy_file(rhs, p);
 			} else {
 				this->make_directory(p);
 			}
@@ -114,16 +115,12 @@ namespace sys {
 		}
 
 	private:
-		inline void
-		copy_file(const path& src, const path& dest) {
-			// TODO replace with splice for linux
-			std::ofstream(dest) << std::ifstream(src).rdbuf();
-		}
 
 		inline void
 		make_directory(const path& p) {
 			UNISTDX_CHECK(::mkdir(p, 0755));
 		}
+
 	};
 
 	struct copy_verbatim {

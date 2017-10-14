@@ -1,4 +1,5 @@
 libunistdx_src += files([
+	'copy_file.cc',
 	'file_mode.cc',
 	'file_mutex.cc',
 	'file_stat.cc',
@@ -9,6 +10,7 @@ libunistdx_src += files([
 
 install_headers(
 	'canonical_path',
+	'copy_file',
 	'directory',
 	'direntry',
 	'dirstream',
