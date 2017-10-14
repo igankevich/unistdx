@@ -65,19 +65,24 @@ sys::copy_file(const path& src, const path& dest) {
 	while ((n = ::copy_file_range(ifd, nullptr, ofd, nullptr, size, 0)) > 0) {
 		size -= n;
 	}
+	if (size != 0) {
+		if (errno != EXDEV && errno != EBADF && errno != ENOSYS) {
+			UNISTDX_THROW_BAD_CALL();
+		}
+		std::ofstream(dest) << std::ifstream(src).rdbuf();
+	}
 	#elif defined(UNISTDX_HAVE_SENDFILE)
 	offset_type offset = 0;
 	while ((n = ::sendfile(ofd, ifd, &offset, size)) > 0) {
 		size -= n;
 	}
-	#endif
 	if (size != 0) {
 		if (errno != EINVAL && errno != ENOSYS) {
 			UNISTDX_THROW_BAD_CALL();
-		} else {
-			std::ofstream(dest) << std::ifstream(src).rdbuf();
 		}
+		std::ofstream(dest) << std::ifstream(src).rdbuf();
 	}
+	#endif
 	#else
 	std::ofstream(dest) << std::ifstream(src).rdbuf();
 	#endif // if defined(UNISTDX_HAVE_SENDFILE) ||
