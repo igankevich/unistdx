@@ -1,0 +1,108 @@
+#ifndef UNISTDX_IO_FILDES_PAIR
+#define UNISTDX_IO_FILDES_PAIR
+
+#include <unistdx/io/fildes>
+#include <unistdx/io/pipe>
+#include <unistdx/io/two_way_pipe>
+
+namespace sys {
+
+	class fildes_pair {
+
+	private:
+		fildes _in, _out;
+
+	public:
+
+		fildes_pair() = default;
+
+		~fildes_pair() = default;
+
+		inline
+		fildes_pair(fildes&& in, fildes&& out):
+		_in(std::move(in)),
+		_out(std::move(out))
+		{}
+
+		inline explicit
+		fildes_pair(pipe&& pipe):
+		_in(std::move(pipe.in())),
+		_out(std::move(pipe.out()))
+		{}
+
+		inline explicit
+		fildes_pair(two_way_pipe&& pipe):
+		_in(std::move(pipe.in())),
+		_out(std::move(pipe.out()))
+		{}
+
+		inline
+		fildes_pair(fildes_pair&& rhs):
+		_in(std::move(rhs._in)),
+		_out(std::move(rhs._out))
+		{}
+
+		inline fildes_pair&
+		operator=(fildes_pair&& rhs) {
+			this->_in = std::move(rhs._in);
+			this->_out = std::move(rhs._out);
+			return *this;
+		}
+
+		fildes_pair&
+		operator=(fildes_pair& rhs) = delete;
+
+		inline fildes&
+		in() noexcept {
+			return this->_in;
+		}
+
+		inline fildes&
+		out() noexcept {
+			return this->_out;
+		}
+
+		inline const fildes&
+		in() const noexcept {
+			return this->_in;
+		}
+
+		inline const fildes&
+		out() const noexcept {
+			return this->_out;
+		}
+
+		inline void
+		close() {
+			this->_in.close();
+			this->_out.close();
+		}
+
+	};
+
+	template<>
+	struct streambuf_traits<fildes_pair> {
+
+		typedef char char_type;
+		typedef streambuf_traits<sys::fildes> fildes_traits;
+
+		inline static std::streamsize
+		write(fildes_pair& sink, const char_type* s, std::streamsize n) {
+			return fildes_traits::write(sink.out(), s, n);
+		}
+
+		inline static std::streamsize
+		read(fildes_pair& src, char_type* s, std::streamsize n) {
+			return fildes_traits::read(src.in(), s, n);
+		}
+
+		inline static std::streamsize
+		in_avail(fildes_pair& rhs) {
+			return fildes_traits::in_avail(rhs.in());
+		}
+
+	};
+
+}
+
+#endif // vim:filetype=cpp

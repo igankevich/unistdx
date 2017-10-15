@@ -10,6 +10,7 @@ install_headers(
 	'epoll_event',
 	'fdstream',
 	'fildes',
+	'fildes_pair',
 	'fildesbuf',
 	'open_flag',
 	'pipe',

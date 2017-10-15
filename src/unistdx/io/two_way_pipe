@@ -14,8 +14,11 @@ namespace sys {
 		{}
 
 		~two_way_pipe() = default;
+
 		two_way_pipe(const two_way_pipe&) = delete;
+
 		two_way_pipe(two_way_pipe&&) = default;
+
 		two_way_pipe&
 		operator=(two_way_pipe&) = delete;
 
@@ -62,6 +65,26 @@ namespace sys {
 		inline bool
 		is_owner() const noexcept {
 			return sys::this_process::id() == this->_owner;
+		}
+
+		inline fildes&
+		in() noexcept {
+			return this->is_owner() ? this->parent_in() : this->child_in();
+		}
+
+		inline fildes&
+		out() noexcept {
+			return this->is_owner() ? this->parent_out() : this->child_out();
+		}
+
+		inline const fildes&
+		in() const noexcept {
+			return this->is_owner() ? this->parent_in() : this->child_in();
+		}
+
+		inline const fildes&
+		out() const noexcept {
+			return this->is_owner() ? this->parent_out() : this->child_out();
 		}
 
 		void
