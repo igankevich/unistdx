@@ -5,7 +5,10 @@
 #include <unistdx/bits/uint128_parse>
 #include <unistdx/config>
 
-#if defined(UNISTDX_HAVE_INT128)
+#if !defined(UNISTDX_HAVE_INT128)
+#error __int128 builtin type is missing
+#endif
+
 namespace sys {
 	typedef unsigned __int128 uint128_t;
 	typedef uint128_t u128;
@@ -34,13 +37,6 @@ namespace std {
 	}
 
 }
-#else
-#include <unistdx/bits/basic_uint>
-namespace sys {
-	typedef bits::basic_uint<u64> uint128_t;
-	typedef uint128_t u128;
-}
-#endif
 
 namespace std {
 

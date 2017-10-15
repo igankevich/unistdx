@@ -229,17 +229,6 @@ test(
 )
 
 test(
-	'base/uint128-emulate',
-	executable(
-		'uint128-emulate-test',
-		sources: 'uint128_test.cc',
-		cpp_args: '-DUNISTDX_TEST_FORCE_CUSTOM_UINT128',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
 	'it/queue_pusher',
 	executable(
 		'queue-pusher-test',
