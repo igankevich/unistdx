@@ -145,12 +145,12 @@ namespace sys {
 			return ret;
 		}
 
-		inline int
+		inline std::streamsize
 		pubflush() {
 			return this->flush();
 		}
 
-		inline int
+		inline std::streamsize
 		pubfill() {
 			return this->fill();
 		}
@@ -236,7 +236,7 @@ namespace sys {
 				this->_name,
 				"flush _,remaining=_,state=_",
 				n,
-				m-n,
+				pptr()-pbase(),
 				strerror(errno)
 			);
 			#endif

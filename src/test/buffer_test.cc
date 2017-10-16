@@ -5,12 +5,14 @@
 #include <random>
 #include <unistdx/io/fdstream>
 #include <unistdx/io/fildesbuf>
+#include <unistdx/net/bytes>
 #include <unistdx/net/pstream>
 #include <vector>
 
 #include "datum.hh"
 #include "make_types.hh"
 #include "random_buffer.hh"
+#include "kernelbuf.hh"
 
 template <class T>
 struct BufferTest: public ::testing::Test {
@@ -43,7 +45,13 @@ TYPED_TEST(BufferTest, FdStream) {
 		std::basic_string<T> expected_contents = this->random_string(k);
 		stream_type s {sink_type {}};
 		s << expected_contents;
-		while (s.fdbuf().pubflush() > 0) {}
+		while (s.fdbuf().dirty()) {
+			s.fdbuf().pubflush();
+		}
+		std::streamsize nread = 0;
+		do {
+			nread += s.fdbuf().pubfill();
+		} while (nread < k);
 		std::basic_stringstream<T> contents;
 		contents << s.rdbuf();
 		std::basic_string<T> result = contents.str();
@@ -60,23 +68,23 @@ TYPED_TEST(BufferTest, FildesBuf) {
 	typedef Fd sink_type;
 
 	for (std::streamsize k : this->_sizes) {
+		std::clog << "Test size=" << k << std::endl;
 		std::basic_string<T> contents = this->random_string(k);
 		packetbuf_type buf(sink_type {});
 		std::basic_ostream<T> out(&buf);
 		buf.begin_packet();
 		out << contents;
 		buf.end_packet();
-		while (buf.pubflush() > 0) {}
+		while (buf.dirty()) {
+			buf.pubflush();
+		}
 		std::basic_istream<T> in(&buf);
 		std::basic_string<T> result(k, '_');
-		while (buf.pubfill() > 0) {}
-		buf.read_packet();
+		std::streamsize nread = 0;
+		do {
+			nread += buf.pubfill();
+		} while (nread < k);
 		in.read(&result[0], k);
-		if (in.gcount() < k) {
-			in.clear();
-			buf.read_packet();
-			in.read(&result[0], k);
-		}
 		EXPECT_EQ(result, contents);
 	}
 }
@@ -88,13 +96,16 @@ TYPED_TEST(BufferTest, PacketStream) {
 	typedef test::random_buffer Fd;
 	typedef Fd sink_type;
 	typedef sys::basic_fildesbuf<T,Tr,Fd> basebuf;
+	typedef test::basic_kernelbuf<basebuf> basebuf2;
+	typedef typename basebuf::ipacket_guard ipacket_guard;
 
 	for (std::streamsize size : this->_sizes) {
 
 		std::vector<Datum> input(size);
 		std::vector<Datum> output(size);
 
-		basebuf buf {sink_type {}};
+		basebuf2 buf;
+		buf.setfd(sink_type());
 		sys::basic_pstream<T> str(&buf);
 
 		std::for_each(
@@ -106,18 +117,29 @@ TYPED_TEST(BufferTest, PacketStream) {
 			    str.end_packet();
 			}
 		);
-		while (buf.pubflush() > 0) {}
+		while (buf.dirty()) {
+			buf.pubflush();
+		}
 
-		while (buf.pubfill() > 0) {}
+		int i = 1;
 		std::for_each(
 			output.begin(),
 			output.end(),
-			[&str] (Datum& rhs) {
-			    str.read_packet();
+			[&] (Datum& rhs) {
+				while (!buf.read_packet()) {
+					buf.pubfill();
+				}
+				ipacket_guard g(&buf);
 			    str >> rhs;
+				++i;
 			}
 		);
 
-		EXPECT_EQ(input, output);
+		for (int j=0; j<input.size(); ++j) {
+			EXPECT_EQ(
+				sys::make_bytes(input[j]),
+				sys::make_bytes(output[j])
+			) << "packet #" << (j+1);
+		}
 	}
 }

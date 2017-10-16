@@ -36,6 +36,12 @@ namespace test {
 		_engine()
 		{}
 
+		random_buffer&
+		operator=(random_buffer&& rhs) {
+			std::stringbuf::operator=(std::move(rhs));
+			return *this;
+		}
+
 		inline bool
 		dirty() const noexcept {
 			return this->pptr() != this->pbase();
@@ -48,8 +54,11 @@ namespace test {
 			if (n == 0) {
 				return 0;
 			}
-			dist_type dist(1, std::min(std::streamsize(65536), n));
+			dist_type dist(0, std::min(std::streamsize(65536), n));
 			std::streamsize nbytes = dist(this->_engine);
+			if (nbytes == 0) {
+				return -1;
+			}
 			sys::log_message("tst", "get [_/_]", nbytes, n);
 			return std::stringbuf::xsgetn(s, nbytes);
 		}
@@ -59,8 +68,11 @@ namespace test {
 			if (n == 0) {
 				return 0;
 			}
-			dist_type dist(1, std::min(std::streamsize(65536), n));
+			dist_type dist(0, std::min(std::streamsize(65536), n));
 			std::streamsize nbytes = dist(this->_engine);
+			if (nbytes == 0) {
+				return -1;
+			}
 			sys::log_message("tst", "put [_/_]", nbytes, n);
 			return std::stringbuf::xsputn(s, nbytes);
 		}
