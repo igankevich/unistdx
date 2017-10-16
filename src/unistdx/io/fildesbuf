@@ -11,18 +11,20 @@
 #include <unistdx/util/system>
 
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-#include <string.h>
 #include <unistdx/base/log_message>
 #endif
 
 namespace sys {
 
+	/**
+	\see fildes, fildes_pair, socket
+	*/
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
 	class basic_fildesbuf: public virtual basic_packetbuf<Ch,Tr> {
 
 	private:
 		typedef basic_packetbuf<Ch,Tr> base_type;
-		typedef streambuf_traits<Fd> streambuf_traits_type;
+		typedef streambuf_traits<Fd> straits_type;
 		typedef std::ios_base::openmode openmode;
 		typedef std::ios_base::seekdir seekdir;
 		typedef byte_buffer buffer_type;
@@ -110,10 +112,10 @@ namespace sys {
 
 		std::streamsize
 		xsgetn(char_type* s, std::streamsize n) override {
-			while (this->egptr() - this->gptr() < n && this->fill() > 0) {}
-			const std::streamsize m = std::min(n, this->egptr() - this->gptr());
-			traits_type::copy(s, this->gptr(), m);
-			this->gbump(m);
+			while (available() < n && fill() > 0) {}
+			const std::streamsize m = std::min(n, available());
+			traits_type::copy(s, gptr(), m);
+			gbump(m);
 			return m;
 		}
 
@@ -157,7 +159,7 @@ namespace sys {
 
 		std::streamsize
 		showmanyc() override {
-			return streambuf_traits_type::in_avail(this->_fd);
+			return straits_type::in_avail(this->_fd);
 		}
 
 		inline void
@@ -180,25 +182,44 @@ namespace sys {
 			this->_fd.close();
 		}
 
+		inline void
+		compact() {
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
+			this->log("compact");
+			#endif
+			// reset gbuf if it was fully read
+			if (gptr() != egptr()) {
+				const std::streamsize n = available();
+				traits_type::move(eback(), gptr(), n);
+				setg(eback(), eback(), eback() + n);
+			} else {
+				this->reset_gbuf();
+			}
+		}
+
+		inline std::streamsize
+		remaining() const noexcept {
+			return this->pptr() - this->pbase();
+		}
+
+		inline std::streamsize
+		available() const noexcept {
+			return this->egptr() - this->gptr();
+		}
+
 	private:
 
 		inline std::streamsize
 		fill() {
-			// reset gbuf if it was fully read
-			if (gptr() == egptr()) {
-				this->reset_gbuf();
-			}
-			// TODO 2016-03-09 this is not optimal solution,
-			// but i don't know a better alternative
 			const std::streamsize old_egptr_offset = egptr() - eback();
 			if (egptr() == glast()) {
 				ggrow();
 			}
 			char_type* first = egptr();
 			char_type* last = glast();
+			assert(first != last);
 			std::streamsize n = 0;
-			while ((n = streambuf_traits_type::read(_fd, first, last-first)) >
-			       0) {
+			while ((n = straits_type::read(_fd, first, last-first)) > 0) {
 				first += n;
 				setg(eback(), gptr(), first);
 				if (first == last) {
@@ -209,21 +230,17 @@ namespace sys {
 			}
 			std::streamsize ret = first - (eback() + old_egptr_offset);
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message(this->_name, "fill _, state=_", ret, strerror(errno));
+			this->log("fill _, n=_", ret, n);
 			#endif
 			return ret;
 		}
 
 		inline std::streamsize
 		flush() {
-			const std::streamsize m = pptr() - pbase();
+			const std::streamsize m = this->remaining();
 			if (m == 0) return 0;
 			const std::streamsize n =
-				streambuf_traits_type::write(
-					this->_fd,
-					pbase(),
-					m
-				);
+				straits_type::write(this->_fd, pbase(), m);
 			const bool success = n==m;
 			if (success) {
 				this->reset_pbuf();
@@ -232,13 +249,7 @@ namespace sys {
 				pbump(m-n);
 			}
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message(
-				this->_name,
-				"flush _,remaining=_,state=_",
-				n,
-				pptr()-pbase(),
-				strerror(errno)
-			);
+			this->log("flush _, remaining=_", n, remaining());
 			#endif
 			return n==-1 ? 0 : n;
 		}
@@ -247,9 +258,6 @@ namespace sys {
 		reset_gbuf() {
 			char_type* g = this->gfirst();
 			setg(g, g, g);
-			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message(this->_name, "reset gptr");
-			#endif
 		}
 
 		void
@@ -272,6 +280,9 @@ namespace sys {
 			const off_type gptr_offset = gptr()-eback();
 			const off_type egptr_offset = egptr()-eback();
 			this->_gbuf.grow();
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
+			this->log("ggrow size=_", this->_gbuf.size());
+			#endif
 			char_type* base = this->gfirst();
 			setg(base, base + gptr_offset, base + egptr_offset);
 			assert(gptr() - eback() == gptr_offset);
@@ -292,7 +303,7 @@ namespace sys {
 		pgrow(std::streamsize new_size) {
 			assert(new_size > std::streamsize(this->_pbuf.size()));
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-			sys::log_message(this->_name, "pgrow size=_", new_size);
+			this->log("pgrow size=_", new_size);
 			#endif
 			const off_type pptr_offset = pptr() - pbase();
 			const off_type pbase_offset = pbase() - pfirst();
@@ -306,6 +317,12 @@ namespace sys {
 		inline void
 		pgrow() {
 			this->pgrow(this->_pbuf.size() * 2);
+		}
+
+		template <class ... Args>
+		inline void
+		log(const Args& ... args) const {
+			log_message(this->_name, args ...);
 		}
 
 	};

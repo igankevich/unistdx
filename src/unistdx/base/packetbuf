@@ -155,9 +155,19 @@ namespace sys {
 			}
 		}
 
-		bool
+		inline bool
 		dirty() const noexcept {
 			return this->pptr() != this->pbase();
+		}
+
+		inline std::streamsize
+		remaining() const noexcept {
+			return this->pptr() - this->pbase();
+		}
+
+		inline std::streamsize
+		available() const noexcept {
+			return this->egptr() - this->gptr();
 		}
 
 		/// Get pointer offset within the payload.
@@ -174,6 +184,11 @@ namespace sys {
 			this->_name = rhs;
 		}
 		#endif
+
+		inline bool
+		is_safe_to_compact() const noexcept {
+			return this->_state == state_type::initial;
+		}
 
 	protected:
 
@@ -320,6 +335,9 @@ namespace sys {
 		getheader() {
 			std::streamsize hs = 0;
 			std::streamsize payload_size = 0;
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
+			sys::log_message(this->_name, "available _", available());
+			#endif
 			if (this->xgetheader(hs, payload_size)) {
 				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 				sys::log_message(this->_name, "_ hs=_,ps=_", __func__, hs, payload_size);
