@@ -150,6 +150,9 @@ endif
 if cpp.has_header_symbol('sched.h', 'clone')
 	config.set('UNISTDX_HAVE_CLONE', true)
 endif
+if cpp.has_header_symbol('sys/prctl.h', 'prctl')
+	config.set('UNISTDX_HAVE_PRCTL', true)
+endif
 # }}}
 
 threads = dependency('threads')

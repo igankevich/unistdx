@@ -80,6 +80,8 @@
 
 #mesondefine UNISTDX_HAVE_CLONE
 
+#mesondefine UNISTDX_HAVE_PRCTL
+
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 
 #endif // vim:filetype=cpp

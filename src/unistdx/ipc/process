@@ -1,14 +1,18 @@
 #ifndef UNISTDX_IPC_PROCESS
 #define UNISTDX_IPC_PROCESS
 
+#include <unistdx/config>
+
 #include <unistd.h>
 #if defined(UNISTDX_HAVE_CLONE)
 #include <sched.h>
 #endif
+#if defined(UNISTDX_HAVE_PRCTL)
+#include <sys/prctl.h>
+#endif
 
 #include <unistdx/base/check>
 #include <unistdx/bits/safe_calls>
-#include <unistdx/config>
 #include <unistdx/ipc/proc_info>
 #include <unistdx/ipc/proc_status>
 #include <unistdx/ipc/signal>
@@ -45,6 +49,20 @@ namespace sys {
 		set_group_id(pid_type rhs) {
 			UNISTDX_CHECK(::setpgid(::sys::this_process::id(), rhs));
 		}
+
+		#if defined(UNISTDX_HAVE_PRCTL)
+		inline void
+		set_name(const char* name) {
+			UNISTDX_CHECK(::prctl(PR_SET_NAME, name));
+		}
+
+		inline std::string
+		name() {
+			std::string nm(16, '\0');
+			UNISTDX_CHECK(::prctl(PR_GET_NAME, nm.data()));
+			return nm;
+		}
+		#endif
 
 	}
 
