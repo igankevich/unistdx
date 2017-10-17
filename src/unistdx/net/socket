@@ -146,6 +146,16 @@ namespace sys {
 			return ::recvmsg(this->_fd, hdr, flags);
 		}
 
+		inline ssize_t
+		receive(void* buf, size_t n, int flags=0) const noexcept {
+			return ::recv(this->_fd, buf, n, flags);
+		}
+
+		inline ssize_t
+		send(const void* buf, size_t n, int flags=0) const noexcept {
+			return ::send(this->_fd, buf, n, flags);
+		}
+
 		#if defined(UNISTDX_HAVE_SO_PEERCRED)
 		user_credentials
 		credentials() const;
@@ -180,9 +190,21 @@ namespace sys {
 	#endif
 
 	template<>
-	struct streambuf_traits<sys::socket>:
-		public sys::fildes_streambuf_traits<sys::socket>
-	{};
+	struct streambuf_traits<socket> {
+
+		typedef void char_type;
+
+		inline static std::streamsize
+		write(socket& sink, const char_type* s, std::streamsize n) {
+			return sink.send(s, n);
+		}
+
+		inline static std::streamsize
+		read(socket& src, char_type* s, std::streamsize n) {
+			return src.receive(s, n);
+		}
+
+	};
 
 }
 
