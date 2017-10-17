@@ -157,11 +157,6 @@ namespace sys {
 			return this->fill();
 		}
 
-		std::streamsize
-		showmanyc() override {
-			return straits_type::in_avail(this->_fd);
-		}
-
 		inline void
 		setfd(fd_type&& rhs) {
 			this->_fd = std::move(rhs);
