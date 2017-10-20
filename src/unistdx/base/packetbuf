@@ -190,6 +190,59 @@ namespace sys {
 			return this->_state == state_type::initial;
 		}
 
+		inline char_type*
+		ipacket_begin() noexcept {
+			return this->eback() + this->_ipacketpos;
+		}
+
+		inline const char_type*
+		ipacket_begin() const noexcept {
+			return this->eback() + this->_ipacketpos;
+		}
+
+		inline char_type*
+		ipacket_end() noexcept {
+			return this->ipacket_begin() + this->_ipacketsize;
+		}
+
+		inline const char_type*
+		ipacket_end() const noexcept {
+			return this->ipacket_begin() + this->_ipacketsize;
+		}
+
+		/// The size of the incoming packet.
+		inline std::streamsize
+		ipacketsize() const noexcept {
+			return this->_ipacketsize;
+		}
+
+		inline char_type*
+		ipayload_begin() noexcept {
+			return this->eback() + this->_ipayloadpos;
+		}
+
+		inline const char_type*
+		ipayload_begin() const noexcept {
+			return this->eback() + this->_ipayloadpos;
+		}
+
+		inline char_type*
+		ipayload_end() noexcept {
+			return this->ipayload_begin() + this->ipayloadsize();
+		}
+
+		inline const char_type*
+		ipayload_end() const noexcept {
+			return this->ipayload_begin() + this->ipayloadsize();
+		}
+
+		/// The size of the incoming packet payload.
+		inline std::streamsize
+		ipayloadsize() const noexcept {
+			return this->_ipacketsize - (this->_ipayloadpos -
+			                             this->_ipacketpos);
+		}
+
 	protected:
 
 		virtual void
@@ -221,50 +274,14 @@ namespace sys {
 			return this->_state;
 		}
 
-		inline char_type*
-		ipayload_begin() noexcept {
-			return this->eback() + this->_ipayloadpos;
-		}
-
-		inline const char_type*
-		ipayload_begin() const noexcept {
-			return this->eback() + this->_ipayloadpos;
-		}
-
-		inline char_type*
-		ipayload_end() noexcept {
-			return this->ipayload_begin() + this->ipayloadsize();
-		}
-
 		inline off_type
 		ipayloadpos() const noexcept {
 			return this->_ipayloadpos;
 		}
 
-		inline std::streamsize
-		ipayloadsize() const noexcept {
-			return this->_ipacketsize - (this->_ipayloadpos -
-			                             this->_ipacketpos);
-		}
-
-		inline char_type*
-		ipacket_begin() const noexcept {
-			return this->eback() + this->_ipacketpos;
-		}
-
-		inline char_type*
-		ipacket_end() const noexcept {
-			return this->ipacket_begin() + this->_ipacketsize;
-		}
-
 		inline off_type
 		ipacketpos() const noexcept {
 			return this->_ipacketpos;
-		}
-
-		inline std::streamsize
-		ipacketsize() const noexcept {
-			return this->_ipacketsize;
 		}
 
 		inline char_type*
