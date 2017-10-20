@@ -227,6 +227,16 @@ namespace sys {
 		}
 
 		inline char_type*
+		ipayload_cur() noexcept {
+			return this->gptr();
+		}
+
+		inline const char_type*
+		ipayload_cur() const noexcept {
+			return this->gptr();
+		}
+
+		inline char_type*
 		ipayload_end() noexcept {
 			return this->ipayload_begin() + this->ipayloadsize();
 		}
@@ -241,6 +251,17 @@ namespace sys {
 		ipayloadsize() const noexcept {
 			return this->_ipacketsize - (this->_ipayloadpos -
 			                             this->_ipacketpos);
+		}
+
+		inline void
+		seek_ipayloadpos(off_type off) noexcept {
+			assert(this->eback() <= this->ipayload_begin() + off);
+			assert(this->ipayload_begin() + off <= this->egptr());
+			this->setg(
+				this->eback(),
+				this->ipayload_begin() + off,
+				this->egptr()
+			);
 		}
 
 	protected:
@@ -326,17 +347,6 @@ namespace sys {
 			this->_ipacketsize = n;
 			assert(this->_ipacketpos <= this->_ipayloadpos);
 			assert(this->_ipayloadpos <= this->_ipacketpos + n);
-		}
-
-		inline void
-		seek_ipayloadpos(off_type off) noexcept {
-			assert(this->eback() <= this->ipayload_begin() + off);
-			assert(this->ipayload_begin() + off <= this->egptr());
-			this->setg(
-				this->eback(),
-				this->ipayload_begin() + off,
-				this->egptr()
-			);
 		}
 
 		template<class Ch1, class Tr1>

@@ -191,13 +191,15 @@ namespace sys {
 		}
 
 		inline basic_pstream&
-		write(const Ch* buf, std::streamsize n) {
+		write(const char_type* buf, std::streamsize n) {
+			assert(n == 0 || (buf && n > 0));
 			this->_buf->sputn(buf, n);
 			return *this;
 		}
 
 		inline basic_pstream&
-		read(Ch* buf, std::streamsize n) {
+		read(char_type* buf, std::streamsize n) {
+			assert(n == 0 || (buf && n > 0));
 			this->_buf->sgetn(buf, n);
 			return *this;
 		}

@@ -21,6 +21,11 @@ namespace sys {
 
 	typedef ::pid_t pid_type;
 
+	inline void
+	send(signal s, pid_type p) {
+		UNISTDX_CHECK(::kill(p, signal_type(s)));
+	}
+
 	namespace this_process {
 
 		inline pid_type
