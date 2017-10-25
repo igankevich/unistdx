@@ -102,6 +102,17 @@ namespace sys {
 			return this->mode(otherbits);
 		}
 
+		inline bool
+		operator==(const file_mode& rhs) const noexcept {
+			return this->_mode == rhs._mode;
+		}
+
+		inline bool
+		operator!=(const file_mode& rhs) const noexcept {
+			return !this->operator==(rhs);
+		}
+
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const file_mode& rhs);
 

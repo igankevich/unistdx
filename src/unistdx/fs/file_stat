@@ -73,7 +73,7 @@ namespace sys {
 
 		inline file_mode
 		mode() const noexcept {
-			return file_mode(this->st_mode);
+			return file_mode(this->st_mode & file_mode::mode_mask);
 		}
 
 		inline uid_type
