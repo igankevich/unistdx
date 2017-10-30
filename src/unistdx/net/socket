@@ -137,13 +137,13 @@ namespace sys {
 		}
 
 		inline ssize_t
-		send(const message_header* hdr, int flags=0) const noexcept {
-			return ::sendmsg(this->_fd, hdr, flags);
+		send(const message_header& hdr, int flags=0) const noexcept {
+			return ::sendmsg(this->_fd, &hdr, flags);
 		}
 
 		inline ssize_t
-		receive(message_header* hdr, int flags=0) const noexcept {
-			return ::recvmsg(this->_fd, hdr, flags);
+		receive(message_header& hdr, int flags=0) const noexcept {
+			return ::recvmsg(this->_fd, &hdr, flags);
 		}
 
 		inline ssize_t
@@ -160,6 +160,14 @@ namespace sys {
 		user_credentials
 		credentials() const;
 
+		#endif
+
+		#if defined(UNISTDX_HAVE_SCM_RIGHTS)
+		void
+		send_fds(const sys::fd_type* data, size_t n);
+
+		void
+		receive_fds(sys::fd_type* data, size_t n);
 		#endif
 
 		friend std::ostream&

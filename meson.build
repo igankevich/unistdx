@@ -64,6 +64,9 @@ endif
 if cpp.has_header_symbol('sys/socket.h', 'SCM_CREDENTIALS')
 	config.set('UNISTDX_HAVE_SCM_CREDENTIALS', true)
 endif
+if cpp.has_header_symbol('sys/socket.h', 'SCM_RIGHTS')
+	config.set('UNISTDX_HAVE_SCM_RIGHTS', true)
+endif
 if cpp.has_header_symbol('sys/socket.h', 'SO_PEERCRED')
 	config.set('UNISTDX_HAVE_SO_PEERCRED', true)
 endif

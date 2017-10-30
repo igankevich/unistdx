@@ -31,6 +31,13 @@ namespace {
 			   : std::make_error_code(std::errc(errno)).message();
 	}
 
+	template <class T>
+	struct default_free {
+		inline void operator()(T* ptr) {
+			::free(ptr);
+		}
+	};
+
 }
 
 sys::socket::socket(const endpoint& bind_addr) {
@@ -248,4 +255,61 @@ sys::socket::credentials() const {
 	return uc;
 }
 
+#endif
+
+#if defined(UNISTDX_HAVE_SCM_RIGHTS)
+union fds_message {
+	sys::cmessage_header h;
+	char bytes[CMSG_SPACE(64*sizeof(sys::fd_type))];
+};
+
+void
+sys::socket::send_fds(const sys::fd_type* data, size_t n) {
+	if (n > 64) {
+		throw std::invalid_argument("too many fds to sent");
+	}
+	char dummy[1] = {0};
+	const size_t size = n*sizeof(sys::fd_type);
+	fds_message m;
+	m.h.cmsg_len = CMSG_LEN(size);
+	m.h.cmsg_level = SOL_SOCKET;
+	m.h.cmsg_type = SCM_RIGHTS;
+	message_header h;
+	h.msg_control = m.bytes;
+	h.msg_controllen = CMSG_SPACE(size);
+	io_vector v {dummy, 1};
+	h.msg_iov = &v;
+	h.msg_iovlen = 1;
+	h.msg_name = nullptr;
+	h.msg_namelen = 0;
+	sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
+	std::copy_n(data, n, fds);
+	UNISTDX_CHECK(this->send(h, 0));
+}
+
+void
+sys::socket::receive_fds(sys::fd_type* data, size_t n) {
+	if (n > 64) {
+		throw std::invalid_argument("too many fds to receive");
+	}
+	const size_t size = n*sizeof(sys::fd_type);
+	char dummy[1] = {0};
+	io_vector v {dummy, 1};
+	fds_message m;
+	m.h.cmsg_len = CMSG_LEN(size);
+	m.h.cmsg_level = 0;
+	m.h.cmsg_type = 0;
+	message_header h;
+	h.msg_control = m.bytes;
+	h.msg_controllen = CMSG_SPACE(size);
+	h.msg_iov = &v;
+	h.msg_iovlen = 1;
+	h.msg_name = nullptr;
+	h.msg_namelen = 0;
+	UNISTDX_CHECK(this->receive(h))
+	if (m.h.cmsg_level == SOL_SOCKET && m.h.cmsg_type == SCM_RIGHTS) {
+		sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
+		std::copy_n(fds, n, data);
+	}
+}
 #endif
