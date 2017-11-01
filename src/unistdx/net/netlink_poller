@@ -1,0 +1,197 @@
+#ifndef UNISTDX_NET_NETLINK_POLLER
+#define UNISTDX_NET_NETLINK_POLLER
+
+#include <unistdx/config>
+#include <unistdx/io/poller>
+#include <unistdx/net/socket>
+
+#if !defined(UNISTDX_HAVE_NETLINK)
+#error netlink.h is required to use netlink
+#endif
+
+#include <linux/netlink.h>
+#include <linux/rtnetlink.h>
+
+namespace sys {
+
+	typedef int netlink_family;
+
+	enum class netlink_message_type: u16 {
+		noop = NLMSG_NOOP,
+		error = NLMSG_ERROR,
+		done = NLMSG_DONE,
+		overrun = NLMSG_OVERRUN
+	};
+
+	class netlink_header: public ::nlmsghdr {
+
+	public:
+
+		inline u32
+		length() const noexcept {
+			return this->nlmsg_len;
+		}
+
+		inline netlink_message_type
+		type() const noexcept {
+			return netlink_message_type(this->nlmsg_type);
+		}
+
+		inline u16
+		flags() const noexcept {
+			return this->nlmsg_flags;
+		}
+
+		inline u32
+		sequence() const noexcept {
+			return this->nlmsg_seq;
+		}
+
+		inline u32
+		port() const noexcept {
+			return this->nlmsg_pid;
+		}
+
+		inline bool
+		noop() const noexcept {
+			return this->type() == netlink_message_type::noop;
+		}
+
+		inline bool
+		done() const noexcept {
+			return this->type() == netlink_message_type::done;
+		}
+
+		inline bool
+		error() const noexcept {
+			return this->type() == netlink_message_type::error;
+		}
+
+		inline bool
+		overrun() const noexcept {
+			return this->type() == netlink_message_type::overrun;
+		}
+
+		inline bool
+		ok(int len) {
+			return NLMSG_OK(this, len);
+		}
+
+		inline netlink_header*
+		next(int len) noexcept {
+			return static_cast<netlink_header*>(NLMSG_NEXT(this, len));
+		}
+
+		inline int
+		payload_length(int len) const noexcept {
+			return NLMSG_PAYLOAD(this, len);
+		}
+
+		template <class Func>
+		void
+		for_each_message(int len, Func func) {
+			netlink_header* msg = this;
+			while (msg->ok(len) && !msg->done()) {
+				func(*msg);
+				msg = msg->next(len);
+			}
+		}
+
+	};
+
+	class rtattributes: public ::rtattr {
+
+	public:
+
+		inline bool
+		ok(int len) {
+			return RTA_OK(this, len);
+		}
+
+		inline rtattributes*
+		next(int len) noexcept {
+			return static_cast<rtattributes*>(RTA_NEXT(this, len));
+		}
+
+	};
+
+	class ifaddr_message: public ::ifaddrmsg {
+
+	public:
+
+		inline rtattributes*
+		get_route_attributes() noexcept {
+			return IFA_RTA(this);
+		}
+
+		inline int
+		payload_length() const noexcept {
+			return IFA_PAYLOAD(this);
+		}
+
+		template <class Func>
+		void
+		for_each_attribute(Func func) {
+			rtattributes* attrs = this->get_route_attributes();
+			const int len = this->payload_length();
+			while (len && attrs->ok(len)) {
+				func(*attrs);
+				attrs = attrs->next(len);
+			}
+		}
+
+	};
+
+	class rtnetlink_header: public netlink_header {
+
+	public:
+
+		inline bool
+		new_address() const noexcept {
+			return this->type() == netlink_message_type(RTM_NEWADDR);
+		}
+
+		inline bool
+		delete_address() const noexcept {
+			return this->type() == netlink_message_type(RTM_DELADDR);
+		}
+
+		inline bool
+		get_address() const noexcept {
+			return this->type() == netlink_message_type(RTM_GETADDR);
+		}
+
+		inline ifaddr_message*
+		get_ifaddr_message() noexcept {
+			return static_cast<ifaddr_message*>(NLMSG_DATA(this));
+		}
+
+	};
+
+	class netlink_poller {
+
+	private:
+		socket _socket;
+
+	public:
+
+		inline explicit
+		netlink_poller(netlink_family nfamily=NETLINK_ROUTE):
+		_socket(
+			family_type(AF_NETLINK),
+			SOCK_RAW | UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC,
+			nfamily
+		) {}
+
+		~netlink_poller() = default;
+
+		netlink_poller(const netlink_poller&) = delete;
+
+		netlink_poller&
+		operator=(const netlink_poller&) = delete;
+
+	};
+
+}
+
+#endif // vim:filetype=cpp

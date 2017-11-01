@@ -76,6 +76,9 @@ endif
 if cpp.has_header_symbol('fcntl.h', 'F_SETNOSIGPIPE')
 	config.set('UNISTDX_HAVE_SETNOSIGPIPE', true)
 endif
+if cpp.has_header('linux/netlink.h')
+	config.set('UNISTDX_HAVE_NETLINK', true)
+endif
 foreach name : [
 	'CLOEXEC',
 	'DIRECT',

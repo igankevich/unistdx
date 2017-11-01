@@ -25,6 +25,7 @@ namespace sys {
 		typedef int opt_type;
 		typedef std::chrono::system_clock clock_type;
 		typedef clock_type::duration duration;
+		typedef int protocol_type;
 
 		enum option : opt_type {
 			reuse_addr = SO_REUSEADDR,
@@ -63,7 +64,11 @@ namespace sys {
 		/// Bind on @bind_addr and connect to a server on @conn_addr.
 		socket(const endpoint& bind_addr, const endpoint& conn_addr);
 
-		socket(family_type family, flag_type flags=default_flags);
+		socket(
+			family_type family,
+			flag_type flags=default_flags,
+			protocol_type proto=0
+		);
 
 		inline
 		~socket() {
