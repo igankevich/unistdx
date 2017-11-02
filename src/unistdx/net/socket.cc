@@ -5,6 +5,7 @@
 #include <unistdx/base/log_message>
 #include <unistdx/base/make_object>
 #include <unistdx/bits/safe_calls>
+#include <unistdx/config>
 
 namespace {
 
@@ -50,8 +51,8 @@ sys::socket::socket(const endpoint& bind_addr, const endpoint& conn_addr) {
 	this->connect(conn_addr);
 }
 
-sys::socket::socket(family_type family, flag_type flags, protocol_type proto):
-sys::fildes(safe_socket(int (family), flags, 0))
+sys::socket::socket(family_type family, socket_type type, protocol_type proto):
+sys::fildes(safe_socket(int (family), int(type)|default_flags, 0))
 {}
 
 void
@@ -114,7 +115,10 @@ sys::socket::accept(socket& sock, endpoint& addr) {
 void
 sys::socket::shutdown(shutdown_how how) {
 	if (*this) {
-		UNISTDX_CHECK_IF_NOT(ENOTCONN, ::shutdown(this->_fd, how));
+		int ret = ::shutdown(this->_fd, how);
+		if (ret == -1 && errno != ENOTCONN && errno != ENOTSUP) {
+			UNISTDX_THROW_BAD_CALL();
+		}
 	}
 }
 
@@ -197,7 +201,12 @@ sys::operator<<(std::ostream& out, const socket& rhs) {
 void
 sys::socket::create_socket_if_necessary(const endpoint& e) {
 	if (!*this) {
-		this->_fd = safe_socket(e.sa_family(), default_flags, 0);
+		#if defined(UNISTDX_HAVE_NETLINK)
+		int type = e.family() == family_type::netlink ? SOCK_RAW : SOCK_STREAM;
+		#else
+		int type = SOCK_STREAM;
+		#endif
+		this->_fd = safe_socket(e.sa_family(), type | default_flags, 0);
 	}
 }
 

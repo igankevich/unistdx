@@ -10,6 +10,9 @@ namespace {
 		inet = 0,
 		inet6 = 1,
 		unix = 2
+		#if defined(UNISTDX_HAVE_NETLINK)
+		, netlink = 3
+		#endif
 	};
 
 	inline portable_family_type
@@ -18,6 +21,9 @@ namespace {
 			case sys::family_type::inet: return portable_family_type::inet;
 			case sys::family_type::inet6: return portable_family_type::inet6;
 			case sys::family_type::unix: return portable_family_type::unix;
+			#if defined(UNISTDX_HAVE_NETLINK)
+			case sys::family_type::netlink: return portable_family_type::netlink;
+			#endif
 			default: return portable_family_type(0);
 		}
 	};
@@ -28,6 +34,9 @@ namespace {
 			case portable_family_type::inet: return sys::family_type::inet;
 			case portable_family_type::inet6: return sys::family_type::inet6;
 			case portable_family_type::unix: return sys::family_type::unix;
+			#if defined(UNISTDX_HAVE_NETLINK)
+			case portable_family_type::netlink: return sys::family_type::netlink;
+			#endif
 			default: return sys::family_type(0);
 		}
 	};

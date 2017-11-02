@@ -20,6 +20,12 @@ namespace sys {
 	#endif
 	typedef struct ::iovec io_vector;
 
+	enum class socket_type {
+		stream = SOCK_STREAM,
+		datagram = SOCK_DGRAM,
+		raw = SOCK_RAW
+	};
+
 	struct socket: public fildes {
 
 		typedef int opt_type;
@@ -39,8 +45,8 @@ namespace sys {
 			shut_read_write = SHUT_RDWR
 		};
 
-		static const flag_type default_flags
-		    = SOCK_STREAM | UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
+		static const flag_type default_flags =
+			UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
 
 		socket() = default;
 
@@ -66,7 +72,7 @@ namespace sys {
 
 		socket(
 			family_type family,
-			flag_type flags=default_flags,
+			socket_type type=socket_type::stream,
 			protocol_type proto=0
 		);
 

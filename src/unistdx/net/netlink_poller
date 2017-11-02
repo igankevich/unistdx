@@ -87,13 +87,13 @@ namespace sys {
 			return NLMSG_PAYLOAD(this, len);
 		}
 
-		template <class Func>
+		template <class Message, class Func>
 		void
 		for_each_message(int len, Func func) {
-			netlink_header* msg = this;
+			Message* msg = static_cast<Message*>(this);
 			while (msg->ok(len) && !msg->done()) {
 				func(*msg);
-				msg = msg->next(len);
+				msg = static_cast<Message*>(msg->next(len));
 			}
 		}
 
@@ -113,6 +113,22 @@ namespace sys {
 			return static_cast<rtattributes*>(RTA_NEXT(this, len));
 		}
 
+		template <class T>
+		inline T*
+		data() {
+			return static_cast<T*>(RTA_DATA(this));
+		}
+
+		inline unsigned short
+		length() const noexcept {
+			return this->rta_len;
+		}
+
+		inline unsigned short
+		type() const noexcept {
+			return this->rta_type;
+		}
+
 	};
 
 	class ifaddr_message: public ::ifaddrmsg {
@@ -121,19 +137,13 @@ namespace sys {
 
 		inline rtattributes*
 		get_route_attributes() noexcept {
-			return IFA_RTA(this);
-		}
-
-		inline int
-		payload_length() const noexcept {
-			return IFA_PAYLOAD(this);
+			return static_cast<rtattributes*>(IFA_RTA(this));
 		}
 
 		template <class Func>
 		void
-		for_each_attribute(Func func) {
+		for_each_attribute(int len, Func func) {
 			rtattributes* attrs = this->get_route_attributes();
-			const int len = this->payload_length();
 			while (len && attrs->ok(len)) {
 				func(*attrs);
 				attrs = attrs->next(len);
@@ -166,29 +176,10 @@ namespace sys {
 			return static_cast<ifaddr_message*>(NLMSG_DATA(this));
 		}
 
-	};
-
-	class netlink_poller {
-
-	private:
-		socket _socket;
-
-	public:
-
-		inline explicit
-		netlink_poller(netlink_family nfamily=NETLINK_ROUTE):
-		_socket(
-			family_type(AF_NETLINK),
-			SOCK_RAW | UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC,
-			nfamily
-		) {}
-
-		~netlink_poller() = default;
-
-		netlink_poller(const netlink_poller&) = delete;
-
-		netlink_poller&
-		operator=(const netlink_poller&) = delete;
+		inline int
+		payload_length() const noexcept {
+			return IFA_PAYLOAD(this);
+		}
 
 	};
 

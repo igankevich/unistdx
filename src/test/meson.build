@@ -18,6 +18,13 @@ test(
 	)
 )
 
+executable(
+	'netlink-poller-test',
+	sources: 'netlink_poller_test.cc',
+	include_directories: srcdir,
+	dependencies: [threads,unistdx,gtest],
+)
+
 test(
 	'base/spin_mutex',
 	executable(

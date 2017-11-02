@@ -9,6 +9,7 @@
 #include <iosfwd>
 #include <tuple>
 
+#include <unistdx/config>
 #include <unistdx/net/bit_count>
 #include <unistdx/net/byte_order>
 #include <unistdx/net/bytes>
@@ -17,12 +18,20 @@
 #include <unistdx/net/ipv4_addr>
 #include <unistdx/net/ipv6_addr>
 
+#if defined(UNISTDX_HAVE_NETLINK)
+#include <linux/netlink.h>
+#include <unistd.h>
+#endif
+
 namespace sys {
 
 	typedef struct ::sockaddr sa_type;
 	typedef ::socklen_t socklen_type;
 	typedef ::in_port_t port_type;
 	typedef struct ::sockaddr_un sockunix_type;
+	#if defined(UNISTDX_HAVE_NETLINK)
+	typedef struct ::sockaddr_nl netlink_sa_type;
+	#endif
 
 	template<class Addr>
 	inline constexpr sockinet6_type
@@ -94,6 +103,15 @@ namespace sys {
 
 		explicit
 		endpoint(const char* unix_socket_path) noexcept;
+
+		#if defined(UNISTDX_HAVE_NETLINK)
+		inline explicit
+		endpoint(int groups) {
+			this->_naddr.nl_family = AF_NETLINK;
+			this->_naddr.nl_pid = ::getpid();
+			this->_naddr.nl_groups = groups;
+		}
+		#endif
 
 		inline constexpr
 		endpoint(const endpoint &rhs, const port_type newport) noexcept:
@@ -225,6 +243,9 @@ namespace sys {
 
 		sockinet6_type _addr6 = {};
 		sockinet4_type _addr4;
+		#if defined(UNISTDX_HAVE_NETLINK)
+		netlink_sa_type _naddr;
+		#endif
 		sa_type _sockaddr;
 		bytes<sockinet6_type> _bytes;
 
