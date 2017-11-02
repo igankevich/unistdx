@@ -55,21 +55,18 @@ endif
 if cpp.has_header_symbol('poll.h', 'POLLRDHUP')
 	config.set('UNISTDX_HAVE_POLLRDHUP', true)
 endif
-if cpp.has_header_symbol('sys/socket.h', 'SOCK_NONBLOCK')
-	config.set('UNISTDX_HAVE_SOCK_NONBLOCK', true)
-endif
-if cpp.has_header_symbol('sys/socket.h', 'SOCK_CLOEXEC')
-	config.set('UNISTDX_HAVE_SOCK_CLOEXEC', true)
-endif
-if cpp.has_header_symbol('sys/socket.h', 'SCM_CREDENTIALS')
-	config.set('UNISTDX_HAVE_SCM_CREDENTIALS', true)
-endif
-if cpp.has_header_symbol('sys/socket.h', 'SCM_RIGHTS')
-	config.set('UNISTDX_HAVE_SCM_RIGHTS', true)
-endif
-if cpp.has_header_symbol('sys/socket.h', 'SO_PEERCRED')
-	config.set('UNISTDX_HAVE_SO_PEERCRED', true)
-endif
+foreach name : [
+		'SOCK_NONBLOCK',
+		'SOCK_CLOEXEC',
+		'SCM_CREDENTIALS',
+		'SCM_RIGHTS',
+		'SO_PEERCRED',
+		'accept4'
+	]
+	if cpp.has_header_symbol('sys/socket.h', name)
+		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
+	endif
+endforeach
 if cpp.has_header_symbol('netinet/tcp.h', 'TCP_USER_TIMEOUT')
 	config.set('UNISTDX_HAVE_TCP_USER_TIMEOUT', true)
 endif
@@ -80,18 +77,18 @@ if cpp.has_header('linux/netlink.h')
 	config.set('UNISTDX_HAVE_NETLINK', true)
 endif
 foreach name : [
-	'CLOEXEC',
-	'DIRECT',
-	'DIRECTORY',
-	'LARGEFILE',
-	'NOATIME',
-	'NOFOLLOW',
-	'PATH',
-	'RSYNC',
-	'TMPFILE',
-]
-	if cpp.has_header_symbol('fcntl.h', 'O_' + name)
-		config.set('UNISTDX_HAVE_O_' + name, true)
+		'O_CLOEXEC',
+		'O_DIRECT',
+		'O_DIRECTORY',
+		'O_LARGEFILE',
+		'O_NOATIME',
+		'O_NOFOLLOW',
+		'O_PATH',
+		'O_RSYNC',
+		'O_TMPFILE',
+	]
+	if cpp.has_header_symbol('fcntl.h', name)
+		config.set('UNISTDX_HAVE_' + name, true)
 	endif
 endforeach
 foreach name : ['SHM_HUGETLB', 'SHM_HUGE_2MB', 'SHM_HUGE_1GB', 'SHM_NORESERVE']
@@ -125,24 +122,19 @@ if cpp.has_header('execinfo.h')
 		config.set('UNISTDX_HAVE_CXXABI', true)
 	endif
 endif
-if cpp.has_header_symbol('pwd.h', 'getpwnam_r')
-	config.set('UNISTDX_HAVE_GETPWNAM_R', true)
-endif
-if cpp.has_header_symbol('pwd.h', 'getpwuid_r')
-	config.set('UNISTDX_HAVE_GETPWUID_R', true)
-endif
-if cpp.has_header_symbol('grp.h', 'getgrnam_r')
-	config.set('UNISTDX_HAVE_GETGRNAM_R', true)
-endif
-if cpp.has_header_symbol('grp.h', 'getgrgid_r')
-	config.set('UNISTDX_HAVE_GETGRGID_R', true)
-endif
+foreach name : ['getpwnam_r' , 'getpwuid_r']
+	if cpp.has_header_symbol('pwd.h', name)
+		config.set('UNISTDX_HAVE_' + name, true)
+	endif
+endforeach
+foreach name : ['getgrnam_r', 'getgrgid_r']
+	if cpp.has_header_symbol('grp.h', name)
+		config.set('UNISTDX_HAVE_' + name, true)
+	endif
+endforeach
 config.set('UNISTDX_VERSION', meson.project_version())
 if cpp.has_header_symbol('sys/mman.h', 'mmap')
 	config.set('UNISTDX_HAVE_MMAP', true)
-endif
-if cpp.has_header_symbol('sys/socket.h', 'accept4')
-	config.set('UNISTDX_HAVE_ACCEPT4', true)
 endif
 if cpp.has_header_symbol('sys/epoll.h', 'epoll_create')
 	config.set('UNISTDX_HAVE_EPOLL', true)
