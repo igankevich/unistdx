@@ -233,9 +233,26 @@ namespace sys {
 	};
 
 	template<>
-	struct streambuf_traits<sys::fildes>:
-	public sys::fildes_streambuf_traits<sys::fildes>
+	struct streambuf_traits<fildes>:
+	public fildes_streambuf_traits<fildes>
 	{};
+
+	template<>
+	struct streambuf_traits<fd_type> {
+
+		typedef void char_type;
+
+		inline static std::streamsize
+		write(fd_type sink, const char_type* s, std::streamsize n) {
+			return ::write(sink, s, n);
+		}
+
+		inline static std::streamsize
+		read(fd_type src, char_type* s, std::streamsize n) {
+			return ::read(src, s, n);
+		}
+
+	};
 
 }
 

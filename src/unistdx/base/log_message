@@ -2,33 +2,16 @@
 #define UNISTDX_BASE_LOG_MESSAGE
 
 #include <cassert>
-#include <iomanip>
-#include <iostream>
-#include <mutex>
 
-#include <unistdx/base/make_object>
+#include <unistdx/io/sysstream>
 
 namespace sys {
+
+	extern thread_local osysstream log;
 
 	class log_message {
 
 	public:
-
-		template<class ... Args>
-		explicit
-		log_message(
-			std::ostream& rhs,
-			const char* name,
-			const Args& ... tokens
-		):
-		_log(rhs) {
-			assert(name);
-			this->lock();
-			this->_log << std::setw(10) << std::right << name << ": ";
-			if (sizeof ... (tokens) > 0) {
-				this->_log << make_sentence(tokens ...) << ' ';
-			}
-		}
 
 		template<class ... Args>
 		explicit
@@ -43,9 +26,10 @@ namespace sys {
 		_spec(spec) {
 			assert(name);
 			assert(fmt);
-			this->lock();
-			_log << std::setw(10) << std::right << name << ": ";
-			format_msg(fmt, tokens ...);
+			this->_log.width(10);
+			this->_log.setf(std::ios::right, std::ios::adjustfield);
+			this->_log << name << ": ";
+			this->format_msg(fmt, tokens ...);
 		}
 
 		template<class ... Args>
@@ -62,13 +46,13 @@ namespace sys {
 		template<class ... Args>
 		explicit
 		log_message(const char* name, const Args& ... tokens):
-		log_message(::std::clog, name, tokens ...)
+		log_message(log, name, tokens ...)
 		{}
 
 		template<class ... Args>
 		explicit
 		log_message(const char* name, const char* fmt, const Args& ... tokens):
-		log_message(::std::clog, name, fmt, tokens ...)
+		log_message(log, name, fmt, tokens ...)
 		{}
 
 		template<class ... Args>
@@ -79,14 +63,10 @@ namespace sys {
 			const char* fmt,
 			const Args& ... tokens
 		):
-		log_message(::std::clog, name, spec, fmt, tokens ...)
+		log_message(log, name, spec, fmt, tokens ...)
 		{}
 
-		inline
-		~log_message() {
-			this->_log << std::endl;
-			this->unlock();
-		}
+		~log_message();
 
 		template<class T>
 		std::ostream&
@@ -114,18 +94,14 @@ namespace sys {
 		template<class T, class ... Args>
 		void
 		format_msg(const char* s, const T& value, const Args& ... args) {
+			const char* olds = s;
 			while (*s && *s != this->_spec) {
-				this->_log << *s++;
+				++s;
 			}
+			this->_log.rdbuf()->sputn(olds, s - olds);
 			this->_log << value;
 			this->format_msg(++s, args ...);
 		}
-
-		void
-		lock() noexcept;
-
-		void
-		unlock() noexcept;
 
 		std::ostream& _log;
 		char _spec = '_';

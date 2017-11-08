@@ -135,7 +135,7 @@ TYPED_TEST(BufferTest, PacketStream) {
 			}
 		);
 
-		for (int j=0; j<input.size(); ++j) {
+		for (size_t j=0; j<input.size(); ++j) {
 			EXPECT_EQ(
 				sys::make_bytes(input[j]),
 				sys::make_bytes(output[j])

@@ -1,0 +1,33 @@
+#ifndef UNISTDX_IO_SYSSTREAM
+#define UNISTDX_IO_SYSSTREAM
+
+#include <ostream>
+
+namespace sys {
+
+	class osysstream:
+		public std::basic_ostream<char,std::char_traits<char> > {
+
+	private:
+		typedef char Ch;
+		typedef std::char_traits<char> Tr;
+		typedef std::basic_ostream<Ch,Tr> ostream_type;
+		typedef int fd_type;
+
+	public:
+
+		inline
+		osysstream():
+		ostream_type(nullptr)
+		{}
+
+		explicit
+		osysstream(std::streambuf* buf);
+
+		~osysstream() = default;
+
+	};
+
+}
+
+#endif // vim:filetype=cpp

@@ -3,6 +3,7 @@ libunistdx_src += files([
 	'fildes.cc',
 	'pipe.cc',
 	'poll_event.cc',
+	'sysstream.cc',
 	'two_way_pipe.cc',
 ])
 
@@ -16,6 +17,7 @@ install_headers(
 	'pipe',
 	'poll_event',
 	'poller',
+	'sysstream',
 	'two_way_pipe',
 	subdir: join_paths(meson.project_name(), 'io')
 )

@@ -1,4 +1,8 @@
 #include <gtest/gtest.h>
+
+#include <thread>
+
+#include <unistdx/base/log_message>
 #include <unistdx/base/make_object>
 #include <unistdx/ipc/argstream>
 #include <unistdx/ipc/execute>
@@ -72,3 +76,27 @@ TEST(SetIdentity, Exceptions) {
 	EXPECT_EQ(old_uid, user());
 	EXPECT_EQ(old_gid, group());
 }
+
+/*
+TEST(Process, LogMessage) {
+	sys::process child {
+		[] () {
+			for (int i=0; i<1000; ++i) {
+				sys::log_message("child", "message a=_, b=_, c=_", i, i, i);
+			}
+			return 0;
+		}
+	};
+	std::thread thr([] () {
+		for (int i=0; i<1000; ++i) {
+			sys::log_message("thread", "message a=_, b=_, c=_", i, i, i);
+		}
+	});
+	for (int i=0; i<1000; ++i) {
+		sys::log_message("parent", "message a=_, b=_, c=_", i, i, i);
+	}
+	thr.join();
+	sys::proc_status status = child.wait();
+	EXPECT_EQ(0, status.exit_code());
+}
+*/

@@ -1,20 +1,20 @@
 #include "log_message"
 
+#include <unistdx/io/fildesbuf>
+
 namespace {
 
-	typedef std::recursive_mutex mutex_type;
-	typedef std::unique_lock<mutex_type> lock_type;
+	typedef sys::basic_fildesbuf<char,std::char_traits<char>,sys::fd_type>
+	    fildesbuf_type;
 
-	mutex_type log_mutex;
+	thread_local fildesbuf_type threadbuf(STDERR_FILENO, 0, 256);
 
 }
 
-void
-sys::log_message::lock() noexcept {
-	log_mutex.lock();
-}
+thread_local sys::osysstream sys::log(&threadbuf);
 
-void
-sys::log_message::unlock() noexcept {
-	log_mutex.unlock();
+sys::log_message::~log_message() {
+	char ch = '\n';
+	threadbuf.sputn(&ch, 1);
+	threadbuf.pubflush();
 }
