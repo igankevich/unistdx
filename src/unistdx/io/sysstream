@@ -3,6 +3,8 @@
 
 #include <ostream>
 
+#include <unistdx/io/fildesbuf>
+
 namespace sys {
 
 	class osysstream:
@@ -13,18 +15,41 @@ namespace sys {
 		typedef std::char_traits<char> Tr;
 		typedef std::basic_ostream<Ch,Tr> ostream_type;
 		typedef int fd_type;
+		typedef basic_fildesbuf<char,std::char_traits<char>,fd_type>
+		    fildesbuf_type;
+
+	private:
+		fildesbuf_type _buf;
 
 	public:
 
 		inline
 		osysstream():
-		ostream_type(nullptr)
-		{}
+		ostream_type(nullptr) {
+			this->init(&this->_buf);
+		}
+
+		inline explicit
+		osysstream(fd_type fd, size_t psize):
+		ostream_type(nullptr),
+		_buf(std::move(fd), 0, psize) {
+			this->init(&this->_buf);
+		}
 
 		explicit
 		osysstream(std::streambuf* buf);
 
 		~osysstream() = default;
+
+		inline fildesbuf_type&
+		buf() noexcept {
+			return this->_buf;
+		}
+
+		inline const fildesbuf_type&
+		buf() const noexcept {
+			return this->_buf;
+		}
 
 	};
 

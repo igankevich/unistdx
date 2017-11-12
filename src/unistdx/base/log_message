@@ -7,8 +7,6 @@
 
 namespace sys {
 
-	extern thread_local osysstream log;
-
 	class log_message {
 
 	public:
@@ -26,9 +24,7 @@ namespace sys {
 		_spec(spec) {
 			assert(name);
 			assert(fmt);
-			this->_log.width(10);
-			this->_log.setf(std::ios::right, std::ios::adjustfield);
-			this->_log << name << ": ";
+			this->write_name(name);
 			this->format_msg(fmt, tokens ...);
 		}
 
@@ -45,14 +41,8 @@ namespace sys {
 
 		template<class ... Args>
 		explicit
-		log_message(const char* name, const Args& ... tokens):
-		log_message(log, name, tokens ...)
-		{}
-
-		template<class ... Args>
-		explicit
 		log_message(const char* name, const char* fmt, const Args& ... tokens):
-		log_message(log, name, fmt, tokens ...)
+		log_message(name, '_', fmt, tokens ...)
 		{}
 
 		template<class ... Args>
@@ -63,8 +53,14 @@ namespace sys {
 			const char* fmt,
 			const Args& ... tokens
 		):
-		log_message(log, name, spec, fmt, tokens ...)
-		{}
+		_str(STDERR_FILENO, 256),
+		_log(_str),
+		_spec(spec) {
+			assert(name);
+			assert(fmt);
+			this->write_name(name);
+			this->format_msg(fmt, tokens ...);
+		}
 
 		~log_message();
 
@@ -88,7 +84,7 @@ namespace sys {
 
 		inline void
 		format_msg(const char* s) {
-			this->_log << s;
+			this->_str << s;
 		}
 
 		template<class T, class ... Args>
@@ -100,9 +96,19 @@ namespace sys {
 			}
 			this->_log.rdbuf()->sputn(olds, s - olds);
 			this->_log << value;
-			this->format_msg(++s, args ...);
+			if (*s) {
+				this->format_msg(++s, args ...);
+			}
 		}
 
+		inline void
+		write_name(const char* name) {
+			this->_log.width(10);
+			this->_log.setf(std::ios::right, std::ios::adjustfield);
+			this->_log << name << ": ";
+		}
+
+		osysstream _str;
 		std::ostream& _log;
 		char _spec = '_';
 

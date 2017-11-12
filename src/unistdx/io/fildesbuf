@@ -11,7 +11,7 @@
 #include <unistdx/util/system>
 
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
-#include <unistdx/base/log_message>
+#include <unistdx/bits/debug_message>
 #endif
 
 namespace sys {
@@ -314,11 +314,13 @@ namespace sys {
 			this->pgrow(this->_pbuf.size() * 2);
 		}
 
+		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
 		template <class ... Args>
 		inline void
-		log(const Args& ... args) const {
-			log_message(this->_name, args ...);
+		log(const char* fmt, const Args& ... args) const {
+			debug_message(this->_name, fmt, args...);
 		}
+		#endif
 
 	};
 

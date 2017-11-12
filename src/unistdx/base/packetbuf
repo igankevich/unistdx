@@ -12,7 +12,7 @@
 #include <iomanip>
 #include <ostream>
 #include <sstream>
-#include <unistdx/base/log_message>
+#include <unistdx/bits/debug_message>
 #else
 #define UNISTDX_FUNC
 #endif
@@ -106,7 +106,7 @@ namespace sys {
 				this->pbump(delta);
 			}
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
-			sys::log_message(
+			sys::debug_message(
 				this->_name,
 				"end {hs=_,ps=_}",
 				hs,
@@ -363,11 +363,11 @@ namespace sys {
 			std::streamsize hs = 0;
 			std::streamsize payload_size = 0;
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
-			sys::log_message(this->_name, "available _", available());
+			sys::debug_message(this->_name, "available _", available());
 			#endif
 			if (this->xgetheader(hs, payload_size)) {
 				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
-				sys::log_message(this->_name, "_ hs=_,ps=_", __func__, hs, payload_size);
+				sys::debug_message(this->_name, "_ hs=_,ps=_", __func__, hs, payload_size);
 				#endif
 				if (hs < 0) {
 					throw std::invalid_argument("header size is less than nought");
@@ -451,7 +451,7 @@ namespace sys {
 		setstate(state_type rhs, const char* where) {
 			const state_type olds = this->_state;
 			this->_state = rhs;
-			sys::log_message(
+			sys::debug_message(
 				this->_name,
 				"_",
 				transition(where, olds, this->_state, *this)
