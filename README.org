@@ -4,6 +4,7 @@ system calls. It is built on several core principles:
 - use standard C++ abstractions to map system calls (containers, iterators,
   input/output streams, traits classes, guards etc.),
 - inherit standard libc structures for maximal transparency,
-- throw an exception when system call fails.
+- throw an exception when system call fails,
+- use asynchronous input/output by default.
  
 *Documentation* is a work-in-progress.
