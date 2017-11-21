@@ -18,7 +18,6 @@
 #define UNISTDX_NET_BIT_COUNT
 
 #include <bitset>
-#include <type_traits>
 
 #include <unistdx/config>
 
@@ -27,7 +26,6 @@ namespace sys {
 	template<class T>
 	inline unsigned int
 	bit_count(T value) noexcept {
-		static_assert(std::is_unsigned<T>::value, "bad value type");
 		union {
 			T val;
 			std::bitset<sizeof(T) * 8> bits;
