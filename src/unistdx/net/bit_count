@@ -17,6 +17,7 @@
 #ifndef UNISTDX_NET_BIT_COUNT
 #define UNISTDX_NET_BIT_COUNT
 
+#include <bitset>
 #include <type_traits>
 
 #include <unistdx/config>
@@ -27,13 +28,12 @@ namespace sys {
 	inline unsigned int
 	bit_count(T value) noexcept {
 		static_assert(std::is_unsigned<T>::value, "bad value type");
-		unsigned int count = 0;
-		while (value > 0) {           // until all bits are zero
-			if ((value & 1) == 1)     // check lower bit
-				++count;
-			value >>= 1;              // shift bits, removing lower bit
-		}
-		return count;
+		union {
+			T val;
+			std::bitset<sizeof(T) * 8> bits;
+		} x{};
+		x.val = value;
+		return x.bits.count();
 	}
 
 	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNT)
@@ -60,7 +60,6 @@ namespace sys {
 		return __builtin_popcountll(value);
 	}
 	#endif
-
 
 }
 
