@@ -61,13 +61,24 @@ namespace sys {
 		file_mutex() noexcept = default;
 
 		inline
+		file_mutex(const char* filename, open_flag flags, mode_type mode) noexcept:
+		fildes() {
+			this->open(filename, flags, mode);
+		}
+
+		inline
 		file_mutex(const char* filename, mode_type mode) noexcept:
 		fildes() {
 			this->open(filename, mode);
 		}
 
+		inline void
+		open(const char* filename, mode_type mode) noexcept {
+			this->open(filename, open_flag::read_write, mode);
+		}
+
 		void
-		open(const char* filename, mode_type mode) noexcept;
+		open(const char* filename, open_flag flags, mode_type mode) noexcept;
 
 		UNISTDX_NO_COPY_AND_MOVE(file_mutex)
 

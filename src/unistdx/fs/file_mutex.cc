@@ -12,10 +12,14 @@ namespace {
 }
 
 void
-sys::file_mutex::open(const char* filename, mode_type mode) noexcept {
+sys::file_mutex::open(
+	const char* filename,
+	open_flag flags,
+	mode_type mode
+) noexcept {
 	this->_fd = ::open(
 		filename,
-		open_flag::create | open_flag::close_on_exec | open_flag::read_write,
+		flags | open_flag::create | open_flag::close_on_exec,
 		mode
 	);
 }
