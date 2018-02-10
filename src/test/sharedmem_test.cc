@@ -20,7 +20,7 @@ TYPED_TEST_CASE(SharedMemTest, MAKE_TYPES(char, unsigned char));
 TYPED_TEST(SharedMemTest, SharedMem) {
 	typedef TypeParam T;
 	typedef typename sys::shared_mem<T>::size_type size_type;
-	const size_type SHMEM_SIZE = 4096;
+	const size_type SHMEM_SIZE = 512;
 	sys::shared_mem<T> mem1(0666, SHMEM_SIZE);
 	sys::shared_mem<T> mem2(mem1.id());
 	// check some invariants

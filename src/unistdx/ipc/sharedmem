@@ -217,7 +217,7 @@ namespace sys {
 
 		inline explicit
 		operator bool() const noexcept {
-			return this->_addr && this->_shm;
+			return this->_addr && this->_shm != -1;
 		}
 
 		inline bool
@@ -262,9 +262,9 @@ namespace sys {
 
 		inline void
 		remove() {
-			if (this->owner() && this->_shm) {
+			if (this->owner() && this->_shm != -1) {
 				UNISTDX_CHECK(::shmctl(this->_shm, IPC_RMID, 0));
-				this->_shm = 0;
+				this->_shm = -1;
 			}
 		}
 
@@ -315,7 +315,7 @@ namespace sys {
 			    );
 		}
 
-		shm_type _shm = 0;
+		shm_type _shm = -1;
 		addr_type _addr = nullptr;
 		size_type _size = 0;
 		bool _owner = false;
