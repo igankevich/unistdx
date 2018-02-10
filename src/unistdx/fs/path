@@ -150,7 +150,7 @@ namespace sys {
 		}
 
 		inline
-		operator const char*() const noexcept {
+		operator const value_type*() const noexcept {
 			return this->data();
 		}
 
