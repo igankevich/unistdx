@@ -20,7 +20,7 @@ TYPED_TEST_CASE(SharedMemTest, MAKE_TYPES(char, unsigned char));
 TYPED_TEST(SharedMemTest, SharedMem) {
 	typedef TypeParam T;
 	typedef typename sys::shared_mem<T>::size_type size_type;
-	const size_type SHMEM_SIZE = 512;
+	const size_type SHMEM_SIZE = 4096;
 	sys::shared_mem<T> mem1(0666, SHMEM_SIZE);
 	sys::shared_mem<T> mem2(mem1.id());
 	// check some invariants
@@ -29,8 +29,12 @@ TYPED_TEST(SharedMemTest, SharedMem) {
 	EXPECT_EQ(mem1.size(), mem2.size());
 	EXPECT_TRUE(mem1.owner());
 	EXPECT_FALSE(mem2.owner());
-	EXPECT_TRUE(static_cast<bool>(mem1));
-	EXPECT_TRUE(static_cast<bool>(mem2));
+	EXPECT_TRUE(static_cast<bool>(mem1))
+		<< "ptr=" << ((void*)mem1.ptr())
+		<< ",id=" << mem1.id();
+	EXPECT_TRUE(static_cast<bool>(mem2))
+		<< "ptr=" << ((void*)mem2.ptr())
+		<< ",id=" << mem2.id();
 	EXPECT_FALSE(!mem1);
 	EXPECT_FALSE(!mem2);
 	EXPECT_NE(nullptr, mem1.begin());
