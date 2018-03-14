@@ -12,7 +12,7 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-*/
+ */
 
 #ifndef UNISTDX_FS_PATH
 #define UNISTDX_FS_PATH
@@ -31,27 +31,36 @@ namespace sys {
 	template <class Ch, class Tr, class Alloc>
 	class basic_canonical_path;
 
-	#define MAKE_OPERATOR(op, tp1, tp2, tp3, tp4, ...) \
+	#define MAKE_OPERATOR(op, tp1, tp2, tp3, tp4) \
 	inline friend bool \
-	operator op(const tp1 lhs, const tp2 rhs) __VA_ARGS__ { \
+	operator op(const tp1 lhs, const tp2 rhs) \
+	noexcept( \
+		noexcept( \
+			::std::operator op( \
+				static_cast<const tp3>(lhs), \
+				static_cast<const tp4>(rhs) \
+			) \
+		) \
+	) \
+	{ \
 		return ::std::operator op( \
 			static_cast<const tp3>(lhs), \
 			static_cast<const tp4>(rhs) \
 		); \
 	}
 
-	#define MAKE_OPERATOR_EQ(tp1, tp2, tp3, tp4, ...) \
-	MAKE_OPERATOR(==, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
-	MAKE_OPERATOR(!=, tp1, tp2, tp3, tp4, ## __VA_ARGS__)
+	#define MAKE_OPERATOR_EQ(tp1, tp2, tp3, tp4) \
+	MAKE_OPERATOR(==, tp1, tp2, tp3, tp4) \
+	MAKE_OPERATOR(!=, tp1, tp2, tp3, tp4)
 
-	#define MAKE_OPERATOR_REL(tp1, tp2, tp3, tp4, ...) \
-	MAKE_OPERATOR(<, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
-	MAKE_OPERATOR(<=, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
-	MAKE_OPERATOR(>, tp1, tp2, tp3, tp4, ## __VA_ARGS__) \
-	MAKE_OPERATOR(>=, tp1, tp2, tp3, tp4, ## __VA_ARGS__)
+	#define MAKE_OPERATOR_REL(tp1, tp2, tp3, tp4) \
+	MAKE_OPERATOR(<, tp1, tp2, tp3, tp4) \
+	MAKE_OPERATOR(<=, tp1, tp2, tp3, tp4) \
+	MAKE_OPERATOR(>, tp1, tp2, tp3, tp4) \
+	MAKE_OPERATOR(>=, tp1, tp2, tp3, tp4)
 
 	template <class Ch, class Tr=std::char_traits<Ch>, class Alloc=
-				  std::allocator<Ch>>
+				  std::allocator<Ch> >
 	class basic_path: public std::basic_string<Ch,Tr,Alloc> {
 
 	public:
@@ -130,7 +139,7 @@ namespace sys {
 		string_type(std::forward<A>(dir)) {
 			this->add(
 				std::forward<B>(filename),
-				std::forward<Args>(more_filenames)...
+				std::forward<Args>(more_filenames) ...
 			);
 		}
 
@@ -146,7 +155,7 @@ namespace sys {
 		add(T&& filename, Args&& ... components) {
 			this->push_back(file_separator);
 			this->append(std::forward<T>(filename));
-			this->add(std::forward<Args>(components)...);
+			this->add(std::forward<Args>(components) ...);
 		}
 
 		inline
@@ -154,51 +163,15 @@ namespace sys {
 			return this->data();
 		}
 
-		MAKE_OPERATOR_EQ(
-			basic_path&,
-			basic_path&,
-			string_type&,
-			string_type&,
-			noexcept
-		);
-		MAKE_OPERATOR_EQ(
-			basic_path&,
-			string_type&,
-			string_type&,
-			string_type&,
-			noexcept
-		);
-		MAKE_OPERATOR_EQ(
-			string_type&,
-			basic_path&,
-			string_type&,
-			string_type&,
-			noexcept
-		);
+		MAKE_OPERATOR_EQ(basic_path&, basic_path&, string_type&, string_type&);
+		MAKE_OPERATOR_EQ(basic_path&, string_type&, string_type&, string_type&);
+		MAKE_OPERATOR_EQ(string_type&, basic_path&, string_type&, string_type&);
 		MAKE_OPERATOR_EQ(basic_path&, char*, string_type&, char*);
 		MAKE_OPERATOR_EQ(char*, basic_path&, char*, string_type&);
 
-		MAKE_OPERATOR_REL(
-			basic_path&,
-			basic_path&,
-			string_type&,
-			string_type&,
-			noexcept
-		);
-		MAKE_OPERATOR_REL(
-			basic_path&,
-			string_type&,
-			string_type&,
-			string_type&,
-			noexcept
-		);
-		MAKE_OPERATOR_REL(
-			string_type&,
-			basic_path&,
-			string_type&,
-			string_type&,
-			noexcept
-		);
+		MAKE_OPERATOR_REL(basic_path&, basic_path&, string_type&, string_type&);
+		MAKE_OPERATOR_REL(basic_path&, string_type&, string_type&, string_type&);
+		MAKE_OPERATOR_REL(string_type&, basic_path&, string_type&, string_type&);
 		MAKE_OPERATOR_REL(basic_path&, char*, string_type&, char*);
 		MAKE_OPERATOR_REL(char*, basic_path&, char*, string_type&);
 
@@ -222,15 +195,15 @@ namespace sys {
 namespace std {
 
 	template <class Ch, class Tr, class Alloc>
-	struct hash<sys::basic_path<Ch,Tr,Alloc>>:
-		public std::hash<std::basic_string<Ch,Tr,Alloc>> {
+	struct hash<sys::basic_path<Ch,Tr,Alloc> >:
+		public std::hash<std::basic_string<Ch,Tr,Alloc> > {
 
 		typedef size_t result_type;
 		typedef sys::basic_path<Ch,Tr,Alloc> argument_type;
 
 		inline size_t
 		operator()(const argument_type& rhs) const noexcept {
-			return std::hash<std::basic_string<Ch,Tr,Alloc>>::operator()(rhs);
+			return std::hash<std::basic_string<Ch,Tr,Alloc> >::operator()(rhs);
 		}
 
 	};

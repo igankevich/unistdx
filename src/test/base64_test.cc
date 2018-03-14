@@ -77,7 +77,7 @@ void test_base64(size_t k, bool spoil) {
 	base64_encode(text.data(), text.data() + text.size(), &encoded[0]);
 	if (spoil && !encoded.empty()) {
 		size_t pos = encoded.size()/2u;
-		encoded[pos] = 128;
+		encoded[pos] = -1;
 		EXPECT_THROW(
 			base64_decode(
 				encoded.data(),

@@ -151,7 +151,7 @@ sys::endpoint::addr(const char* host, port_type p) {
 sys::endpoint::endpoint(const char* unix_socket_path) noexcept:
 _sockaddr{AF_UNIX, 0} {
 	constexpr const int offset = sizeof(sa_family_t);
-	constexpr const int max_size = this->_bytes.size() - offset - 1;
+	constexpr const int max_size = decltype(this->_bytes)::size() - offset - 1;
 	const char* p = unix_socket_path;
 	int n = 0;
 	if (!*unix_socket_path) {
