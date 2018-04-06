@@ -1,5 +1,8 @@
+#include <unistdx/io/terminal>
 #include <unistdx/util/system>
+
 #include <gtest/gtest.h>
+
 #include <stdlib.h>
 
 TEST(System, ThreadConcurrency) {
@@ -20,4 +23,11 @@ TEST(System, IOConcurrency) {
 
 TEST(System, PageSize) {
 	EXPECT_GT(sys::page_size(), 0);
+}
+
+TEST(Terminal, Name) {
+	if (sys::is_a_terminal(STDIN_FILENO)) {
+		sys::path p = sys::terminal_device_path(STDIN_FILENO);
+		EXPECT_FALSE(p.empty()) << p;
+	}
 }
