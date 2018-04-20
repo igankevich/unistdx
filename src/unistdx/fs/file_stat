@@ -1,6 +1,8 @@
 #ifndef UNISTDX_FS_FILE_STAT
 #define UNISTDX_FS_FILE_STAT
 
+#include <chrono>
+
 #include <unistdx/base/check>
 #include <unistdx/fs/file_mode>
 #include <unistdx/fs/file_type>
@@ -11,8 +13,16 @@ namespace sys {
 	typedef ::off_t offset_type;
 	typedef ::uid_t uid_type;
 	typedef ::gid_t gid_type;
+	typedef ::dev_t device_type;
 
 	struct file_stat: public stat_type {
+
+		typedef std::chrono::system_clock clock_type;
+		typedef clock_type::duration duration;
+		typedef clock_type::time_point time_point;
+		typedef ::blksize_t block_size_type;
+		typedef ::blkcnt_t block_count_type;
+		typedef ::nlink_t nlink_type;
 
 		static const mode_type type_mask = S_IFMT;
 
@@ -71,6 +81,36 @@ namespace sys {
 			return this->st_size;
 		}
 
+		inline block_size_type
+		block_size() const noexcept {
+			return this->st_blksize;
+		}
+
+		inline block_size_type
+		preferred_block_size() const noexcept {
+			return this->st_blksize;
+		}
+
+		inline block_count_type
+		num_blocks() const noexcept {
+			return this->st_blocks;
+		}
+
+		inline device_type
+		device() const noexcept {
+			return this->st_dev;
+		}
+
+		inline device_type
+		this_device() const noexcept {
+			return this->st_rdev;
+		}
+
+		inline nlink_type
+		num_links() const noexcept {
+			return this->st_nlink;
+		}
+
 		inline file_mode
 		mode() const noexcept {
 			return file_mode(this->st_mode & file_mode::mode_mask);
@@ -94,6 +134,24 @@ namespace sys {
 		inline void
 		update(const char* filename) {
 			UNISTDX_CHECK_IF_NOT(ENOENT, ::stat(filename, this));
+		}
+
+		inline time_point
+		last_accessed() const noexcept {
+			using namespace std::chrono;
+			return time_point(seconds(this->st_atim.tv_sec) + nanoseconds(this->st_atim.tv_nsec));
+		}
+
+		inline time_point
+		last_modified() const noexcept {
+			using namespace std::chrono;
+			return time_point(seconds(this->st_mtim.tv_sec) + nanoseconds(this->st_mtim.tv_nsec));
+		}
+
+		inline time_point
+		last_status_changed() const noexcept {
+			using namespace std::chrono;
+			return time_point(seconds(this->st_ctim.tv_sec) + nanoseconds(this->st_ctim.tv_nsec));
 		}
 
 		friend std::ostream&
