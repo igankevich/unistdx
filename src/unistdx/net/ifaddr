@@ -5,7 +5,7 @@
 
 #include <unistdx/base/check>
 #include <unistdx/net/endpoint>
-#include <unistdx/net/pstream>
+#include <unistdx/net/bstream>
 #include <unistdx/net/subnet_iterator>
 
 namespace sys {
@@ -152,12 +152,12 @@ namespace sys {
 		operator>>(std::istream& in, ifaddr<X>& rhs);
 
 		template <class X>
-		friend pstream&
-		operator<<(pstream& out, const ifaddr<X>& rhs);
+		friend bstream&
+		operator<<(bstream& out, const ifaddr<X>& rhs);
 
 		template <class X>
-		friend pstream&
-		operator>>(pstream& in, ifaddr<X>& rhs);
+		friend bstream&
+		operator>>(bstream& in, ifaddr<X>& rhs);
 
 	private:
 
@@ -192,12 +192,12 @@ namespace sys {
 	operator>>(std::istream& in, ifaddr<Addr>& rhs);
 
 	template <class Addr>
-	pstream&
-	operator<<(pstream& out, const ifaddr<Addr>& rhs);
+	bstream&
+	operator<<(bstream& out, const ifaddr<Addr>& rhs);
 
 	template <class Addr>
-	pstream&
-	operator>>(pstream& in, ifaddr<Addr>& rhs);
+	bstream&
+	operator>>(bstream& in, ifaddr<Addr>& rhs);
 
 }
 

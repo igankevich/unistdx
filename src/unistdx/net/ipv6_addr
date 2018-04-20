@@ -100,13 +100,13 @@ namespace sys {
 		friend std::istream&
 		operator>>(std::istream& in, ipv6_addr& rhs);
 
-		inline friend pstream&
-		operator<<(pstream& out, const ipv6_addr& rhs) {
+		inline friend bstream&
+		operator<<(bstream& out, const ipv6_addr& rhs) {
 			return out << rhs._bytes;
 		}
 
-		inline friend pstream&
-		operator>>(pstream& in, ipv6_addr& rhs) {
+		inline friend bstream&
+		operator>>(bstream& in, ipv6_addr& rhs) {
 			return in >> rhs._bytes;
 		}
 

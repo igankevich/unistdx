@@ -43,13 +43,13 @@ namespace {
 
 }
 
-sys::pstream&
-sys::operator<<(pstream& out, family_type rhs) {
+sys::bstream&
+sys::operator<<(bstream& out, family_type rhs) {
 	return out << static_cast<raw_family_type>(map_family_type(rhs));
 }
 
-sys::pstream&
-sys::operator>>(pstream& in, family_type& rhs) {
+sys::bstream&
+sys::operator>>(bstream& in, family_type& rhs) {
 	raw_family_type raw;
 	in >> raw;
 	rhs = map_family_type(static_cast<portable_family_type>(raw));

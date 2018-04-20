@@ -7,7 +7,7 @@
 #include <sys/un.h>
 
 #include <unistdx/config>
-#include <unistdx/net/pstream>
+#include <unistdx/net/bstream>
 
 namespace sys {
 
@@ -22,11 +22,11 @@ namespace sys {
 		#endif
 	};
 
-	pstream&
-	operator<<(pstream& out, family_type rhs);
+	bstream&
+	operator<<(bstream& out, family_type rhs);
 
-	pstream&
-	operator>>(pstream& in, family_type& rhs);
+	bstream&
+	operator>>(bstream& in, family_type& rhs);
 
 }
 

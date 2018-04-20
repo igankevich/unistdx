@@ -10,6 +10,7 @@ libunistdx_src += files([
 
 install_headers(
 	'bit_count',
+	'bstream',
 	'byte_order',
 	'byte_swap',
 	'bytes',

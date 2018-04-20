@@ -5,7 +5,7 @@
 #include <chrono>
 
 #include <unistdx/base/types>
-#include <unistdx/net/pstream>
+#include <unistdx/net/bstream>
 
 typedef std::chrono::nanoseconds::rep Time;
 
@@ -57,16 +57,16 @@ struct Datum {
 	}
 
 	template <class Ch>
-	friend sys::basic_pstream<Ch>&
-	operator<<(sys::basic_pstream<Ch>& out, const Datum& rhs) {
+	friend sys::basic_bstream<Ch>&
+	operator<<(sys::basic_bstream<Ch>& out, const Datum& rhs) {
 		return out
 			<< rhs.x << rhs.y << rhs.z
 			<< rhs.u << rhs.v << rhs.w;
 	}
 
 	template <class Ch>
-	friend sys::basic_pstream<Ch>&
-	operator>>(sys::basic_pstream<Ch>& in, Datum& rhs) {
+	friend sys::basic_bstream<Ch>&
+	operator>>(sys::basic_bstream<Ch>& in, Datum& rhs) {
 		return in
 			>> rhs.x >> rhs.y >> rhs.z
 			>> rhs.u >> rhs.v >> rhs.w;

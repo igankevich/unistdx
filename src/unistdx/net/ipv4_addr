@@ -56,13 +56,13 @@ namespace sys {
 		friend std::istream&
 		operator>>(std::istream& in, ipv4_addr& rhs);
 
-		inline friend pstream&
-		operator<<(pstream& out, const ipv4_addr& rhs) {
+		inline friend bstream&
+		operator<<(bstream& out, const ipv4_addr& rhs) {
 			return out << rhs._bytes;
 		}
 
-		inline friend pstream&
-		operator>>(pstream& in, ipv4_addr& rhs) {
+		inline friend bstream&
+		operator>>(bstream& in, ipv4_addr& rhs) {
 			return in >> rhs._bytes;
 		}
 
