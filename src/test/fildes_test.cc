@@ -1,28 +1,18 @@
 #include <gtest/gtest.h>
 
 #include <set>
+
 #include <unistdx/bits/for_each_file_descriptor>
 #include <unistdx/io/pipe>
 
-TEST(Fildes, ForEachFileDescriptor) {
-	std::set<sys::fd_type> expected{0,1,2}, actual;
-	sys::bits::for_each_file_descriptor(
-		[&] (const sys::poll_event& rhs) {
-			if (rhs.fd() <= 2) {
-				actual.emplace(rhs.fd());
-			}
-		}
-	);
-	EXPECT_EQ(expected, actual);
-}
-
-TEST(Fildes, ForEachFileDescriptorPipe) {
+TEST(ForEachFileDescriptor, Pipe) {
 	sys::pipe p;
-	std::set<sys::fd_type> expected{0,1,2,3,4}, actual;
+	std::set<sys::fd_type> expected{p.in().fd(), p.out().fd()}, actual;
 	sys::bits::for_each_file_descriptor(
 		[&] (const sys::poll_event& rhs) {
-			if (rhs.fd() <= 4) {
-				actual.emplace(rhs.fd());
+			const auto fd = rhs.fd();
+			if (fd == p.in().fd() || fd == p.out().fd()) {
+				actual.emplace(fd);
 			}
 		}
 	);

@@ -98,6 +98,11 @@ namespace sys {
 			return this->_fd;
 		}
 
+		inline fd_type
+		fd() const noexcept {
+			return this->_fd;
+		}
+
 		inline open_flag
 		flags() const {
 			return this->get_flags(F_GETFL);
