@@ -10,6 +10,10 @@ namespace sys {
 	void
 	mkdirs(const sys::path& root, const sys::path& relative_path);
 
+	/// make directories assuming none of them exist
+	void
+	mkdirs(sys::path dir);
+
 }
 
 #endif // vim:filetype=cpp

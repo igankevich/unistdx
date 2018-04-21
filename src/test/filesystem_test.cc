@@ -7,6 +7,7 @@
 #include <unistdx/fs/file>
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/idirtree>
+#include <unistdx/fs/mkdirs>
 #include <unistdx/fs/odirectory>
 #include <unistdx/fs/odirtree>
 #include <unistdx/fs/path>
@@ -335,4 +336,13 @@ TEST(DirTree, CopyRecursively) {
 		);
 	}
 	EXPECT_EQ(expected, actual);
+}
+
+TEST(MakeDirectories, Full) {
+	sys::path root(current_test_name(), "mkdirs-1");
+	test::tmpdir tdir_h(root);
+	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "1", "2", "3")));
+	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "a", "b")));
+	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "x")));
+	EXPECT_TRUE(sys::file_stat(sys::path(root, "1", "2", "3")).exists());
 }
