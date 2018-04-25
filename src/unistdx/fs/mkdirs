@@ -5,12 +5,27 @@
 
 namespace sys {
 
-	/// split path into components ignoring the last one
-	/// assuming it is a file
+
+	/**
+	\brief
+	Make directories assuming that the root exists.
+	\date 2018-04-25
+	\author Ivan Gankevich
+	\param[in] root path, relative to which directories are created
+	\param[in] relative_path path, components of which are created
+	*/
 	void
 	mkdirs(const sys::path& root, const sys::path& relative_path);
 
-	/// make directories assuming none of them exist
+	/**
+	\brief
+	Make directories assuming none of the path components exist.
+	\date 2018-04-25
+	\author Ivan Gankevich
+	\param[in] dir path, components of which are created
+
+	My description.
+	*/
 	void
 	mkdirs(sys::path dir);
 

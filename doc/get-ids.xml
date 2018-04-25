@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+
+  <xsl:output method="text" />
+
+  <xsl:template match="/"><xsl:apply-templates/></xsl:template>
+
+  <xsl:template match="*">
+    <xsl:message terminate="yes">WARNING: Unmatched element: <xsl:value-of select="name()"/></xsl:message>
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="doxygen"><xsl:apply-templates/></xsl:template>
+
+  <xsl:template match="doxygen/compounddef"><xsl:apply-templates/></xsl:template>
+
+  <xsl:template match="compounddef[@kind!='namespace']"></xsl:template>
+
+  <xsl:template match="doxygen/compounddef/*"></xsl:template>
+
+  <xsl:template match="doxygen/compounddef/sectiondef"><xsl:apply-templates/></xsl:template>
+
+  <xsl:template match="memberdef[@kind!='function']"></xsl:template>
+
+  <xsl:template match="/doxygen/compounddef[@kind='namespace']/sectiondef[@kind='func']/memberdef[@kind='function']">
+      <xsl:value-of select="concat(name, ' ', ../../compoundname, ' ', location/@file)" />
+  </xsl:template>
+
+</xsl:stylesheet>

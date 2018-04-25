@@ -157,6 +157,7 @@ threads = dependency('threads')
 gtest = dependency('gtest', main: true)
 
 subdir('src')
+subdir('doc')
 
 # pkgconfig {{{
 pkgconfig = import('pkgconfig')
@@ -212,18 +213,6 @@ if clang_tidy.found()
 			'-I' + join_paths(meson.source_root(), 'src'),
 			'-I' + join_paths(meson.build_root(), 'src'),
 			'-std=c++11'
-		]
-	)
-endif
-# }}}
-# doxygen {{{
-doxygen = find_program('doxygen', required: false)
-if doxygen.found()
-	run_target(
-		'doc',
-		command: [
-			doxygen,
-			join_paths(meson.source_root(), 'Doxyfile'),
 		]
 	)
 endif
