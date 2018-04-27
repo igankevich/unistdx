@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sphinx_bootstrap_theme
 
 extensions = ['breathe']
 breathe_projects = { 'unistdx': os.getenv('MESON_BUILD_ROOT') + '/xml' }
@@ -17,34 +18,26 @@ version = '3.2'
 release = '3.2'
 language = None
 exclude_patterns = []
-pygments_style = 'sphinx'
+pygments_style = 'perldoc'
 todo_include_todos = False
-html_theme = 'alabaster'
-# html_theme_options = {}
+#html_theme = 'alabaster'
+#html_theme = 'sphinx_rtd_theme'
+html_theme = 'bootstrap'
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme_options = {
+        'navbar_sidebarrel': False,
+        'navbar_pagenav': False,
+        'bootswatch_theme': "cerulean",
+        'bootstrap_version': "3",
+        'navbar_links': [
+            ("Reference", "api-reference"),
+            ("Tutorials", "tutorials"),
+            ("How-tos", "how-to-guides"),
+            ("Advanced topics", "advanced-topics"),
+            ],
+        'nosidebar': True,
+        }
 html_static_path = ['_static']
-html_sidebars = {
-    '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-    ]
-}
-htmlhelp_basename = 'Unistdxdoc'
-latex_elements = {
-    # 'papersize': 'letterpaper',
-    # 'pointsize': '10pt',
-    # 'preamble': '',
-    # 'figure_align': 'htbp',
-}
-latex_documents = [
-    (master_doc, 'Unistdx.tex', 'Unistdx Documentation',
-     'Ivan Gankevich', 'manual'),
-]
-man_pages = [
-    (master_doc, 'unistdx', 'Unistdx Documentation',
-     [author], 1)
-]
-texinfo_documents = [
-    (master_doc, 'Unistdx', 'Unistdx Documentation',
-     author, 'Unistdx', 'One line description of project.',
-     'Miscellaneous'),
-]
+html_show_sourcelink = False
+def setup(app):
+    app.add_stylesheet("unistdx.css")
