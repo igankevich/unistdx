@@ -5,6 +5,12 @@
 
 namespace sys {
 
+	/**
+	\brief The inverse of standard lock guard.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup base guard
+	*/
 	template<class Mutex>
 	class unlock_guard {
 

@@ -9,39 +9,66 @@
 namespace sys {
 
 	typedef ::pid_t pid_type;
+	/// Alias for \c uid_t.
 	typedef ::uid_t uid_type;
+	/// Alias for \c gid_t.
 	typedef ::gid_t gid_type;
 
+	/// Superuser ID. Always returns 0.
 	inline constexpr uid_type
 	superuser() noexcept { return 0; }
 
+	/// Superuser group ID. Always returns 0.
 	inline constexpr gid_type
 	supergroup() noexcept { return 0; }
 
 	namespace this_process {
 
+		/// Get real UID of the current process.
 		inline uid_type
 		user() noexcept { return ::getuid(); }
 
+		/**
+		\brief Change process' user.
+		\arg Set both real and effective UID of the current process (if priviledged).
+		\arg Set only effective UID of the current process (if unpriviledged).
+		*/
 		inline void
 		set_user(uid_type rhs) {
 			UNISTDX_CHECK(::setuid(rhs));
 		}
 
+		/// Get effective UID of the current process.
 		inline uid_type
 		effective_user() noexcept { return ::geteuid(); }
 
+		/// Get real GID of the current process.
 		inline gid_type
 		group() noexcept { return ::getgid(); }
 
+		/**
+		\brief Change process' group.
+		\arg Set both real and effective GID of the current process (if priviledged).
+		\arg Set only effective GID of the current process (if unpriviledged).
+		*/
 		inline void
 		set_group(gid_type rhs) {
 			UNISTDX_CHECK(::setgid(rhs));
 		}
 
+		/// Get effective GID of the current process.
 		inline gid_type
 		effective_group() noexcept { return ::getegid(); }
 
+		/**
+		\brief Set both UID and GID of the current process.
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup ipc
+		\details
+		\arg Sets GID first.
+		\arg Reverts process UID and GID upon error.
+		*/
 		void
 		set_identity(uid_type uid, gid_type gid);
 

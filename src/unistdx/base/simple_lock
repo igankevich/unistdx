@@ -5,6 +5,14 @@
 
 namespace sys {
 
+	/**
+	\brief
+	A lock guard with \link lock\endlink and \link unlock\endlink
+	methods.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup base guard
+	*/
 	template<class Mutex>
 	class simple_lock {
 
@@ -15,6 +23,7 @@ namespace sys {
 		Mutex& _mtx;
 
 	public:
+
 		inline
 		simple_lock(mutex_type& m) noexcept:
 		_mtx(m)

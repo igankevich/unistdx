@@ -18,6 +18,14 @@
 
 namespace sys {
 
+	/**
+	\brief File descriptor poller.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup semaphore
+	\details File descriptor poller implemented with `epoll` system call
+	having condition variable-like interface.
+	*/
 	class event_poller {
 
 	private:

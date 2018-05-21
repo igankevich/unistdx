@@ -30,9 +30,16 @@ namespace sys {
 		write_lock = LOCK_EX
 	};
 
+	/**
+	\brief File-based mutex.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup fs mutex
+	*/
 	class file_mutex: public fildes {
 
 	public:
+
 		void
 		lock(file_lock_type tp=file_lock_type::write_lock);
 

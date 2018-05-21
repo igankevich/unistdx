@@ -1,33 +1,48 @@
 #ifndef UNISTDX_FS_MKDIRS
 #define UNISTDX_FS_MKDIRS
 
+#include <unistdx/fs/file_mode>
 #include <unistdx/fs/path>
 
 namespace sys {
 
+	/**
+	\defgroup fs Filesystem
+	\brief Filesystem manipulation.
+	*/
 
 	/**
 	\brief
-	Make directories assuming that the root exists.
+	Make directories recursively.
 	\date 2018-04-25
 	\author Ivan Gankevich
+	\ingroup fs
+	\param[in] dir path, components of which are created
+	\param[in] m file mode of directories to be created
+	\param[in] offset character offset in path name to start
+	creating directories from
+	\details Create directories assuming all path components that come
+	before \p offset characters from the beginning of \p dir exist.
+	*/
+	void
+	mkdirs(path dir, file_mode m=0755, path::size_type offset=0);
+
+	/**
+	\brief
+	Make directories recursively.
+	\date 2018-04-25
+	\author Ivan Gankevich
+	\ingroup fs
 	\param[in] root path, relative to which directories are created
 	\param[in] relative_path path, components of which are created
+	\param[in] m file mode of directories to be created
+	\details Create directories relative to \p root assuming that
+	the root exists.
 	*/
-	void
-	mkdirs(const sys::path& root, const sys::path& relative_path);
-
-	/**
-	\brief
-	Make directories assuming none of the path components exist.
-	\date 2018-04-25
-	\author Ivan Gankevich
-	\param[in] dir path, components of which are created
-
-	My description.
-	*/
-	void
-	mkdirs(sys::path dir);
+	inline void
+	mkdirs(const path& root, const path& relative_path, file_mode m=0755) {
+		::sys::mkdirs(path(root, relative_path), m, root.size());
+	}
 
 }
 

@@ -27,7 +27,9 @@ TEST(Process, Fork) {
 TEST(Process, ForkExec) {
 	sys::process child {
 		[] () {
-			return sys::this_process::execute_command("ls");
+			sys::argstream args;
+			args.append("ls");
+			return sys::this_process::execute_command(args.argv());
 		}
 	};
 	sys::proc_status status = child.wait();

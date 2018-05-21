@@ -46,7 +46,7 @@
 )
 .fi
 .RS
-<xsl:value-of select="normalize-space($brief)" />
+<xsl:value-of select="normalize-space(briefdescription)" />
 .RE
 <xsl:for-each select="detaileddescription/*/parameterlist/parameteritem">
 .RS

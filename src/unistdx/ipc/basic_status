@@ -5,8 +5,27 @@ namespace sys {
 
 	typedef int code_type;
 
+	/**
+	\brief Base class for process status.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc
+	*/
 	template<class T>
 	struct basic_status {};
+
+	/// Get process status string.
+	template <class T>
+	inline constexpr const char*
+	status_string(const basic_status<T>& rhs) noexcept {
+		return rhs.exited() ? "exited" :
+			   rhs.killed() ? "killed" :
+			   rhs.core_dumped() ? "core_dumped" :
+			   rhs.stopped() ? "stopped" :
+			   rhs.continued() ? "continued" :
+			   rhs.trapped() ? "trapped" :
+			   "unknown";
+	}
 
 }
 

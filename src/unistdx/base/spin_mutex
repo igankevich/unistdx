@@ -7,13 +7,24 @@
 
 namespace sys {
 
-	/// Fast mutex for scheduling.
+	/**
+	\defgroup mutex Mutexes
+	\brief Mutual exclusion.
+	*/
+
+	/**
+	\brief Fast mutex that does not use system calls.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup base mutex
+	*/
 	class spin_mutex {
 
 	private:
 		std::atomic_flag _flag = ATOMIC_FLAG_INIT;
 
 	public:
+
 		inline void
 		lock() noexcept {
 			while (this->_flag.test_and_set(std::memory_order_acquire));

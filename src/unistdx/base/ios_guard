@@ -6,8 +6,18 @@
 namespace sys {
 
 	/**
-	Save/restore std::ios flags and fill character with RAII
-	upon construction/destruction of an ios_guard object.
+	\defgroup guard Guards
+	\brief Enforce object state with RAII.
+	*/
+
+	/**
+	\brief I/O stream state guard.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup base guard
+	\details
+	Saves/restores std::ios flags and fill character upon
+	construction/destruction.
 	*/
 	class ios_guard {
 

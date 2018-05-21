@@ -5,6 +5,15 @@
 
 namespace sys {
 
+	/**
+	\brief Computes bytes digest using SHA-1 algorithm.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup base
+	\details Computes bytes digest using
+	<a href="https://tools.ietf.org/html/rfc3174"> US Secure Hash Algorithm 1
+	(SHA-1) algorithm</a>.
+	*/
 	class sha1 {
 
 	private:

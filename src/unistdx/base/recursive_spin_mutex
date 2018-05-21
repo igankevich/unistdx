@@ -8,7 +8,12 @@
 
 namespace sys {
 
-	/// Spin mutex that can be lock multiple times by the same thread.
+	/**
+	\brief Spin mutex that can be lock multiple times by the same thread.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup base mutex
+	*/
 	class recursive_spin_mutex: public spin_mutex {
 
 	private:

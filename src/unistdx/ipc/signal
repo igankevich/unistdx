@@ -10,21 +10,49 @@
 
 namespace sys {
 
+	/**
+	\defgroup wrapper Wrappers
+	\brief Wrappers for system structures.
+	*/
+
+	/**
+	\brief Alias for signal type.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup comm
+	*/
 	typedef int signal_type;
+
+	/**
+	\brief Alias for \c sigaction type.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup comm
+	*/
 	typedef struct ::sigaction sigaction_type;
 
+	/**
+	\brief Signal enumeration.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup comm
+	*/
 	enum struct signal: signal_type {
 		// POSIX.1-1990
+		/// Interrupt.
 		hang_up = SIGHUP,
+		/// Keyboard interrupt.
 		keyboard_interrupt = SIGINT,
 		quit = SIGQUIT,
 		illegal_instruction = SIGILL,
 		abort = SIGABRT,
 		floating_point_exception = SIGFPE,
+		/// Forcibly terminate.
 		kill = SIGKILL,
 		segmentation_fault = SIGSEGV,
 		broken_pipe = SIGPIPE,
 		alarm = SIGALRM,
+		/// Gracefully terminate.
 		terminate = SIGTERM,
 		user_defined_1 = SIGUSR1,
 		user_defined_2 = SIGUSR2,
@@ -58,19 +86,34 @@ namespace sys {
 		#endif
 	};
 
+	/**
+	\brief Output signal name.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup comm
+	*/
 	std::ostream&
 	operator<<(std::ostream& out, const signal rhs);
 
-	struct signal_action: public sigaction_type {
+	/**
+	\brief Signal callback.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc comm wrapper
+	*/
+	class signal_action: public sigaction_type {
+	public:
 
 		inline
 		signal_action() = default;
 
+		/// Construct signal action from old-style signal handler.
 		inline
 		signal_action(void (*func)(int)) noexcept {
 			this->sa_handler = func;
 		}
 
+		/// Construct signal action from new-style signal handler.
 		inline
 		signal_action(void (*func)(int, siginfo_t*, void*)) noexcept {
 			this->sa_sigaction = func;
@@ -79,13 +122,30 @@ namespace sys {
 
 	};
 
+	/// Routines implicitly applied to the currect process.
 	namespace this_process {
 
+		/**
+		\brief Set signal callback function.
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup comm
+		*/
 		inline void
 		bind_signal(signal sig, const signal_action& action) {
 			UNISTDX_CHECK(::sigaction(signal_type(sig), &action, 0));
 		}
 
+		/**
+		\brief Ignore specified signal
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup comm
+		\details
+		By default any signal for which callback function
+		is not set may kill the process. This routine allows to ignore
+		specified signals.
+		*/
 		inline void
 		ignore_signal(signal sig) {
 			bind_signal(sig, SIG_IGN);
@@ -94,19 +154,29 @@ namespace sys {
 	}
 
 	#if !defined(__MACH__)
-	struct sigset_type: public ::sigset_t {
+	/**
+	\brief Signal set.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc comm wrapper
+	*/
+	class sigset_type: public ::sigset_t {
+	public:
 
+		/// Construct empty signal set.
 		inline
 		sigset_type() {
 			UNISTDX_CHECK(::sigemptyset(this));
 		}
 
+		/// Construct signal set containing only signal \p s.
 		inline explicit
 		sigset_type(signal_type s):
 		sigset_type() {
 			UNISTDX_CHECK(::sigaddset(this, s));
 		}
 
+		/// Call \p func for each signal in the set.
 		template<class F>
 		void
 		for_each(F func) {
@@ -121,8 +191,20 @@ namespace sys {
 
 	};
 
-	struct signal_guard {
+	/**
+	\brief Blocks/unblocks specified signals upon creation/destruction.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc comm guard
+	*/
+	class signal_guard {
 
+	private:
+		sigset_type _signals;
+
+	public:
+
+		/// Construct signal guard that blocks all signals in set \p s.
 		inline explicit
 		signal_guard(sigset_type s):
 		_signals(s) {
@@ -134,11 +216,13 @@ namespace sys {
 			this->unlock();
 		}
 
+		/// Block all specified signals.
 		inline void
 		lock() {
 			this->change_mask(SIG_BLOCK);
 		}
 
+		/// Unblock all specified signals.
 		inline void
 		unlock() {
 			this->change_mask(SIG_UNBLOCK);
@@ -151,7 +235,6 @@ namespace sys {
 			UNISTDX_CHECK(::sigprocmask(how, &this->_signals, 0));
 		}
 
-		sigset_type _signals;
 	};
 	#endif // if !defined(__MACH__)
 

@@ -17,7 +17,7 @@
 #if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 namespace {
 	loff_t
-	copy_file_range(
+	copy_file_range_priv(
 		int fd_in,
 		loff_t* off_in,
 		int fd_out,
@@ -62,7 +62,7 @@ sys::copy_file(const path& src, const path& dest) {
 	offset_type size = st.size();
 	ssize_t n;
 	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
-	while ((n = ::copy_file_range(ifd, nullptr, ofd, nullptr, size, 0)) > 0) {
+	while ((n = ::copy_file_range_priv(ifd, nullptr, ofd, nullptr, size, 0)) > 0) {
 		size -= n;
 	}
 	if (size != 0) {

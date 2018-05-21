@@ -6,7 +6,17 @@
 namespace sys {
 
 	#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES) && !defined(__MACH__)
-	struct thread_semaphore: public posix_semaphore {
+	/**
+	\brief Thread semaphore.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc semaphore
+	\details
+	The semaphore is defined as either \link posix_semaphore\endlink,
+	\link sysv_semaphore\endlink or std::condition_variable_any.
+	*/
+	class thread_semaphore: public posix_semaphore {
+	public:
 		inline
 		thread_semaphore():
 		posix_semaphore(semaphore_type::thread)

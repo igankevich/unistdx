@@ -6,7 +6,17 @@
 namespace sys {
 
 	#if defined(UNISTDX_HAVE_POSIX_SEMAPHORES) && !defined(__MACH__)
-	struct process_semaphore: public posix_semaphore {
+	/**
+	\brief Process semaphore.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc semaphore
+	\details
+	The semaphore is defined as either \link posix_semaphore\endlink or
+	\link sysv_semaphore\endlink.
+	*/
+	class process_semaphore: public posix_semaphore {
+	public:
 		inline
 		process_semaphore():
 		posix_semaphore(semaphore_type::process)

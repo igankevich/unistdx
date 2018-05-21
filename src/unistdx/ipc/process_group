@@ -12,9 +12,11 @@ namespace sys {
 
 	namespace this_process {
 
+		/// Get process group ID of the calling process.
 		inline pid_type
 		process_group_id() noexcept { return ::getpgrp(); }
 
+		/// Set process group ID of the calling process.
 		inline void
 		set_process_group_id(pid_type rhs) {
 			UNISTDX_CHECK(::setpgid(this_process::id(), rhs));
@@ -22,10 +24,18 @@ namespace sys {
 
 	}
 
+	/**
+	\brief A group of processes.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc container
+	*/
 	class process_group {
 
 	public:
+		/// Container iterator.
 		typedef std::vector<process>::iterator iterator;
+		/// Container constant iterator.
 		typedef std::vector<process>::const_iterator const_iterator;
 
 	private:
@@ -39,6 +49,7 @@ namespace sys {
 
 		UNISTDX_NO_COPY_AND_MOVE(process_group)
 
+		/// Add new process to a group using \p childmain as the main function.
 		template<class F>
 		const process&
 		emplace(F&& childmain, process_flag pf=process_flag::fork) {
@@ -56,9 +67,14 @@ namespace sys {
 			return proc;
 		}
 
+		/// Wait until all processes finish their execution.
 		int
 		wait();
 
+		/**
+		\brief Wait until all processes finish their execution
+		unlocking \p lock for the duration of wait.
+		*/
 		template<class Lock, class F>
 		void
 		wait(Lock& lock, F callback, wait_flags flags=proc_exited) {
@@ -87,6 +103,7 @@ namespace sys {
 			}
 		}
 
+		/// Send signal \p s to all processes in the group.
 		inline void
 		send(signal s) {
 			if (this->_gid > 0) {
@@ -94,61 +111,73 @@ namespace sys {
 			}
 		}
 
+		/// Terminate all processes in the group.
 		inline void
 		terminate() {
 			this->send(signal::terminate);
 		}
 
+		/// Get process group ID.
 		inline pid_type
 		id() const noexcept {
 			return this->_gid;
 		}
 
+		/// Get process by index \p i.
 		const process&
 		operator[](size_t i) const noexcept {
 			return this->_procs[i];
 		}
 
+		/// Get process by index \p i.
 		inline process&
 		operator[](size_t i) noexcept {
 			return this->_procs[i];
 		}
 
+		/// Get the number of proccess in the group.
 		inline size_t
 		size() const noexcept {
 			return this->_procs.size();
 		}
 
+		/// Returns iterator to the beginning of the container.
 		inline iterator
 		begin() noexcept {
 			return this->_procs.begin();
 		}
 
+		/// Returns iterator to the end of the container.
 		inline iterator
 		end() noexcept {
 			return this->_procs.end();
 		}
 
+		/// Returns the first process.
 		inline const process&
 		front() const noexcept {
 			return this->_procs.front();
 		}
 
+		/// Returns the first process.
 		inline process&
 		front() noexcept {
 			return this->_procs.front();
 		}
 
+		/// Returns the last process.
 		inline const process&
 		back() const noexcept {
 			return this->_procs.back();
 		}
 
+		/// Returns the last process.
 		inline process&
 		back() noexcept {
 			return this->_procs.back();
 		}
 
+		/// Check if the group is empty.
 		inline bool
 		empty() const noexcept {
 			return this->_procs.empty();
@@ -159,6 +188,7 @@ namespace sys {
 
 	};
 
+	/// Output process group ID and all processes in the group.
 	std::ostream&
 	operator<<(std::ostream& out, const process_group& rhs);
 

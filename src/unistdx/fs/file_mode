@@ -8,6 +8,13 @@
 
 namespace sys {
 
+	/**
+	\brief
+	Alias for file mode type \c mode_t.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup fs
+	*/
 	typedef ::mode_t mode_type;
 
 	struct file_mode {

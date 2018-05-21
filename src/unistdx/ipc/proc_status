@@ -8,76 +8,132 @@
 
 namespace sys {
 
+	/**
+	\brief
+	Alias for status type used in \c wait system call.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc
+	*/
 	typedef int wstat_type;
+
+	/**
+	\brief
+	Alias for exit code type used in \c wait system call.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc
+	*/
 	typedef int code_type;
 
+	/**
+	\brief
+	A \link basic_status\endlink object that tells how the process
+	was terminated.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc wrapper
+	\details Wraps \c wstat_type.
+	*/
 	template<>
 	struct basic_status<wstat_type> {
 
+	private:
+		wstat_type _stat = 0;
+
+	public:
+
+		/// Construct process status from raw wait status.
 		inline explicit constexpr
 		basic_status(wstat_type rhs) noexcept:
-		stat(rhs) {}
+		_stat(rhs) {}
 
 		inline constexpr
 		basic_status() noexcept = default;
 
+		/// Copy-constructor.
 		inline constexpr
 		basic_status(const basic_status&) noexcept = default;
 
+		/// \copydoc proc_info::exited
 		inline constexpr bool
 		exited() const noexcept {
-			return WIFEXITED(stat);
+			return WIFEXITED(this->_stat);
 		}
 
+		/// \copydoc proc_info::killed
 		inline constexpr bool
 		killed() const noexcept {
-			return WIFSIGNALED(stat);
+			return WIFSIGNALED(this->_stat);
 		}
 
+		/// \copydoc proc_info::stopped
 		inline constexpr bool
 		stopped() const noexcept {
-			return WIFSTOPPED(stat);
+			return WIFSTOPPED(this->_stat);
 		}
 
+		/// \copydoc proc_info::core_dumped
 		inline constexpr bool
 		core_dumped() const noexcept {
 			#if defined(WCOREDUMP)
-			return static_cast<bool>(WCOREDUMP(stat));
+			return static_cast<bool>(WCOREDUMP(this->_stat));
 			#else
 			return false;
 			#endif
 		}
 
+		/// Always returns false for compatibility with \link proc_info\endlink.
 		inline constexpr bool
 		trapped() const noexcept {
 			return false;
 		}
 
+		/// \copydoc proc_info::continued
 		inline constexpr bool
 		continued() const noexcept {
-			return WIFCONTINUED(stat);
+			return WIFCONTINUED(this->_stat);
 		}
 
+		/// \copydoc proc_info::exit_code
 		inline constexpr code_type
 		exit_code() const noexcept {
-			return WEXITSTATUS(stat);
+			return WEXITSTATUS(this->_stat);
 		}
 
+		/// \copydoc proc_info::term_signal
 		inline constexpr signal
 		term_signal() const noexcept {
-			return signal(WTERMSIG(stat));
+			return signal(WTERMSIG(this->_stat));
 		}
 
+		/// \copydoc proc_info::stop_signal
 		inline constexpr signal
 		stop_signal() const noexcept {
-			return signal(WSTOPSIG(stat));
+			return signal(WSTOPSIG(this->_stat));
 		}
 
-		wstat_type stat = 0;
+		/// Get process status string.
+		inline constexpr const char*
+		status_string() const noexcept {
+			return ::sys::status_string<wstat_type>(*this);
+		}
+
 	};
 
+	/**
+	\brief Alias for basic_status<wstat_type>.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\ingroup ipc
+	*/
 	typedef basic_status<wstat_type> proc_status;
 
+	/**
+	\brief Output exit status, exit code/termination signal.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	*/
 	std::ostream&
 	operator<<(std::ostream& out, const proc_status& rhs);
 

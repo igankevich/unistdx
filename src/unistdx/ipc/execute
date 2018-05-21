@@ -3,25 +3,26 @@
 
 #include <unistd.h>
 
+#include <initializer_list>
+
 #include <unistdx/base/check>
-#include <unistdx/ipc/argstream>
 
 namespace sys {
 
 	namespace this_process {
 
-		template<class ... Args>
-		int
-		exec(const Args& ... args) {
-			sys::argstream str;
-			str.append(args ...);
-			assert(str.argc() == sizeof ... (Args));
-			char** argv = str.argv();
-			int ret;
-			UNISTDX_CHECK(ret = ::execv(argv[0], argv));
-			return ret;
-		}
-
+		/**
+		\brief
+		Execute child process with arguments \p argv and environment \p envp.
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup ipc
+		\see argstream
+		\details
+		\arg The executable is specified as the first argument \c argv[0].
+		\arg The executable path must be absolute.
+		\arg Use \link argstream\endlink to construct \p argv.
+		*/
 		inline int
 		execute(char* const argv[], char* const envp[]) {
 			int ret;
@@ -29,6 +30,18 @@ namespace sys {
 			return ret;
 		}
 
+		/**
+		\brief
+		Execute child process with arguments \p argv and current process environment.
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup ipc
+		\see argstream
+		\details
+		\arg The executable is specified as the first argument \c argv[0].
+		\arg The executable path must be absolute.
+		\arg Use \link argstream\endlink to construct \p argv.
+		*/
 		inline int
 		execute(char* const argv[]) {
 			int ret;
@@ -36,29 +49,41 @@ namespace sys {
 			return ret;
 		}
 
-		template<class ... Args>
-		int
-		execute_command(const Args& ... args) {
-			sys::argstream str;
-			str.append(args ...);
-			assert(str.argc() == sizeof ... (Args));
-			char** argv = str.argv();
-			int ret;
-			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
-			return ret;
-		}
-
+		/**
+		\brief
+		Execute child process with arguments \p argv and environment \p envp.
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup ipc
+		\see argstream
+		\details
+		\arg The executable is specified as the first argument \c argv[0].
+		\arg Uses \c PATH environment variable to search for the executable.
+		\arg Use \link argstream\endlink to construct \p argv.
+		*/
 		inline int
-		exec_command(char* const argv[]) {
-			int ret;
-			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
-			return ret;
-		}
-
-		inline int
-		exec_command(char* const argv[], char* const envp[]) {
+		execute_command(char* const argv[], char* const envp[]) {
 			int ret;
 			UNISTDX_CHECK(ret = ::execvpe(argv[0], argv, envp));
+			return ret;
+		}
+
+		/**
+		\brief
+		Execute child process with arguments \p argv and current process environment.
+		\date 2018-05-21
+		\author Ivan Gankevich
+		\ingroup ipc
+		\see argstream
+		\details
+		\arg The executable is specified as the first argument \c argv[0].
+		\arg Uses \c PATH environment variable to search for the executable.
+		\arg Use \link argstream\endlink to construct \p argv.
+		*/
+		inline int
+		execute_command(char* const argv[]) {
+			int ret;
+			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
 			return ret;
 		}
 

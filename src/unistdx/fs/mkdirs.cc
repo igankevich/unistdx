@@ -5,29 +5,25 @@
 #include <unistdx/base/check>
 
 void
-sys::mkdirs(const sys::path& root, const sys::path& relative_path) {
-	size_t i0 = 0, i1 = 0;
-	while ((i1 = relative_path.find('/', i0)) != std::string::npos) {
-		sys::path p(root, relative_path.substr(0, i1));
-		int ret = ::mkdir(p, 0755);
-		if (ret == -1 && errno != EEXIST) {
-			UNISTDX_THROW_BAD_CALL();
+sys::mkdirs(sys::path dir, file_mode m, path::size_type offset) {
+	const sys::path::size_type n = dir.size();
+	bool eof = false;
+	for (sys::path::size_type i=0; i<n; ++i) {
+		const char ch = dir[i];
+		if (i == n-1) {
+			eof = true;
 		}
-		i0 = i1 + 1;
-	}
-}
-
-
-void
-sys::mkdirs(sys::path dir) {
-	dir += '/';
-	size_t i0 = 0, i1 = 0;
-	while ((i1 = dir.find('/', i0)) != std::string::npos) {
-		sys::path p(dir.substr(0, i1));
-		int ret = ::mkdir(p, 0755);
-		if (ret == -1 && errno != EEXIST) {
-			UNISTDX_THROW_BAD_CALL();
+		if (ch == '/' || eof) {
+			if (!eof) {
+				dir[i] = '\0';
+			}
+			int ret = ::mkdir(dir, m);
+			if (!eof) {
+				dir[i] = ch;
+			}
+			if (ret == -1 && errno != EEXIST) {
+				UNISTDX_THROW_BAD_CALL();
+			}
 		}
-		i0 = i1 + 1;
 	}
 }
