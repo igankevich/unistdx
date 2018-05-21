@@ -36,6 +36,92 @@ namespace sys {
 		return 1u;
 	}
 
+	class cache;
+
+	class cache_level {
+
+	private:
+		int _level = 0;
+		size_type _size = 0;
+		size_type _linesize = 0;
+		size_type _assoc = 0;
+
+	public:
+
+		inline int
+		level() const noexcept {
+			return this->_level;
+		}
+
+		inline size_type
+		size() const noexcept {
+			return this->_size;
+		}
+
+		inline size_type
+		line_size() const noexcept {
+			return this->_linesize;
+		}
+
+		inline size_type
+		associativity() const noexcept {
+			return this->_assoc;
+		}
+
+		friend class cache;
+
+	};
+
+	class cache {
+
+	public:
+		typedef cache_level value_type;
+		typedef const value_type* const_iterator;
+
+	private:
+		cache_level _levels[4];
+		int _nlevels = 0;
+
+	public:
+
+		cache();
+		~cache() = default;
+
+		cache(const cache&) = default;
+		cache(cache&&) = default;
+
+		inline int
+		num_levels() const noexcept {
+			return this->_nlevels;
+		}
+
+		inline const_iterator
+		begin() const noexcept {
+			return this->_levels;
+		}
+
+		inline const_iterator
+		end() const noexcept {
+			return this->_levels + this->_nlevels;
+		}
+
+		inline int
+		size() const noexcept {
+			return this->_nlevels;
+		}
+
+		inline value_type
+		size(int i) const noexcept {
+			return this->_levels[i];
+		}
+
+		inline value_type
+		operator[](int i) const noexcept {
+			return this->_levels[i];
+		}
+
+	};
+
 }
 
 #endif // vim:filetype=cpp

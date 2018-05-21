@@ -31,3 +31,14 @@ TEST(Terminal, Name) {
 		EXPECT_FALSE(p.empty()) << p;
 	}
 }
+
+TEST(System, Cache) {
+	sys::cache cache;
+	for (const auto& c : cache) {
+		std::clog << "Cache level=" << c.level()
+			<< ",size=" << c.size()
+			<< ",line_size=" << c.line_size()
+			<< ",assoc=" << c.associativity()
+			<< std::endl;
+	}
+}
