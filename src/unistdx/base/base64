@@ -7,6 +7,7 @@
 
 namespace sys {
 
+	/// The length of \p len bytes sequence encoded in BASE64.
 	inline size_t
 	base64_encoded_size(size_t len) {
 		if (len > std::numeric_limits<size_t>::max()/4u*3u-2u) {
@@ -15,22 +16,51 @@ namespace sys {
 		return ((len + 2u) / 3u) * 4u;
 	}
 
+	/// The length of \p len bytes sequence decoded from BASE64.
 	inline constexpr size_t
 	base64_max_decoded_size(size_t len) noexcept {
 		return (len / 4u) * 3u;
 	}
 
+	/**
+	\brief Encode byte sequence with BASE64.
+	\details
+	Encode byte sequence pointed by \p first with length \p n
+	with BASE64 and put result to memory location pointed by
+	\p result.
+	*/
 	void
 	base64_encode(const char* first, size_t n, char* result);
 
+	/**
+	\brief Encode byte sequence with BASE64.
+	\details
+	Encode byte sequence located between \p first and \p last
+	with BASE64 and put result to memory location pointed by
+	\p result.
+	*/
 	inline void
 	base64_encode(const char* first, const char* last, char* result) {
 		base64_encode(first, last-first, result);
 	}
 
+	/**
+	\brief Decode BASE64 byte sequence.
+	\return the length of the decoded sequence
+	\details
+	Decode BASE64 byte sequence pointed by \p first with length \p n
+	and put result to memory location pointed by \p result.
+	*/
 	size_t
 	base64_decode(const char* first, size_t n, char* result);
 
+	/**
+	\brief Decode BASE64 byte sequence.
+	\return the length of the decoded sequence
+	\details
+	Decode BASE64 byte sequence between \p first and \p last
+	and put result to memory location pointed by \p result.
+	*/
 	inline size_t
 	base64_decode(const char* first, const char* last, char* result) {
 		return base64_decode(first, last-first, result);

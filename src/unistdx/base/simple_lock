@@ -34,11 +34,13 @@ namespace sys {
 			this->unlock();
 		}
 
+		/// Lock the mutex.
 		inline void
 		lock() noexcept {
 			this->_mtx.lock();
 		}
 
+		/// Unlock the mutex.
 		inline void
 		unlock() noexcept {
 			this->_mtx.unlock();

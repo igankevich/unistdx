@@ -30,8 +30,17 @@
 
 namespace sys {
 
-	struct bad_call: public std::system_error {
+	/**
+	\brief A \c std::system_error that records file, line and function where
+	the exception was thrown.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	*/
+	class bad_call: public std::system_error {
 
+	public:
+
+		/// Construct the error with precise location where it was thrown.
 		inline
 		bad_call(const char* file, const int line, const char* function) noexcept:
 		std::system_error(errno, std::generic_category()),
@@ -47,6 +56,7 @@ namespace sys {
 		const char* _function;
 	};
 
+	/// Output error message prefixed by the location where it was thrown.
 	std::ostream&
 	operator<<(std::ostream& out, const bad_call& rhs);
 

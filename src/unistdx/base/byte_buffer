@@ -8,12 +8,26 @@
 
 namespace sys {
 
+	/**
+	\brief
+	Byte buffer which uses direct memory allocation for maximum performance.
+	\date 2018-05-21
+	\author Ivan Gankevich
+	\details
+	\arg Uses \c mmap and system calls to bypass memory allocators.
+	\arg Uses \c mremap to efficiently resize the buffer without copying.
+	\arg Uses \c madvise to optimise for sequential access and prevent core dumping.
+	*/
 	class byte_buffer {
 
 	public:
+		/// Alias to \c char.
 		typedef char value_type;
+		/// Pointer to \c char.
 		typedef value_type* iterator;
+		/// Constant pointer to \c char.
 		typedef const value_type* const_iterator;
+		/// Alias to \c size_t.
 		typedef std::size_t size_type;
 
 	private:
@@ -29,6 +43,7 @@ namespace sys {
 		byte_buffer&
 		operator=(const byte_buffer&) = delete;
 
+		/// Move-constructor.
 		inline
 		byte_buffer(byte_buffer&& rhs):
 		_data(rhs._data),
@@ -36,59 +51,74 @@ namespace sys {
 			rhs._data = nullptr;
 		}
 
+		/// Construct byte buffer with size \p size.
 		explicit
 		byte_buffer(size_type size);
 
 		~byte_buffer();
 
+		/// Get pointer to raw data.
 		inline iterator
 		data() noexcept {
 			return this->_data;
 		}
 
+		/// Get pointer to raw data.
 		inline const_iterator
 		data() const noexcept {
 			return this->_data;
 		}
 
+		/// Get iterator to the beginning of the container.
 		inline iterator
 		begin() noexcept {
 			return this->_data;
 		}
 
+		/// Get iterator to the beginning of the container.
 		inline const_iterator
 		begin() const noexcept {
 			return this->_data;
 		}
 
+		/// Get iterator to the end of the container.
 		inline iterator
 		end() noexcept {
 			return this->_data + this->_size;
 		}
 
+		/// Get iterator to the end of the container.
 		inline const_iterator
 		end() const noexcept {
 			return this->_data + this->_size;
 		}
 
+		/// Get number of bytes in byte buffer.
 		inline size_type
 		size() const noexcept {
 			return this->_size;
 		}
 
+		/// Check if the buffer is valid.
 		inline explicit
 		operator bool() const noexcept {
 			return this->_data;
 		}
 
+		/// Check if the buffer is valid.
 		inline bool
 		operator!() const noexcept {
 			return !this->operator bool();
 		}
 
+		/// Resize the buffer preserving its contents.
 		void
 		resize(size_type new_size);
 
+		/**
+		\brief Double the buffer size.
+		\throws std::length_error when maximum size is reached.
+		*/
 		inline void
 		grow() {
 			if (this->max_size() / 2 < this->_size) {
@@ -97,6 +127,7 @@ namespace sys {
 			this->resize(this->_size*2);
 		}
 
+		/// Returns maximum size a buffer may occupy (theoretical limit).
 		inline static size_type
 		max_size() noexcept {
 			return std::numeric_limits<size_type>::max();
