@@ -1,6 +1,10 @@
 #ifndef UNISTDX_BASE_UINT128
 #define UNISTDX_BASE_UINT128
 
+#include <functional>
+#include <limits>
+#include <type_traits>
+
 #include <unistdx/base/types>
 #include <unistdx/bits/uint128_parse>
 #include <unistdx/config>
@@ -10,30 +14,18 @@
 #endif
 
 namespace sys {
+
 	typedef unsigned __int128 uint128_t;
 	typedef uint128_t u128;
-}
 
-// Attempt to simulate useful behaviour for ``unsigned __int128''
-// (input/output operators, static type information.)
-namespace std {
+	namespace literals {
 
-	inline std::ostream&
-	operator<<(std::ostream& out, unsigned __int128 rhs) {
-		std::ostream::sentry s(out);
-		if (s) {
-			sys::bits::uint128_put(rhs, out);
+		template<char ... Chars>
+		constexpr uint128_t
+		operator"" _u128() noexcept {
+			return bits::parse_uint<uint128_t, sizeof...(Chars)>((const char[]){Chars...});
 		}
-		return out;
-	}
 
-	inline std::istream&
-	operator>>(std::istream& in, unsigned __int128& rhs) {
-		std::istream::sentry s(in);
-		if (s) {
-			sys::bits::uint128_get(rhs, in);
-		}
-		return in;
 	}
 
 }
@@ -52,23 +44,109 @@ namespace std {
 		static const bool value = true;
 	};
 
-}
+	template <>
+	class numeric_limits<sys::uint128_t> {
+	public:
+		static constexpr bool is_specialized = true;
 
-namespace sys {
-
-	namespace literals {
-
-		template<char ... Chars>
-		constexpr uint128_t
-		operator"" _u128() noexcept {
-			return bits::parse_uint<uint128_t, sizeof...(Chars)>((const char[]){Chars...});
+		static constexpr sys::uint128_t
+		min() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
 		}
 
-	}
+		static constexpr sys::uint128_t
+		max() noexcept {
+			using namespace sys::literals;
+			return 0xffffffffffffffffffffffffffffffff_u128;
+		}
+
+		static constexpr sys::uint128_t
+		lowest() noexcept {
+			return min();
+		}
+
+		static constexpr int digits = 128;
+		static constexpr int digits10 = 38;
+		static constexpr bool is_signed = false;
+		static constexpr bool is_integer = true;
+		static constexpr bool is_exact = true;
+		static constexpr int radix = 2;
+
+		static constexpr sys::uint128_t
+		epsilon() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
+		}
+
+		static constexpr sys::uint128_t
+		round_error() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
+		}
+
+		static constexpr int min_exponent = 0;
+		static constexpr int min_exponent10 = 0;
+		static constexpr int max_exponent = 0;
+		static constexpr int max_exponent10 = 0;
+
+		static constexpr bool has_infinity = false;
+		static constexpr bool has_quiet_NaN = false;
+		static constexpr bool has_signaling_NaN = false;
+		static constexpr float_denorm_style has_denorm = denorm_absent;
+		static constexpr bool has_denorm_loss = false;
+
+		static constexpr sys::uint128_t
+		infinity() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
+		}
+
+		static constexpr sys::uint128_t
+		quiet_NaN() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
+		}
+
+		static constexpr sys::uint128_t
+		signaling_NaN() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
+		}
+
+		static constexpr sys::uint128_t
+		denorm_min() noexcept {
+			using namespace sys::literals;
+			return 0_u128;
+		}
+
+		static constexpr bool is_iec559 = false;
+		static constexpr bool is_bounded = true;
+		static constexpr bool is_modulo = false;
+
+		static constexpr bool traps = false;
+		static constexpr bool tinyness_before = false;
+		static constexpr float_round_style round_style = round_toward_zero;
+
+	};
+
+	template<>
+	struct hash<sys::uint128_t> {
+
+		typedef size_t result_type;
+		typedef ::sys::uint128_t argument_type;
+
+		inline size_t
+		operator()(const sys::uint128_t& rhs) const noexcept {
+			using ::sys::u64;
+			std::hash<u64> h;
+			using namespace sys::literals;
+			return h(u64(rhs & 0xffffffffffffffff_u128)) ^
+			       h(u64((rhs >> 64) & 0xffffffffffffffff_u128));
+		}
+
+	};
 
 }
-
-#include <unistdx/bits/uint128_limits>
-#include <unistdx/bits/uint128_hash>
 
 #endif // vim:filetype=cpp
