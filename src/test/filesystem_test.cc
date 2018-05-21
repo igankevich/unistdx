@@ -4,7 +4,6 @@
 #include <unistdx/base/make_object>
 
 #include <unistdx/fs/canonical_path>
-#include <unistdx/fs/file>
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/idirtree>
 #include <unistdx/fs/mkdirs>

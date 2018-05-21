@@ -65,12 +65,6 @@ namespace sys {
 			return *this;
 		}
 
-		inline basic_idirtree&
-		operator>>(file& rhs) {
-			this->read_direntry(rhs);
-			return *this;
-		}
-
 	private:
 
 		template<class Entry>
@@ -112,11 +106,6 @@ namespace sys {
 		inline bool
 		operator()(const path&, const pathentry& rhs) const {
 			return !rhs.is_hidden() && get_file_type(rhs) == file_type::directory;
-		}
-
-		inline bool
-		operator()(const path&, const file& rhs) const noexcept {
-			return !rhs.is_hidden() && rhs.is_directory();
 		}
 
 	};

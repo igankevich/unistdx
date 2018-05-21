@@ -25,11 +25,6 @@ namespace sys {
 			return this->make_dirs(rhs.getpath());
 		}
 
-		inline sys::path
-		operator()(const file& rhs) const {
-			return this->make_dirs(rhs);
-		}
-
 	private:
 		sys::path
 		make_dirs(const sys::path& rhs) const;

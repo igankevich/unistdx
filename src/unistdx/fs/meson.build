@@ -14,7 +14,6 @@ install_headers(
 	'directory',
 	'direntry',
 	'dirstream',
-	'file',
 	'file_mode',
 	'file_mutex',
 	'file_stat',

@@ -3,7 +3,6 @@
 
 #include <unistdx/fs/direntry>
 #include <unistdx/fs/dirstream>
-#include <unistdx/fs/file>
 #include <unistdx/fs/pathentry>
 #include <unistdx/it/basic_istream_iterator>
 
@@ -96,12 +95,6 @@ namespace sys {
 
 		inline basic_idirectory&
 		operator>>(pathentry& rhs) {
-			this->read_direntry(rhs);
-			return *this;
-		}
-
-		inline basic_idirectory&
-		operator>>(file& rhs) {
 			this->read_direntry(rhs);
 			return *this;
 		}
