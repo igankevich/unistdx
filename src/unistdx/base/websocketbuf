@@ -12,6 +12,26 @@
 
 namespace sys {
 
+	/**
+	\brief
+	Stream buffer that encodes/decodes its contents using WebSocket protocol.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup streambuf
+	\see websocket_frame
+	\details
+	The implementation
+	\arg supports only the latest WebSocket standard,
+	\arg supports only binary frames,
+	\arg supports only binary WebSocket protocol,
+	\arg does not perform closing handshake,
+	\arg always masks payloads,
+	\arg uses secure random device for key generation and masking.
+
+	Please, see WebSocket protocol
+	<a href="https://tools.ietf.org/html/rfc6455">RFC 6455</a>
+	for more information.
+	*/
 	template<class Ch, class Tr=std::char_traits<Ch> >
 	class basic_websocketbuf: public virtual basic_packetbuf<Ch,Tr> {
 
@@ -21,6 +41,7 @@ namespace sys {
 		using typename std::basic_streambuf<Ch,Tr>::char_type;
 		using typename std::basic_streambuf<Ch,Tr>::traits_type;
 
+		/// The role of this stream buffer.
 		enum struct role_type {
 			server,
 			client
@@ -58,16 +79,19 @@ namespace sys {
 
 	public:
 
+		/// Set stream buffer role.
 		inline void
 		role(role_type r) noexcept {
 			this->_role = r;
 		}
 
+		/// Get stream buffer role.
 		inline role_type
 		role() const noexcept {
 			return this->_role;
 		}
 
+		/// Perform WebSocket opening handshake.
 		inline bool
 		handshake() override {
 			return (this->_role == role_type::server)
@@ -75,9 +99,11 @@ namespace sys {
 				   : this->client_handshake();
 		}
 
+		/// Perform server WebSocket opening handshake.
 		bool
 		server_handshake();
 
+		/// Perform client WebSocket opening handshake.
 		bool
 		client_handshake();
 

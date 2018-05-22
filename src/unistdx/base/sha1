@@ -38,12 +38,14 @@ namespace sys {
 
 	public:
 
+		/// Construct SHA-1 digest object.
 		inline
 		sha1() noexcept:
 		_digest{h0, h1, h2, h3, h4},
 		_blockptr{_block}
 		{}
 
+		/// Reset SHA-1 object to start computing new hash.
 		inline void
 		reset() {
 			this->_digest[0] = h0;
@@ -55,16 +57,29 @@ namespace sys {
 			this->_length = 0;
 		}
 
+		/**
+		Append next \p n bytes from array pointed by \p first
+		and compute digest if possible.
+		*/
 		inline void
 		put(const char* first, std::size_t n) {
 			this->xput(first, first+n, n);
 		}
 
+		/**
+		Append next byte array between \p first and \p last
+		and compute digest if possible.
+		*/
 		inline void
 		put(const char* first, const char* last) {
 			this->xput(first, last, last-first);
 		}
 
+		/**
+		Compute the final digest by padding the last block
+		if needed. If the block does not require padding this
+		method does nothing.
+		*/
 		inline void
 		compute() noexcept {
 			if (this->_blockptr != this->block_end()) {
@@ -72,6 +87,7 @@ namespace sys {
 			}
 		}
 
+		/// Copy SHA-1 digest to byte array pointed by \p result.
 		inline void
 		digest(char* result) noexcept {
 			for (int i=0; i<20; ++i) {
@@ -79,6 +95,7 @@ namespace sys {
 			}
 		}
 
+		/// Copy SHA-1 digest to unsigned integer array pointed by \p result.
 		inline void
 		digest(u32* result) noexcept {
 			for (int i=0; i<5; ++i) {
@@ -86,11 +103,13 @@ namespace sys {
 			}
 		}
 
+		/// Get SHA-1 digest as a pointer to unsigned integer array.
 		inline const u32*
 		digest() const noexcept {
 			return this->_digest;
 		}
 
+		/// Get SHA-1 digest as a pointer to unsigned byte array.
 		inline const unsigned char*
 		digest_bytes() const noexcept {
 			return this->_bytes;

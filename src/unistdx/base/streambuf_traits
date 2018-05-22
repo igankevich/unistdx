@@ -5,27 +5,47 @@
 
 namespace sys {
 
+	/**
+	\brief Traits that abstract read and write operations for stream buffers.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\details
+	\arg With this class it is possible to plug arbitrary object (including
+	another stream buffer) as a source or sink for stream buffer using
+	\link basic_fildesbuf\endlink.
+	\arg Generic implementation is done for \c str::streambuf.
+	*/
 	template<class T>
 	class streambuf_traits {
 
 	public:
+
+		/// Character type.
 		typedef typename T::char_type char_type;
 
+		/**
+		Write \p n bytes from array pointed by \p s to buffer \p buf.
+		*/
 		inline static std::streamsize
 		write(T& buf, const char_type* s, std::streamsize n) {
 			return buf.sputn(s, n);
 		}
 
+		/**
+		Read \p n bytes to array pointed by \p s from buffer \p buf.
+		*/
 		inline static std::streamsize
 		read(T& buf, char_type* s, std::streamsize n) {
 			return buf.sgetn(s, n);
 		}
 
+		/// Check if the source/sink is blocking.
 		inline static bool
 		is_blocking(const T&) {
 			return false;
 		}
 
+		/// Check how many bytes are available for reading in buffer \p buf.
 		inline static std::streamsize
 		in_avail(T& buf) {
 			return buf.in_avail();

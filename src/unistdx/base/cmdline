@@ -8,23 +8,28 @@
 
 namespace sys {
 
+	/// Invalid command line argument error.
 	class bad_argument: public std::exception {
 
 	private:
 		const char* _arg;
 
 	public:
+
+		/// Construct error object for command line argument \p arg.
 		inline explicit
 		bad_argument(const char* arg):
 		std::exception(),
 		_arg(arg)
 		{}
 
+		/// Error message.
 		const char*
 		what() const noexcept override {
 			return "invalid argument";
 		}
 
+		/// Command line argument name.
 		inline const char*
 		argument() const noexcept {
 			return this->_arg;
@@ -32,10 +37,17 @@ namespace sys {
 
 	};
 
+	/**
+	\brief
+	Command line argument encoded as \c key=value pair.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	*/
 	template <class T>
 	class key_value {
 
 	public:
+		/// Alias to \c std::string.
 		typedef std::string key_type;
 
 	private:
@@ -43,12 +55,17 @@ namespace sys {
 		T& _value;
 
 	public:
+
+		/**
+		Construct key-value pair with key \p key and reference to value \p value.
+		*/
 		inline
 		key_value(const key_type& key, T& value):
 		_key(key),
 		_value(value)
 		{}
 
+		/// Parse command line argument as key-value pair.
 		inline bool
 		operator()(int, const std::string& arg) {
 			bool success = false;
@@ -65,23 +82,32 @@ namespace sys {
 
 	};
 
+	/// Helper function to construct key-value pair.
 	template <class T>
 	key_value<T>
 	make_key_value(const std::string& key, T& value) {
 		return key_value<T>(key, value);
 	}
 
+	/**
+	Ignores nought command line argument, which usually
+	equals executable name. Fails on all other arguments.
+	*/
 	struct ignore_first_argument {
+		/// \copydoc ignore_first_argument
 		inline bool
 		operator()(int pos, const std::string&) {
 			return pos == 0;
 		}
-
 	};
 
+	/// Function that parses command line argument.
 	typedef std::function<bool (int,const std::string&)>
 	    input_operator_type;
 
+	/**
+	Parse command line arguments \p argv using provided \p input_operators.
+	*/
 	void
 	parse_arguments(
 		int argc,
@@ -89,6 +115,9 @@ namespace sys {
 		input_operator_type* input_operators
 	);
 
+	/**
+	Parse command line arguments \p argv using provided \p input_operators.
+	*/
 	inline void
 	parse_arguments(
 		int argc,

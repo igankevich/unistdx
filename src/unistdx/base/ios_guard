@@ -27,6 +27,8 @@ namespace sys {
 		std::ios::char_type _oldfill;
 
 	public:
+
+		/// Construct the guard from stream \p s.
 		inline explicit
 		ios_guard(std::ios& s):
 		_stream(s),

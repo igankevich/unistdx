@@ -17,6 +17,8 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup base mutex
+	\details
+	\arg Uses \c std::atomic_flag.
 	*/
 	class spin_mutex {
 
@@ -25,21 +27,25 @@ namespace sys {
 
 	public:
 
+		/// Lock the mutex.
 		inline void
 		lock() noexcept {
 			while (this->_flag.test_and_set(std::memory_order_acquire));
 		}
 
+		/// Unlock the mutex.
 		inline void
 		unlock() noexcept {
 			this->_flag.clear(std::memory_order_release);
 		}
 
+		/// Try to lock the mutex without blocking.
 		inline bool
 		try_lock() noexcept {
 			return !this->_flag.test_and_set(std::memory_order_acquire);
 		}
 
+		/// Construct spin mutex.
 		inline
 		spin_mutex() noexcept = default;
 

@@ -4,9 +4,26 @@
 #include <system_error>
 #include <iosfwd>
 
+/**
+\defgroup macros Macros
+\brief Macros that do what functions can not do.
+*/
+
+/**
+\brief
+Uncoditionally throw \link sys::bad_call\endlink
+with error code and error location.
+\ingroup macros
+*/
 #define UNISTDX_THROW_BAD_CALL() \
 	throw ::sys::bad_call(__FILE__, __LINE__, __func__)
 
+/**
+\brief
+Check if \p func equals -1 and throw \link sys::bad_call\endlink
+with error code and error location.
+\ingroup macros
+*/
 #define UNISTDX_CHECK(func) \
 { \
 	if ((func) == -1) { \
@@ -14,6 +31,12 @@
 	} \
 }
 
+/**
+\brief
+Check if \p func equals \p ret and throw \link sys::bad_call\endlink
+with error code and error location.
+\ingroup macros
+*/
 #define UNISTDX_CHECK2(func, ret) \
 { \
 	if ((func) == (ret)) { \
@@ -21,6 +44,12 @@
 	} \
 }
 
+/**
+\brief
+Check if \p func equals \p ret and throw \link sys::bad_call\endlink
+with error code and error location unless \c errno equals \p good_err.
+\ingroup macros
+*/
 #define UNISTDX_CHECK_IF_NOT(good_err, func) \
 { \
 	if ((func) == -1 && errno != (good_err)) { \

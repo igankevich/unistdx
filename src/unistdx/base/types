@@ -17,19 +17,30 @@ namespace sys {
 	\brief Basic types, classes and functions.
 	*/
 
+	/// 1-byte unsigned integer type.
 	typedef ::std::uint8_t u8;
+	/// 2-byte unsigned integer type.
 	typedef ::std::uint16_t u16;
+	/// 4-byte unsigned integer type.
 	typedef ::std::uint32_t u32;
+	/// 8-byte unsigned integer type.
 	typedef ::std::uint64_t u64;
 
+	/// 1-byte signed integer type.
 	typedef ::std::int8_t i8;
+	/// 2-byte signed integer type.
 	typedef ::std::int16_t i16;
+	/// 4-byte signed integer type.
 	typedef ::std::int32_t i32;
+	/// 8-byte signed integer type.
 	typedef ::std::int64_t i64;
 
+	/// 4-byte floating point type.
 	typedef float f32;
+	/// 8-byte floating point type.
 	typedef double f64;
 	#if defined(UNISTDX_HAVE_LONG_DOUBLE)
+	/// 16-byte floating point type.
 	typedef long double f128;
 	static_assert(sizeof(f128) == 16, "bad f128 type");
 	#endif

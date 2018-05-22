@@ -25,6 +25,7 @@ namespace sys {
 
 	public:
 
+		/// Lock the mutex.
 		inline void
 		lock() noexcept {
 			const id_type tid = std::this_thread::get_id();
@@ -37,6 +38,7 @@ namespace sys {
 			}
 		}
 
+		/// Unlock the mutex.
 		inline void
 		unlock() noexcept {
 			if (std::this_thread::get_id() == this->_owner) {
@@ -47,12 +49,14 @@ namespace sys {
 			}
 		}
 
+		/// Try to lock the mutex without blocking.
 		inline bool
 		try_lock() noexcept {
 			return std::this_thread::get_id() == this->_owner
 				|| this->spin_mutex::try_lock();
 		}
 
+		/// Construct recursive spin mutex.
 		inline
 		recursive_spin_mutex() noexcept = default;
 
