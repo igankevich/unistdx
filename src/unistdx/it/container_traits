@@ -5,45 +5,63 @@
 
 namespace sys {
 
+	/**
+	\brief Container trais.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\details
+	It is like character traits, but for containers, in a sense that
+	you need to always carry traits type template parameter together with
+	the container type template parameter.
+	*/
 	template <class Container>
 	struct container_traits {
 
+		/// Container type
 		typedef Container container_type;
+		/// Container value type
 		typedef typename Container::value_type value_type;
 
 	};
 
+	/// Container traits for vector-like containers.
 	template <class Container>
 	struct vector_traits: public container_traits<Container> {
 
 		using typename container_traits<Container>::container_type;
 		using typename container_traits<Container>::value_type;
 
+		/// Push element to the container.
 		static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push_back(rhs);
 		}
 
+		/// Construct element in-place in the container.
 		static void
 		emplace(container_type& cnt, const value_type&& rhs) {
 			cnt.emplace_back(std::forward<value_type>(rhs));
 		}
 
+		/// Returns the first element in the container.
 		static value_type&
 		front(container_type& cnt) {
 			return cnt.front();
 		}
 
+		/// Returns the first element in the container.
 		static const value_type&
 		front(const container_type& cnt) {
 			return cnt.front();
 		}
 
+		/// Unsupported operation.
 		static void
 		pop_front(container_type&) {
 			throw std::runtime_error("unsupported operation pop_front");
 		}
 
+		/// Removes the last element in the container.
 		static void
 		pop_back(container_type& cnt) {
 			cnt.pop_back();
@@ -51,42 +69,50 @@ namespace sys {
 
 	};
 
+	/// Container traits for queue-like containers.
 	template <class Container>
 	struct queue_traits: public container_traits<Container> {
 
 		using typename container_traits<Container>::container_type;
 		using typename container_traits<Container>::value_type;
 
+		/// Push element to the container.
 		static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push(rhs);
 		}
 
+		/// Construct element in-place in the container.
 		static void
 		emplace(container_type& cnt, const value_type&& rhs) {
 			cnt.emplace(std::forward<value_type>(rhs));
 		}
 
+		/// Returns the first element in the container.
 		static value_type&
 		front(container_type& cnt) {
 			return cnt.front();
 		}
 
+		/// Returns the first element in the container.
 		static const value_type&
 		front(const container_type& cnt) {
 			return cnt.front();
 		}
 
+		/// Removes the first element in the container.
 		static void
 		pop(container_type& cnt) {
 			cnt.pop();
 		}
 
+		/// Removes the first element in the container.
 		static void
 		pop_front(container_type& cnt) {
 			cnt.pop();
 		}
 
+		/// Unsupported operation.
 		static void
 		pop_back(container_type&) {
 			throw std::runtime_error("unsupported operation pop_back");
@@ -94,37 +120,44 @@ namespace sys {
 
 	};
 
+	/// Container traits for priority queue container.
 	template <class Container>
 	struct priority_queue_traits: public container_traits<Container> {
 
 		using typename container_traits<Container>::container_type;
 		using typename container_traits<Container>::value_type;
 
+		/// Push element to the container.
 		static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push(rhs);
 		}
 
+		/// Construct element in-place in the container.
 		static void
 		emplace(container_type& cnt, const value_type&& rhs) {
 			cnt.emplace(std::forward<value_type>(rhs));
 		}
 
+		/// Returns the first element in the container.
 		static const value_type&
 		front(const container_type& cnt) {
 			return cnt.top();
 		}
 
+		/// Removes the first element in the container.
 		static void
 		pop(container_type& cnt) {
 			cnt.pop();
 		}
 
+		/// Removes the first element in the container.
 		static void
 		pop_front(container_type& cnt) {
 			cnt.pop();
 		}
 
+		/// Unsupported operation.
 		static void
 		pop_back(container_type&) {
 			throw std::runtime_error("unsupported operation pop_back");
@@ -132,43 +165,50 @@ namespace sys {
 
 	};
 
-
+	/// Container traits for deque container.
 	template <class Container>
 	struct deque_traits: public container_traits<Container> {
 
 		using typename container_traits<Container>::container_type;
 		using typename container_traits<Container>::value_type;
 
+		/// Push element to the container.
 		static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push_back(rhs);
 		}
 
+		/// Construct element in-place in the container.
 		static void
 		emplace(container_type& cnt, const value_type&& rhs) {
 			cnt.emplace_back(std::forward<value_type>(rhs));
 		}
 
+		/// Returns the first element in the container.
 		static value_type&
 		front(container_type& cnt) {
 			return cnt.front();
 		}
 
+		/// Returns the first element in the container.
 		static const value_type&
 		front(const container_type& cnt) {
 			return cnt.front();
 		}
 
+		/// Removes the first element in the container.
 		static void
 		pop(container_type& cnt) {
 			cnt.pop_front();
 		}
 
+		/// Removes the first element in the container.
 		static void
 		pop_front(container_type& cnt) {
 			cnt.pop_front();
 		}
 
+		/// Removes the last element in the container.
 		static void
 		pop_back(container_type& cnt) {
 			cnt.pop_back();

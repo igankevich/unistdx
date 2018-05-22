@@ -6,48 +6,84 @@
 
 namespace sys {
 
+	/**
+	\brief Iterator for containers of tuples.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup iter
+	\tparam Base base iterator type
+	\tparam N field index to iterave over
+	\details
+	Field iterator works by aggregating another iterator
+	over tuples and accessing only certain field of the
+	tuple.
+	*/
 	template <class Base, size_t N>
 	class field_iterator: public Base {
 
+	private:
+		typedef Base base_type;
+		typedef typename base_type::value_type base_value_type;
+
 	public:
+		using typename base_type::iterator_category;
+		using typename base_type::value_type;
+		using typename base_type::pointer;
+		using typename base_type::reference;
+		using typename base_type::difference_type;
+
+	public:
+		/// Base iterator type.
 		typedef Base base_iterator;
-		typedef typename std::tuple_element<
-				N,
-				typename base_iterator::value_type
-		>::type value_type;
+		/// Value type, which is equal to the corresponding field type.
+		typedef typename std::tuple_element<N,base_value_type>::type value_type;
+		/// Field pointer type.
 		typedef value_type* pointer;
-		typedef const pointer const_pointer;
+		/// Field reference type.
 		typedef value_type& reference;
+
+	private:
+		typedef const pointer const_pointer;
 		typedef const reference const_reference;
+
+	public:
 
 		field_iterator() = default;
 
+		/// Construct field iterator aggregating base iterator \c rhs.
+		inline
 		field_iterator(base_iterator rhs):
 		base_iterator(rhs)
 		{}
 
+		/// Copy constructor.
+		inline
 		field_iterator(const field_iterator& rhs):
 		base_iterator(rhs)
 		{}
 
-		const_pointer
+		/// Access field by pointer.
+		inline const_pointer
 		operator->() const noexcept {
-			return &std::get<N>(*base_iterator::operator->());
+			return &std::get<N>(*this->base_iterator::operator->());
 		}
 
-		pointer
+		/// Access field by pointer.
+		inline pointer
 		operator->() noexcept {
-			return &std::get<N>(*base_iterator::operator->());
+			return &std::get<N>(*this->base_iterator::operator->());
 		}
 
-		const_reference
+		/// Dereference.
+		inline const_reference
 		operator*() const noexcept {
-			return std::get<N>(base_iterator::operator*());
+			return std::get<N>(this->base_iterator::operator*());
 		}
 
-		reference
+		/// Dereference.
+		inline reference
 		operator*() noexcept {
-			return std::get<N>(base_iterator::operator*());
+			return std::get<N>(this->base_iterator::operator*());
 		}
 
 	};

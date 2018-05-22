@@ -5,71 +5,102 @@
 
 namespace sys {
 
+	/**
+	\brief Iterator for C-string arrays frequently used in system programming.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup iter
+	\details
+	Array is assumed to terminate with null pointer.
+	*/
 	template<class T>
 	class cstring_iterator: public
 		std::iterator<std::bidirectional_iterator_tag, T>{
 
+	private:
+		typedef typename std::iterator<std::bidirectional_iterator_tag, T>
+			base_type;
+
 	public:
-		typedef T value_type;
-		typedef T* pointer;
-		typedef const T* const_pointer;
-		typedef T& reference;
-		typedef const T& const_reference;
-		typedef typename std::iterator_traits<pointer>::difference_type
-		    difference_type;
+		using typename base_type::iterator_category;
+		using typename base_type::value_type;
+		using typename base_type::pointer;
+		using typename base_type::reference;
+		using typename base_type::difference_type;
+
+	private:
+		typedef const value_type* const_pointer;
+		typedef const value_type& const_reference;
 		typedef size_t size_type;
 
+	private:
+		pointer _ptr = nullptr;
+
+	public:
+
+		/// Construct C-string iterator from string pointed by \p ptr.
 		inline explicit
 		cstring_iterator(pointer ptr):
 		_ptr(ptr) {}
 
 		cstring_iterator() = default;
 
+		/// Copy-constructor.
 		cstring_iterator(const cstring_iterator&) = default;
 
+		/// Move-constructor.
 		cstring_iterator(cstring_iterator&&) = default;
 
 		~cstring_iterator() = default;
 
+		/// Assignment operator.
 		cstring_iterator&
 		operator=(const cstring_iterator&) = default;
 
+		/// Returns true, if both iterators use the same string.
 		inline bool
 		operator==(const cstring_iterator& rhs) const noexcept {
 			return this->_ptr == rhs._ptr || (!*this->_ptr && !rhs._ptr);
 		}
 
+		/// Returns false, if both iterators use the same string.
 		inline bool
 		operator!=(const cstring_iterator& rhs) const noexcept {
-			return !operator==(rhs);
+			return !this->operator==(rhs);
 		}
 
+		/// Dereference.
 		inline const_reference
 		operator*() const noexcept {
 			return *this->_ptr;
 		}
 
+		/// Dereference.
 		inline reference
 		operator*() noexcept {
 			return *this->_ptr;
 		}
 
+		/// Access object by pointer.
 		inline const_pointer
 		operator->() const noexcept {
 			return this->ptr;
 		}
 
+		/// Access object by pointer.
 		inline pointer
 		operator->() noexcept {
 			return this->ptr;
 		}
 
+		/// Increment.
 		inline cstring_iterator&
 		operator++() noexcept {
 			++this->_ptr;
 			return *this;
 		}
 
+		/// Post-increment.
 		inline cstring_iterator
 		operator++(int) noexcept {
 			cstring_iterator tmp(*this);
@@ -77,12 +108,14 @@ namespace sys {
 			return tmp;
 		}
 
+		/// Decrement.
 		inline cstring_iterator&
 		operator--() noexcept {
 			--this->_ptr;
 			return *this;
 		}
 
+		/// Post-decrement.
 		inline cstring_iterator
 		operator--(int) noexcept {
 			cstring_iterator tmp(*this);
@@ -90,18 +123,21 @@ namespace sys {
 			return tmp;
 		}
 
+		/// Add in-place.
 		inline cstring_iterator&
 		operator+=(difference_type n) noexcept {
 			this->_ptr += n;
 			return *this;
 		}
 
+		/// Subtract in-place.
 		inline cstring_iterator&
 		operator-=(difference_type n) noexcept {
 			this->_ptr -= n;
 			return *this;
 		}
 
+		/// Add scalar.
 		inline friend cstring_iterator
 		operator+(const cstring_iterator& lhs, difference_type rhs) {
 			cstring_iterator tmp(lhs);
@@ -109,6 +145,7 @@ namespace sys {
 			return tmp;
 		}
 
+		/// Add scalar.
 		inline friend cstring_iterator
 		operator+(difference_type lhs, const cstring_iterator& rhs) {
 			cstring_iterator tmp(rhs);
@@ -116,6 +153,7 @@ namespace sys {
 			return tmp;
 		}
 
+		/// Subtract scalar.
 		inline friend cstring_iterator
 		operator-(const cstring_iterator& lhs, difference_type rhs) {
 			cstring_iterator tmp(lhs);
@@ -123,40 +161,42 @@ namespace sys {
 			return tmp;
 		}
 
+		/// Access object by index.
 		inline const value_type&
 		operator[](size_type n) const noexcept {
 			return this->_ptr[n];
 		}
 
+		/// Access object by index.
 		inline value_type&
 		operator[](size_type n) noexcept {
 			return this->_ptr[n];
 		}
 
+		/// Compare iterator pointers.
 		inline bool
 		operator<(const cstring_iterator& rhs) const noexcept {
 			return this->_ptr < rhs._ptr;
 		}
 
+		/// Compare iterator pointers.
 		inline bool
 		operator>=(const cstring_iterator& rhs) const noexcept {
-			return !operator<(rhs);
+			return !this->operator<(rhs);
 		}
 
+		/// Compare iterator pointers.
 		inline bool
 		operator>(const cstring_iterator& rhs) const noexcept {
-			return !operator<=(rhs);
+			return !this->operator<=(rhs);
 		}
 
+		/// Compare iterator pointers.
 		inline bool
 		operator<=(const cstring_iterator& rhs) const noexcept {
-			return operator==(rhs) || operator<(rhs);
+			return this->operator==(rhs) || this->operator<(rhs);
 
 		}
-
-	private:
-
-		pointer _ptr = nullptr;
 
 	};
 
