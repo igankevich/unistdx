@@ -20,40 +20,67 @@ namespace sys {
 	typedef ::mode_t mode_type;
 	typedef int fd_type;
 
-	struct fildes {
+	/**
+	\brief File descriptor wrapper.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup wrapper
+	*/
+	class fildes {
 
+	public:
+
+		/// File descriptor flags.
 		enum fd_flag: flag_type {
 			fd_close_on_exec = FD_CLOEXEC
 		};
 
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
+		/// File descriptor pipe flags.
 		enum pipe_flag: flag_type {
 			no_sigpipe = F_SETNOSIGPIPE
 		};
 		#endif
 
+		/// Invalid file descriptor constant.
 		static const fd_type
 		bad = -1;
+
+	protected:
+		/// File descriptor number
+		fd_type _fd = bad;
+
+	public:
 
 		inline fildes() = default;
 		fildes(const fildes&) = delete;
 		fildes& operator=(const fildes&) = delete;
 
+		/// Construct file descriptor by wrapping \p rhs.
 		inline explicit
 		fildes(fd_type rhs) noexcept:
 		_fd(rhs)
 		{}
 
+		/// Move-constructor.
 		inline
 		fildes(fildes&& rhs) noexcept: _fd(rhs._fd) {
 			rhs._fd = bad;
 		}
 
+		/**
+		Construct file descriptor by opening file \p filename with
+		open flags \p flags and mode \p mode.
+		*/
 		inline
 		fildes(const char* filename, open_flag flags, mode_type mode) {
 			this->open(filename, flags, mode);
 		}
 
+		/**
+		\brief Close file descriptor
+		\details The method ignores errors reported by \c close system call.
+		*/
 		inline
 		~fildes() {
 			try {
@@ -61,12 +88,17 @@ namespace sys {
 			} catch (...) {}
 		}
 
+		/// Move assignment.
 		inline fildes&
 		operator=(fildes&& rhs) {
 			std::swap(this->_fd, rhs._fd);
 			return *this;
 		}
 
+		/**
+		\brief Close file descriptor.
+		\throws bad_call if \c close system call fails
+		*/
 		inline void
 		close() {
 			if (*this) {
@@ -75,6 +107,10 @@ namespace sys {
 			}
 		}
 
+		/**
+		Read \p n bytes from file descriptor and store them in the array
+		pointed by \p buf.
+		*/
 		inline ssize_t
 		read(void* buf, size_t n) const {
 			ssize_t ret = ::read(this->_fd, buf, n);
@@ -84,6 +120,10 @@ namespace sys {
 			return ret;
 		}
 
+		/**
+		Write \p n bytes to file descriptor copying them from the array
+		pointer by \p buf.
+		*/
 		inline ssize_t
 		write(const void* buf, size_t n) const {
 			ssize_t ret = ::write(this->_fd, buf, n);
@@ -93,96 +133,131 @@ namespace sys {
 			return ret;
 		}
 
+		/**
+		\copybrief fd
+		\deprecated use \link fd\endlink method instead
+		*/
 		inline fd_type
 		get_fd() const noexcept {
 			return this->_fd;
 		}
 
+		/// Get raw file descriptor.
 		inline fd_type
 		fd() const noexcept {
 			return this->_fd;
 		}
 
+		/// Get file descriptor open flags.
 		inline open_flag
 		flags() const {
 			return this->get_flags(F_GETFL);
 		}
 
+		/// Get file descriptor flags.
 		inline flag_type
 		fd_flags() const {
 			return this->get_flags(F_GETFD);
 		}
 
+		/// Set file descriptor open flags.
 		inline void
 		setf(open_flag rhs) {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) | rhs);
 		}
 
+		/// Unset file descriptor open flags.
 		inline void
 		unsetf(open_flag rhs) {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) & ~rhs);
 		}
 
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
+		/// Set file descriptor pipe flags.
 		inline void
 		setf(pipe_flag rhs) {
 			this->set_flag(rhs, 1);
 		}
 
+		/// Unset file descriptor pipe flags.
 		inline void
 		unsetf(pipe_flag rhs) {
 			this->set_flag(rhs, 0);
 		}
 		#endif
 
+		/// Set file descriptor flags.
 		inline void
 		setf(fd_flag rhs) {
 			this->set_flag(F_SETFD, rhs);
 		}
 
+		/// Compare file descriptors.
 		inline bool
 		operator==(const fildes& rhs) const noexcept {
 			return this->_fd == rhs._fd;
 		}
 
+		/// Returns true, if file descriptor is valid.
 		inline explicit
 		operator bool() const noexcept {
 			return this->_fd >= 0;
 		}
 
+		/// Returns true, if file descriptor is invalid.
 		inline bool
 		operator !() const noexcept {
 			return !this->operator bool();
 		}
 
+		/// Compare file descriptors.
 		inline bool
 		operator==(fd_type rhs) const noexcept {
 			return this->_fd == rhs;
 		}
 
+		/// Compare file descriptors.
 		inline friend bool
 		operator==(fd_type lhs, const fildes& rhs) noexcept {
 			return rhs._fd == lhs;
 		}
 
+		/// Output file descriptor number.
 		inline friend std::ostream&
 		operator<<(std::ostream& out, const fildes& rhs) {
 			return out << rhs._fd;
 		}
 
+		/**
+		Change file descriptor number to an arbitrrary one
+		by duplicating it with \c dup system call.
+		*/
 		void
 		remap();
 
+		/**
+		Change file descriptor number to \p new_fd
+		by duplicating it with \c dup2 system call.
+		*/
 		void
 		remap(fd_type new_fd);
 
+		/**
+		Check if this file descriptor exists in the kernel
+		by trying to get its flags
+		*/
 		inline void
 		validate() {
 			this->get_flags(F_GETFD);
 		}
 
+		/**
+		Init file descriptor by opening file \p filename with
+		open flags \p flags and mode \p mode.
+		*/
 		inline void
 		open(const char* filename, open_flag flags, mode_type mode) {
+			this->close();
 			this->_fd = ::open(filename, flags, mode);
 		}
 
@@ -200,27 +275,43 @@ namespace sys {
 			UNISTDX_CHECK(::fcntl(this->_fd, which, val));
 		}
 
-	protected:
-		fd_type _fd = bad;
 	};
 
 	static_assert(sizeof(fildes) == sizeof(fd_type), "bad fd size");
 
+	/**
+	\brief
+	Base class for File descriptor \link streambuf_traits\endlink.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup traits
+	*/
 	template<class T>
 	struct fildes_streambuf_traits {
 
+		/// Character type.
 		typedef void char_type;
 
+		/**
+		Write \p n bytes from array pointed by \p s to buffer \p buf.
+		*/
 		inline static std::streamsize
 		write(T& sink, const char_type* s, std::streamsize n) {
 			return sink.write(s, n);
 		}
 
+		/**
+		Read \p n bytes to array pointed by \p s from buffer \p buf.
+		*/
 		inline static std::streamsize
 		read(T& src, char_type* s, std::streamsize n) {
 			return src.read(s, n);
 		}
 
+		/**
+		Determine if file descriptor is in bloking mode
+		by checking its flags.
+		*/
 		inline static bool
 		is_blocking(const T& rhs) {
 			try {
@@ -230,6 +321,9 @@ namespace sys {
 			}
 		}
 
+		/**
+		Determine how many bytes are available for reading from kernel buffer.
+		*/
 		inline static std::streamsize
 		in_avail(T& rhs) {
 			#if defined(UNISTDX_HAVE_FIONREAD)
@@ -245,21 +339,42 @@ namespace sys {
 
 	};
 
+	/**
+	\brief
+	Stream buffer traits for \link fildes\endlink.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup traits
+	*/
 	template<>
 	struct streambuf_traits<fildes>:
 	public fildes_streambuf_traits<fildes>
 	{};
 
+	/**
+	\brief
+	Stream buffer traits for raw \link fd_type\endlink.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup traits
+	*/
 	template<>
 	struct streambuf_traits<fd_type> {
 
+		/// Character type.
 		typedef void char_type;
 
+		/**
+		Write \p n bytes from array pointed by \p s to buffer \p buf.
+		*/
 		inline static std::streamsize
 		write(fd_type sink, const char_type* s, std::streamsize n) {
 			return ::write(sink, s, n);
 		}
 
+		/**
+		Read \p n bytes to array pointed by \p s from buffer \p buf.
+		*/
 		inline static std::streamsize
 		read(fd_type src, char_type* s, std::streamsize n) {
 			return ::read(src, s, n);

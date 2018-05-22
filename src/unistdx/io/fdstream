@@ -7,142 +7,263 @@
 
 namespace sys {
 
+	/**
+	\brief Input stream that reads from file descriptor.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup stream
+	\details
+	\arg Any type for which \link streambuf_traits\endlink are defined, may
+	be used instead of file descriptor.
+	\arg Input operations are non-blocking by default.
+	*/
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	struct basic_ifdstream: public std::basic_istream<Ch,Tr> {
+	class basic_ifdstream: public std::basic_istream<Ch,Tr> {
 
+	private:
+		typedef std::basic_istream<Ch,Tr> base_type;
 		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
-		typedef std::basic_istream<Ch,Tr> istream_type;
-		typedef typename fildesbuf_type::fd_type fd_type;
 
+	public:
+		using typename base_type::char_type;
+		using typename base_type::traits_type;
+		using typename base_type::int_type;
+		using typename base_type::pos_type;
+		using typename base_type::off_type;
+
+	public:
+		/// File descriptor type. Can be a wrapper class or \c int.
+		typedef Fd fd_type;
+
+	private:
+		fildesbuf_type _fildesbuf;
+
+	public:
+
+		/// Construct the stream with file descriptor \p fd.
 		inline explicit
 		basic_ifdstream(Fd&& fd):
-		istream_type(nullptr),
+		base_type(nullptr),
 		_fildesbuf(std::move(fd), page_size(), 0) {
 			this->init(&this->_fildesbuf);
 		}
 
+		/// Open the stream with file descriptor \p rhs.
 		inline void
 		open(fd_type&& rhs) {
 			this->close();
 			this->_fildesbuf.setfd(std::move(rhs));
 		}
 
+		/// Close the stream.
 		inline void
 		close() {
 			this->_fildesbuf.close();
 		}
 
+		/// Get file descriptor.
 		inline const fd_type&
 		fd() const {
 			return this->_fildesbuf.fd();
 		}
 
+		/// Get file descriptor.
 		inline fd_type&
 		fd() {
 			return this->_fildesbuf.fd();
 		}
 
-	private:
-		fildesbuf_type _fildesbuf;
-	};
-
-	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	struct basic_ofdstream: public std::basic_ostream<Ch,Tr> {
-
-		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
-		typedef std::basic_ostream<Ch,Tr> ostream_type;
-		typedef typename fildesbuf_type::fd_type fd_type;
-
-		inline
-		basic_ofdstream():
-		ostream_type(nullptr),
-		_fildesbuf() {
-			this->init(&_fildesbuf);
-		}
-
-		inline explicit
-		basic_ofdstream(Fd&& fd):
-		ostream_type(nullptr),
-		_fildesbuf(std::move(fd), 0, page_size()) {
-			this->init(&_fildesbuf);
-		}
-
-		inline void
-		open(fd_type&& rhs) {
-			this->close();
-			this->_fildesbuf.setfd(std::move(rhs));
-		}
-
-		inline void
-		close() {
-			this->_fildesbuf.close();
-		}
-
-		inline const fd_type&
-		fd() const {
-			return this->_fildesbuf.fd();
-		}
-
-		inline fd_type&
-		fd() {
-			return this->_fildesbuf.fd();
-		}
-
-	private:
-		fildesbuf_type _fildesbuf;
-	};
-
-	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-	struct basic_fdstream: public std::basic_iostream<Ch,Tr> {
-
-		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
-		typedef std::basic_iostream<Ch,Tr> iostream_type;
-		typedef typename fildesbuf_type::fd_type fd_type;
-
-		inline explicit
-		basic_fdstream(Fd&& fd):
-		iostream_type(nullptr),
-		_fildesbuf(std::move(fd), page_size()) {
-			this->init(&_fildesbuf);
-		}
-
-		inline void
-		open(fd_type&& rhs) {
-			this->close();
-			this->_fildesbuf.setfd(std::move(rhs));
-		}
-
-		inline void
-		close() {
-			this->_fildesbuf.close();
-		}
-
-		inline const fd_type&
-		fd() const {
-			return this->_fildesbuf.fd();
-		}
-
-		inline fd_type&
-		fd() {
-			return this->_fildesbuf.fd();
-		}
-
+		/// Get stream buffer.
 		inline const fildesbuf_type&
 		fdbuf() const noexcept {
 			return this->_fildesbuf;
 		}
 
+		/// Get stream buffer.
 		inline fildesbuf_type&
 		fdbuf() noexcept {
 			return this->_fildesbuf;
 		}
 
-	private:
-		fildesbuf_type _fildesbuf;
 	};
 
+	/**
+	\brief Output stream that writes to file descriptor.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup stream
+	\details
+	\arg Any type for which \link streambuf_traits\endlink are defined, may
+	be used instead of file descriptor.
+	\arg Output operations are non-blocking by default.
+	\arg The stream does not flush buffer contents when closed.
+	*/
+	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
+	class basic_ofdstream: public std::basic_ostream<Ch,Tr> {
+
+	private:
+		typedef std::basic_ostream<Ch,Tr> base_type;
+		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
+
+	public:
+		using typename base_type::char_type;
+		using typename base_type::traits_type;
+		using typename base_type::int_type;
+		using typename base_type::pos_type;
+		using typename base_type::off_type;
+
+	public:
+		/// File descriptor type. Can be a wrapper class or \c int.
+		typedef typename fildesbuf_type::fd_type fd_type;
+
+	private:
+		fildesbuf_type _fildesbuf;
+
+	public:
+
+		inline
+		basic_ofdstream():
+		base_type(nullptr),
+		_fildesbuf() {
+			this->init(&_fildesbuf);
+		}
+
+		/// Construct the stream with file descriptor \p fd.
+		inline explicit
+		basic_ofdstream(Fd&& fd):
+		base_type(nullptr),
+		_fildesbuf(std::move(fd), 0, page_size()) {
+			this->init(&_fildesbuf);
+		}
+
+		/// Open the stream with file descriptor \p rhs.
+		inline void
+		open(fd_type&& rhs) {
+			this->close();
+			this->_fildesbuf.setfd(std::move(rhs));
+		}
+
+		/// Close the stream.
+		inline void
+		close() {
+			this->_fildesbuf.close();
+		}
+
+		/// Get file descriptor.
+		inline const fd_type&
+		fd() const {
+			return this->_fildesbuf.fd();
+		}
+
+		/// Get file descriptor.
+		inline fd_type&
+		fd() {
+			return this->_fildesbuf.fd();
+		}
+
+		/// Get stream buffer.
+		inline const fildesbuf_type&
+		fdbuf() const noexcept {
+			return this->_fildesbuf;
+		}
+
+		/// Get stream buffer.
+		inline fildesbuf_type&
+		fdbuf() noexcept {
+			return this->_fildesbuf;
+		}
+
+	};
+
+	/**
+	\brief Input/output stream that reads/writes to/from file descriptor.
+	\date 2018-05-22
+	\author Ivan Gankevich
+	\ingroup stream
+	\details
+	\arg Any type for which \link streambuf_traits\endlink are defined, may
+	be used instead of file descriptor.
+	\arg Input and output operations are non-blocking by default.
+	\arg The stream does not flush buffer contents when closed.
+	*/
+	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
+	class basic_fdstream: public std::basic_iostream<Ch,Tr> {
+
+	private:
+		typedef std::basic_iostream<Ch,Tr> base_type;
+		typedef basic_fildesbuf<Ch,Tr,Fd> fildesbuf_type;
+
+	public:
+		using typename base_type::char_type;
+		using typename base_type::traits_type;
+		using typename base_type::int_type;
+		using typename base_type::pos_type;
+		using typename base_type::off_type;
+
+	public:
+		/// File descriptor type. Can be a wrapper class or \c int.
+		typedef typename fildesbuf_type::fd_type fd_type;
+
+	private:
+		fildesbuf_type _fildesbuf;
+
+	public:
+
+		/// Construct the stream with file descriptor \p fd.
+		inline explicit
+		basic_fdstream(Fd&& fd):
+		base_type(nullptr),
+		_fildesbuf(std::move(fd), page_size()) {
+			this->init(&_fildesbuf);
+		}
+
+		/// Open the stream with file descriptor \p rhs.
+		inline void
+		open(fd_type&& rhs) {
+			this->close();
+			this->_fildesbuf.setfd(std::move(rhs));
+		}
+
+		/// Close the stream.
+		inline void
+		close() {
+			this->_fildesbuf.close();
+		}
+
+		/// Get file descriptor.
+		inline const fd_type&
+		fd() const {
+			return this->_fildesbuf.fd();
+		}
+
+		/// Get file descriptor.
+		inline fd_type&
+		fd() {
+			return this->_fildesbuf.fd();
+		}
+
+		/// Get stream buffer.
+		inline const fildesbuf_type&
+		fdbuf() const noexcept {
+			return this->_fildesbuf;
+		}
+
+		/// Get stream buffer.
+		inline fildesbuf_type&
+		fdbuf() noexcept {
+			return this->_fildesbuf;
+		}
+
+	};
+
+	/// Character based input file descriptor stream.
 	typedef basic_ifdstream<char> ifdstream;
+
+	/// Character based output file descriptor stream.
 	typedef basic_ofdstream<char> ofdstream;
+
+	/// Character based input/output file descriptor stream.
+	typedef basic_fdstream<char> fdstream;
 
 }
 

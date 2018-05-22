@@ -9,6 +9,7 @@ namespace sys {
 	\brief Container trais.
 	\date 2018-05-22
 	\author Ivan Gankevich
+	\ingroup traits
 	\details
 	It is like character traits, but for containers, in a sense that
 	you need to always carry traits type template parameter together with
@@ -24,7 +25,10 @@ namespace sys {
 
 	};
 
-	/// Container traits for vector-like containers.
+	/**
+	\brief Container traits for vector-like containers.
+	\ingroup traits
+	*/
 	template <class Container>
 	struct vector_traits: public container_traits<Container> {
 
@@ -69,7 +73,10 @@ namespace sys {
 
 	};
 
-	/// Container traits for queue-like containers.
+	/**
+	\brief Container traits for queue-like containers.
+	\ingroup traits
+	*/
 	template <class Container>
 	struct queue_traits: public container_traits<Container> {
 
@@ -120,7 +127,10 @@ namespace sys {
 
 	};
 
-	/// Container traits for priority queue container.
+	/**
+	\brief Container traits for priority queue container.
+	\ingroup traits
+	*/
 	template <class Container>
 	struct priority_queue_traits: public container_traits<Container> {
 
@@ -165,7 +175,10 @@ namespace sys {
 
 	};
 
-	/// Container traits for deque container.
+	/**
+	\brief Container traits for deque container.
+	\ingroup traits
+	*/
 	template <class Container>
 	struct deque_traits: public container_traits<Container> {
 

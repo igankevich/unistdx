@@ -6,9 +6,15 @@
 namespace sys {
 
 	/**
+	\defgroup traits Traits
+	\brief Traits classes.
+	*/
+
+	/**
 	\brief Traits that abstract read and write operations for stream buffers.
 	\date 2018-05-22
 	\author Ivan Gankevich
+	\ingroup traits
 	\details
 	\arg With this class it is possible to plug arbitrary object (including
 	another stream buffer) as a source or sink for stream buffer using
@@ -16,9 +22,7 @@ namespace sys {
 	\arg Generic implementation is done for \c str::streambuf.
 	*/
 	template<class T>
-	class streambuf_traits {
-
-	public:
+	struct streambuf_traits {
 
 		/// Character type.
 		typedef typename T::char_type char_type;
