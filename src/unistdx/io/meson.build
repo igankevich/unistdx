@@ -3,7 +3,6 @@ libunistdx_src += files([
 	'fildes.cc',
 	'pipe.cc',
 	'poll_event.cc',
-	'terminal.cc',
 	'two_way_pipe.cc',
 ])
 

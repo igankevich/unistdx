@@ -17,7 +17,15 @@
 namespace sys {
 
 	/**
+	\brief Stream buffer that writes and reads from file descriptor.
+	\date 2018-05-23
+	\author Ivan Gankevich
+	\ingroup streambuf
 	\see fildes, fildes_pair, socket
+	\tparam Fd File descriptor type. Can be a wrapper class or \c int.
+	\arg Input/output file descriptor operations are assumed
+	to be non-blocking.
+	\arg Does not flush its contents when closed.
 	*/
 	template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
 	class basic_fildesbuf: public virtual basic_packetbuf<Ch,Tr> {
@@ -41,13 +49,20 @@ namespace sys {
 		using base_type::setp;
 		using base_type::gbump;
 		using base_type::pbump;
+
+	public:
+		using base_type::available;
+		using base_type::remaining;
+
+	public:
+		using typename base_type::char_type;
 		using typename base_type::int_type;
 		using typename base_type::traits_type;
-		using typename base_type::char_type;
 		using typename base_type::pos_type;
 		using typename base_type::off_type;
 
 	public:
+		/// File descriptor type.
 		typedef Fd fd_type;
 
 	private:
@@ -67,16 +82,25 @@ namespace sys {
 		basic_fildesbuf(std::move(fd_type()), page_size())
 		{}
 
+		/// Construct the buffer with file descriptor \p fd.
 		inline explicit
 		basic_fildesbuf(fd_type&& fd):
 		basic_fildesbuf(std::move(fd), page_size())
 		{}
 
+		/**
+		Construct the buffer with file descriptor \p fd and get and put area
+		size equal to \p bufsize.
+		*/
 		inline
 		basic_fildesbuf(fd_type&& fd, size_type bufsize):
 		basic_fildesbuf(std::move(fd), bufsize, bufsize)
 		{}
 
+		/**
+		Construct the buffer with file descriptor \p fd, get area size \p gbufsize
+		and put area size \p pbufsize.
+		*/
 		inline
 		basic_fildesbuf(fd_type&& fd, size_type gbufsize, size_type pbufsize):
 		_fd(std::move(fd)), _gbuf(gbufsize), _pbuf(pbufsize) {
@@ -86,6 +110,7 @@ namespace sys {
 
 		UNISTDX_NO_COPY_AND_MOVE(basic_fildesbuf)
 
+		/// See \c std::streambuf::underflow.
 		int_type
 		underflow() override {
 			assert(gptr() == egptr());
@@ -95,6 +120,7 @@ namespace sys {
 				   : traits_type::to_int_type(*gptr());
 		}
 
+		/// See \c std::streambuf::overflow.
 		int_type
 		overflow(int_type c) override {
 			assert(pptr() == epptr());
@@ -110,6 +136,7 @@ namespace sys {
 			return c;
 		}
 
+		/// See \c std::streambuf::xsgetn.
 		std::streamsize
 		xsgetn(char_type* s, std::streamsize n) override {
 			while (available() < n && fill() > 0) {}
@@ -119,6 +146,7 @@ namespace sys {
 			return m;
 		}
 
+		/// See \c std::streambuf::xsputn.
 		std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
 			const std::streamsize remaining = epptr() - pptr();
@@ -135,6 +163,7 @@ namespace sys {
 			return n;
 		}
 
+		/// See \c std::streambuf::sync.
 		int
 		sync() override {
 			int ret = 0;
@@ -147,36 +176,43 @@ namespace sys {
 			return ret;
 		}
 
+		/// Flush put area contents to file descriptor.
 		inline std::streamsize
 		pubflush() {
 			return this->flush();
 		}
 
+		/// Fill get area from file descriptor.
 		inline std::streamsize
 		pubfill() {
 			return this->fill();
 		}
 
+		/// Set file descriptor.
 		inline void
 		setfd(fd_type&& rhs) {
 			this->_fd = std::move(rhs);
 		}
 
+		/// Get file descriptor.
 		inline const fd_type&
 		fd() const {
 			return this->_fd;
 		}
 
+		/// Get file descriptor.
 		inline fd_type&
 		fd() {
 			return this->_fd;
 		}
 
+		/// Close file descriptor.
 		inline void
 		close() {
 			this->_fd.close();
 		}
 
+		/// Compact buffer.
 		inline void
 		compact() {
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
@@ -190,16 +226,6 @@ namespace sys {
 			} else {
 				this->reset_gbuf();
 			}
-		}
-
-		inline std::streamsize
-		remaining() const noexcept {
-			return this->pptr() - this->pbase();
-		}
-
-		inline std::streamsize
-		available() const noexcept {
-			return this->egptr() - this->gptr();
 		}
 
 	private:
@@ -324,6 +350,7 @@ namespace sys {
 
 	};
 
+	/// Alias to basic_fildesbuf<char>.
 	typedef basic_fildesbuf<char> fildesbuf;
 
 }

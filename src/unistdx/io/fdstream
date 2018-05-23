@@ -12,6 +12,7 @@ namespace sys {
 	\date 2018-05-22
 	\author Ivan Gankevich
 	\ingroup stream
+	\tparam Fd File descriptor type. Can be a wrapper class or \c int.
 	\details
 	\arg Any type for which \link streambuf_traits\endlink are defined, may
 	be used instead of file descriptor.
@@ -32,7 +33,7 @@ namespace sys {
 		using typename base_type::off_type;
 
 	public:
-		/// File descriptor type. Can be a wrapper class or \c int.
+		/// File descriptor type.
 		typedef Fd fd_type;
 
 	private:

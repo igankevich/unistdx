@@ -145,7 +145,7 @@ namespace sys {
 			this->increment(n);
 		}
 
-		/// Wait on the semaphore unlocking \p lock for the duration of wait.
+		/// Wait on the semaphore unlocking \p lock for the duration of the wait.
 		template<class Lock>
 		void wait(Lock& lock) {
 			unlock_guard<Lock> unlock(lock);
@@ -154,7 +154,7 @@ namespace sys {
 
 		/**
 		\brief
-		Wait on the semaphore unlocking \p lock for the duration of wait until
+		Wait on the semaphore unlocking \p lock for the duration of the wait until
 		predicate \p pred becomes true.
 		\details
 		\arg If \p pred is true upon the call to this method
@@ -172,7 +172,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore specified amount of time \p dur
-		unlocking \p lock for the duration of wait.
+		unlocking \p lock for the duration of the wait.
 		*/
 		template<class Lock, class Rep, class Period>
 		std::cv_status
@@ -189,7 +189,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore specified amount of time \p dur
-		unlocking \p lock for the duration of wait until
+		unlocking \p lock for the duration of the wait until
 		predicate \p pred becomes true or timeout occurs.
 		\return predicate value
 		\details
@@ -211,7 +211,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore until specified time \p tp
-		unlocking \p lock for the duration of wait.
+		unlocking \p lock for the duration of the wait.
 		*/
 		template<class Lock, class Duration>
 		std::cv_status
@@ -222,7 +222,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore until specified time \p tp
-		unlocking \p lock for the duration of wait until
+		unlocking \p lock for the duration of the wait until
 		predicate \p pred becomes true.
 		\return predicate value
 		\details
@@ -239,7 +239,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore until specified time \p tp
-		unlocking \p lock for the duration of wait.
+		unlocking \p lock for the duration of the wait.
 		*/
 		template<class Lock, class Clock, class Duration>
 		std::cv_status
@@ -250,7 +250,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore until specified time \p dur
-		unlocking \p lock for the duration of wait until
+		unlocking \p lock for the duration of the wait until
 		predicate \p pred becomes true or timeout occurs.
 		\return predicate value
 		\details
@@ -373,7 +373,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore until specified time \p tp
-		unlocking \p lock for the duration of wait.
+		unlocking \p lock for the duration of the wait.
 		*/
 		template<class Lock, class Duration>
 		std::cv_status
@@ -398,7 +398,7 @@ namespace sys {
 		/**
 		\brief
 		Wait on the semaphore until specified time \p tp
-		unlocking \p lock for the duration of wait until
+		unlocking \p lock for the duration of the wait until
 		predicate \p pred becomes true.
 		\return predicate value
 		\details

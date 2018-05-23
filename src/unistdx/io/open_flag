@@ -5,14 +5,21 @@
 
 namespace sys {
 
+	/// Raw file descriptor flag type (int).
 	typedef int flag_type;
 
+	/**
+	\brief Flags used when opening file.
+	\date 2018-05-23
+	\author Ivan Gankevich
+	*/
 	class open_flag {
 
 	private:
 		flag_type _flag = 0;
 
 	public:
+		/// Flags enumeration.
 		enum open_flag_enum: flag_type {
 			append = O_APPEND,
 			async = O_ASYNC,
@@ -39,23 +46,28 @@ namespace sys {
 
 		open_flag() = default;
 
+		/// Copy-constructor.
 		open_flag(const open_flag&) = default;
 
+		/// Construct open flag from raw flag.
 		inline
 		open_flag(flag_type rhs) noexcept:
 		_flag(rhs)
 		{}
 
+		/// Automatically cast to raw flag.
 		inline
 		operator flag_type() const noexcept {
 			return this->_flag;
 		}
 
+		/// Returns true, if non-blocking flag is set.
 		inline bool
 		is_non_blocking() const noexcept {
 			return this->_flag & non_blocking;
 		}
 
+		/// Returns true, if non-blocking flag is not set.
 		inline bool
 		is_blocking() const noexcept {
 			return !this->is_non_blocking();
@@ -63,6 +75,7 @@ namespace sys {
 
 	};
 
+	/// Check if flag \p rhs is supported by operating system.
 	inline constexpr bool
 	supports(open_flag::open_flag_enum rhs) noexcept {
 		return flag_type(rhs) != 0;
@@ -74,29 +87,61 @@ namespace sys {
 		return op flag_type(rhs); \
 	}
 
-	#define MAKE_BINARY(op, return_type) \
+	#define MAKE_BINARY_1(op, return_type) \
 	inline return_type \
 	operator op(open_flag lhs, open_flag rhs) noexcept { \
 		return flag_type(lhs) op flag_type(rhs); \
-	} \
+	}
+
+	#define MAKE_BINARY_2(op, return_type) \
 	inline return_type \
 	operator op(flag_type lhs, open_flag rhs) noexcept { \
 		return lhs op flag_type(rhs); \
-	} \
+	}
+
+	#define MAKE_BINARY_3(op, return_type) \
 	inline return_type \
 	operator op(open_flag lhs, flag_type rhs) noexcept { \
 		return flag_type(lhs) op rhs; \
 	}
 
+	/// Bit-wise negation.
 	MAKE_UNARY(~)
-	MAKE_BINARY(|, open_flag)
-	MAKE_BINARY(&, open_flag)
-	MAKE_BINARY(^, open_flag)
-	MAKE_BINARY(==, bool)
-	MAKE_BINARY(!=, bool)
+	/// Bit-wise \c OR.
+	MAKE_BINARY_1(|, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_2(|, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_3(|, open_flag)
+	/// Bit-wise \c AND.
+	MAKE_BINARY_1(&, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_2(&, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_3(&, open_flag)
+	/// Bit-wise \c XOR.
+	MAKE_BINARY_1(^, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_2(^, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_3(^, open_flag)
+	/// Comparison operator.
+	MAKE_BINARY_1(==, bool)
+	/// Comparison operator.
+	MAKE_BINARY_2(==, bool)
+	/// Comparison operator.
+	MAKE_BINARY_3(==, bool)
+	/// Comparison operator.
+	MAKE_BINARY_1(!=, bool)
+	/// Comparison operator.
+	MAKE_BINARY_2(!=, bool)
+	/// Comparison operator.
+	MAKE_BINARY_3(!=, bool)
 
 	#undef MAKE_UNARY
-	#undef MAKE_BINARY
+	#undef MAKE_BINARY_1
+	#undef MAKE_BINARY_2
+	#undef MAKE_BINARY_3
 
 }
 

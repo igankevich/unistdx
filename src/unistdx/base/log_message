@@ -26,6 +26,11 @@ namespace sys {
 	*/
 	class log_message {
 
+	private:
+		osysstream _str;
+		std::ostream& _log;
+		char _spec = '_';
+
 	public:
 
 		/**
@@ -163,10 +168,6 @@ namespace sys {
 			this->_log.setf(std::ios::right, std::ios::adjustfield);
 			this->_log << name << ": ";
 		}
-
-		osysstream _str;
-		std::ostream& _log;
-		char _spec = '_';
 
 	};
 

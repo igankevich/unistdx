@@ -22,9 +22,11 @@ namespace sys {
 	\brief File descriptor poller.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup semaphore
-	\details File descriptor poller implemented with `epoll` system call
+	\ingroup semaphore container
+	\details
+	\arg File descriptor poller implemented with \c epoll_create system call
 	having condition variable-like interface.
+	\arg The poller has condition variable interface for waiting and notifying.
 	*/
 	class event_poller {
 
@@ -35,8 +37,11 @@ namespace sys {
 		typedef std::vector<epoll_event> container_type;
 
 	public:
+		/// Container element type.
 		typedef typename container_type::value_type value_type;
+		/// Container iterator type.
 		typedef value_type* iterator;
+		/// Container const iterator type.
 		typedef const value_type* const_iterator;
 
 	private:
@@ -50,7 +55,8 @@ namespace sys {
 
 	public:
 
-		explicit
+		/// Construct event poller with \p maxevent number of events.
+		inline explicit
 		event_poller(int maxevents=4096/sizeof(epoll_event)):
 		_epollfd(::epoll_create1(EPOLL_CLOEXEC)),
 		_pipe(),
@@ -60,13 +66,20 @@ namespace sys {
 
 		~event_poller() = default;
 
-		UNISTDX_NO_COPY_AND_MOVE(event_poller);
+		UNISTDX_NO_COPY_AND_MOVE(event_poller)
 
+		/**
+		Returns file descriptor which is used to notify poller
+		of an external event.
+		*/
 		inline fd_type
 		pipe_in() const noexcept {
-			return this->_pipe.in().get_fd();
+			return this->_pipe.in().fd();
 		}
 
+		/**
+		Notify poller of an external event via \link pipe_in\endlink.
+		*/
 		inline void
 		notify_one() noexcept {
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
@@ -76,57 +89,89 @@ namespace sys {
 			this->_pipe.out().write(&c, sizeof(char));
 		}
 
+		/// \copydoc notify_one
 		inline void
 		notify_all() noexcept {
 			this->notify_one();
 		}
 
+		/// Returns iterator to the beginning of array of events.
 		inline const_iterator
 		begin() const noexcept {
 			return this->_events.data();
 		}
 
+		/// Returns iterator to the end of array of events.
 		inline const_iterator
 		end() const noexcept {
 			return this->_events.data() + this->_nevents;
 		}
 
+		/**
+		Construct \link epoll_event\endlink in-place with
+		file descriptor \p fd and event mask \p ev and
+		add it to the poller.
+		*/
 		inline void
 		emplace(fd_type fd, event ev) {
 			this->xadd(epoll_event(fd, ev));
 		}
 
+		/// Add file descriptor-event mask pair to the poller.
 		inline void
 		insert(const epoll_event& ev) {
 			this->xadd(ev);
 		}
 
+		/// Update event mask for existing file descriptor.
 		inline void
 		replace(const epoll_event& ev) {
 			this->xmod(ev);
 		}
 
+		/// Remove file descriptor \p fd from the poller.
 		inline void
 		erase(fd_type fd) {
 			this->xdel(fd);
 		}
 
+		/**
+		\brief Remove file descriptor-event mask pair to the poller.
+		\details
+		Equivalent to <code>erase(ev.fd())</code>.
+		*/
 		inline void
-		erase(epoll_event ev) {
+		erase(const epoll_event& ev) {
 			this->xdel(ev.fd());
 		}
 
+		/**
+		Change maximum number of events that the poller handles at a time
+		*/
 		inline void
 		resize(int new_size) {
 			this->_events.resize(new_size);
 		}
 
+		/**
+		Wait for events to occur unlocking \p lock for the duration
+		of the wait.
+		*/
 		template<class Lock>
 		inline void
 		wait(Lock& lock) {
 			this->wait(lock, [] () { return false; });
 		}
 
+		/**
+		\brief
+		Wait for events to occur unlocking \p lock for the duration
+		of the wait until predicate \p pred becomes true.
+		\details
+		\arg If \p pred is true upon the call to this method
+		no waiting or unlocking is done
+		\arg The mutex is locked when checking for the predicate.
+		*/
 		template<class Lock, class Pred>
 		inline void
 		wait(Lock& lock, Pred pred) {
@@ -136,6 +181,11 @@ namespace sys {
 			}
 		}
 
+		/**
+		\brief
+		Wait for events to occur specified amount of time \p dur
+		unlocking \p lock for the duration of the wait.
+		*/
 		template<class Lock, class Rep, class Period>
 		inline std::cv_status
 		wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
@@ -146,6 +196,17 @@ namespace sys {
 			       std::cv_status::no_timeout;
 		}
 
+		/**
+		\brief
+		Wait for events to occur specified amount of time \p dur
+		unlocking \p lock for the duration of the wait until
+		predicate \p pred becomes true or timeout occurs.
+		\return predicate value
+		\details
+		\arg If \p pred is true upon the call to this method
+		no waiting or unlocking is done
+		\arg The mutex is locked when checking for the predicate.
+		*/
 		template<class Lock, class Rep, class Period, class Pred>
 		inline bool
 		wait_for(
@@ -161,6 +222,11 @@ namespace sys {
 			return true;
 		}
 
+		/**
+		\brief
+		Wait for events to occur until specified time \p tp
+		unlocking \p lock for the duration of the wait.
+		*/
 		template<class Lock, class Duration>
 		inline std::cv_status
 		wait_until(Lock& lock, const time_point<Duration>& tp) {
@@ -174,6 +240,17 @@ namespace sys {
 			);
 		}
 
+		/**
+		\brief
+		Wait for events to occur until specified time \p tp
+		unlocking \p lock for the duration of the wait until
+		predicate \p pred becomes true.
+		\return predicate value
+		\details
+		\arg If \p pred is true upon the call to this method
+		no waiting or unlocking is done
+		\arg The mutex is locked when checking for the predicate.
+		*/
 		template<class Lock, class Duration, class Pred>
 		bool
 		wait_until(Lock& lock, const time_point<Duration>& tp, Pred pred) {
@@ -184,18 +261,31 @@ namespace sys {
 			);
 		}
 
+		/**
+		\brief
+		Wait for events to occur until specified time \p tp
+		unlocking \p lock for the duration of the wait.
+		*/
 		template<class Lock, class Clock, class Duration>
 		std::cv_status
-		wait_until(
-			Lock& lock,
-			const std::chrono::time_point<Clock, Duration>& tp
-		) {
+		wait_until(Lock& lock, const std::chrono::time_point<Clock, Duration>& tp) {
 			typedef Clock other_clock;
 			const auto delta = tp - other_clock::now();
 			const auto new_tp = clock_type::now() + delta;
 			return this->wait_until(lock, new_tp);
 		}
 
+		/**
+		\brief
+		Wait for events to occur until specified time \p dur
+		unlocking \p lock for the duration of the wait until
+		predicate \p pred becomes true or timeout occurs.
+		\return predicate value
+		\details
+		\arg If \p pred is true upon the call to this method
+		no waiting or unlocking is done
+		\arg The mutex is locked when checking for the predicate.
+		*/
 		template<class Lock, class Clock, class Duration, class Pred>
 		inline bool
 		wait_until(

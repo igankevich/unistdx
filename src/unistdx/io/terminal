@@ -3,19 +3,20 @@
 
 #include <unistd.h>
 
+#include <unistdx/base/check>
 #include <unistdx/fs/path>
 
 namespace sys {
 
 	typedef int fd_type;
 
+	/// Returns true, if file descriptor \p f refers to a terminal.
 	inline bool
 	is_a_terminal(sys::fd_type f) {
-		return ::isatty(f) == 1;
+		int ret = ::isatty(f);
+		UNISTDX_CHECK(ret);
+		return ret == 1;
 	}
-
-	path
-	terminal_device_path(sys::fd_type f);
 
 }
 

@@ -79,7 +79,8 @@ namespace sys {
 	#undef MAKE_UNARY_OP
 
 	/**
-	\brief File descriptor event.
+	\brief
+	File descriptor event wrapper for \link event_poller\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
 	\ingroup wrapper
