@@ -7,6 +7,14 @@
 
 namespace sys {
 
+	/**
+	\brief Count the number of bits that are set in \p value.
+	\date 2018-05-23
+	\author Ivan Gankevich
+	\arg Uses \c std::bitset for generic implementation.
+	\arg There are optimised implementations for standard
+	unsigned integer types.
+	*/
 	template<class T>
 	inline unsigned int
 	bit_count(T value) noexcept {
@@ -19,6 +27,7 @@ namespace sys {
 	}
 
 	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNT)
+	/// Specialisation for unsigned int.
 	template<>
 	inline unsigned int
 	bit_count<unsigned int>(unsigned int value) noexcept {
@@ -27,6 +36,7 @@ namespace sys {
 	#endif
 
 	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNTL)
+	/// Specialisation for unsigned long.
 	template<>
 	inline unsigned int
 	bit_count<unsigned long>(unsigned long value) noexcept {
@@ -36,6 +46,7 @@ namespace sys {
 
 	#if defined(UNISTDX_HAVE_BUILTIN_POPCOUNTLL) && \
 		defined(UNISTDX_HAVE_LONG_LONG)
+	/// Specialisation for unsigned long long.
 	template<>
 	inline unsigned int
 	bit_count<unsigned long long>(unsigned long long value) noexcept {

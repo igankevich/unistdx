@@ -11,11 +11,13 @@
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
-#define UNISTDX_MAKE_INOUT_OPERATOR(tp) \
+#define UNISTDX_MAKE_PUT_OPERATOR(tp) \
 	inline basic_bstream & \
 	operator<<(tp rhs) { \
 		return this->write(rhs); \
-	} \
+	}
+
+#define UNISTDX_MAKE_GET_OPERATOR(tp) \
 	inline basic_bstream& \
 	operator>>(tp& rhs) { \
 		return this->read(rhs); \
@@ -25,20 +27,28 @@ namespace sys {
 
 	/**
 	\brief
-	Input/output stream that everything in binary format
+	Input/output stream that reads/writes everything in binary format
 	with network byte order.
-
 	\date 2018-04-20
 	\author Ivan Gankevich
+	\ingroup stream
+	\tparam Ch character type
+	\tparam Tr character traits type
+	\tparam Size size type (defaults to 4-byte integer)
 	*/
 	template <class Ch, class Tr=std::char_traits<Ch>, class Size=u32>
 	class basic_bstream {
 
 	public:
+		/// Character type.
 		typedef Ch char_type;
+		/// Character traits type.
 		typedef Tr traits_type;
+		/// Size type (defaults to 4-byte integer).
 		typedef Size size_type;
+		/// Stream buffer type.
 		typedef std::basic_streambuf<Ch,Tr> streambuf_type;
+		/// String type used for input and output.
 		typedef std::basic_string<Ch,Tr> string_type;
 
 	private:
@@ -53,10 +63,12 @@ namespace sys {
 
 		basic_bstream() = default;
 
+		/// Construct binary stream for stream buffer \p buf.
 		inline explicit
 		basic_bstream(streambuf_type* buf):
 		_buf(buf) {}
 
+		/// Move-constructor.
 		inline
 		basic_bstream(basic_bstream&& rhs):
 		_buf(rhs._buf) {
@@ -73,16 +85,19 @@ namespace sys {
 
 		~basic_bstream() = default;
 
+		/// Get stream buffer.
 		inline streambuf_type*
 		rdbuf() noexcept {
 			return this->_buf;
 		}
 
+		/// Get stream buffer.
 		inline const streambuf_type*
 		rdbuf() const noexcept {
 			return this->_buf;
 		}
 
+		/// Set stream buffer to \p rhs.
 		inline streambuf_type*
 		rdbuf(streambuf_type* rhs) {
 			streambuf_type* old = this->_buf;
@@ -90,47 +105,27 @@ namespace sys {
 			return old;
 		}
 
-		/// Synchronise input buffer.
+		/// Synchronise both input and output buffers.
 		inline void
 		sync() {
 			assert(this->_buf);
 			this->_buf->pubsync();
 		}
 
-		/// Flush output buffer.
+		/// Synchronise both input and output buffers.
 		inline void
 		flush() {
 			assert(this->_buf);
 			this->_buf->pubsync();
 		}
 
+		/// Insert operator for standard type.
 		inline basic_bstream&
 		operator<<(bool rhs) {
 			return this->write(rhs ? char(1) : char(0));
 		}
 
-		UNISTDX_MAKE_INOUT_OPERATOR(char)
-		UNISTDX_MAKE_INOUT_OPERATOR(i8)
-		UNISTDX_MAKE_INOUT_OPERATOR(i16)
-		UNISTDX_MAKE_INOUT_OPERATOR(i32)
-		UNISTDX_MAKE_INOUT_OPERATOR(i64)
-		UNISTDX_MAKE_INOUT_OPERATOR(u8)
-		UNISTDX_MAKE_INOUT_OPERATOR(u16)
-		UNISTDX_MAKE_INOUT_OPERATOR(u32)
-		UNISTDX_MAKE_INOUT_OPERATOR(u64)
-		UNISTDX_MAKE_INOUT_OPERATOR(f32)
-		UNISTDX_MAKE_INOUT_OPERATOR(f64)
-		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
-		UNISTDX_MAKE_INOUT_OPERATOR(f128)
-		#endif
-		UNISTDX_MAKE_INOUT_OPERATOR(string_type)
-
-		template<class T>
-		inline basic_bstream&
-		operator<<(const sys::bytes<T,Ch>& rhs) {
-			return this->write(rhs.begin(), rhs.size());
-		}
-
+		/// Get operator for standard type.
 		inline basic_bstream&
 		operator>>(bool& rhs) {
 			char c = 0;
@@ -139,12 +134,79 @@ namespace sys {
 			return *this;
 		}
 
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(char)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(char)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(i8)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(i8)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(i16)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(i16)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(i32)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(i32)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(i64)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(i64)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(u8)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(u8)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(u16)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(u16)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(u32)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(u32)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(u64)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(u64)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(f32)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(f32)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(f64)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(f64)
+		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
+		/// Insert operator for standard type.
+		UNISTDX_MAKE_PUT_OPERATOR(f128)
+		/// Get operator for standard type.
+		UNISTDX_MAKE_GET_OPERATOR(f128)
+		#endif
+		/// Insert operator for \c std::string.
+		UNISTDX_MAKE_PUT_OPERATOR(string_type)
+		/// Get operator for \c std::string.
+		UNISTDX_MAKE_GET_OPERATOR(string_type)
+
+		/// Insert operator for \link bytes\endlink.
+		template<class T>
+		inline basic_bstream&
+		operator<<(const sys::bytes<T,Ch>& rhs) {
+			return this->write(rhs.begin(), rhs.size());
+		}
+
+		/// Get operator for \link bytes\endlink.
 		template<class T>
 		inline basic_bstream&
 		operator>>(sys::bytes<T,Ch>& rhs) {
 			return this->read(rhs.begin(), rhs.size());
 		}
 
+		/**
+		Put \p n bytes from byte buffer pointed by \p buf
+		to binary stream.
+		*/
 		inline basic_bstream&
 		write(const char_type* buf, std::streamsize n) {
 			assert(this->_buf);
@@ -153,6 +215,10 @@ namespace sys {
 			return *this;
 		}
 
+		/**
+		Get \p n bytes from binary stream and store them
+		in byte buffer pointed by \p buf.
+		*/
 		inline basic_bstream&
 		read(char_type* buf, std::streamsize n) {
 			assert(this->_buf);
@@ -222,10 +288,12 @@ namespace sys {
 
 	};
 
+	/// Alias to basic_bstream<char>.
 	typedef basic_bstream<char> bstream;
 
 }
 
-#undef UNISTDX_MAKE_INOUT_OPERATOR
+#undef UNISTDX_MAKE_GET_OPERATOR
+#undef UNISTDX_MAKE_PUT_OPERATOR
 
 #endif // vim:filetype=cpp

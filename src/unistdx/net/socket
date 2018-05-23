@@ -63,11 +63,11 @@ namespace sys {
 		socket(fildes&& rhs) noexcept:
 		sys::fildes(std::move(rhs)) {}
 
-		/// Bind on @bind_addr and listen.
+		/// Bind on \p bind_addr and listen.
 		explicit
 		socket(const endpoint& bind_addr);
 
-		/// Bind on @bind_addr and connect to a server on @conn_addr.
+		/// Bind on \p bind_addr and connect to a server on \p conn_addr.
 		socket(const endpoint& bind_addr, const endpoint& conn_addr);
 
 		socket(
@@ -114,7 +114,7 @@ namespace sys {
 
 		#endif
 
-		/// @deprecated We use event-based error notifications.
+		/// @deprecated Use event-based error notifications.
 		int
 		error() const noexcept;
 

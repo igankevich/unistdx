@@ -13,136 +13,190 @@
 
 namespace sys {
 
+	/**
+	\brief Container, that uses object binary representation as its contents.
+	\date 2018-05-23
+	\author Ivan Gankevich
+	\ingroup container
+	\tparam T object type
+	\tparam Ch character (byte) type
+	*/
 	template<class T, class Ch=char>
 	union bytes {
 
+	public:
+		/// Object type.
+		typedef T object_type;
+		/// Character (byte) type.
 		typedef Ch value_type;
-		typedef bits::Integral<sizeof(T)> integral_type;
+		/// Iterator type.
 		typedef value_type* iterator;
-		typedef const value_type* const_iterator;
+		/// Size type.
 		typedef std::size_t size_type;
+
+	private:
+		typedef bits::Integral<sizeof(object_type)> integral_type;
+		typedef const value_type* const_iterator;
+
+	private:
+		object_type _val;
+		integral_type _intval;
+		value_type _bytes[sizeof(object_type)];
+
+	public:
 
 		inline constexpr
 		bytes() noexcept:
 		_val {} {}
 
+		/// Copy-constructor.
 		inline constexpr
 		bytes(const bytes &rhs) noexcept:
 		_val(rhs._val) {}
 
+		/**
+		Construct bytes container using \p rhs binary representaton as its contents.
+		*/
 		inline constexpr
-		bytes(T rhs) noexcept:
+		bytes(object_type rhs) noexcept:
 		_val(rhs) {}
 
+		/**
+		Construct bytes container from byte sequence described by two iterators.
+		*/
 		template<class It>
 		inline
 		bytes(It first, It last) noexcept {
 			std::copy(first, last, this->_bytes);
 		}
 
+		/**
+		Construct bytes container from byte sequence described
+		by iterator \p first and sequence size \p n.
+		*/
 		template<class It>
 		inline
 		bytes(It first, size_type n) noexcept {
 			std::copy_n(first, n, this->_bytes);
 		}
 
+		/// Convert binary representation to network byte order in-place.
 		inline void
 		to_network_format() noexcept {
-			_intval.to_network_format();
+			this->_intval.to_network_format();
 		}
 
+		/// Convert binary representation to native byte order in-place.
 		inline void
 		to_host_format() noexcept {
-			_intval.to_host_format();
+			this->_intval.to_host_format();
 		}
 
+		/// Automatically cast to value type.
 		inline
-		operator T&() noexcept {
-			return _val;
+		operator object_type&() noexcept {
+			return this->_val;
 		}
 
+		/// Automatically cast to value type.
 		inline constexpr
-		operator const T&() const noexcept {
-			return _val;
+		operator const object_type&() const noexcept {
+			return this->_val;
 		}
 
+		/// Access a byte by index.
 		inline constexpr value_type
 		operator[](size_type idx) const noexcept {
-			return _bytes[idx];
+			return this->_bytes[idx];
 		}
 
+		/// Access a byte by index.
 		inline value_type&
 		operator[](size_type idx) noexcept {
-			return _bytes[idx];
+			return this->_bytes[idx];
 		}
 
+		/// Byte-wise compare.
 		inline constexpr bool
 		operator==(const bytes& rhs) const noexcept {
-			return _intval == rhs._intval;
+			return this->_intval == rhs._intval;
 		}
 
+		/// Byte-wise compare.
 		inline constexpr bool
 		operator!=(const bytes& rhs) const noexcept {
-			return !operator==(rhs);
+			return !this->operator==(rhs);
 		}
 
+		/// Get iterator to the beginning of the byte sequence.
 		inline iterator
 		begin() noexcept {
-			return _bytes;
+			return this->_bytes;
 		}
 
-		inline iterator
-		end() noexcept {
-			return _bytes + sizeof(T);
-		}
-
+		/// Get iterator to the beginning of the byte sequence.
 		inline constexpr const_iterator
 		begin() const noexcept {
-			return _bytes;
+			return this->_bytes;
 		}
 
+		/// Get iterator to the end of the byte sequence.
+		inline iterator
+		end() noexcept {
+			return this->_bytes + sizeof(object_type);
+		}
+
+		/// Get iterator to the end of the byte sequence.
 		inline constexpr const_iterator
 		end() const noexcept {
-			return _bytes + sizeof(T);
+			return this->_bytes + sizeof(object_type);
 		}
 
+		/// Get the first byte.
+		inline value_type&
+		front() noexcept {
+			return *this->begin();
+		}
+
+		/// Get the last byte.
 		inline value_type&
 		back() noexcept {
-			return *(_bytes + sizeof(T) - 1);
+			return *(this->end() - 1);
 		}
 
-		inline constexpr const T&
+		/// Get object.
+		inline constexpr const object_type&
 		value() const noexcept {
-			return _val;
+			return this->_val;
 		}
 
-		inline T&
+		/// Get object.
+		inline object_type&
 		value() noexcept {
-			return _val;
+			return this->_val;
 		}
 
+		/// Get the number of bytes.
 		inline static constexpr size_type
 		size() noexcept {
-			return sizeof(T);
+			return sizeof(object_type);
 		}
-
-	private:
-		T _val;
-		integral_type _intval;
-		value_type _bytes[sizeof(T)];
 
 		static_assert(
 			sizeof(decltype(_val)) == sizeof(decltype(_intval)),
 			"bad integral type"
 		);
+
 	};
 
+	/// Construct byte sequence from object \p rhs.
 	template<class T>
 	inline constexpr bytes<T>
 	make_bytes(T rhs) noexcept {
 		return bytes<T>(rhs);
 	}
 
+	/// Print byte sequence in hexadecimal form.
 	template<class T, class B>
 	inline std::ostream&
 	operator<<(std::ostream& out, const bytes<T,B>& rhs) {
@@ -157,6 +211,10 @@ namespace sys {
 		return out;
 	}
 
+	/**
+	Converts binary representation of \p n in native byte order
+	to network byte order if needed.
+	*/
 	template<class T>
 	inline T
 	to_network_format(bytes<T> n) noexcept {
@@ -164,6 +222,10 @@ namespace sys {
 		return n.value();
 	}
 
+	/**
+	Converts binary representation of \p n in network byte order
+	to native byte order if needed.
+	*/
 	template<class T>
 	inline T
 	to_host_format(bytes<T> n) noexcept {

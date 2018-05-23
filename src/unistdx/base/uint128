@@ -32,6 +32,7 @@ namespace sys {
 
 }
 
+/// Specialisations of standard templates.
 namespace std {
 
 	/// Specialisation of \c std::is_arithmetic for \link sys::uint128_t\endlink.

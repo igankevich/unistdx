@@ -234,8 +234,7 @@ sys::receive_credentials(
 	socket& sock,
 	message_header& h,
 	void* data,
-	size_t
-	n
+	size_t n
 ) {
 	user_credentials_message m;
 	m.h.cmsg_len = CMSG_LEN(sizeof(m));

@@ -11,8 +11,10 @@
 
 namespace sys {
 
+	/// Socket address family type.
 	typedef ::sa_family_t sa_family_type;
 
+	/// Socket address families.
 	enum struct family_type: sa_family_type {
 		inet = AF_INET,
 		inet6 = AF_INET6,
@@ -22,9 +24,11 @@ namespace sys {
 		#endif
 	};
 
+	/// Put socket address family in a portable way.
 	bstream&
 	operator<<(bstream& out, family_type rhs);
 
+	/// Get socket address family in a portable way.
 	bstream&
 	operator>>(bstream& in, family_type& rhs);
 
