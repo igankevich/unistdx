@@ -15,6 +15,7 @@ sys::two_way_pipe::validate() {
 
 void
 sys::two_way_pipe::open() {
+	this->_owner = this_process::id();
 	this->_pipe1.open();
 	this->_pipe2.open();
 }

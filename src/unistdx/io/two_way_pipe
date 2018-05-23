@@ -6,122 +6,151 @@
 
 namespace sys {
 
-	struct two_way_pipe {
+	/**
+	\brief Two-way pipe implemented as two one-way pipes.
+	\date 2018-05-23
+	\author Ivan Gankevich
+	\details
+	\arg The pipe is designed for communication between
+	parent and child processes.
+	*/
+	class two_way_pipe {
 
-		inline
-		two_way_pipe():
-		_owner(sys::this_process::id())
-		{}
+	private:
+		pipe _pipe1;
+		pipe _pipe2;
+		pid_type _owner;
+
+	public:
+
+		two_way_pipe() = default;
 
 		~two_way_pipe() = default;
 
 		two_way_pipe(const two_way_pipe&) = delete;
 
+		/// Move-constructor.
 		two_way_pipe(two_way_pipe&&) = default;
 
 		two_way_pipe&
 		operator=(two_way_pipe&) = delete;
 
+		/// Parent input file descriptor.
 		inline fildes&
 		parent_in() noexcept {
 			return this->_pipe1.in();
 		}
 
-		inline fildes&
-		parent_out() noexcept {
-			return this->_pipe2.out();
-		}
-
+		/// Parent input file descriptor.
 		inline const fildes&
 		parent_in() const noexcept {
 			return this->_pipe1.in();
 		}
 
+		/// Parent output file descriptor.
+		inline fildes&
+		parent_out() noexcept {
+			return this->_pipe2.out();
+		}
+
+		/// Parent output file descriptor.
 		inline const fildes&
 		parent_out() const noexcept {
 			return this->_pipe2.out();
 		}
 
+		/// Child input file descriptor.
 		inline fildes&
 		child_in() noexcept {
 			return this->_pipe2.in();
 		}
 
-		inline fildes&
-		child_out() noexcept {
-			return this->_pipe1.out();
-		}
-
+		/// Child input file descriptor.
 		inline const fildes&
 		child_in() const noexcept {
 			return this->_pipe2.in();
 		}
 
+		/// Child output file descriptor.
+		inline fildes&
+		child_out() noexcept {
+			return this->_pipe1.out();
+		}
+
+		/// Child output file descriptor.
 		inline const fildes&
 		child_out() const noexcept {
 			return this->_pipe1.out();
 		}
 
+		/// Returns true, if the calling process created this pipe.
 		inline bool
 		is_owner() const noexcept {
 			return sys::this_process::id() == this->_owner;
 		}
 
+		/// Get calling process' input file descriptor.
 		inline fildes&
 		in() noexcept {
 			return this->is_owner() ? this->parent_in() : this->child_in();
 		}
 
-		inline fildes&
-		out() noexcept {
-			return this->is_owner() ? this->parent_out() : this->child_out();
-		}
-
+		/// Get calling process' input file descriptor.
 		inline const fildes&
 		in() const noexcept {
 			return this->is_owner() ? this->parent_in() : this->child_in();
 		}
 
+		/// Get calling process' output file descriptor.
+		inline fildes&
+		out() noexcept {
+			return this->is_owner() ? this->parent_out() : this->child_out();
+		}
+
+		/// Get calling process' output file descriptor.
 		inline const fildes&
 		out() const noexcept {
 			return this->is_owner() ? this->parent_out() : this->child_out();
 		}
 
+		/// Create two-way pipe by creating two one-way pipes.
 		void
 		open();
 
+		/// Close all pipe file descriptors.
 		void
 		close();
 
+		/// Close unused file descriptors in child process.
 		void
 		close_in_child();
 
+		/// Close unused file descriptors in parent process.
 		void
 		close_in_parent();
 
+		/// Close unused file descriptors in the calling process.
 		void
 		close_unused();
 
+		/// Remap file descriptors numbers in child process.
 		void
 		remap_in_child();
 
+		/// Remap file descriptors numbers in child process to \p in and \p out.
 		void
 		remap_in_child(fd_type in, fd_type out);
 
+		/// Validate files descriptors in the calling process.
 		void
 		validate();
 
 		friend std::ostream&
 		operator<<(std::ostream& out, const two_way_pipe& rhs);
 
-	private:
-
-		pipe _pipe1;
-		pipe _pipe2;
-		pid_type _owner;
-
 	};
 
+	/// Output both pipes.
 	std::ostream&
 	operator<<(std::ostream& out, const two_way_pipe& rhs);
 

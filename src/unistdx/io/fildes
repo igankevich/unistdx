@@ -328,7 +328,7 @@ namespace sys {
 		in_avail(T& rhs) {
 			#if defined(UNISTDX_HAVE_FIONREAD)
 			int nread;
-			if (::ioctl(rhs.get_fd(), FIONREAD, &nread) < 0) {
+			if (::ioctl(rhs.fd(), FIONREAD, &nread) < 0) {
 				nread = 0;
 			}
 			return nread;

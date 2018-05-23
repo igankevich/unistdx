@@ -85,6 +85,8 @@
 
 #mesondefine UNISTDX_HAVE_NETLINK
 
+#mesondefine UNISTDX_HAVE_PIPE2
+
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 
 #endif // vim:filetype=cpp

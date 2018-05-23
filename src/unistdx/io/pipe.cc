@@ -7,19 +7,23 @@
 
 namespace {
 
-	sys::fd_type
+	inline void
 	safe_pipe(sys::fd_type fds[2]) {
 		using namespace sys;
+		#if defined(UNISTDX_HAVE_SETNOSIGPIPE) || \
+			!defined(UNISTDX_HAVE_PIPE2)
 		bits::global_lock_type lock(bits::__forkmutex);
-		int ret = ::pipe(fds);
-		if (ret != -1) {
-			bits::set_mandatory_flags(fds[0]);
-			bits::set_mandatory_flags(fds[1]);
-			#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
-			fcntl(fds[1], F_SETNOSIGPIPE, 1);
-			#endif
-		}
-		return ret;
+		#endif
+		#if defined(UNISTDX_HAVE_PIPE2)
+		UNISTDX_CHECK(::pipe2(fds, O_CLOEXEC | O_NONBLOCK));
+		#else
+		UNISTDX_CHECK(::pipe(fds));
+		bits::set_mandatory_flags(fds[0]);
+		bits::set_mandatory_flags(fds[1]);
+		#endif
+		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
+		UNISTDX_CHECK(::fcntl(fds[1], F_SETNOSIGPIPE, 1));
+		#endif
 	}
 
 }
@@ -27,7 +31,7 @@ namespace {
 void
 sys::pipe::open() {
 	this->close();
-	UNISTDX_CHECK(safe_pipe(this->_rawfds));
+	safe_pipe(this->_rawfds);
 }
 
 void

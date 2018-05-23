@@ -151,6 +151,9 @@ endif
 if cpp.has_header_symbol('sys/prctl.h', 'prctl')
 	config.set('UNISTDX_HAVE_PRCTL', true)
 endif
+if cpp.has_header_symbol('unistd.h', 'pipe2')
+	config.set('UNISTDX_HAVE_PIPE2', true)
+endif
 # }}}
 
 threads = dependency('threads')
