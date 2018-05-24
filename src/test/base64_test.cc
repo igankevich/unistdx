@@ -31,6 +31,14 @@ std::vector<pair_type> encode_pairs{
 	{"abc", "YWJj"},
 	{"aaaa", "YWFhYQ=="},
 	{"abcd", "YWJjZA=="},
+	// test vectors from the specification
+	{"", ""},
+	{"f", "Zg=="},
+	{"fo", "Zm8="},
+	{"foo", "Zm9v"},
+	{"foob", "Zm9vYg=="},
+	{"fooba", "Zm9vYmE="},
+	{"foobar", "Zm9vYmFy"},
 };
 
 std::vector<pair_type> decode_pairs = encode_pairs;
