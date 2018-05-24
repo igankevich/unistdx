@@ -19,6 +19,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup streambuf
 	\see websocket_frame
+	\see \rfc{6455}
 	\details
 	The implementation
 	\arg supports only the latest WebSocket standard,
@@ -27,10 +28,6 @@ namespace sys {
 	\arg does not perform closing handshake,
 	\arg always masks payloads,
 	\arg uses secure random device for key generation and masking.
-
-	Please, see WebSocket protocol
-	<a href="https://tools.ietf.org/html/rfc6455">RFC 6455</a>
-	for more information.
 	*/
 	template<class Ch, class Tr=std::char_traits<Ch> >
 	class basic_websocketbuf: public virtual basic_packetbuf<Ch,Tr> {

@@ -7,7 +7,10 @@
 
 namespace sys {
 
-	/// The length of \p len bytes sequence encoded in BASE64.
+	/**
+	\brief The length of \p len bytes sequence encoded in BASE64.
+	\see \rfc{4648}
+	*/
 	inline size_t
 	base64_encoded_size(size_t len) {
 		if (len > std::numeric_limits<size_t>::max()/4u*3u-2u) {
@@ -16,7 +19,10 @@ namespace sys {
 		return ((len + 2u) / 3u) * 4u;
 	}
 
-	/// The length of \p len bytes sequence decoded from BASE64.
+	/**
+	\brief The length of \p len bytes sequence decoded from BASE64.
+	\see \rfc{4648}
+	*/
 	inline constexpr size_t
 	base64_max_decoded_size(size_t len) noexcept {
 		return (len / 4u) * 3u;
@@ -24,6 +30,7 @@ namespace sys {
 
 	/**
 	\brief Encode byte sequence with BASE64.
+	\see \rfc{4648}
 	\details
 	Encode byte sequence pointed by \p first with length \p n
 	with BASE64 and put result to memory location pointed by
@@ -34,6 +41,7 @@ namespace sys {
 
 	/**
 	\brief Encode byte sequence with BASE64.
+	\see \rfc{4648}
 	\details
 	Encode byte sequence located between \p first and \p last
 	with BASE64 and put result to memory location pointed by
@@ -46,6 +54,7 @@ namespace sys {
 
 	/**
 	\brief Decode BASE64 byte sequence.
+	\see \rfc{4648}
 	\return the length of the decoded sequence
 	\details
 	Decode BASE64 byte sequence pointed by \p first with length \p n
@@ -56,6 +65,7 @@ namespace sys {
 
 	/**
 	\brief Decode BASE64 byte sequence.
+	\see \rfc{4648}
 	\return the length of the decoded sequence
 	\details
 	Decode BASE64 byte sequence between \p first and \p last
