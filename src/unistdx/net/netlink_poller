@@ -1,6 +1,8 @@
 #ifndef UNISTDX_NET_NETLINK_POLLER
 #define UNISTDX_NET_NETLINK_POLLER
 
+#include <iosfwd>
+
 #include <unistdx/config>
 #include <unistdx/io/poller>
 #include <unistdx/net/socket>
@@ -14,79 +16,129 @@
 
 namespace sys {
 
-	typedef int netlink_family;
+	namespace bits {
 
+		template <class T, class Message>
+		inline T*
+		routing_attributes_ptr(Message* m) noexcept {
+			return reinterpret_cast<T*>(
+				reinterpret_cast<char*>(m) + NLMSG_ALIGN(sizeof(Message))
+			);
+		}
+
+		template <class T, class Message>
+		inline const T*
+		routing_attributes_ptr(const Message* m) noexcept {
+			return reinterpret_cast<const T*>(
+				reinterpret_cast<const char*>(m) + NLMSG_ALIGN(sizeof(Message))
+			);
+		}
+
+	}
+
+	/// Netlink message types.
 	enum class netlink_message_type: u16 {
+		/// Message is to be ignored.
 		noop = NLMSG_NOOP,
+		/// Message is an error and its payload is \c mlmsgerr system structure.
 		error = NLMSG_ERROR,
+		/// Message is the last part of multipart message.
 		done = NLMSG_DONE,
+		/// Message data was lost due to buffer overrun.
 		overrun = NLMSG_OVERRUN
 	};
 
+	/**
+	\brief Netlink message header.
+	\date 2018-05-24
+	\author Ivan Gankevich
+	\ingroup wrapper
+	\details
+	A wrapper around \c nlmsghdr system type
+	(see \man{netlink,7}).
+	*/
 	class netlink_header: public ::nlmsghdr {
 
 	public:
 
+		/// Length of message with header.
 		inline u32
 		length() const noexcept {
 			return this->nlmsg_len;
 		}
 
+		/// Payload type
 		inline netlink_message_type
 		type() const noexcept {
 			return netlink_message_type(this->nlmsg_type);
 		}
 
+		/// Additional flags.
 		inline u16
 		flags() const noexcept {
 			return this->nlmsg_flags;
 		}
 
+		/// Message sequence number.
 		inline u32
 		sequence() const noexcept {
 			return this->nlmsg_seq;
 		}
 
+		/// Sender port identifier.
 		inline u32
 		port() const noexcept {
 			return this->nlmsg_pid;
 		}
 
+		/// Returns true, if message type is to be ignored.
 		inline bool
 		noop() const noexcept {
 			return this->type() == netlink_message_type::noop;
 		}
 
+		/// Returns true, if message is the last part of multipart message.
 		inline bool
 		done() const noexcept {
 			return this->type() == netlink_message_type::done;
 		}
 
+		/// Returns true, if message is an error.
 		inline bool
 		error() const noexcept {
 			return this->type() == netlink_message_type::error;
 		}
 
+		/// Returns true, if message data was lost due to buffer overrun.
 		inline bool
 		overrun() const noexcept {
 			return this->type() == netlink_message_type::overrun;
 		}
 
+		/// Returns true, if the message is valid (see \man{netlink,3}).
 		inline bool
-		ok(int len) {
+		ok(int len) const noexcept {
 			return NLMSG_OK(this, len);
 		}
 
+		/// Returns the next header in multipart message.
 		inline netlink_header*
 		next(int len) noexcept {
 			return static_cast<netlink_header*>(NLMSG_NEXT(this, len));
 		}
 
+		/// Returns message payload length.
 		inline int
 		payload_length(int len) const noexcept {
 			return NLMSG_PAYLOAD(this, len);
 		}
 
+		/**
+		\brief
+		Call function \p func for each part of multipart message.
+		\date 2018-05-24
+		\author Ivan Gankevich
+		*/
 		template <class Message, class Func>
 		void
 		for_each_message(int len, Func func) {
@@ -99,51 +151,144 @@ namespace sys {
 
 	};
 
+	/**
+	\brief Netlink route attributes.
+	\date 2018-05-24
+	\author Ivan Gankevich
+	\ingroup wrapper
+	\tparam T attribute enumeration
+	\details
+	A wrapper around \c rtattr system type (see \man{rtnetlink,7}).
+	*/
+	template <class A>
 	class rtattributes: public ::rtattr {
 
 	public:
 
+		/// Attributes enumeration type.
+		typedef A attributes_type;
+
+		/// Returns true, if the attrubute is valid (see \man{rtnetlink,3}.
 		inline bool
-		ok(int len) {
+		ok(int len) const noexcept {
 			return RTA_OK(this, len);
 		}
 
+		/// Returns the next attrubute.
 		inline rtattributes*
 		next(int len) noexcept {
 			return static_cast<rtattributes*>(RTA_NEXT(this, len));
 		}
 
+		/// Returns the pointer to the beginning of attribute data.
 		template <class T>
 		inline T*
 		data() {
 			return static_cast<T*>(RTA_DATA(this));
 		}
 
+		/// Attribute length.
 		inline unsigned short
 		length() const noexcept {
 			return this->rta_len;
 		}
 
-		inline unsigned short
+		/// Attribute type (see \man{rtnetlink,3}).
+		inline attributes_type
 		type() const noexcept {
-			return this->rta_type;
+			return static_cast<attributes_type>(this->rta_type);
 		}
 
 	};
 
+	/// Interface address attributes.
+	enum class ifaddr_attribute: u32 {
+		unknown = IFA_UNSPEC,
+		address = IFA_ADDRESS,
+		local_address = IFA_LOCAL,
+		interface_name = IFA_LABEL,
+		broadcast_address = IFA_BROADCAST,
+		anycast_address = IFA_ANYCAST,
+		address_info = IFA_CACHEINFO,
+		multicast_address = IFA_MULTICAST,
+		flags = IFA_FLAGS,
+	};
+
+	/// Returns attribute name.
+	const char*
+	to_string(ifaddr_attribute rhs);
+
+	/// Print attribute name for debugging.
+	std::ostream&
+	operator<<(std::ostream& out, const ifaddr_attribute& rhs);
+
+	/**
+	\brief Netlink interaface address message.
+	\date 2018-05-24
+	\author Ivan Gankevich
+	\ingroup wrapper
+	\details
+	A wrapper around \c ifaddrmsg system type (see \man{rtnetlink,7}).
+	*/
 	class ifaddr_message: public ::ifaddrmsg {
 
 	public:
 
-		inline rtattributes*
-		get_route_attributes() noexcept {
-			return static_cast<rtattributes*>(IFA_RTA(this));
+		/// Route attribute type.
+		typedef rtattributes<ifaddr_attribute> attr_type;
+
+		/// Get address family.
+		inline family_type
+		family() const noexcept {
+			return static_cast<family_type>(this->ifa_family);
 		}
 
+		/// Get address prefix.
+		inline int
+		prefix() const noexcept {
+			return static_cast<int>(this->ifa_prefixlen);
+		}
+
+		/// Get address flags.
+		inline unsigned char
+		flags() const noexcept {
+			return this->ifa_flags;
+		}
+
+		/// Get address scope.
+		inline unsigned char
+		scope() const noexcept {
+			return this->ifa_scope;
+		}
+
+		/// Get address index.
+		inline int
+		index() const noexcept {
+			return this->ifa_index;
+		}
+
+		/// Get route attributes.
+		inline attr_type*
+		routing_attributes() noexcept {
+			return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
+		}
+
+		/// Get route attributes.
+		inline const attr_type*
+		routing_attributes() const noexcept {
+			return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
+		}
+
+		/**
+		\brief
+		Call function \p func for each attribute.
+		\date 2018-05-24
+		\author Ivan Gankevich
+		*/
 		template <class Func>
 		void
 		for_each_attribute(int len, Func func) {
-			rtattributes* attrs = this->get_route_attributes();
+			attr_type* attrs = this->routing_attributes();
 			while (len && attrs->ok(len)) {
 				func(*attrs);
 				attrs = attrs->next(len);
@@ -152,33 +297,53 @@ namespace sys {
 
 	};
 
-	class rtnetlink_header: public netlink_header {
+	/**
+	\brief Netlink interface address message header.
+	\date 2018-05-24
+	\author Ivan Gankevich
+	\ingroup wrapper
+	\details
+	A wrapper around \c nlmsghdr for \c ifaddrmsg netlink messages
+	(see \man{rtnetlink,7}).
+	*/
+	class ifaddr_message_header: public netlink_header {
 
 	public:
 
+		/// Returns true, if the message contains address that was added.
 		inline bool
 		new_address() const noexcept {
 			return this->type() == netlink_message_type(RTM_NEWADDR);
 		}
 
+		/// Returns true, if the message contains address that was deleted.
 		inline bool
 		delete_address() const noexcept {
 			return this->type() == netlink_message_type(RTM_DELADDR);
 		}
 
+		/// Returns true, if the message contains address.
 		inline bool
 		get_address() const noexcept {
 			return this->type() == netlink_message_type(RTM_GETADDR);
 		}
 
+		/// Returns pointer to message payload.
 		inline ifaddr_message*
-		get_ifaddr_message() noexcept {
+		message() noexcept {
 			return static_cast<ifaddr_message*>(NLMSG_DATA(this));
 		}
 
+		/// Returns pointer to message payload.
+		inline const ifaddr_message*
+		message() const noexcept {
+			return static_cast<const ifaddr_message*>(NLMSG_DATA(this));
+		}
+
+		/// \copydoc netlink_header::payload_length
 		inline int
 		payload_length() const noexcept {
-			return IFA_PAYLOAD(this);
+			return NLMSG_PAYLOAD(this, sizeof(::ifaddrmsg));
 		}
 
 	};

@@ -55,3 +55,22 @@ sys::operator>>(bstream& in, family_type& rhs) {
 	rhs = map_family_type(static_cast<portable_family_type>(raw));
 	return in;
 }
+
+const char*
+sys::to_string(family_type rhs) {
+	switch (rhs) {
+	case family_type::inet: return "inet";
+	case family_type::inet6: return "inet6";
+	case family_type::unix: return "unix";
+	#if defined(UNISTDX_HAVE_NETLINK)
+	case family_type::netlink: return "netlink";
+	#endif
+	default: return "unknown";
+	}
+}
+
+std::ostream&
+sys::operator<<(std::ostream& out, const family_type& rhs) {
+	return out << to_string(rhs);
+}
+

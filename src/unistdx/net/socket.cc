@@ -211,10 +211,12 @@ sys::socket::create_socket_if_necessary(const endpoint& e) {
 }
 
 #if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
-union user_credentials_message {
-	sys::cmessage_header h;
-	char bytes[CMSG_SPACE(sizeof(sys::user_credentials))];
-};
+namespace {
+	union user_credentials_message {
+		sys::cmessage_header h;
+		char bytes[CMSG_SPACE(sizeof(sys::user_credentials))];
+	};
+}
 
 void
 sys::send_credentials(socket& sock, const void* data, size_t n) {
@@ -266,15 +268,17 @@ sys::socket::credentials() const {
 #endif
 
 #if defined(UNISTDX_HAVE_SCM_RIGHTS)
-union fds_message {
-	sys::cmessage_header h;
-	char bytes[CMSG_SPACE(64*sizeof(sys::fd_type))];
-};
+namespace {
+	union fds_message {
+		sys::cmessage_header h;
+		char bytes[CMSG_SPACE(64*sizeof(sys::fd_type))];
+	};
+}
 
 void
 sys::socket::send_fds(const sys::fd_type* data, size_t n) {
 	if (n > 64) {
-		throw std::invalid_argument("too many fds to sent");
+		throw std::invalid_argument("too many fds to send");
 	}
 	char dummy[1] = {0};
 	const size_t size = n*sizeof(sys::fd_type);

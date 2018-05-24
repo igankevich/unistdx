@@ -142,7 +142,7 @@ namespace sys {
 			return this->_fd;
 		}
 
-		/// Get raw file descriptor.
+		/// Get bare file descriptor.
 		inline fd_type
 		fd() const noexcept {
 			return this->_fd;
@@ -353,7 +353,7 @@ namespace sys {
 
 	/**
 	\brief
-	Stream buffer traits for raw \link fd_type\endlink.
+	Stream buffer traits for bare \link fd_type\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
 	\ingroup traits
@@ -365,7 +365,7 @@ namespace sys {
 		typedef void char_type;
 
 		/**
-		Write \p n bytes from array pointed by \p s to buffer \p buf.
+		Write \p n bytes from array pointed by \p s to file descriptor \p sink.
 		*/
 		inline static std::streamsize
 		write(fd_type sink, const char_type* s, std::streamsize n) {
@@ -373,7 +373,7 @@ namespace sys {
 		}
 
 		/**
-		Read \p n bytes to array pointed by \p s from buffer \p buf.
+		Read \p n bytes to array pointed by \p s from file descriptor \p src.
 		*/
 		inline static std::streamsize
 		read(fd_type src, char_type* s, std::streamsize n) {

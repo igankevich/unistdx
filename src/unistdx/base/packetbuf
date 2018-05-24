@@ -642,12 +642,16 @@ namespace sys {
 	class basic_ipacket_guard {
 
 	private:
-		typedef Ch char_type;
 		typedef streamptr<Ch> ptr_type;
-		typedef basic_packetbuf<Ch,Tr> buf_type;
+
+	public:
+		/// Character type.
+		typedef Ch char_type;
+		/// Stream buffer type.
+		typedef basic_packetbuf<Ch,Tr> streambuf_type;
 
 	private:
-		buf_type* _buf;
+		streambuf_type* _buf;
 		ptr_type _ptrs;
 
 	public:
@@ -658,7 +662,7 @@ namespace sys {
 		reading only to payload part of the packet buffer.
 		*/
 		explicit
-		basic_ipacket_guard(buf_type* buf):
+		basic_ipacket_guard(streambuf_type* buf):
 		_buf(buf)
 		{
 			this->_buf->getgptr(this->_ptrs);

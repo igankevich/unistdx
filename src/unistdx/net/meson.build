@@ -2,9 +2,9 @@ libunistdx_src += files([
 	'endian.cc',
 	'endpoint.cc',
 	'family.cc',
-	'ifaddr.cc',
 	'ipv4_addr.cc',
 	'ipv6_addr.cc',
+	'netlink_poller.cc',
 	'socket.cc',
 ])
 

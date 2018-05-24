@@ -4,8 +4,9 @@
 #include <tuple>
 
 #include <unistdx/base/check>
-#include <unistdx/net/endpoint>
+#include <unistdx/bits/addr_parse>
 #include <unistdx/net/bstream>
+#include <unistdx/net/endpoint>
 #include <unistdx/net/subnet_iterator>
 
 namespace sys {
@@ -196,24 +197,33 @@ namespace sys {
 		}
 
 		/// Put address and network prefix.
-		template <class X>
-		friend std::ostream&
-		operator<<(std::ostream& out, const ifaddr<X>& rhs);
+		inline friend std::ostream&
+		operator<<(std::ostream& out, const ifaddr& rhs) {
+			typedef sys::bits::Const_char<'/'> Slash;
+			return out << rhs._address << Slash() << rhs._netmask.to_prefix();
+		}
 
 		/// Get address and network prefix.
-		template <class X>
-		friend std::istream&
-		operator>>(std::istream& in, ifaddr<X>& rhs);
+		inline friend std::istream&
+		operator>>(std::istream& in, ifaddr& rhs) {
+			typedef sys::bits::Const_char<'/'> Slash;
+			sys::prefix_type prefix = 0;
+			in >> rhs._address >> Slash() >> prefix;
+			rhs._netmask = Addr::from_prefix(prefix);
+			return in;
+		}
 
 		/// Put interface address in binary form.
-		template <class X>
-		friend bstream&
-		operator<<(bstream& out, const ifaddr<X>& rhs);
+		inline friend bstream&
+		operator<<(bstream& out, const ifaddr& rhs) {
+			return out << rhs._address << rhs._netmask;
+		}
 
 		/// Get interface address in binary form.
-		template <class X>
-		friend bstream&
-		operator>>(bstream& in, ifaddr<X>& rhs);
+		inline friend bstream&
+		operator>>(bstream& in, ifaddr& rhs) {
+			return in >> rhs._address >> rhs._netmask;
+		}
 
 	private:
 
@@ -237,26 +247,6 @@ namespace sys {
 
 	};
 
-	/// Put address and network prefix.
-	template <class Addr>
-	std::ostream&
-	operator<<(std::ostream& out, const ifaddr<Addr>& rhs);
-
-	/// Get address and network prefix.
-	template <class Addr>
-	std::istream&
-	operator>>(std::istream& in, ifaddr<Addr>& rhs);
-
-	/// Put interface address in binary form.
-	template <class Addr>
-	bstream&
-	operator<<(bstream& out, const ifaddr<Addr>& rhs);
-
-	/// Get interface address in binary form.
-	template <class Addr>
-	bstream&
-	operator>>(bstream& in, ifaddr<Addr>& rhs);
-
 }
 
 namespace std {
@@ -277,7 +267,6 @@ namespace std {
 			return
 			    addr_hash::operator()(rhs._address) ^
 			    addr_hash::operator()(rhs._netmask);
-
 		}
 
 	};

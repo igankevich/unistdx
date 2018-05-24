@@ -24,22 +24,25 @@ TEST(NetlinkPoller, First) {
 				char bytes[4096];
 			} h;
 			ssize_t len = sock.read(h.bytes, sizeof(h.bytes));
-			h.h.for_each_message<sys::rtnetlink_header>(
+			h.h.for_each_message<sys::ifaddr_message_header>(
 				len,
-				[&] (sys::rtnetlink_header& msg) {
+				[&] (sys::ifaddr_message_header& hdr) {
 					std::string action;
-					if (msg.new_address()) {
+					if (hdr.new_address()) {
 						action = "add";
-					} else if (msg.delete_address()) {
+					} else if (hdr.delete_address()) {
 						action = "del";
 					}
-					if (msg.new_address() || msg.delete_address()) {
-						sys::ifaddr_message* m = msg.get_ifaddr_message();
+					if (hdr.new_address() || hdr.delete_address()) {
+						sys::ifaddr_message* m = hdr.message();
+						std::clog << "m->family()=" << m->family() << std::endl;
+						std::clog << "m->prefix()=" << m->prefix() << std::endl;
 						sys::ipv4_addr address{};
 						m->for_each_attribute(
 							len,
-							[&] (sys::rtattributes& attrs) {
-								if (attrs.type() == IFA_ADDRESS) {
+							[&] (sys::ifaddr_message::attr_type& attrs) {
+							std::clog << "attrs.type()=" << attrs.type() << std::endl;
+								if (attrs.type() == sys::ifaddr_attribute::address) {
 									address = *attrs.data<sys::ipv4_addr>();
 								}
 							}

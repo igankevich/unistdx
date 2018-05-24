@@ -32,6 +32,14 @@ namespace sys {
 	bstream&
 	operator>>(bstream& in, family_type& rhs);
 
+	/// Get family name.
+	const char*
+	to_string(family_type rhs);
+
+	/// Print family name for debugging.
+	std::ostream&
+	operator<<(std::ostream& out, const family_type& rhs);
+
 }
 
 #endif // vim:filetype=cpp

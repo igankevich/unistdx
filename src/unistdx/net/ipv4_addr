@@ -3,7 +3,6 @@
 
 #include <netinet/in.h>
 
-#include <cassert>
 #include <functional>
 #include <iosfwd>
 
@@ -234,7 +233,6 @@ namespace sys {
 	ipv4_addr::from_prefix(prefix_type prefix) noexcept {
 		constexpr const size_t nbits = sizeof(addr4_type) *
 		                               std::numeric_limits<unsigned char>::digits;
-		assert(prefix <= nbits);
 		return nbits == prefix
 		       ? ipaddr_traits<ipv4_addr>::widearea_mask()
 			   : ipv4_addr((addr4_type(1) << prefix) - addr4_type(1));
