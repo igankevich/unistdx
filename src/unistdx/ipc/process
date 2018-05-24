@@ -44,13 +44,20 @@ namespace sys {
 		parent_id() noexcept { return ::getppid(); }
 
 		/**
-		Fork child process preventing race conditions by
-		locking global fork mutex.
+		\brief Fork child process preventing race conditions by
+		locking global fork mutex (if needed).
+		\details
+		The mutex is not locked on systems supporting close-on-exec and
+		non-blocking file descriptor flags.
 		*/
 		inline pid_type
 		fork() {
-			bits::global_lock_type lock(bits::__forkmutex);
-			return ::fork();
+			#if defined(UNISTDX_FORK_MUTEX)
+			bits::global_lock_type lock(bits::fork_mutex);
+			#endif
+			pid_type ret;
+			UNISTDX_CHECK(ret = ::fork());
+			return ret;
 		}
 
 		/**

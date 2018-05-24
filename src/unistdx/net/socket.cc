@@ -9,12 +9,12 @@
 
 namespace {
 
-	int
+	inline int
 	safe_socket(int domain, int type, int protocol) {
 		using namespace sys::bits;
 		#if !defined(UNISTDX_HAVE_SOCK_NONBLOCK) || \
 		!defined(UNISTDX_HAVE_SOCK_CLOEXEC)
-		global_lock_type lock(__forkmutex);
+		global_lock_type lock(fork_mutex);
 		#endif
 		int sock;
 		UNISTDX_CHECK(sock = ::socket(domain, type, protocol));
@@ -31,13 +31,6 @@ namespace {
 		       ? "ok"
 			   : std::make_error_code(std::errc(errno)).message();
 	}
-
-	template <class T>
-	struct default_free {
-		inline void operator()(T* ptr) {
-			::free(ptr);
-		}
-	};
 
 }
 
@@ -103,7 +96,7 @@ sys::socket::accept(socket& sock, endpoint& addr) {
 			)
 	);
 	#else
-	global_lock_type lock(__forkmutex);
+	global_lock_type lock(fork_mutex);
 	UNISTDX_CHECK(sock._fd = ::accept(this->_fd, addr.sockaddr(), &len));
 	set_mandatory_flags(sock._fd);
 	#endif

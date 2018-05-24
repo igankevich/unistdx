@@ -12,7 +12,7 @@ namespace {
 		using namespace sys;
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE) || \
 			!defined(UNISTDX_HAVE_PIPE2)
-		bits::global_lock_type lock(bits::__forkmutex);
+		bits::global_lock_type lock(bits::fork_mutex);
 		#endif
 		#if defined(UNISTDX_HAVE_PIPE2)
 		UNISTDX_CHECK(::pipe2(fds, O_CLOEXEC | O_NONBLOCK));

@@ -1,6 +1,10 @@
 #ifndef UNISTDX_BITS_SAFE_CALLS
 #define UNISTDX_BITS_SAFE_CALLS
 
+#include <unistdx/config>
+
+#if defined(UNISTDX_FORK_MUTEX)
+
 #include <fcntl.h>
 #include <mutex>
 
@@ -11,7 +15,7 @@ namespace sys {
 		typedef std::mutex global_mutex_type;
 		typedef std::lock_guard<global_mutex_type> global_lock_type;
 
-		extern global_mutex_type __forkmutex;
+		extern global_mutex_type fork_mutex;
 
 		inline void
 		set_mandatory_flags(int fd) noexcept {
@@ -22,5 +26,7 @@ namespace sys {
 	}
 
 }
+
+#endif
 
 #endif // vim:filetype=cpp

@@ -89,4 +89,14 @@
 
 #define UNISTDX_VERSION "@UNISTDX_VERSION@"
 
+#if defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
+	defined(UNISTDX_HAVE_SOCK_CLOEXEC) && \
+	defined(UNISTDX_HAVE_SOCK_CLOEXEC) && \
+	defined(UNISTDX_HAVE_ACCEPT4) && \
+	defined(UNISTDX_HAVE_PIPE2)
+#undef UNISTDX_FORK_MUTEX
+#else
+#define UNISTDX_FORK_MUTEX
+#endif
+
 #endif // vim:filetype=cpp

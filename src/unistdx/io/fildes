@@ -228,6 +228,11 @@ namespace sys {
 			return out << rhs._fd;
 		}
 
+		/// Specialise \c std::swap.
+		inline friend void swap(fildes& lhs, fildes& rhs) {
+			std::swap(lhs._fd, rhs._fd);
+		}
+
 		/**
 		Change file descriptor number to an arbitrrary one
 		by duplicating it with \c dup system call.
