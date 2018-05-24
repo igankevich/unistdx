@@ -5,6 +5,8 @@
 
 #include <unistdx/config>
 #include <unistdx/io/poller>
+#include <unistdx/net/netlink_attribute_iterator>
+#include <unistdx/net/netlink_message_iterator>
 #include <unistdx/net/socket>
 
 #if !defined(UNISTDX_HAVE_NETLINK)
@@ -15,6 +17,45 @@
 #include <linux/rtnetlink.h>
 
 namespace sys {
+
+	template <class T>
+	class netlink_attribute_container {
+
+	public:
+		typedef T value_type;
+		typedef int size_type;
+		typedef netlink_attribute_iterator<T> iterator;
+
+	private:
+		iterator _first;
+		iterator _last;
+		int _len = 0;
+
+	public:
+
+		inline
+		netlink_attribute_container(iterator first, iterator last, int len):
+		_first(first),
+		_last(last),
+		_len(len)
+		{}
+
+		inline iterator
+		begin() noexcept {
+			return this->_first;
+		}
+
+		inline iterator
+		end() noexcept {
+			return this->_last;
+		}
+
+		inline int
+		length() const noexcept {
+			return this->_len;
+		}
+
+	};
 
 	namespace bits {
 
@@ -149,6 +190,21 @@ namespace sys {
 			}
 		}
 
+		template <class T>
+		inline netlink_message_iterator<T>
+		begin(int len) noexcept {
+			return netlink_message_iterator<T>(
+				static_cast<T*>(this),
+				len
+			);
+		}
+
+		template <class T>
+		inline netlink_message_iterator<T>
+		end() noexcept {
+			return netlink_message_iterator<T>();
+		}
+
 	};
 
 	/**
@@ -156,7 +212,7 @@ namespace sys {
 	\date 2018-05-24
 	\author Ivan Gankevich
 	\ingroup wrapper
-	\tparam T attribute enumeration
+	\tparam A attribute enumeration
 	\details
 	A wrapper around \c rtattr system type (see \man{rtnetlink,7}).
 	*/
@@ -197,6 +253,12 @@ namespace sys {
 		inline attributes_type
 		type() const noexcept {
 			return static_cast<attributes_type>(this->rta_type);
+		}
+
+		template <class T>
+		inline netlink_attribute_iterator<T>
+		end() noexcept {
+			return netlink_attribute_iterator<T>();
 		}
 
 	};
@@ -295,6 +357,28 @@ namespace sys {
 			}
 		}
 
+		inline netlink_attribute_iterator<attr_type>
+		begin(int len) noexcept {
+			return netlink_attribute_iterator<attr_type>(
+				this->routing_attributes(),
+				len
+			);
+		}
+
+		inline netlink_attribute_iterator<attr_type>
+		end() noexcept {
+			return netlink_attribute_iterator<attr_type>();
+		}
+
+		inline netlink_attribute_container<attr_type>
+		attributes(int len) {
+			return netlink_attribute_container<attr_type>(
+				this->begin(len),
+				this->end(),
+				len
+			);
+		}
+
 	};
 
 	/**
@@ -347,6 +431,48 @@ namespace sys {
 		}
 
 	};
+
+	template <class T>
+	class netlink_container {
+
+	public:
+		typedef T value_type;
+		typedef int size_type;
+		typedef netlink_message_iterator<T> iterator;
+
+	private:
+		int _len = 0;
+		union {
+			netlink_header h;
+			char bytes[4096];
+		} _hdr;
+
+	public:
+
+		inline void
+		read(socket& sock) {
+			this->_len = sock.read(this->_hdr.bytes, sizeof(this->_hdr.bytes));
+		}
+
+		inline iterator
+		begin() noexcept {
+			return this->_hdr.h.template begin<value_type>(this->_len);
+		}
+
+		inline iterator
+		end() noexcept {
+			return this->_hdr.h.template end<value_type>();
+		}
+
+		inline int
+		length() const noexcept {
+			return this->_len;
+		}
+
+	};
+
+	typedef sys::netlink_container<sys::ifaddr_message_header>
+		ifaddr_message_container;
 
 }
 

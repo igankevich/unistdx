@@ -37,6 +37,10 @@ namespace sys {
 		typedef const value_type* const_pointer;
 		typedef const value_type& const_reference;
 
+	private:
+		stream_type* _stream = nullptr;
+		value_type _value;
+
 	public:
 
 		/// Construct input stream iterator from input stream \p rhs.
@@ -124,9 +128,6 @@ namespace sys {
 				this->_stream = nullptr;
 			}
 		}
-
-		stream_type* _stream = nullptr;
-		value_type _value;
 
 	};
 

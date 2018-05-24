@@ -9,7 +9,7 @@ sys::to_string(ifaddr_attribute rhs) {
 		case ifaddr_attribute::interface_name: return "interface_name";
 		case ifaddr_attribute::broadcast_address: return "broadcast_address";
 		case ifaddr_attribute::anycast_address: return "anycast_address";
-		case ifaddr_attribute::address_info: return "addres_info";
+		case ifaddr_attribute::address_info: return "address_info";
 		case ifaddr_attribute::multicast_address: return "multicast_address";
 		case ifaddr_attribute::flags: return "flags";
 		default: return "unknown";
