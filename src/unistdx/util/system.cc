@@ -5,10 +5,10 @@
 namespace {
 
 	inline sys::size_type
-		get_size(int name) {
-			long result = ::sysconf(name);
-			return result > 0 ? result : 0;
-		}
+	get_size(int name) {
+		long result = ::sysconf(name);
+		return result > 0 ? result : 0;
+	}
 
 }
 

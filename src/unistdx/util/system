@@ -6,8 +6,16 @@
 /// POSIX and Linux system call wrappers.
 namespace sys {
 
+	/// Alias to \c size_t.
 	typedef size_t size_type;
 
+	/**
+	\brief Get system page size.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\details
+	Falls back to 4096 when the page size can not be determined.
+	*/
 	inline size_type
 	page_size() noexcept {
 		#if defined(PAGESIZE)
@@ -28,9 +36,20 @@ namespace sys {
 		#undef UNISTDX_SYSCONF_PAGE_SIZE
 	}
 
+	/**
+	\brief Returns maximum number of threads for the system.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\details
+	\arg If \c UNISTDX_SINGLE_THREAD preprocessor macro is defined, returns 1.
+	\arg If \c UNISTDX_CONCURRENCY environment variable equals positive integer,
+	returns its value.
+	\arg Otherwise return \c std::this_thread::hardware_concurrency.
+	*/
 	extern unsigned
 	thread_concurrency() noexcept;
 
+	/// Always returns 1.
 	inline unsigned
 	io_concurrency() noexcept {
 		return 1u;
@@ -38,6 +57,11 @@ namespace sys {
 
 	class cache;
 
+	/**
+	\brief A particular level of cache.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	*/
 	class cache_level {
 
 	private:
@@ -48,21 +72,25 @@ namespace sys {
 
 	public:
 
+		/// Get level number.
 		inline int
 		level() const noexcept {
 			return this->_level;
 		}
 
+		/// Get cache size.
 		inline size_type
 		size() const noexcept {
 			return this->_size;
 		}
 
+		/// Get cache line size.
 		inline size_type
 		line_size() const noexcept {
 			return this->_linesize;
 		}
 
+		/// Get cache associativity (the number of sets into which cache blocks go).
 		inline size_type
 		associativity() const noexcept {
 			return this->_assoc;
@@ -72,10 +100,20 @@ namespace sys {
 
 	};
 
+	/**
+	\brief System caches.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\ingroup container
+	\details
+	The data is queried in a series of \man{sysconf,3} calls.
+	*/
 	class cache {
 
 	public:
+		/// Alias to \link cache_level\endlink.
 		typedef cache_level value_type;
+		/// Constant iterator.
 		typedef const value_type* const_iterator;
 
 	private:
@@ -87,34 +125,37 @@ namespace sys {
 		cache();
 		~cache() = default;
 
+		/// Copy-constructor.
 		cache(const cache&) = default;
+
+		/// Move-constructor.
 		cache(cache&&) = default;
 
+		/// The number of cache levels.
 		inline int
 		num_levels() const noexcept {
 			return this->_nlevels;
 		}
 
+		/// Get iterator to the beginning of cache level sequence.
 		inline const_iterator
 		begin() const noexcept {
 			return this->_levels;
 		}
 
+		/// Get iterator to the end of cache level sequence.
 		inline const_iterator
 		end() const noexcept {
 			return this->_levels + this->_nlevels;
 		}
 
+		/// \copydoc num_levels
 		inline int
 		size() const noexcept {
 			return this->_nlevels;
 		}
 
-		inline value_type
-		size(int i) const noexcept {
-			return this->_levels[i];
-		}
-
+		/// Get cache by index.
 		inline value_type
 		operator[](int i) const noexcept {
 			return this->_levels[i];

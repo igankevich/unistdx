@@ -7,7 +7,23 @@
 
 namespace sys {
 
-	struct userstream {
+	/**
+	\brief Input stream of system users.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\ingroup stream
+	\see user
+	\see user_iterator
+	\details
+	Useful to traverse all system users in conjunction with
+	\link user_iterator\endlink.
+	*/
+	class userstream {
+
+	private:
+		bool _end = false;
+
+	public:
 
 		userstream();
 
@@ -15,25 +31,25 @@ namespace sys {
 
 		UNISTDX_NO_COPY_AND_MOVE(userstream)
 
+		/// Returns true if the end of stream is not reached.
 		inline explicit
 		operator bool() const noexcept {
 			return !this->_end;
 		}
 
+		/// Returns true if the end of stream is reached.
 		inline bool
 		operator!() const noexcept {
 			return !this->operator bool();
 		}
 
+		/// Read the next user from the stream.
 		userstream&
 		operator>>(user& rhs);
 
-	private:
-
-		bool _end = false;
-
 	};
 
+	/// Iterator for \link userstream\endlink.
 	typedef basic_istream_iterator<userstream, user> user_iterator;
 
 }

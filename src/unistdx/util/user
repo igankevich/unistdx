@@ -12,46 +12,79 @@
 
 namespace sys {
 
+	/// Alias to \c uid_t system type.
 	typedef ::uid_t uid_type;
+
+	/// Alias to \c gid_t system type.
 	typedef ::gid_t gid_type;
+
+	/// Alias to \c passwd system type.
 	typedef struct ::passwd passwd_type;
 
-	struct user: public passwd_type {
+	/**
+	\brief System user.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\see \man{getpwent,3}
+	\ingroup wrapper
+	\details
+	\arg Wraps \c passwd system type.
+	\arg The size of this wrapper is larger than \c passwd,
+	because it contains byte buffer that stores all the fields.
+	*/
+	class user: public passwd_type {
+
+	private:
+		std::string _buf;
+
+	public:
 
 		user() = default;
+
+		/// Move-constructor.
 		user(user&&) = default;
+
+		/// Copy-constructor.
 		user(const user&) = default;
+
 		~user() = default;
 
+		/// Assignment.
 		user&
 		operator=(const user& rhs) = default;
 
+		/// Assignment.
 		inline user&
 		operator=(const passwd_type& rhs) {
 			passwd_type::operator=(rhs);
 			return *this;
 		}
 
+		/// Get user name.
 		inline const char*
 		name() const {
 			return this->pw_name;
 		}
 
+		/// Get user password.
 		inline const char*
 		password() const {
 			return this->pw_passwd;
 		}
 
+		/// Get user ID.
 		inline uid_type
 		id() const {
 			return this->pw_uid;
 		}
 
+		/// Get user primary group ID.
 		inline gid_type
 		group_id() const {
 			return this->pw_gid;
 		}
 
+		/// Get user real name.
 		inline const char*
 		real_name() const {
 			#if defined(UNISTDX_HAVE_GECOS)
@@ -61,21 +94,25 @@ namespace sys {
 			#endif
 		}
 
+		/// Get user home directory.
 		inline const char*
 		home() const {
 			return this->pw_dir;
 		}
 
+		/// Get user shell.
 		inline const char*
 		shell() const {
 			return this->pw_shell;
 		}
 
+		/// Compare user IDs.
 		inline bool
 		operator==(const user& rhs) const noexcept {
 			return id() == rhs.id();
 		}
 
+		/// Compare user IDs.
 		inline bool
 		operator!=(const user& rhs) const noexcept {
 			return !operator==(rhs);
@@ -107,16 +144,21 @@ namespace sys {
 			this->_buf.resize(this->_buf.size()*2);
 		}
 
-		std::string _buf;
-
 	};
 
+	/// Print user in \c /etc/passwd format.
 	std::ostream&
 	operator<<(std::ostream& out, const user& rhs);
 
+	/**
+	Find user in system database by id \p id and store in \p result.
+	*/
 	bool
-	find_user(uid_type uid, user& result);
+	find_user(uid_type id, user& result);
 
+	/**
+	Find user in system database by name \p name and store in \p result.
+	*/
 	bool
 	find_user(const char* name, user& result);
 
