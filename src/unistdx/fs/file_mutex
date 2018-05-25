@@ -11,6 +11,7 @@
 
 namespace sys {
 
+	/// An exception indicating file lock error.
 	class bad_file_lock: public std::exception {
 
 	public:
@@ -18,6 +19,7 @@ namespace sys {
 
 		~bad_file_lock() noexcept = default;
 
+		/// Error text.
 		const char*
 		what() const noexcept override {
 			return "bad file lock";
@@ -25,8 +27,11 @@ namespace sys {
 
 	};
 
+	/// File lock types.
 	enum struct file_lock_type: int {
+		/// Shared read lock.
 		read_lock = LOCK_SH,
+		/// Exclusive write lock.
 		write_lock = LOCK_EX
 	};
 
@@ -35,39 +40,69 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup fs mutex
+	\see \man{flock,2}
+	\details
+	\arg Uses the sanest (but not very portable) \man{flock,2}
+	system call for file locking.
+	\arg Read locks may be acquired by multiple processes, provided
+	that there no write lock on the file.
+	\arg Write lock may be acquired by only one process.
 	*/
 	class file_mutex: public fildes {
 
 	public:
 
+		/// Acquire file lock of type \p tp.
 		void
 		lock(file_lock_type tp=file_lock_type::write_lock);
 
+		/// Release file lock.
 		void
 		unlock();
 
+		/// Try to acquire file lock of type \p tp.
 		bool
 		try_lock(file_lock_type tp=file_lock_type::write_lock);
 
 		file_mutex() noexcept = default;
 
+		/**
+		Construct file mutex with file \p filename, flags \p flags,
+		file mode \p mode.
+		*/
 		inline
-		file_mutex(const char* filename, open_flag flags, mode_type mode) noexcept:
+		file_mutex(
+			const char* filename,
+			open_flag flags,
+			mode_type mode
+		) noexcept:
 		fildes() {
 			this->open(filename, flags, mode);
 		}
 
+		/**
+		Construct file mutex with file \p filename, read-write permissions,
+		file mode \p mode.
+		*/
 		inline
 		file_mutex(const char* filename, mode_type mode) noexcept:
 		fildes() {
 			this->open(filename, mode);
 		}
 
+		/**
+		Open file \p filename for mutex with read-write permissions and
+		file mode \p mode.
+		*/
 		inline void
 		open(const char* filename, mode_type mode) noexcept {
 			this->open(filename, open_flag::read_write, mode);
 		}
 
+		/**
+		Open file \p filename for mutex with flags \p flags and
+		file mode \p mode.
+		*/
 		void
 		open(const char* filename, open_flag flags, mode_type mode) noexcept;
 

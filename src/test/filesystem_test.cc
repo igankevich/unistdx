@@ -294,6 +294,14 @@ TEST(GetFileType, PathEntry) {
 	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(*result));
 }
 
+TEST(IDirectory, Entries) {
+	sys::path cwd(".");
+	sys::idirectory dir(cwd);
+	for (const auto& entry : dir.entries<sys::direntry>()) {
+		std::clog << "entry=" << entry << std::endl;
+	}
+}
+
 TEST(DirTree, CopyRecursively) {
 	std::vector<std::string> files1 {"a", "b", "c"};
 	std::vector<std::string> files2 {"d", "e", "f"};

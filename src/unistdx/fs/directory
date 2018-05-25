@@ -6,48 +6,69 @@
 
 namespace sys {
 
+	/**
+	\brief Directory entry input/output stream.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\ingroup stream
+	\tparam FilePred file predicate type, that determines which
+	directory entries to include in the stream.
+	\tparam Trans transformation function type
+	*/
 	template<class FilePred, class Trans>
 	class basic_directory:
 		public basic_idirectory<FilePred>,
 		public basic_odirectory<Trans> {
 
-	public:
-
+	private:
 		typedef basic_idirectory<FilePred> idir_type;
 		typedef basic_odirectory<Trans> odir_type;
 
+	public:
 		using typename idir_type::filepred_type;
 		using typename odir_type::transform;
 
+		/**
+		Open directory \p p as an input directori for reading entries
+		and set it as output directory.
+		*/
 		inline void
 		open(const path& p) {
 			this->idir_type::open(p);
 			this->odir_type::open(p);
 		}
 
+		/// \copydoc basic_idirectory::close
 		inline void
 		close() {
 			this->idir_type::close();
 		}
 
+		/// Get input/output directory.
 		inline const path&
 		getpath() const noexcept {
 			return this->idir_type::getpath();
 		}
 
+		/// Returns true if input stream is in good state.
 		inline explicit
 		operator bool() const noexcept {
 			return this->idir_type::operator bool() &&
 			       this->odir_type::operator bool();
 		}
 
+		/// Returns true if input stream is not in good state.
 		inline bool
 		operator!() const noexcept {
-			return !operator bool();
+			return !this->operator bool();
 		}
 
 	};
 
+	/**
+	Directory entry input stream that ignores all hidden files
+	during traversal and output stream that copies all files verbatim.
+	*/
 	typedef basic_directory<ignore_hidden_files,copy_verbatim> directory;
 
 }

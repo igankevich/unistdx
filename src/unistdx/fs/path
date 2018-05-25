@@ -6,7 +6,10 @@
 
 namespace sys {
 
+	/// Path components separator.
 	constexpr const char file_separator = '/';
+
+	/// Path separator in environment variables.
 	constexpr const char path_separator = ':';
 
 	template <class Ch, class Tr, class Alloc>
@@ -43,12 +46,20 @@ namespace sys {
 	MAKE_OPERATOR(>, tp1, tp2, tp3, tp4) \
 	MAKE_OPERATOR(>=, tp1, tp2, tp3, tp4)
 
+	/**
+	\brief File system path template which is a string with additional methods.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\tparam Ch character type
+	\tparam Tr character traits type
+	\tparam Alloc allocator type
+	*/
 	template <class Ch, class Tr=std::char_traits<Ch>, class Alloc=
 				  std::allocator<Ch> >
 	class basic_path: public std::basic_string<Ch,Tr,Alloc> {
 
 	public:
-
+		/// String type.
 		typedef std::basic_string<Ch,Tr,Alloc> string_type;
 		using typename string_type::value_type;
 		using typename string_type::traits_type;
@@ -70,46 +81,66 @@ namespace sys {
 		inline
 		basic_path() = default;
 
+		/// Copy-assignment.
 		inline basic_path&
 		operator=(const basic_path&) = default;
 
+		/// Move-assignment.
+		inline basic_path&
+		operator=(basic_path&&) = default;
+
+		/// Copy-assignment for string.
 		inline basic_path&
 		operator=(const string_type& rhs) {
 			string_type::operator=(rhs);
 			return *this;
 		}
 
+		/// Move-assignment for string.
+		inline basic_path&
+		operator=(string_type&& rhs) {
+			string_type::operator=(std::move(rhs));
+			return *this;
+		}
+
+		/// Assignment.
 		inline basic_path&
 		operator=(const char* rhs) {
 			string_type::operator=(rhs);
 			return *this;
 		}
 
+		/// Construct path from bar <code>const char*</code>.
 		inline explicit
 		basic_path(const char* rhs):
 		string_type(rhs)
 		{}
 
+		/// Copy-constructor for string.
 		inline explicit
 		basic_path(const string_type& rhs):
 		string_type(rhs)
 		{}
 
+		/// Move-constructor for string.
 		inline explicit
 		basic_path(string_type&& rhs) noexcept:
 		string_type(std::forward<string_type>(rhs))
 		{}
 
+		/// Copy-constructor.
 		inline
 		basic_path(const basic_path& rhs):
 		string_type(rhs)
 		{}
 
+		/// Move-constructor.
 		inline
 		basic_path(basic_path&& rhs):
 		string_type(std::forward<string_type>(rhs))
 		{}
 
+		/// Construct path from directory \p dir and file \p filename.
 		template <class A, class B>
 		inline
 		basic_path(A&& dir, B&& filename):
@@ -117,6 +148,7 @@ namespace sys {
 			this->add(std::forward<B>(filename));
 		}
 
+		/// Construct path from multiple path components.
 		template <class A, class B, class ... Args>
 		inline
 		basic_path(A&& dir, B&& filename, Args&& ... more_filenames):
@@ -127,6 +159,7 @@ namespace sys {
 			);
 		}
 
+		/// Append file \p filename as path component.
 		template <class T>
 		inline void
 		add(T&& filename) {
@@ -134,6 +167,7 @@ namespace sys {
 			this->append(std::forward<T>(filename));
 		}
 
+		/// Append method arguments as path components.
 		template <class T, class ... Args>
 		inline void
 		add(T&& filename, Args&& ... components) {
@@ -142,11 +176,16 @@ namespace sys {
 			this->add(std::forward<Args>(components) ...);
 		}
 
+		/**
+		Automatically cast to <code>const char*</code> which is oftet used
+		in system calls.
+		*/
 		inline
 		operator const value_type*() const noexcept {
 			return this->data();
 		}
 
+		/// \nowarn
 		MAKE_OPERATOR_EQ(basic_path&, basic_path&, string_type&, string_type&);
 		MAKE_OPERATOR_EQ(basic_path&, string_type&, string_type&, string_type&);
 		MAKE_OPERATOR_EQ(string_type&, basic_path&, string_type&, string_type&);
@@ -158,6 +197,7 @@ namespace sys {
 		MAKE_OPERATOR_REL(string_type&, basic_path&, string_type&, string_type&);
 		MAKE_OPERATOR_REL(basic_path&, char*, string_type&, char*);
 		MAKE_OPERATOR_REL(char*, basic_path&, char*, string_type&);
+		/// \endnowarn
 
 	private:
 
@@ -172,26 +212,36 @@ namespace sys {
 	#undef MAKE_OPERATOR_EQ
 	#undef MAKE_OPERATOR_REL
 
+	/// Alias to basic_path<char>.
 	typedef basic_path<char> path;
 
 }
 
 namespace std {
 
+	/// Specialisation of \c std::hash for \link sys::basic_path\endlink.
 	template <class Ch, class Tr, class Alloc>
 	struct hash<sys::basic_path<Ch,Tr,Alloc> >:
-		public std::hash<std::basic_string<Ch,Tr,Alloc> > {
+		public std::hash<std::basic_string<Ch,Tr,Alloc>> {
 
+	private:
+		typedef std::hash<std::basic_string<Ch,Tr,Alloc>> base_type;
+
+	public:
+		/// Hash function return value type.
 		typedef size_t result_type;
+		/// Hash function argument type.
 		typedef sys::basic_path<Ch,Tr,Alloc> argument_type;
 
-		inline size_t
+		/// Return string hash of path.
+		inline result_type
 		operator()(const argument_type& rhs) const noexcept {
-			return std::hash<std::basic_string<Ch,Tr,Alloc> >::operator()(rhs);
+			return this->base_type::operator()(rhs);
 		}
 
 	};
 
 }
+
 
 #endif // vim:filetype=cpp

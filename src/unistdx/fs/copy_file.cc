@@ -16,6 +16,7 @@
 
 #if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 namespace {
+
 	loff_t
 	copy_file_range_priv(
 		int fd_in,
@@ -56,8 +57,8 @@ sys::copy_file(const path& src, const path& dest) {
 		open_flag::close_on_exec,
 		0644
 	);
-	fd_type ifd = in.get_fd();
-	fd_type ofd = in.get_fd();
+	fd_type ifd = in.fd();
+	fd_type ofd = in.fd();
 	file_stat st(src);
 	offset_type size = st.size();
 	ssize_t n;

@@ -5,16 +5,30 @@
 #include <unistdx/fs/dirstream>
 #include <unistdx/fs/pathentry>
 #include <unistdx/it/basic_istream_iterator>
+#include <unistdx/it/iterator_pair>
 
 namespace sys {
 
+	/// Alias to \c DIR system type.
 	typedef DIR dir_type;
 
+	/**
+	\brief Directory entry input stream.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\tparam FilePred file predicate type, that determines which
+	directory entries to include in the stream.
+	\see direntry
+	\see pathentry
+	\details
+	An input stream from which directory entries are read non-recursively.
+	\arg File predicate may have internal state.
+	*/
 	template<class FilePred>
 	class basic_idirectory: public dirstream {
 
 	public:
-
+		/// File predicate type.
 		typedef FilePred filepred_type;
 
 	private:
@@ -26,11 +40,13 @@ namespace sys {
 
 		basic_idirectory() = default;
 
+		/// Construct directory entry input stream for directory \p path.
 		inline explicit
 		basic_idirectory(const path& path) {
 			this->open(path);
 		}
 
+		/// Move-constructor.
 		inline
 		basic_idirectory(basic_idirectory&& rhs):
 		dirstream(std::forward<dirstream>(rhs)),
@@ -47,6 +63,10 @@ namespace sys {
 			this->close();
 		}
 
+		/**
+		\brief Open directory \p p as input directory for reading entries.
+		\see \man{opendir,3}
+		*/
 		inline void
 		open(const path& p) {
 			this->close();
@@ -57,6 +77,10 @@ namespace sys {
 			}
 		}
 
+		/**
+		\brief Close input directory.
+		\see \man{closedir,3}
+		*/
 		inline void
 		close() {
 			if (this->_dir) {
@@ -67,36 +91,57 @@ namespace sys {
 			}
 		}
 
+		/// Returns true, if the directory was opened.
 		inline bool
 		is_open() const noexcept {
 			return this->_dir != nullptr;
 		}
 
+		/// Get file predicate.
 		inline const filepred_type&
 		getfilepred() const noexcept {
 			return this->_filepred;
 		}
 
+		/**
+		\brief Set file predicate.
+		\details
+		This method allows for file predicate to have internal state, that
+		affects which entries are included in the stream.
+		*/
 		inline void
 		setfilepred(filepred_type rhs) {
 			this->_filepred = rhs;
 		}
 
+		/// Get input directory.
 		inline const path&
 		getpath() const noexcept {
 			return this->_dirpath;
 		}
 
+		/// Get next directory entry as \link direntry\endlink.
 		inline basic_idirectory&
 		operator>>(direntry& rhs) {
 			this->read_direntry(rhs);
 			return *this;
 		}
 
+		/// Get next directory entry as \link pathentry\endlink.
 		inline basic_idirectory&
 		operator>>(pathentry& rhs) {
 			this->read_direntry(rhs);
 			return *this;
+		}
+
+		/// Get all directories entries as a container.
+		template <class Entry>
+		inline iterator_pair<basic_istream_iterator<basic_idirectory,Entry>>
+		entries() noexcept {
+			return iterator_pair<basic_istream_iterator<basic_idirectory,Entry>>(
+				basic_istream_iterator<basic_idirectory,Entry>(*this),
+				basic_istream_iterator<basic_idirectory,Entry>()
+			);
 		}
 
 	private:
@@ -145,8 +190,16 @@ namespace sys {
 
 	};
 
+	/**
+	\brief Do not include hidden file when traversing directories.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\details
+	This is the default file predicate for \link idirectory\endlink.
+	*/
 	struct ignore_hidden_files {
 
+		/// Returns true, if directory entry rhs is not hidden.
 		template <class Entry>
 		inline bool
 		operator()(const path&, const Entry& rhs) const noexcept {
@@ -155,7 +208,10 @@ namespace sys {
 
 	};
 
+	/// Directory entry input stream that ignores all hidden files during traversal.
 	typedef basic_idirectory<ignore_hidden_files> idirectory;
+
+	/// Directory entry input stream iterator.
 	template<class T>
 	using idirectory_iterator = basic_istream_iterator<idirectory, T>;
 

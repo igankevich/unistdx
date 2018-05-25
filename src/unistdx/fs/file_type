@@ -10,6 +10,7 @@ namespace sys {
 
 	typedef ::mode_t mode_type;
 
+	/// File types.
 	enum struct file_type: mode_type {
 		regular = S_IFREG,
 		directory = S_IFDIR,
@@ -20,6 +21,7 @@ namespace sys {
 		symbolic_link = S_IFLNK
 	};
 
+	/// Print file type as a character, as in \man{ls,1} command.
 	std::ostream&
 	operator<<(std::ostream& out, const file_type& rhs);
 

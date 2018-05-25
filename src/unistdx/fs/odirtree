@@ -7,19 +7,46 @@
 
 namespace sys {
 
+	/// The same template as basic_odirectory.
 	template <class Trans>
 	using basic_odirtree = basic_odirectory<Trans>;
 
+	/**
+	\brief Copy files and directories recursively.
+	\details
+	This is the default file transformation type for
+	\link odirtree\endlink.
+	*/
 	struct copy_recursively {
 
+	private:
 		path _src;
 		path _dest;
 
+	public:
+
+		copy_recursively() = default;
+
+		/**
+		Construct transformation with source directory \p src
+		and destination directory \p dst.
+		*/
+		inline
+		copy_recursively(const path& src, const path& dst):
+		_src(src),
+		_dest(dst)
+		{}
+
+		/// Copy file name of directory \p rhs without changing it.
 		inline sys::path
 		operator()(const direntry& rhs) const {
 			return sys::path(rhs.name());
 		}
 
+		/**
+		Copy file name of directory \p rhs by changing it to be
+		relative to souce directory.
+		*/
 		inline sys::path
 		operator()(const pathentry& rhs) const {
 			return this->make_dirs(rhs.getpath());
@@ -31,7 +58,13 @@ namespace sys {
 
 	};
 
+	/**
+	Directory entry output stream that copies
+	all files and directories recursively.
+	*/
 	typedef basic_odirtree<copy_recursively> odirtree;
+
+	/// Directory entry output stream iterator.
 	template<class T>
 	using odirtree_iterator = basic_ostream_iterator<odirtree, T>;
 

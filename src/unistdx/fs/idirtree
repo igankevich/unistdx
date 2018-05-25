@@ -7,58 +7,89 @@
 
 namespace sys {
 
+	/**
+	\brief Recursive directory entry input stream.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\tparam FilePred file predicate type, that determines which
+	directory entries to include in the stream.
+	\tparam DirPred directory predicate type, that determines which
+	directories to recurse into.
+	\see direntry
+	\see pathentry
+	\details
+	An input stream from which directories entries are read recursively.
+	\arg File and directory predicates may have internal state.
+	*/
 	template<class FilePred, class DirPred>
-	struct basic_idirtree: public basic_idirectory<FilePred> {
+	class basic_idirtree: public basic_idirectory<FilePred> {
 
-		typedef basic_idirectory<FilePred> directory;
-		using dirstream::good;
-		using dirstream::eof;
-		using dirstream::_state;
-		using typename dirstream::state;
-		using dirstream::eofbit;
-		using dirstream::clear;
-		using dirstream::setstate;
+	private:
+		typedef basic_idirectory<FilePred> base_type;
 
+	public:
+		using typename base_type::state;
+		using typename base_type::filepred_type;
+		using base_type::eofbit;
+
+	public:
+		/// Directory predicate type.
 		typedef DirPred dirpred_type;
+
+	private:
+		std::queue<sys::path> _dirs;
+		dirpred_type _dirpred;
+
+	public:
 
 		basic_idirtree() = default;
 
+		/**
+		Construct recursive directory entry input stream for
+		input directory \p starting_point
+		*/
 		inline explicit
 		basic_idirtree(const path& starting_point):
-		directory(starting_point) {
+		base_type(starting_point) {
 			this->_dirs.emplace(starting_point);
 		}
 
+		/// Open path \p p as input directory.
 		inline void
 		open(const path& p) {
 			while (!this->_dirs.empty()) {
 				this->_dirs.pop();
 			}
-			directory::open(p);
+			base_type::open(p);
 			this->_dirs.emplace(p);
 		}
 
+		/// Path to the directory which is currently being traversed.
 		inline const path&
 		current_dir() const noexcept {
 			return this->_dirs.front();
 		}
 
+		/// Get directory predicate.
 		inline const dirpred_type&
 		getdirpred() const noexcept {
 			return this->_dirpred;
 		}
 
+		/// Set directory predicate.
 		inline void
 		setdirpred(dirpred_type rhs) {
 			this->_dirpred = rhs;
 		}
 
+		/// Get next directory entry as \link direntry\endlink.
 		inline basic_idirtree&
 		operator>>(direntry& rhs) {
 			this->read_direntry(rhs);
 			return *this;
 		}
 
+		/// Get next directory entry as \link pathentry\endlink.
 		inline basic_idirtree&
 		operator>>(pathentry& rhs) {
 			this->read_direntry(rhs);
@@ -72,7 +103,7 @@ namespace sys {
 		read_direntry(Entry& rhs) {
 			bool success = false;
 			while (!success && !this->eof()) {
-				if (this->directory::operator>>(rhs)) {
+				if (this->base_type::operator>>(rhs)) {
 					success = true;
 					const path& cur = this->current_dir();
 					if (this->_dirpred(cur, rhs)) {
@@ -84,25 +115,31 @@ namespace sys {
 						this->setstate(eofbit);
 					} else {
 						this->clear();
-						this->directory::open(this->_dirs.front());
+						this->base_type::open(this->_dirs.front());
 					}
 				}
 			}
 		}
 
-		std::queue<sys::path> _dirs;
-		dirpred_type _dirpred;
-
 	};
 
+	/**
+	\brief Do not recurse to hidden directories when traversing directories.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\details
+	This is the default directory predicate for \link idirectory\endlink.
+	*/
 	struct ignore_hidden_dirs {
 
+		/// Returns true, if directory entry is not hidden.
 		inline bool
 		operator()(const path& prefix, const direntry& rhs) const {
 			return !rhs.is_hidden()
 			       && get_file_type(prefix, rhs) == file_type::directory;
 		}
 
+		/// Returns true, if directory entry is not hidden.
 		inline bool
 		operator()(const path&, const pathentry& rhs) const {
 			return !rhs.is_hidden() && get_file_type(rhs) == file_type::directory;
@@ -110,7 +147,13 @@ namespace sys {
 
 	};
 
+	/**
+	Recursive directory entry input stream that ignores all hidden files
+	during traversal and does not recurse to hidden directories.
+	*/
 	typedef basic_idirtree<ignore_hidden_files, ignore_hidden_dirs> idirtree;
+
+	/// Recursive directory entry input stream iterator.
 	template<class T>
 	using idirtree_iterator = basic_istream_iterator<idirtree, T>;
 
