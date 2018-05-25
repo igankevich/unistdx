@@ -6,6 +6,12 @@
 
 namespace sys {
 
+	/**
+	\brief Iterator for netlink multipart messages.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\ingroup iter
+	*/
 	template <class T>
 	class netlink_message_iterator: public std::iterator<std::input_iterator_tag, T> {
 

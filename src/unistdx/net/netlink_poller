@@ -8,6 +8,7 @@
 #include <unistdx/net/netlink_attribute_iterator>
 #include <unistdx/net/netlink_message_iterator>
 #include <unistdx/net/socket>
+#include <unistdx/it/iterator_pair>
 
 #if !defined(UNISTDX_HAVE_NETLINK)
 #error netlink.h is required to use netlink
@@ -17,45 +18,6 @@
 #include <linux/rtnetlink.h>
 
 namespace sys {
-
-	template <class T>
-	class netlink_attribute_container {
-
-	public:
-		typedef T value_type;
-		typedef int size_type;
-		typedef netlink_attribute_iterator<T> iterator;
-
-	private:
-		iterator _first;
-		iterator _last;
-		int _len = 0;
-
-	public:
-
-		inline
-		netlink_attribute_container(iterator first, iterator last, int len):
-		_first(first),
-		_last(last),
-		_len(len)
-		{}
-
-		inline iterator
-		begin() noexcept {
-			return this->_first;
-		}
-
-		inline iterator
-		end() noexcept {
-			return this->_last;
-		}
-
-		inline int
-		length() const noexcept {
-			return this->_len;
-		}
-
-	};
 
 	namespace bits {
 
@@ -174,22 +136,7 @@ namespace sys {
 			return NLMSG_PAYLOAD(this, len);
 		}
 
-		/**
-		\brief
-		Call function \p func for each part of multipart message.
-		\date 2018-05-24
-		\author Ivan Gankevich
-		*/
-		template <class Message, class Func>
-		void
-		for_each_message(int len, Func func) {
-			Message* msg = static_cast<Message*>(this);
-			while (msg->ok(len) && !msg->done()) {
-				func(*msg);
-				msg = static_cast<Message*>(msg->next(len));
-			}
-		}
-
+		/// Returns iterator to the first message.
 		template <class T>
 		inline netlink_message_iterator<T>
 		begin(int len) noexcept {
@@ -199,10 +146,18 @@ namespace sys {
 			);
 		}
 
+		/// Returns iterator to the end of messages.
 		template <class T>
 		inline netlink_message_iterator<T>
 		end() noexcept {
 			return netlink_message_iterator<T>();
+		}
+
+		/// Returns all messages as traversable container.
+		template <class T>
+		inline iterator_pair<netlink_message_iterator<T>>
+		messages(int len) noexcept {
+			return make_iterator_pair(this->begin<T>(len), this->end<T>());
 		}
 
 	};
@@ -253,12 +208,6 @@ namespace sys {
 		inline attributes_type
 		type() const noexcept {
 			return static_cast<attributes_type>(this->rta_type);
-		}
-
-		template <class T>
-		inline netlink_attribute_iterator<T>
-		end() noexcept {
-			return netlink_attribute_iterator<T>();
 		}
 
 	};
@@ -341,22 +290,7 @@ namespace sys {
 			return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
 		}
 
-		/**
-		\brief
-		Call function \p func for each attribute.
-		\date 2018-05-24
-		\author Ivan Gankevich
-		*/
-		template <class Func>
-		void
-		for_each_attribute(int len, Func func) {
-			attr_type* attrs = this->routing_attributes();
-			while (len && attrs->ok(len)) {
-				func(*attrs);
-				attrs = attrs->next(len);
-			}
-		}
-
+		/// Returns iterator to the first attribute.
 		inline netlink_attribute_iterator<attr_type>
 		begin(int len) noexcept {
 			return netlink_attribute_iterator<attr_type>(
@@ -365,17 +299,18 @@ namespace sys {
 			);
 		}
 
+		/// Returns iterator to the end of attributes.
 		inline netlink_attribute_iterator<attr_type>
 		end() noexcept {
 			return netlink_attribute_iterator<attr_type>();
 		}
 
-		inline netlink_attribute_container<attr_type>
+		/// Returns all attributes as traversable container.
+		inline iterator_pair<netlink_attribute_iterator<attr_type>>
 		attributes(int len) {
-			return netlink_attribute_container<attr_type>(
+			return iterator_pair<netlink_attribute_iterator<attr_type>>(
 				this->begin(len),
-				this->end(),
-				len
+				this->end()
 			);
 		}
 
@@ -432,12 +367,21 @@ namespace sys {
 
 	};
 
+	/**
+	\brief Container for netlink messages.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\ingroup container
+	*/
 	template <class T>
 	class netlink_container {
 
 	public:
+		/// Message header type.
 		typedef T value_type;
+		/// Message length type.
 		typedef int size_type;
+		/// Message iterator type.
 		typedef netlink_message_iterator<T> iterator;
 
 	private:
@@ -449,21 +393,25 @@ namespace sys {
 
 	public:
 
+		/// Read netlink message sequence from socket \p sock.
 		inline void
 		read(socket& sock) {
 			this->_len = sock.read(this->_hdr.bytes, sizeof(this->_hdr.bytes));
 		}
 
+		/// Returns the pointer to the beginning of message sequence.
 		inline iterator
 		begin() noexcept {
 			return this->_hdr.h.template begin<value_type>(this->_len);
 		}
 
+		/// Returns the pointer to the end of message sequence.
 		inline iterator
 		end() noexcept {
 			return this->_hdr.h.template end<value_type>();
 		}
 
+		/// Netlink message length.
 		inline int
 		length() const noexcept {
 			return this->_len;
@@ -471,6 +419,7 @@ namespace sys {
 
 	};
 
+	/// Netlink container for interface address messages.
 	typedef sys::netlink_container<sys::ifaddr_message_header>
 		ifaddr_message_container;
 

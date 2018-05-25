@@ -6,6 +6,12 @@
 
 namespace sys {
 
+	/**
+	\brief Iterator for netlink message attributes.
+	\date 2018-05-25
+	\author Ivan Gankevich
+	\ingroup iter
+	*/
 	template <class T>
 	class netlink_attribute_iterator:
 		public std::iterator<std::input_iterator_tag, T> {
