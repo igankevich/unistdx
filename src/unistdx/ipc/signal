@@ -25,57 +25,85 @@ namespace sys {
 	typedef struct ::sigaction sigaction_type;
 
 	/**
-	\brief Signal enumeration.
+	\brief Process signals.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc
+	\see \man{signal,7}
 	*/
 	enum struct signal: signal_type {
-		// POSIX.1-1990
 		/// Interrupt.
 		hang_up = SIGHUP,
 		/// Keyboard interrupt.
 		keyboard_interrupt = SIGINT,
+		/// Keyboard quit.
 		quit = SIGQUIT,
+		/// Illegal processor instrucion encountered.
 		illegal_instruction = SIGILL,
+		/// Abort signal from \man{abort,3}.
 		abort = SIGABRT,
+		/// Floating-point arithmetic exception.
 		floating_point_exception = SIGFPE,
 		/// Forcibly terminate.
 		kill = SIGKILL,
+		/// Invalid memory address was accessed.
 		segmentation_fault = SIGSEGV,
+		/// Write to a \man{pipe,2} that is closed on the other end.
 		broken_pipe = SIGPIPE,
+		/// A signal from \man{alarm,2} clock or interval timer \man{setitimer,2}.
 		alarm = SIGALRM,
 		/// Gracefully terminate.
 		terminate = SIGTERM,
+		/// User-defined signal 1.
 		user_defined_1 = SIGUSR1,
+		/// User-defined signal 2.
 		user_defined_2 = SIGUSR2,
+		/// Child process stopped or terminated.
 		child = SIGCHLD,
+		/// Resume process execution.
 		resume = SIGCONT,
+		/// Pause process execution.
 		stop = SIGSTOP,
-		stop_from_terminal = SIGTSTP,
+		/// Stop signal from controlling terminal.
+		terminal_stop = SIGTSTP,
+		/// Background process tried to read from controlling terminal.
 		terminal_input = SIGTTIN,
+		/// Background process tried to write to controlling terminal.
 		terminal_output = SIGTTOU,
-		// POSIX.1-2001
+		/// Memory bus error.
 		bad_memory_access = SIGBUS,
 		#if defined(UNISTDX_HAVE_SIGPOLL)
+		/// Asyncrhonous input/output event signal.
 		poll = SIGPOLL,
 		#endif
+		/// A signal from interval timer \man{setitimer,2}.
 		profile = SIGPROF,
+		/// Bad argument to system call.
 		bad_argument = SIGSYS,
+		/// Breakpoint reached by the programme being debugged.
 		breakpoint = SIGTRAP,
+		/// Out-of-band data arrived at a socket.
 		urgent = SIGURG,
+		/// A signal from interval timer \man{setitimer,2}.
 		virtual_alarm = SIGVTALRM,
+		/// CPU time soft limit, which is set by \man{setrlimit,2}, exceeded.
 		cpu_time_limit_exceeded = SIGXCPU,
+		/// Maximum file size limit, which is set by \man{setrlimit,2}, exceeded.
 		file_size_limit_exceeded = SIGXFSZ
-		                           // non-standard
 		#if defined(UNISTDX_HAVE_SIGSTKFLT)
-		, coprocessor_stack_fault = SIGSTKFLT
+		,
+		/// Stack fault on coprocessor (unused signal).
+		coprocessor_stack_fault = SIGSTKFLT
 		#endif
+		,
 		#if defined(UNISTDX_HAVE_SIGPWR)
-		, power_failure = SIGPWR
+		/// Power failure.
+		power_failure = SIGPWR
 		#endif
+		,
 		#if defined(UNISTDX_HAVE_SIGWINCH)
-		, window_resize = SIGWINCH
+		/// Controlling terminal changed its window size.
+		terminal_window_resize = SIGWINCH
 		#endif
 	};
 

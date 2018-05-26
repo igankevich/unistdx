@@ -31,7 +31,9 @@ namespace sys {
 	\author Ivan Gankevich
 	*/
 	enum struct semaphore_type: int {
+		/// Semaphore that may synchronise threads only.
 		thread = 0,
+		/// Semaphore that may synchronise threads and processes.
 		process = 1
 	};
 

@@ -37,13 +37,22 @@ namespace sys {
 	struct basic_status<siginfo_type> {
 
 	public:
-		/// Enumeration of reasons for process status change.
+		/// \brief Reasons for process status change.
+		/// \see \man{wait,2}
 		enum struct reason {
+			/// Process exited by calling \man{exit,2}.
 			exited = CLD_EXITED,
+			/// Process was killed by a signal.
 			killed = CLD_KILLED,
+			/// Process was killed by a signal and dumped a core.
 			core_dumped = CLD_DUMPED,
+			/// Process execution was stopped by a signal.
 			stopped = CLD_STOPPED,
+			/// Traced process was trapped.
 			trapped = CLD_TRAPPED,
+			/**
+			Process execution was continued with \link signal::resume\endlink signal.
+			*/
 			continued = CLD_CONTINUED
 		};
 

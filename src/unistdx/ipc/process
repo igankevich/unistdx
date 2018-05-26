@@ -112,8 +112,13 @@ namespace sys {
 	\ingroup ipc
 	*/
 	enum wait_flags {
+		/// Process exited by calling \man{exit,2}.
 		proc_exited = WEXITED,
+		/// Process execution was stopped by a signal.
 		proc_stopped = WSTOPPED,
+		/**
+		Process execution was continued with \link signal::resume\endlink signal.
+		*/
 		proc_continued = WCONTINUED
 	};
 

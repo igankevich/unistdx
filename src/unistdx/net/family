@@ -17,11 +17,18 @@ namespace sys {
 	/// \brief Socket address families.
 	/// \ingroup net
 	enum struct family_type: sa_family_type {
+		/// IPv4 socket address family.
 		inet = AF_INET,
+		/// IPv4 socket address family.
 		inet6 = AF_INET6,
+		/// UNIX domain socket address family.
+		/// \see \man{unix,7}
 		unix = AF_UNIX
 		#if defined(UNISTDX_HAVE_NETLINK)
-		, netlink = AF_NETLINK
+		,
+		/// Netlink socket address family.
+		/// \see \man{netlink,7}
+		netlink = AF_NETLINK
 		#endif
 	};
 

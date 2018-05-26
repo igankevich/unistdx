@@ -27,7 +27,7 @@ namespace {
 			signal_names[SIGCHLD] = "child";
 			signal_names[SIGCONT] = "resume";
 			signal_names[SIGSTOP] = "stop";
-			signal_names[SIGTSTP] = "stop_from_terminal";
+			signal_names[SIGTSTP] = "terminal_stop";
 			signal_names[SIGTTIN] = "terminal_input";
 			signal_names[SIGTTOU] = "terminal_output";
 			signal_names[SIGBUS] = "bad_memory_access";
@@ -48,7 +48,7 @@ namespace {
 			signal_names[SIGPWR] = "power_failure";
 			#endif
 			#if defined(UNISTDX_HAVE_SIGWINCH)
-			signal_names[SIGWINCH] ="window_resize";
+			signal_names[SIGWINCH] ="terminal_window_resize";
 			#endif
 		}
 
