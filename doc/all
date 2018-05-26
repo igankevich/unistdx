@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cd $MESON_BUILD_ROOT
-targets="doc doc-rename"
+targets="doc-doxygen doc-rename"
 if ! test -f "std.tag.xml"
 then
 	targets="doc-std-tagfile $targets"

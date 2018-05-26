@@ -1,7 +1,7 @@
 doxygen = find_program('doxygen', required: false)
 if doxygen.found()
 	run_target(
-		'doc',
+		'doc-doxygen',
 		command: [doxygen, join_paths(meson.current_source_dir(), 'Doxyfile')]
 	)
 	run_target(
@@ -20,7 +20,7 @@ if doxygen.found()
 		'doc-rename',
 		command: join_paths(meson.current_source_dir(), 'rename')
 	)
-	run_target('doc-all', command: join_paths(meson.current_source_dir(), 'all'))
+	run_target('doc', command: join_paths(meson.current_source_dir(), 'all'))
 endif
 
 # doxygen tag files {{{
