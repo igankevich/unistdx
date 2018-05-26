@@ -111,7 +111,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup ipc
 	*/
-	enum wait_flags {
+	enum class wait_flags: int {
 		/// Process exited by calling \man{exit,2}.
 		proc_exited = WEXITED,
 		/// Process execution was stopped by a signal.

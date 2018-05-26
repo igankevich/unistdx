@@ -16,6 +16,11 @@ if doxygen.found()
 			join_paths(meson.current_source_dir(), 'Doxyfile')
 		]
 	)
+	run_target(
+		'doc-rename',
+		command: join_paths(meson.current_source_dir(), 'rename')
+	)
+	run_target('doc-all', command: join_paths(meson.current_source_dir(), 'all'))
 endif
 
 # doxygen tag files {{{
@@ -24,7 +29,7 @@ std_tagfile_prefix = 'http://upload.cppreference.com/mwiki/images/f/f8/'
 std_tagfile_url = std_tagfile_prefix + std_tagfile_name
 wget = find_program('wget', required: false)
 curl = find_program('curl', required: false)
-if wget.found() and false
+if wget.found()
 	run_target(
 		'doc-std-tagfile',
 		command: [

@@ -245,7 +245,10 @@ namespace sys {
 	std::istream&
 	operator>>(std::istream& in, ipv6_addr& rhs);
 
-	/// \copydoc ipaddr_traits
+	/**
+	\brief
+	Specialisation of \link ipaddr_traits\endlink for \link ipv6_addr\endlink.
+	*/
 	template<>
 	struct ipaddr_traits<ipv6_addr> {
 

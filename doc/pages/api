@@ -1,0 +1,15 @@
+/**
+
+\page api API reference
+
+\arg <a href="concepts-and-abstractions.html">Concepts and abstractions</a>
+\arg <a href="classes.html">Classes</a>
+\arg <a href="functions.html">Functions</a>
+\arg <a href="variables.html">Variables</a>
+\arg <a href="enumerations.html">Enumerations</a>
+\arg <a href="typedefs.html">Typedefs</a>
+\arg <a href="namespaces.html">Namespaces</a>
+
+*/
+
+// vim:filetype=cpp

@@ -93,8 +93,9 @@ namespace sys {
 	}
 
 	/**
-	Ignores nought command line argument, which usually
-	equals executable name. Fails on all other arguments.
+	\brief Ignores nought command line argument, which usually
+	equals executable name.
+	\details Fails on all other arguments.
 	*/
 	struct ignore_first_argument {
 		/// \copydoc ignore_first_argument

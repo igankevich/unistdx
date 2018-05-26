@@ -77,7 +77,7 @@ namespace sys {
 		*/
 		template<class Lock, class F>
 		void
-		wait(Lock& lock, F callback, wait_flags flags=proc_exited) {
+		wait(Lock& lock, F callback, wait_flags flags=wait_flags::proc_exited) {
 			sys::siginfo_type info;
 			sys::proc_info status;
 			const_iterator result;
@@ -86,7 +86,7 @@ namespace sys {
 					unlock_guard<Lock> g(lock);
 					UNISTDX_CHECK_IF_NOT(
 						EINTR,
-						::waitid(P_PGID, this->_gid, &info, flags)
+						::waitid(P_PGID, this->_gid, &info, static_cast<int>(flags))
 					);
 				}
 				status = sys::proc_info(info);

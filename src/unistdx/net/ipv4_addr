@@ -190,7 +190,10 @@ namespace sys {
 	std::istream&
 	operator>>(std::istream& in, ipv4_addr& rhs);
 
-	/// \copydoc ipaddr_traits
+	/**
+	\brief
+	Specialisation of \link ipaddr_traits\endlink for \link ipv4_addr\endlink.
+	*/
 	template<>
 	struct ipaddr_traits<ipv4_addr> {
 
