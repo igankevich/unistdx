@@ -1,0 +1,7 @@
+<map id="Streams" name="Streams">
+<area shape="rect" id="node2" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="407,5,491,32"/>
+<area shape="rect" id="node3" href="$group__net.html" title="Network abstractions. " alt="" coords="414,65,485,92"/>
+<area shape="rect" id="node4" href="$group__fs.html" title="File and directory manipulation. " alt="" coords="404,155,495,181"/>
+<area shape="rect" id="node5" href="$group__io.html" title="Input/output handling. " alt="" coords="430,244,469,271"/>
+<area shape="rect" id="node6" href="$group__concepts.html" title="Group classes and functions by concept. " alt="" coords="5,111,111,137"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="Stream buffers" name="Stream buffers">
+<area shape="rect" id="node1" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="444,12,528,39"/>
+<area shape="rect" id="node3" href="$group__io.html" title="Input/output handling. " alt="" coords="467,63,505,89"/>
+<area shape="rect" id="node4" href="$group__mutex.html" title="Classes with std::mutex interface. " alt="" coords="450,113,522,140"/>
+<area shape="rect" id="node5" href="$group__concepts.html" title="Group classes and functions by concept. " alt="" coords="5,63,111,89"/>
+</map>

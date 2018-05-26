@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$structsys_1_1container__traits.html" title="Container trais. " alt="" coords="5,104,145,145"/>
+<area shape="rect" id="node2" href="$structsys_1_1deque__traits.html" title="Container traits for deque container. " alt="" coords="197,5,328,47"/>
+<area shape="rect" id="node3" href="$structsys_1_1priority__queue__traits.html" title="Container traits for priority queue container. " alt="" coords="193,71,332,112"/>
+<area shape="rect" id="node4" href="$structsys_1_1queue__traits.html" title="Container traits for queue&#45;like containers. " alt="" coords="197,136,328,177"/>
+<area shape="rect" id="node5" href="$structsys_1_1vector__traits.html" title="Container traits for vector&#45;like containers. " alt="" coords="201,201,324,243"/>
+</map>

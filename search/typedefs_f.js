@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['sa_5ffamily_5ftype',['sa_family_type',['../namespacesys.html#a59798e61ac38156fc607cc90b3692810',1,'sys']]],
+  ['sa_5ftype',['sa_type',['../namespacesys.html#a782d0c4ffbbe1f20dec78c7408d9ce40',1,'sys']]],
+  ['sem_5ftype',['sem_type',['../classsys_1_1sysv__semaphore.html#a77d76ed17f35a65f615341a80c0b0dab',1,'sys::sysv_semaphore::sem_type()'],['../classsys_1_1basic__shmembuf.html#ae04125eeacc4cfd7c01408ee103751f0',1,'sys::basic_shmembuf::sem_type()']]],
+  ['shared_5fmem_5ftype',['shared_mem_type',['../classsys_1_1basic__shmembuf.html#a9498c57cc1b5efee3335d28a7f2de3b2',1,'sys::basic_shmembuf']]],
+  ['shm_5ftype',['shm_type',['../group__ipc.html#ga6e6a3ed67df2374abd692718f17f77d6',1,'sys']]],
+  ['shmembuf',['shmembuf',['../namespacesys.html#a4e0672a8be1fcd9f0ae040c1fb545dee',1,'sys']]],
+  ['sigaction_5ftype',['sigaction_type',['../namespacesys.html#a6d485987b8d9ec1dff38117f15ed10f7',1,'sys']]],
+  ['siginfo_5ftype',['siginfo_type',['../group__ipc.html#ga117d9dd28b865864052fb766144c2d26',1,'sys']]],
+  ['signal_5ftype',['signal_type',['../namespacesys.html#a24dcc91874b2e7d8619ac801174a4ee8',1,'sys']]],
+  ['size_5ftype',['size_type',['../classsys_1_1byte__buffer.html#a5648737ac9dbdd6bb7de4ebe6d13142c',1,'sys::byte_buffer::size_type()'],['../classsys_1_1sharedmem__stat.html#a13005e7cb82b539532cb9f097f5b19eb',1,'sys::sharedmem_stat::size_type()'],['../classsys_1_1shared__mem.html#ac3b74848ef8fd922f764e843627e7531',1,'sys::shared_mem::size_type()'],['../classsys_1_1basic__shmembuf.html#a7744b5d136aed738efdebd4be239d55f',1,'sys::basic_shmembuf::size_type()'],['../classsys_1_1iterator__pair.html#aabc453e5da8149428fd0aafd1b8dd689',1,'sys::iterator_pair::size_type()'],['../classsys_1_1basic__bstream.html#a140edd58baa409c8a55c7bd8bfe7f60c',1,'sys::basic_bstream::size_type()'],['../unionsys_1_1bytes.html#a15945103dcd821aba75fc7d8ae8ea1e0',1,'sys::bytes::size_type()'],['../classsys_1_1ifaddrs.html#ae8498b4459aa2997d1af81de599d77f2',1,'sys::ifaddrs::size_type()'],['../classsys_1_1netlink__container.html#a1f7c01aea206846c120403fbb6745fb3',1,'sys::netlink_container::size_type()'],['../namespacesys.html#a6b23dfb976300d47ff30159394a7894e',1,'sys::size_type()']]],
+  ['sockinet4_5ftype',['sockinet4_type',['../namespacesys.html#a8992303241a8bf25a56559c3926ba505',1,'sys']]],
+  ['sockinet6_5ftype',['sockinet6_type',['../namespacesys.html#ae1aad13875f0650830340b3a7421563d',1,'sys']]],
+  ['socklen_5ftype',['socklen_type',['../namespacesys.html#abaf34a18d5a055566a86986beb8ccfdb',1,'sys']]],
+  ['sockunix_5ftype',['sockunix_type',['../namespacesys.html#ad858cd262a348cdcafc80717be6a77ad',1,'sys']]],
+  ['stat_5ftype',['stat_type',['../namespacesys.html#a6c6c461bce67f354b27eb0b1b2772bf9',1,'sys']]],
+  ['stream_5ftype',['stream_type',['../classsys_1_1opacket__guard.html#a414e1b395095d806857a0c314c9db9ec',1,'sys::opacket_guard']]],
+  ['streambuf_5ftype',['streambuf_type',['../classsys_1_1basic__ipacket__guard.html#a149bb58a32534fb6da6ea247ec497bd9',1,'sys::basic_ipacket_guard::streambuf_type()'],['../classsys_1_1basic__bstream.html#a654b564857bcb92aa188acf34ff8444d',1,'sys::basic_bstream::streambuf_type()'],['../classsys_1_1basic__pstream.html#a76ec4439b82e96d1e8d89d51ffce5ab5',1,'sys::basic_pstream::streambuf_type()']]],
+  ['string_5ftype',['string_type',['../classsys_1_1basic__path.html#a778de427fbfbdd8ae792c71863222d9a',1,'sys::basic_path::string_type()'],['../classsys_1_1basic__bstream.html#af357b07df5240cf18116970af20565d6',1,'sys::basic_bstream::string_type()'],['../classsys_1_1basic__pstream.html#a0a5b208cc61324f91a1f9892e5b69ee9',1,'sys::basic_pstream::string_type()']]]
+];

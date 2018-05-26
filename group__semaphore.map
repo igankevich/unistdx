@@ -1,0 +1,6 @@
+<map id="Semaphores" name="Semaphores">
+<area shape="rect" id="node1" href="$group__container.html" title="Classes with container interface. " alt="" coords="449,7,535,33"/>
+<area shape="rect" id="node2" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="450,96,534,123"/>
+<area shape="rect" id="node4" href="$group__io.html" title="Input/output handling. " alt="" coords="473,147,511,173"/>
+<area shape="rect" id="node5" href="$group__concepts.html" title="Group classes and functions by concept. " alt="" coords="5,96,111,123"/>
+</map>

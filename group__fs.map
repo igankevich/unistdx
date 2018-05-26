@@ -1,0 +1,6 @@
+<map id="File system" name="File system">
+<area shape="rect" id="node1" href="$group__stream.html" title="Classes with member input/output operators. " alt="" coords="465,49,536,76"/>
+<area shape="rect" id="node2" href="$group__wrapper.html" title="Wrappers for system structures. " alt="" coords="461,139,540,165"/>
+<area shape="rect" id="node5" href="$group__mutex.html" title="Classes with std::mutex interface. " alt="" coords="465,189,537,216"/>
+<area shape="rect" id="node4" href="$group__system.html" title="System calls and system structures wrappers. " alt="" coords="5,139,148,165"/>
+</map>

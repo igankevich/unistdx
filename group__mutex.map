@@ -1,0 +1,6 @@
+<map id="Mutexes" name="Mutexes">
+<area shape="rect" id="node1" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="421,5,505,32"/>
+<area shape="rect" id="node2" href="$group__streambuf.html" title="Classes with std::streambuf interface. " alt="" coords="409,56,516,83"/>
+<area shape="rect" id="node3" href="$group__fs.html" title="File and directory manipulation. " alt="" coords="417,107,508,133"/>
+<area shape="rect" id="node5" href="$group__concepts.html" title="Group classes and functions by concept. " alt="" coords="5,56,111,83"/>
+</map>

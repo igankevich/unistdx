@@ -1,0 +1,6 @@
+<map id="sys::websocket_frame" name="sys::websocket_frame">
+<area shape="rect" id="node2" href="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml$cpp/types/integer.html" title="std::uint32_t" alt="" coords="5,5,100,32"/>
+<area shape="rect" id="node3" href="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml$cpp/types/integer.html" title="std::uint16_t" alt="" coords="124,5,219,32"/>
+<area shape="rect" id="node4" href="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml$cpp/types/integer.html" title="std::uint64_t" alt="" coords="243,5,337,32"/>
+<area shape="rect" id="node5" href="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml$cpp/types/integer.html" title="std::uint8_t" alt="" coords="361,5,448,32"/>
+</map>

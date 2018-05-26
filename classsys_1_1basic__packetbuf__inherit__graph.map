@@ -1,0 +1,7 @@
+<map id="sys::basic_packetbuf&lt; Ch, Tr &gt;" name="sys::basic_packetbuf&lt; Ch, Tr &gt;">
+<area shape="rect" id="node3" href="$classsys_1_1basic__fildesbuf.html" title="basic_fildesbuf\&lt; Ch,\l Tr, fd_type \&gt;" alt="" coords="406,5,549,47"/>
+<area shape="rect" id="node4" href="$classsys_1_1basic__fildesbuf.html" title="Stream buffer that writes and reads from file descriptor. " alt="" coords="408,71,547,112"/>
+<area shape="rect" id="node5" href="$classsys_1_1basic__shmembuf.html" title="Shared memory stream buffer with synchronisation via process_semaphore. " alt="" coords="402,136,553,177"/>
+<area shape="rect" id="node6" href="$classsys_1_1basic__websocketbuf.html" title="Stream buffer that encodes/decodes its contents using WebSocket protocol. " alt="" coords="392,201,563,243"/>
+<area shape="rect" id="node2" href="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml$cpp/io/basic_streambuf.html" title="std::basic_streambuf\l\&lt; Ch, Tr \&gt;" alt="" coords="5,104,149,145"/>
+</map>

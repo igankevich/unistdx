@@ -1,0 +1,4 @@
+<map id="sys::posix_semaphore" name="sys::posix_semaphore">
+<area shape="rect" id="node2" href="$classsys_1_1process__semaphore.html" title="Process semaphore. " alt="" coords="5,80,173,107"/>
+<area shape="rect" id="node3" href="$classsys_1_1thread__semaphore.html" title="Thread semaphore. " alt="" coords="198,80,357,107"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="IO" name="IO">
+<area shape="rect" id="node1" href="$group__container.html" title="Classes with container interface. " alt="" coords="420,13,505,40"/>
+<area shape="rect" id="node2" href="$group__stream.html" title="Classes with member input/output operators. " alt="" coords="427,103,498,129"/>
+<area shape="rect" id="node3" href="$group__wrapper.html" title="Wrappers for system structures. " alt="" coords="423,172,502,199"/>
+<area shape="rect" id="node4" href="$group__streambuf.html" title="Classes with std::streambuf interface. " alt="" coords="409,223,516,249"/>
+<area shape="rect" id="node5" href="$group__semaphore.html" title="Classes with std::condition_variable interface. " alt="" coords="415,273,510,300"/>
+<area shape="rect" id="node6" href="$group__traits.html" title="Traits classes. " alt="" coords="435,389,490,416"/>
+<area shape="rect" id="node7" href="$group__system.html" title="System calls and system structures wrappers. " alt="" coords="5,200,148,227"/>
+</map>

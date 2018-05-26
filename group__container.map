@@ -1,0 +1,7 @@
+<map id="Containers" name="Containers">
+<area shape="rect" id="node2" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="427,19,511,45"/>
+<area shape="rect" id="node3" href="$group__net.html" title="Network abstractions. " alt="" coords="433,76,504,103"/>
+<area shape="rect" id="node4" href="$group__semaphore.html" title="Classes with std::condition_variable interface. " alt="" coords="421,127,516,153"/>
+<area shape="rect" id="node5" href="$group__io.html" title="Input/output handling. " alt="" coords="449,177,488,204"/>
+<area shape="rect" id="node6" href="$group__concepts.html" title="Group classes and functions by concept. " alt="" coords="5,104,111,131"/>
+</map>

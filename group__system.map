@@ -1,0 +1,8 @@
+<map id="System abstractions" name="System abstractions">
+<area shape="rect" id="node1" href="$group__macros.html" title="Macros for system error handling. " alt="" coords="209,5,274,32"/>
+<area shape="rect" id="node2" href="$group__wrapper.html" title="Wrappers for system structures. " alt="" coords="202,56,281,83"/>
+<area shape="rect" id="node3" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="199,107,283,133"/>
+<area shape="rect" id="node4" href="$group__net.html" title="Network abstractions. " alt="" coords="206,157,277,184"/>
+<area shape="rect" id="node5" href="$group__fs.html" title="File and directory manipulation. " alt="" coords="196,208,287,235"/>
+<area shape="rect" id="node7" href="$group__io.html" title="Input/output handling. " alt="" coords="222,259,261,285"/>
+</map>
