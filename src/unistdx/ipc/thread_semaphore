@@ -13,7 +13,7 @@ namespace sys {
 	\ingroup ipc semaphore
 	\details
 	The semaphore is defined as either \link posix_semaphore\endlink,
-	\link sysv_semaphore\endlink or std::condition_variable_any.
+	\link sysv_semaphore\endlink or \link std::condition_variable_any\endlink.
 	*/
 	class thread_semaphore: public posix_semaphore {
 	public:

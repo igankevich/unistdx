@@ -297,7 +297,7 @@ namespace sys {
 
 namespace std {
 
-	/// Specialisation of \c std::hash for \link sys::ipv6_addr\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::ipv6_addr\endlink.
 	template<>
 	struct hash<sys::ipv6_addr>: public std::hash<sys::ipv6_addr::rep_type> {
 

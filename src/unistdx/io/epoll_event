@@ -52,28 +52,19 @@ namespace sys {
 		return event(op tp(a)); \
 	}
 
-	/// Bit-wise \c OR.
+	/// \{
 	MAKE_BINARY_OP(|, event, event)
-	/// Bit-wise \c OR.
 	MAKE_BINARY_OP(|, decltype(poll_event_base::events), event)
-	/// Bit-wise \c OR.
 	MAKE_BINARY_OP(|, event, decltype(poll_event_base::events))
-	/// Bit-wise \c AND.
 	MAKE_BINARY_OP(&, event, event)
-	/// Bit-wise \c AND.
 	MAKE_BINARY_OP(&, event, decltype(poll_event_base::events))
-	/// Bit-wise \c AND.
 	MAKE_BINARY_OP(&, decltype(poll_event_base::events), event)
-	/// Comparison operator.
 	MAKE_BOOL_OP(==, decltype(poll_event_base::events), event)
-	/// Comparison operator.
 	MAKE_BOOL_OP(==, event, decltype(poll_event_base::events))
-	/// Comparison operator.
 	MAKE_BOOL_OP(!=, decltype(poll_event_base::events), event)
-	/// Comparison operator.
 	MAKE_BOOL_OP(!=, event, decltype(poll_event_base::events))
-	/// Bit-wise negation.
 	MAKE_UNARY_OP(~)
+	/// \}
 
 	#undef MAKE_BINARY_OP
 	#undef MAKE_UNARY_OP

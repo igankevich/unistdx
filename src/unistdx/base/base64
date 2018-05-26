@@ -10,6 +10,8 @@ namespace sys {
 	/**
 	\brief The length of \p len bytes sequence encoded in BASE64.
 	\see \rfc{4648}
+	\throws std::length_error when \p len is too large to be encoded
+	as BASE64 string on this platform
 	*/
 	inline size_t
 	base64_encoded_size(size_t len) {
@@ -37,7 +39,7 @@ namespace sys {
 	\p result.
 	*/
 	void
-	base64_encode(const char* first, size_t n, char* result);
+	base64_encode(const char* first, size_t n, char* result) noexcept;
 
 	/**
 	\brief Encode byte sequence with BASE64.
@@ -48,7 +50,7 @@ namespace sys {
 	\p result.
 	*/
 	inline void
-	base64_encode(const char* first, const char* last, char* result) {
+	base64_encode(const char* first, const char* last, char* result) noexcept {
 		base64_encode(first, last-first, result);
 	}
 
@@ -56,6 +58,7 @@ namespace sys {
 	\brief Decode BASE64 byte sequence.
 	\see \rfc{4648}
 	\return the length of the decoded sequence
+	\throws std::invalid_argument when input sequence is not valid BASE64 string
 	\details
 	Decode BASE64 byte sequence pointed by \p first with length \p n
 	and put result to memory location pointed by \p result.
@@ -67,6 +70,7 @@ namespace sys {
 	\brief Decode BASE64 byte sequence.
 	\see \rfc{4648}
 	\return the length of the decoded sequence
+	\throws std::invalid_argument when input sequence is not valid BASE64 string
 	\details
 	Decode BASE64 byte sequence between \p first and \p last
 	and put result to memory location pointed by \p result.

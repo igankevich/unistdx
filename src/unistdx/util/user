@@ -151,13 +151,16 @@ namespace sys {
 	operator<<(std::ostream& out, const user& rhs);
 
 	/**
+	\brief
 	Find user in system database by id \p id and store in \p result.
+	\see \man{getpwuid,3}
 	*/
 	bool
 	find_user(uid_type id, user& result);
 
 	/**
-	Find user in system database by name \p name and store in \p result.
+	\brief Find user in system database by name \p name and store in \p result.
+	\see \man{getpwnam,3}
 	*/
 	bool
 	find_user(const char* name, user& result);

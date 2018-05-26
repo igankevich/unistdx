@@ -363,7 +363,7 @@ namespace sys {
 
 namespace std {
 
-	/// Specialisation of \c std::hash for \link sys::endpoint\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::endpoint\endlink.
 	template<>
 	struct hash<sys::endpoint> {
 

@@ -14,7 +14,7 @@ namespace sys {
 
 	/**
 	\brief
-	File descriptor event wrapper for \c poll system call.
+	File descriptor event wrapper for \man{poll,2} system call.
 	\date 2018-05-23
 	\author Ivan Gankevich
 	\ingroup wrapper

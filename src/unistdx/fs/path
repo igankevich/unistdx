@@ -47,7 +47,9 @@ namespace sys {
 	MAKE_OPERATOR(>=, tp1, tp2, tp3, tp4)
 
 	/**
-	\brief File system path template which is a string with additional methods.
+	\brief
+	File system path template which is a \link std::string\endlink
+	with additional methods.
 	\date 2018-05-25
 	\author Ivan Gankevich
 	\tparam Ch character type
@@ -219,7 +221,7 @@ namespace sys {
 
 namespace std {
 
-	/// Specialisation of \c std::hash for \link sys::basic_path\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::basic_path\endlink.
 	template <class Ch, class Tr, class Alloc>
 	struct hash<sys::basic_path<Ch,Tr,Alloc> >:
 		public std::hash<std::basic_string<Ch,Tr,Alloc>> {

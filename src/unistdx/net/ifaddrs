@@ -12,6 +12,7 @@ namespace sys {
 	\date 2018-05-23
 	\author Ivan Gankevich
 	\ingroup wrapper
+	\see \man{getifaddrs,3}
 	\details
 	Wraps \c ifaddrs system type.
 	*/
@@ -30,11 +31,13 @@ namespace sys {
 
 	public:
 
+		/// Calls \man{getifaddrs,3}.
 		inline
 		ifaddrs() {
 			UNISTDX_CHECK(::getifaddrs(&this->_addrs));
 		}
 
+		/// Calls \man{freeifaddrs,3}.
 		inline
 		~ifaddrs() noexcept {
 			if (this->_addrs) {

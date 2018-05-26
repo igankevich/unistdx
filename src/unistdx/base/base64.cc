@@ -60,11 +60,7 @@ namespace {
 }
 
 void
-sys::base64_encode(
-	const char* first,
-	size_t n,
-	char* result
-) {
+sys::base64_encode(const char* first, size_t n, char* result) noexcept {
 	const size_t rem = n%3;
 	const size_t m = (rem == 0) ? n : (n-rem);
 	for (size_t i=0; i<m; i+=3) {

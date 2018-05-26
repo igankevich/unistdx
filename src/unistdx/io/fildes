@@ -79,7 +79,8 @@ namespace sys {
 
 		/**
 		\brief Close file descriptor
-		\details The method ignores errors reported by \c close system call.
+		\details
+		The method ignores errors reported by \man{close,2} system call.
 		*/
 		inline
 		~fildes() {
@@ -97,7 +98,7 @@ namespace sys {
 
 		/**
 		\brief Close file descriptor.
-		\throws bad_call if \c close system call fails
+		\throws bad_call if \man{close,2} system call fails
 		*/
 		inline void
 		close() {
@@ -228,21 +229,21 @@ namespace sys {
 			return out << rhs._fd;
 		}
 
-		/// Specialise \c std::swap.
+		/// Specialisation of \link std::swap\endlink.
 		inline friend void swap(fildes& lhs, fildes& rhs) {
 			std::swap(lhs._fd, rhs._fd);
 		}
 
 		/**
 		Change file descriptor number to an arbitrrary one
-		by duplicating it with \c dup system call.
+		by duplicating it with \man{dup,2} system call.
 		*/
 		void
 		remap();
 
 		/**
 		Change file descriptor number to \p new_fd
-		by duplicating it with \c dup2 system call.
+		by duplicating it with \man{dup2,2} system call.
 		*/
 		void
 		remap(fd_type new_fd);

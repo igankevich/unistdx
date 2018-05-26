@@ -108,7 +108,7 @@ namespace sys {
 
 	/**
 	\brief
-	Flags used by \c waitid system call.
+	Flags used by \man{waitid,2} system call.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc
@@ -121,7 +121,7 @@ namespace sys {
 
 	/**
 	\brief
-	Flags used by \c clone system call.
+	Flags used by \man{clone,2} system call.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	*/
@@ -149,7 +149,8 @@ namespace sys {
 
 
 	/**
-	\brief System process with \c std::thread interface.
+	\brief
+	System process with \link std::thread\endlink interface.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc
@@ -304,7 +305,7 @@ namespace sys {
 			UNISTDX_CHECK(::setpgid(_pid, rhs));
 		}
 
-		/// Always returns true to be compatible with \c std::thread.
+		/// Always returns true to be compatible with \link std::thread\endlink.
 		inline bool
 		joinable() {
 			return true;

@@ -110,7 +110,7 @@ namespace sys {
 
 		UNISTDX_NO_COPY_AND_MOVE(basic_fildesbuf)
 
-		/// See \c std::streambuf::underflow.
+		/// Overrides \link std::streambuf::underflow\endlink.
 		int_type
 		underflow() override {
 			assert(gptr() == egptr());
@@ -120,7 +120,7 @@ namespace sys {
 				   : traits_type::to_int_type(*gptr());
 		}
 
-		/// See \c std::streambuf::overflow.
+		/// Overrides \link std::streambuf::overflow\endlink.
 		int_type
 		overflow(int_type c) override {
 			assert(pptr() == epptr());
@@ -136,7 +136,7 @@ namespace sys {
 			return c;
 		}
 
-		/// See \c std::streambuf::xsgetn.
+		/// Overrides \link std::streambuf::xsgetn\endlink.
 		std::streamsize
 		xsgetn(char_type* s, std::streamsize n) override {
 			while (available() < n && fill() > 0) {}
@@ -146,7 +146,7 @@ namespace sys {
 			return m;
 		}
 
-		/// See \c std::streambuf::xsputn.
+		/// Overrides \link std::streambuf::xsputn\endlink.
 		std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
 			const std::streamsize remaining = epptr() - pptr();
@@ -163,7 +163,7 @@ namespace sys {
 			return n;
 		}
 
-		/// See \c std::streambuf::sync.
+		/// Overrides \link std::streambuf::sync\endlink.
 		int
 		sync() override {
 			int ret = 0;

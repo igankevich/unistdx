@@ -47,7 +47,7 @@ namespace sys {
 	class key_value {
 
 	public:
-		/// Alias to \c std::string.
+		/// Alias to \link std::string\endlink.
 		typedef std::string key_type;
 
 	private:

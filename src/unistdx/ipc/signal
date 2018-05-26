@@ -24,7 +24,7 @@ namespace sys {
 	typedef int signal_type;
 
 	/**
-	\brief Alias for \c sigaction type.
+	\brief Alias for \c sigaction system type.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup comm

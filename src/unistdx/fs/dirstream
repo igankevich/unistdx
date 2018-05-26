@@ -8,7 +8,7 @@ namespace sys {
 	\date 2018-05-25
 	\author Ivan Gankevich
 	\details
-	The class stores stream state similar to \c std::ios class
+	The class stores stream state similar to \link std::ios_base\endlink class
 	for use in subclasses.
 	*/
 	class dirstream {

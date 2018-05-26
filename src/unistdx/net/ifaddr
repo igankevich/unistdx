@@ -251,7 +251,7 @@ namespace sys {
 
 namespace std {
 
-	/// Specialisation of \c std::hash for \link sys::ifaddr\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::ifaddr\endlink.
 	template<class Addr>
 	struct hash<sys::ifaddr<Addr> >: public std::hash<Addr> {
 

@@ -12,7 +12,7 @@ namespace sys {
 
 	/**
 	\brief
-	Input stream iterator that works with any stream, not just \c std::istream.
+	Input stream iterator that works with any stream, not just \link std::istream\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
 	\ingroup iter

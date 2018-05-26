@@ -19,7 +19,7 @@ namespace sys {
 	\arg With this class it is possible to plug arbitrary object (including
 	another stream buffer) as a source or sink for stream buffer using
 	\link basic_fildesbuf\endlink.
-	\arg Generic implementation is done for \c str::streambuf.
+	\arg Generic implementation is done for \link std::streambuf\endlink.
 	*/
 	template<class T>
 	struct streambuf_traits {

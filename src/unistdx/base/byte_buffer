@@ -14,9 +14,9 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\details
-	\arg Uses \c mmap and system calls to bypass memory allocators.
-	\arg Uses \c mremap to efficiently resize the buffer without copying.
-	\arg Uses \c madvise to optimise for sequential access and prevent core dumping.
+	\arg Uses \man{mmap,2} and system calls to bypass memory allocators.
+	\arg Uses \man{mremap,2} to efficiently resize the buffer without copying.
+	\arg Uses \man{madvise,2} to optimise for sequential access and prevent core dumping.
 	*/
 	class byte_buffer {
 
@@ -27,7 +27,7 @@ namespace sys {
 		typedef value_type* iterator;
 		/// Constant pointer to \c char.
 		typedef const value_type* const_iterator;
-		/// Alias to \c size_t.
+		/// Alias to \link std::size_t\endlink.
 		typedef std::size_t size_type;
 
 	private:

@@ -10,7 +10,7 @@ namespace sys {
 
 	/**
 	\brief
-	Alias for status type used in \c wait system call.
+	Alias for status type used in \man{wait,2} system call.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc
@@ -19,7 +19,7 @@ namespace sys {
 
 	/**
 	\brief
-	Alias for exit code type used in \c wait system call.
+	Alias for exit code type used in \man{wait,2} system call.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc
@@ -33,7 +33,7 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc wrapper
-	\details Wraps \c wstat_type.
+	\details Wraps \link wstat_type\endlink.
 	*/
 	template<>
 	struct basic_status<wstat_type> {

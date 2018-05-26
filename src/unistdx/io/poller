@@ -24,7 +24,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup semaphore container
 	\details
-	\arg File descriptor poller implemented with \c epoll_create system call
+	\arg File descriptor poller implemented with \man{epoll_create1,2} system call
 	having condition variable-like interface.
 	\arg The poller has condition variable interface for waiting and notifying.
 	*/

@@ -50,7 +50,7 @@ namespace sys {
 
 		field_iterator() = default;
 
-		/// Construct field iterator aggregating base iterator \c rhs.
+		/// Construct field iterator aggregating base iterator \p rhs.
 		inline
 		field_iterator(base_iterator rhs):
 		base_iterator(rhs)

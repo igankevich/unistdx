@@ -35,18 +35,18 @@ namespace sys {
 /// Specialisations of standard templates.
 namespace std {
 
-	/// Specialisation of \c std::is_arithmetic for \link sys::uint128_t\endlink.
+	/// Specialisation of \link std::is_arithmetic\endlink for \link sys::uint128_t\endlink.
 	template<> struct is_arithmetic<sys::uint128_t>: public true_type {};
 
-	/// Specialisation of \c std::is_integral for \link sys::uint128_t\endlink.
+	/// Specialisation of \link std::is_integral\endlink for \link sys::uint128_t\endlink.
 	template<> struct is_integral<sys::uint128_t>: public true_type {};
 
-	/// Specialisation of \c std::is_unsigned for \link sys::uint128_t\endlink.
+	/// Specialisation of \link std::is_unsigned\endlink for \link sys::uint128_t\endlink.
 	template<> struct is_unsigned<sys::uint128_t>: public true_type {};
 
 	/**
 	\brief
-	Specialisation of \c std::numeric_limits for \link sys::uint128_t\endlink.
+	Specialisation of \link std::numeric_limits\endlink for \link sys::uint128_t\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
 	\ingroup base
@@ -120,7 +120,7 @@ namespace std {
 		static constexpr bool has_quiet_NaN = false;
 		/// Equals false.
 		static constexpr bool has_signaling_NaN = false;
-		/// Equals std::denorm_absent.
+		/// Equals \c std::denorm_absent.
 		static constexpr float_denorm_style has_denorm = denorm_absent;
 		/// Equals false.
 		static constexpr bool has_denorm_loss = false;
@@ -169,7 +169,7 @@ namespace std {
 
 	};
 
-	/// Specialisation of \c std::hash for \link sys::uint128_t\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
 	template<>
 	struct hash<sys::uint128_t> {
 

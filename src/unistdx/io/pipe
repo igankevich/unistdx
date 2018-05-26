@@ -6,7 +6,7 @@
 namespace sys {
 
 	/**
-	\brief A pipe constructed with \c pipe system call.
+	\brief A pipe constructed with \man{pipe,2} system call.
 	\date 2018-05-23
 	\author Ivan Gankevich
 	*/
@@ -19,7 +19,7 @@ namespace sys {
 	public:
 
 		/**
-		\brief Construct pipe with \c pipe system call.
+		\brief Construct pipe with \man{pipe,2} system call.
 		\details
 		Both file descriptors are in non-blocking mode
 		and have close-on-exec flag set.
@@ -68,7 +68,7 @@ namespace sys {
 			return this->_fds[1];
 		}
 
-		/// Create pipe with \c pipe system call.
+		/// Create pipe with \man{pipe,2} system call.
 		void open();
 
 		/// Close both pipe file descriptors.

@@ -13,6 +13,7 @@ namespace sys {
 	\date 2018-05-23
 	\author Ivan Gankevich
 	\ingroup iter
+	\see \man{getifaddrs,3}
 	*/
 	class ifaddrs_iterator:
 		public std::iterator<std::input_iterator_tag, ifaddrs_type> {

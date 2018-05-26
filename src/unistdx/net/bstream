@@ -11,13 +11,11 @@
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
-#define UNISTDX_MAKE_PUT_OPERATOR(tp) \
+#define UNISTDX_MAKE_PUT_GET_OPERATOR(tp) \
 	inline basic_bstream & \
 	operator<<(tp rhs) { \
 		return this->write(rhs); \
-	}
-
-#define UNISTDX_MAKE_GET_OPERATOR(tp) \
+	} \
 	inline basic_bstream& \
 	operator>>(tp& rhs) { \
 		return this->read(rhs); \
@@ -134,60 +132,23 @@ namespace sys {
 			return *this;
 		}
 
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(char)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(char)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(i8)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(i8)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(i16)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(i16)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(i32)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(i32)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(i64)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(i64)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(u8)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(u8)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(u16)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(u16)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(u32)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(u32)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(u64)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(u64)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(f32)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(f32)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(f64)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(f64)
+		/// \{
+		UNISTDX_MAKE_PUT_GET_OPERATOR(char)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(i8)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(i16)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(i32)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(i64)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(u8)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(u16)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(u32)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(u64)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(f32)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(f64)
 		#if defined(UNISTDX_HAVE_LONG_DOUBLE)
-		/// Insert operator for standard type.
-		UNISTDX_MAKE_PUT_OPERATOR(f128)
-		/// Get operator for standard type.
-		UNISTDX_MAKE_GET_OPERATOR(f128)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(f128)
 		#endif
-		/// Insert operator for \c std::string.
-		UNISTDX_MAKE_PUT_OPERATOR(string_type)
-		/// Get operator for \c std::string.
-		UNISTDX_MAKE_GET_OPERATOR(string_type)
+		UNISTDX_MAKE_PUT_GET_OPERATOR(string_type)
+		/// \}
 
 		/// Insert operator for \link bytes\endlink.
 		template<class T>
@@ -293,7 +254,6 @@ namespace sys {
 
 }
 
-#undef UNISTDX_MAKE_GET_OPERATOR
-#undef UNISTDX_MAKE_PUT_OPERATOR
+#undef UNISTDX_MAKE_PUT_GET_OPERATOR
 
 #endif // vim:filetype=cpp

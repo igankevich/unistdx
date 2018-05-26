@@ -6,7 +6,7 @@
 /// POSIX and Linux system call wrappers.
 namespace sys {
 
-	/// Alias to \c size_t.
+	/// Alias to \link std::size_t\endlink.
 	typedef size_t size_type;
 
 	/**
@@ -44,7 +44,7 @@ namespace sys {
 	\arg If \c UNISTDX_SINGLE_THREAD preprocessor macro is defined, returns 1.
 	\arg If \c UNISTDX_CONCURRENCY environment variable equals positive integer,
 	returns its value.
-	\arg Otherwise return \c std::this_thread::hardware_concurrency.
+	\arg Otherwise return \link std::thread::hardware_concurrency\endlink.
 	*/
 	extern unsigned
 	thread_concurrency() noexcept;

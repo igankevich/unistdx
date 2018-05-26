@@ -363,7 +363,7 @@ namespace sys {
 
 		/**
 		Offset of the first incoming packet payload byte
-		relative to \c eback().
+		relative to \link eback\endlink.
 		*/
 		inline off_type
 		ipayloadpos() const noexcept {
@@ -372,7 +372,7 @@ namespace sys {
 
 		/**
 		Offset of the first incoming packet byte
-		relative to \c eback().
+		relative to \link eback\endlink.
 		*/
 		inline off_type
 		ipacketpos() const noexcept {
@@ -393,7 +393,7 @@ namespace sys {
 
 		/**
 		Offset of the first outgoing packet byte
-		relative to \c pbase().
+		relative to \link pbase\endlink.
 		*/
 		inline off_type
 		opacketpos() const noexcept {
@@ -418,7 +418,7 @@ namespace sys {
 			this->_oheadersize = size;
 		}
 
-		/// Set outgoing packet offset relative to \c pbase().
+		/// Set outgoing packet offset relative to \link pbase\endlink.
 		inline void
 		set_opacket(off_type pos1) noexcept {
 			this->_opacketpos = pos1;
@@ -592,7 +592,7 @@ namespace sys {
 		}
 
 		/// Start reading payload. This method limits how many bytes
-		/// can be read with a call to \c setg().
+		/// can be read with a call to \link setg\endlink.
 		void
 		begin_payload() {
 			if (this->_state != state_type::payload_is_ready) {

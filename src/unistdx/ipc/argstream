@@ -60,7 +60,7 @@ namespace sys {
 
 		~basic_argbuf() = default;
 
-		/// See \c std::streambuf::overflow.
+		/// Overrides \link std::streambuf::overflow\endlink.
 		inline int_type
 		overflow(int_type c) override {
 			assert(pptr() == epptr());
@@ -74,7 +74,7 @@ namespace sys {
 			return c;
 		}
 
-		/// See \c std::streambuf::xsputn.
+		/// Overrides \link std::streambuf::xsputn\endlink.
 		inline std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
 			if (n == 1) {
@@ -88,13 +88,13 @@ namespace sys {
 			return n;
 		}
 
-		/// Get argument array suitable to pass to \c execve system call.
+		/// Get argument array suitable to pass to \man{execve,2} system call.
 		inline char**
 		argv() noexcept {
 			return this->_rawargs.data();
 		}
 
-		/// Get argument array suitable to pass to \c execve system call.
+		/// Get argument array suitable to pass to \man{execve,2} system call.
 		inline char* const*
 		argv() const noexcept {
 			return this->_rawargs.data();
@@ -164,22 +164,22 @@ namespace sys {
 		_argbuf(std::move(rhs._argbuf))
 		{ this->init(&_argbuf); }
 
-		/// Get argument array suitable to pass to \c execve system call.
+		/// Get argument array suitable to pass to \man{execve,2} system call.
 		inline char**
 		argv() noexcept {
-			return _argbuf.argv();
+			return this->_argbuf.argv();
 		}
 
-		/// Get argument array suitable to pass to \c execve system call.
+		/// Get argument array suitable to pass to \man{execve,2} system call.
 		inline char* const*
 		argv() const noexcept {
-			return _argbuf.argv();
+			return this->_argbuf.argv();
 		}
 
 		/// Get the number of arguments.
 		inline int
 		argc() const noexcept {
-			return _argbuf.argc();
+			return this->_argbuf.argc();
 		}
 
 		/// Insert \p rhs to the stream and delimit the current argument.

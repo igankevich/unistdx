@@ -68,6 +68,11 @@ namespace sys {
 		enum option : opt_type {
 			reuse_addr = SO_REUSEADDR,
 			keep_alive = SO_KEEPALIVE,
+			/**
+			\brief Enables sending and receiving UID, GID and PID
+			of the process via unix domain socket.
+			\see \man{unix,7}
+			*/
 			pass_credentials = SO_PASSCRED,
 		};
 
@@ -293,7 +298,7 @@ namespace sys {
 	Manually send process UID, GID, PID as opaque array pointed by \p data.
 	\note On Linux \link socket::credentials\endlink returns credentials
 	without manually sending and receiving this message provided that
-	\c pass_credentials socket option is set.
+	\link socket::pass_credentials\endlink socket option is set.
 	*/
 	void
 	send_credentials(socket& sock, const void* data, size_t n);
@@ -303,7 +308,7 @@ namespace sys {
 	Manually receive process UID, GID, PID as opaque array pointed by \p data.
 	\note On Linux \link socket::credentials\endlink returns credentials
 	without manually sending and receiving this message provided that
-	\c pass_credentials socket option is set.
+	\link socket::pass_credentials\endlink socket option is set.
 	*/
 	void
 	receive_credentials(socket& sock, message_header& h, void* data, size_t n);

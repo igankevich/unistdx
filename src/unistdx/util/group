@@ -122,13 +122,17 @@ namespace sys {
 	operator<<(std::ostream& out, const group& rhs);
 
 	/**
+	\brief
 	Find group in system database by id \p id and store in \p result.
+	\see \man{getgruid,3}
 	*/
 	bool
 	find_group(gid_type id, group& result);
 
 	/**
+	\brief
 	Find group in system database by name \p name and store in \p result.
+	\see \man{getgrnam,3}
 	*/
 	bool
 	find_group(const char* name, group& result);

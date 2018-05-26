@@ -7,7 +7,7 @@ namespace sys {
 
 	/**
 	\brief
-	Output stream iterator that works with any stream, not just \c std::ostream.
+	Output stream iterator that works with any stream, not just \link std::ostream\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
 	\ingroup iter

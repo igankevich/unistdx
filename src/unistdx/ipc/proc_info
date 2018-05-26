@@ -31,7 +31,7 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc wrapper
-	\details Wraps \c siginfo_type.
+	\details Wraps \link siginfo_type\endlink.
 	*/
 	template<>
 	struct basic_status<siginfo_type> {

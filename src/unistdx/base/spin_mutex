@@ -18,7 +18,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup base mutex
 	\details
-	\arg Uses \c std::atomic_flag.
+	\arg Uses \link std::atomic_flag\endlink.
 	*/
 	class spin_mutex {
 

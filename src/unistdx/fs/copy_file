@@ -12,8 +12,8 @@ namespace sys {
 	\see \man{copy_file_range,2}
 	\see \man{sendfile,2}
 	\details
-	\arg Uses \c copy_file_range on newer kernels.
-	\arg Uses \c sendfile when available.
+	\arg Uses \man{copy_file_range,2} on newer kernels.
+	\arg Uses \man{sendfile,2} when available.
 	\arg Otherwise, falls back to standard stream copying.
 	*/
 	void

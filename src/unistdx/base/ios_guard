@@ -16,7 +16,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup base guard
 	\details
-	Saves/restores std::ios flags and fill character upon
+	Saves/restores \link std::ios_base\endlink flags and fill character upon
 	construction/destruction.
 	*/
 	class ios_guard {

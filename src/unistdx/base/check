@@ -47,7 +47,7 @@ with error code and error location.
 /**
 \brief
 Check if \p func equals \p ret and throw \link sys::bad_call\endlink
-with error code and error location unless \c errno equals \p good_err.
+with error code and error location unless \man{errno,3} equals \p good_err.
 \ingroup macros
 */
 #define UNISTDX_CHECK_IF_NOT(good_err, func) \
@@ -60,7 +60,8 @@ with error code and error location unless \c errno equals \p good_err.
 namespace sys {
 
 	/**
-	\brief A \c std::system_error that records file, line and function where
+	\brief
+	A \link std::system_error\endlink that records file, line and function where
 	the exception was thrown.
 	\date 2018-05-21
 	\author Ivan Gankevich

@@ -23,8 +23,9 @@ namespace sys {
 	\tparam Ch character type
 	\tparam Tr character traits type
 	\details
-	\arg The class provides both \c std::streambuf and \c std::mutex interfaces.
-	\arg Methods \c lock and \c unlock must be called in both parent and child
+	\arg The class provides both \link std::streambuf\endlink and
+	\link std::mutex\endlink interfaces.
+	\arg Methods \link lock\endlink and \link unlock\endlink must be called in both parent and child
 	process to syncrhonise buffer state updates.
 	*/
 	template<class Ch, class Tr=std::char_traits<Ch> >
@@ -40,7 +41,7 @@ namespace sys {
 	public:
 		/// Shared memory container type.
 		typedef typename ::sys::shared_mem<char_type> shared_mem_type;
-		/// Size type. An alias to \c shared_mem_type::size_type.
+		/// Size type.
 		typedef typename shared_mem_type::size_type size_type;
 		/// Semaphore type. An alias to \link process_semaphore\endlink.
 		typedef process_semaphore sem_type;
@@ -83,7 +84,7 @@ namespace sys {
 			return this->_sharedmem;
 		}
 
-		/// See \c std::streambuf::overflow.
+		/// Overrides \link std::streambuf::overflow\endlink.
 		int_type
 		overflow(int_type c = traits_type::eof()) override {
 			int_type ret;
@@ -99,7 +100,7 @@ namespace sys {
 			return ret;
 		}
 
-		/// See \c std::streambuf::underflow.
+		/// Overrides \link std::streambuf::underflow\endlink.
 		int_type
 		underflow() override {
 			int_type ret;
@@ -112,7 +113,7 @@ namespace sys {
 			return ret;
 		}
 
-		/// See \c std::streambuf::xsputn.
+		/// Overrides \link std::streambuf::xsputn\endlink.
 		std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
 			#ifndef NDEBUG
@@ -290,7 +291,7 @@ namespace sys {
 
 	/**
 	\brief
-	Alias for \c basic_shmembuf<char>
+	Instantiation of \link basic_shmembuf\endlink for char.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup comm

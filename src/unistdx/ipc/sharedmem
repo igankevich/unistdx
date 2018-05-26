@@ -30,7 +30,7 @@ namespace sys {
 
 	/**
 	\brief
-	A wrapper for \c shmid_ds.
+	A wrapper for \c shmid_ds system structure.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	*/
@@ -46,8 +46,8 @@ namespace sys {
 
 	public:
 
-		/// Size type. Alias to \c size_t.
-		typedef size_t size_type;
+		/// Size type. Alias to \link std::size_t\endlink.
+		typedef std::size_t size_type;
 
 		/// Get status for shared memory segment with ID \p id.
 		inline explicit
@@ -143,8 +143,8 @@ namespace sys {
 		typedef ::key_t key_type;
 
 	public:
-		/// Size type. Alias to \c size_t.
-		typedef size_t size_type;
+		/// Size type. Alias to \link std::size_t\endlink.
+		typedef std::size_t size_type;
 		/// Raw pointer type.
 		typedef void* addr_type;
 		/// Container element type.
@@ -156,15 +156,15 @@ namespace sys {
 
 		/**
 		\brief
-		Create and attach shared memory segment with mode \c mode
-		and minimum size \c guaranteed_size.
+		Create and attach shared memory segment with mode \p mode
+		and minimum size \p guaranteed_size.
 		*/
 		inline
 		shared_mem(mode_type mode, size_type guaranteed_size) {
 			this->open_as_owner(mode|ipc::create, guaranteed_size);
 		}
 
-		/// Attach shared memory segment with id \c shm.
+		/// Attach shared memory segment with id \p shm.
 		inline explicit
 		shared_mem(shm_type shm) {
 			this->open_as_user(shm);

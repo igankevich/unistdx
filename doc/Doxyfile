@@ -251,6 +251,7 @@ PREDEFINED             = UNISTDX_HAVE_POSIX_SEMAPHORES \
 EXPAND_AS_DEFINED      =
 SKIP_FUNCTION_MACROS   = YES
 TAGFILES               =
+TAGFILES              += "$(MESON_BUILD_ROOT)/std.tag.xml=http://en.cppreference.com/w/"
 GENERATE_TAGFILE       =
 ALLEXTERNALS           = NO
 EXTERNAL_GROUPS        = YES
