@@ -52,6 +52,7 @@ namespace sys {
 	with additional methods.
 	\date 2018-05-25
 	\author Ivan Gankevich
+	\ingroup fs
 	\tparam Ch character type
 	\tparam Tr character traits type
 	\tparam Alloc allocator type
@@ -214,7 +215,11 @@ namespace sys {
 	#undef MAKE_OPERATOR_EQ
 	#undef MAKE_OPERATOR_REL
 
-	/// Alias to basic_path<char>.
+	/**
+	\brief
+	Specialisation of \link basic_path\endlink for char.
+	\ingroup fs
+	*/
 	typedef basic_path<char> path;
 
 }

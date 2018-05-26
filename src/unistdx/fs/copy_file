@@ -9,6 +9,7 @@ namespace sys {
 	\brief Copy file using the most optimal system call.
 	\date 2018-05-25
 	\author Ivan Gankevich
+	\ingroup fs
 	\see \man{copy_file_range,2}
 	\see \man{sendfile,2}
 	\details

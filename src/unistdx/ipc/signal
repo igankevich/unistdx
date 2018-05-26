@@ -11,15 +11,9 @@
 namespace sys {
 
 	/**
-	\defgroup wrapper Wrappers
-	\brief Wrappers for system structures.
-	*/
-
-	/**
 	\brief Alias for signal type.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
 	*/
 	typedef int signal_type;
 
@@ -27,7 +21,6 @@ namespace sys {
 	\brief Alias for \c sigaction system type.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
 	*/
 	typedef struct ::sigaction sigaction_type;
 
@@ -35,7 +28,7 @@ namespace sys {
 	\brief Signal enumeration.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
+	\ingroup ipc
 	*/
 	enum struct signal: signal_type {
 		// POSIX.1-1990
@@ -90,7 +83,7 @@ namespace sys {
 	\brief Output signal name.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
+	\ingroup ipc
 	*/
 	std::ostream&
 	operator<<(std::ostream& out, const signal rhs);
@@ -129,7 +122,7 @@ namespace sys {
 		\brief Set signal callback function.
 		\date 2018-05-21
 		\author Ivan Gankevich
-		\ingroup comm
+		\ingroup ipc
 		*/
 		inline void
 		bind_signal(signal sig, const signal_action& action) {
@@ -140,7 +133,7 @@ namespace sys {
 		\brief Ignore specified signal
 		\date 2018-05-21
 		\author Ivan Gankevich
-		\ingroup comm
+		\ingroup ipc
 		\details
 		By default any signal for which callback function
 		is not set may kill the process. This routine allows to ignore

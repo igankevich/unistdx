@@ -6,11 +6,6 @@
 namespace sys {
 
 	/**
-	\defgroup iter Iterators
-	\brief Iterator objects.
-	*/
-
-	/**
 	\brief
 	Input stream iterator that works with any stream, not just \link std::istream\endlink.
 	\date 2018-05-22

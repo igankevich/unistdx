@@ -26,25 +26,9 @@
 namespace sys {
 
 	/**
-	\defgroup semaphore Semaphores
-	\brief Classes with condition variable interface.
-	*/
-
-	/**
-	\defgroup ipc Processes
-	\brief Process and threads abstractions.
-	*/
-
-	/**
-	\defgroup comm Communication
-	\brief Inter-process communication.
-	*/
-
-	/**
 	\brief The scope of semaphore (process/thread).
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
 	*/
 	enum struct semaphore_type: int {
 		thread = 0,

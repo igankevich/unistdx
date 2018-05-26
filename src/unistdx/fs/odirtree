@@ -7,7 +7,8 @@
 
 namespace sys {
 
-	/// The same template as basic_odirectory.
+	/// \brief The same template as basic_odirectory.
+	/// \ingroup fs
 	template <class Trans>
 	using basic_odirtree = basic_odirectory<Trans>;
 
@@ -16,6 +17,7 @@ namespace sys {
 	\details
 	This is the default file transformation type for
 	\link odirtree\endlink.
+	\ingroup fs
 	*/
 	struct copy_recursively {
 
@@ -59,12 +61,15 @@ namespace sys {
 	};
 
 	/**
+	\brief
 	Directory entry output stream that copies
 	all files and directories recursively.
+	\ingroup fs
 	*/
 	typedef basic_odirtree<copy_recursively> odirtree;
 
-	/// Directory entry output stream iterator.
+	/// \brief Directory entry output stream iterator.
+	/// \ingroup fs
 	template<class T>
 	using odirtree_iterator = basic_ostream_iterator<odirtree, T>;
 

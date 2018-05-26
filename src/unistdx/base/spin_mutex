@@ -8,15 +8,10 @@
 namespace sys {
 
 	/**
-	\defgroup mutex Mutexes
-	\brief Mutual exclusion.
-	*/
-
-	/**
 	\brief Fast mutex that does not use system calls.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup base mutex
+	\ingroup mutex
 	\details
 	\arg Uses \link std::atomic_flag\endlink.
 	*/

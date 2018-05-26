@@ -10,7 +10,7 @@ namespace sys {
 	\brief Directory entry input/output stream.
 	\date 2018-05-25
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream fs
 	\tparam FilePred file predicate type, that determines which
 	directory entries to include in the stream.
 	\tparam Trans transformation function type

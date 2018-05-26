@@ -11,6 +11,7 @@ namespace sys {
 	\brief Recursive directory entry input stream.
 	\date 2018-05-25
 	\author Ivan Gankevich
+	\ingroup stream fs
 	\tparam FilePred file predicate type, that determines which
 	directory entries to include in the stream.
 	\tparam DirPred directory predicate type, that determines which
@@ -129,6 +130,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\details
 	This is the default directory predicate for \link idirectory\endlink.
+	\ingroup fs
 	*/
 	struct ignore_hidden_dirs {
 
@@ -148,12 +150,15 @@ namespace sys {
 	};
 
 	/**
+	\brief
 	Recursive directory entry input stream that ignores all hidden files
 	during traversal and does not recurse to hidden directories.
+	\ingroup fs
 	*/
 	typedef basic_idirtree<ignore_hidden_files, ignore_hidden_dirs> idirtree;
 
-	/// Recursive directory entry input stream iterator.
+	/// \brief Recursive directory entry input stream iterator.
+	/// \ingorup fs
 	template<class T>
 	using idirtree_iterator = basic_istream_iterator<idirtree, T>;
 

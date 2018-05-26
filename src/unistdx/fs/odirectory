@@ -12,7 +12,7 @@ namespace sys {
 	\brief Directory entry output stream.
 	\date 2018-05-25
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream fs
 	\tparam Trans transformation function type
 	\see direntry
 	\see pathentry
@@ -152,10 +152,12 @@ namespace sys {
 
 	};
 
-	/// Directory entry output stream that copies all files verbatim.
+	/// \brief Directory entry output stream that copies all files verbatim.
+	/// \ingroup fs
 	typedef basic_odirectory<copy_verbatim> odirectory;
 
-	/// Directory entry output stream iterator.
+	/// \brief Directory entry output stream iterator.
+	/// \ingroup fs
 	template<class T>
 	using odirectory_iterator = basic_ostream_iterator<odirectory, T>;
 

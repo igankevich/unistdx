@@ -52,6 +52,7 @@ namespace sys {
 	\brief Canonical path that is always absolute and real.
 	\date 2018-05-25
 	\author Ivan Gankevich
+	\ingroup fs
 	\tparam Ch character type
 	\tparam Tr character traits type
 	\tparam Alloc allocator type
@@ -177,12 +178,20 @@ namespace sys {
 
 	};
 
-	/// Alias to basic_canonical_path<char>.
+	/**
+	\brief
+	Specialisation of \link basic_canonical_path\endlink for char.
+	\ingroup fs
+	*/
 	typedef basic_canonical_path<char> canonical_path;
 
 	namespace this_process {
 
-		/// Get canonical path to the working directory of the calling process.
+		/**
+		\brief
+		Get canonical path to the working directory of the calling process.
+		\ingroup fs
+		*/
 		inline sys::canonical_path
 		workdir() {
 			return sys::canonical_path(".");

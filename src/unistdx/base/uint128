@@ -49,7 +49,6 @@ namespace std {
 	Specialisation of \link std::numeric_limits\endlink for \link sys::uint128_t\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
-	\ingroup base
 	*/
 	template <>
 	class numeric_limits<sys::uint128_t> {

@@ -9,7 +9,7 @@ namespace sys {
 	\brief The inverse of standard lock guard.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup base guard
+	\ingroup guard
 	\tparam Mutex mutex type
 	*/
 	template<class Mutex>

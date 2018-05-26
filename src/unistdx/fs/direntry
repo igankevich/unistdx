@@ -21,7 +21,7 @@ namespace sys {
 	\brief Directory entry.
 	\date 2018-05-25
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper fs
 	\see \man{readdir,3}
 	\details
 	A wrapper around \c dirent system type.

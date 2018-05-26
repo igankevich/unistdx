@@ -9,7 +9,6 @@ namespace sys {
 	\brief Computes bytes digest using SHA-1 algorithm.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup base
 	\see \rfc{3174}
 	\details Computes bytes digest using US Secure Hash Algorithm 1 (SHA-1).
 	*/

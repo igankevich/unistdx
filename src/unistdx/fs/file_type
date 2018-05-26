@@ -11,13 +11,23 @@ namespace sys {
 	typedef ::mode_t mode_type;
 
 	/// File types.
+	/// \ingroup fs
 	enum struct file_type: mode_type {
+		/// Regular file.
 		regular = S_IFREG,
+		/// A directory.
 		directory = S_IFDIR,
+		/// Block device.
 		block_device = S_IFBLK,
+		/// Character device.
 		character_device = S_IFCHR,
+		/// Named pipe.
+		/// \see \man{fifo,7}
 		pipe = S_IFIFO,
+		/// UNIX domain socket.
+		/// \see \man{unix,7}
 		socket = S_IFSOCK,
+		/// Symbolic link.
 		symbolic_link = S_IFLNK
 	};
 

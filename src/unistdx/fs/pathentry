@@ -11,7 +11,7 @@ namespace sys {
 	\brief Directory entry with a path to directory
 	\date 2018-05-25
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper fs
 	\details
 	This class stores a path to a directory where entry is located,
 	which makes it convenient for recursive directory traversals.

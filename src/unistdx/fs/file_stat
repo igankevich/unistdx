@@ -36,7 +36,7 @@ namespace sys {
 	File status class that wraps \c stat system type.
 	\date 2018-05-25
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper fs
 	*/
 	class file_stat: public stat_type {
 

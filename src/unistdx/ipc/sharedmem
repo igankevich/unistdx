@@ -14,11 +14,6 @@
 namespace sys {
 
 	/**
-	\defgroup container Containers
-	\brief Containers wrapping operating system functionality.
-	*/
-
-	/**
 	\brief Alias for shared memory ID type.
 	\date 2018-05-21
 	\author Ivan Gankevich

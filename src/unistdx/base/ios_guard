@@ -6,15 +6,10 @@
 namespace sys {
 
 	/**
-	\defgroup guard Guards
-	\brief Enforce object state with RAII.
-	*/
-
-	/**
 	\brief I/O stream state guard.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup base guard
+	\ingroup guard
 	\details
 	Saves/restores \link std::ios_base\endlink flags and fill character upon
 	construction/destruction.

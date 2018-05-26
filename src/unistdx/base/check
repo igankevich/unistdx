@@ -5,11 +5,6 @@
 #include <iosfwd>
 
 /**
-\defgroup macros Macros
-\brief Macros that do what functions can not do.
-*/
-
-/**
 \brief
 Uncoditionally throw \link sys::bad_call\endlink
 with error code and error location.

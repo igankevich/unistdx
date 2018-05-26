@@ -7,11 +7,6 @@
 namespace sys {
 
 	/**
-	\defgroup fs Filesystem
-	\brief Filesystem manipulation.
-	*/
-
-	/**
 	\brief
 	Make directories recursively.
 	\date 2018-04-25

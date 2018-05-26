@@ -9,11 +9,6 @@
 namespace sys {
 
 	/**
-	\defgroup stream I/O streams
-	\brief Input/output streams.
-	*/
-
-	/**
 	\brief Stream buffer for command line arguments.
 	\date 2018-05-21
 	\author Ivan Gankevich

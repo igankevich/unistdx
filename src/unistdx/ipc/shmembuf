@@ -9,17 +9,12 @@
 namespace sys {
 
 	/**
-	\defgroup streambuf Stream buffers
-	\brief Stream buffers wrapping system functionality.
-	*/
-
-	/**
 	\brief
 	Shared memory stream buffer with synchronisation via
 	\link process_semaphore\endlink.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup ipc comm mutex streambuf
+	\ingroup ipc mutex streambuf
 	\tparam Ch character type
 	\tparam Tr character traits type
 	\details
@@ -294,7 +289,6 @@ namespace sys {
 	Instantiation of \link basic_shmembuf\endlink for char.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
 	*/
 	typedef basic_shmembuf<char> shmembuf;
 

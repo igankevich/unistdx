@@ -3,11 +3,13 @@
 
 #include <unistd.h>
 
+#include <cstdint>
+
 /// POSIX and Linux system call wrappers.
 namespace sys {
 
 	/// Alias to \link std::size_t\endlink.
-	typedef size_t size_type;
+	typedef ::std::size_t size_type;
 
 	/**
 	\brief Get system page size.

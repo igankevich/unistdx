@@ -26,7 +26,6 @@ namespace sys {
 	Send signal \p s to process \p p.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup comm
 	*/
 	inline void
 	send(signal s, pid_type p) {
@@ -65,7 +64,6 @@ namespace sys {
 		Send signal \p s to the current process.
 		\date 2018-05-21
 		\author Ivan Gankevich
-		\ingroup comm
 		*/
 		inline void
 		send(signal s) {

@@ -11,7 +11,10 @@
 
 namespace sys {
 
-	/// An exception indicating file lock error.
+	/**
+	\brief An exception indicating file lock error.
+	\ingroup exception
+	*/
 	class bad_file_lock: public std::exception {
 
 	public:
@@ -39,7 +42,7 @@ namespace sys {
 	\brief File-based mutex.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup fs mutex
+	\ingroup mutex fs
 	\see \man{flock,2}
 	\details
 	\arg Uses the sanest (but not very portable) \man{flock,2}

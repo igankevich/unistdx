@@ -12,11 +12,6 @@ static_assert(sizeof(i ## bits) == bytes, "bad i" #bits " type")
 
 namespace sys {
 
-	/**
-	\defgroup base Basic abstractions
-	\brief Basic types, classes and functions.
-	*/
-
 	/// 1-byte unsigned integer type.
 	typedef ::std::uint8_t u8;
 	/// 2-byte unsigned integer type.

@@ -16,6 +16,7 @@ namespace sys {
 	\brief Directory entry input stream.
 	\date 2018-05-25
 	\author Ivan Gankevich
+	\ingroup stream fs
 	\tparam FilePred file predicate type, that determines which
 	directory entries to include in the stream.
 	\see direntry
@@ -194,6 +195,7 @@ namespace sys {
 	\brief Do not include hidden file when traversing directories.
 	\date 2018-05-25
 	\author Ivan Gankevich
+	\ingroup fs
 	\details
 	This is the default file predicate for \link idirectory\endlink.
 	*/
@@ -208,10 +210,15 @@ namespace sys {
 
 	};
 
-	/// Directory entry input stream that ignores all hidden files during traversal.
+	/**
+	\brief
+	Directory entry input stream that ignores all hidden files during traversal.
+	\ingroup fs
+	*/
 	typedef basic_idirectory<ignore_hidden_files> idirectory;
 
-	/// Directory entry input stream iterator.
+	/// \brief Directory entry input stream iterator.
+	/// \ingroup fs
 	template<class T>
 	using idirectory_iterator = basic_istream_iterator<idirectory, T>;
 

@@ -6,11 +6,6 @@
 namespace sys {
 
 	/**
-	\defgroup traits Traits
-	\brief Traits classes.
-	*/
-
-	/**
 	\brief Traits that abstract read and write operations for stream buffers.
 	\date 2018-05-22
 	\author Ivan Gankevich
