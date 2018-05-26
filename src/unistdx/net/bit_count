@@ -11,6 +11,7 @@ namespace sys {
 	\brief Count the number of bits that are set in \p value.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	\arg Uses \link std::bitset\endlink for generic implementation.
 	\arg There are optimised implementations for standard
 	unsigned integer types.

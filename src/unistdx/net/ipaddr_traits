@@ -7,6 +7,7 @@ namespace sys {
 	\brief IP-address generic functions.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	*/
 	template<class Address>
 	struct ipaddr_traits;

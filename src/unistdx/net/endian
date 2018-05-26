@@ -8,7 +8,7 @@ namespace sys {
 	Guard object, that checks if endiannes was correctly determined at compile-time.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup guard
+	\ingroup guard net
 	\deprecated
 	*/
 	struct endian_guard {

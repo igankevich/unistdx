@@ -21,7 +21,8 @@ namespace sys {
 	/// Alias to system file descriptor type (int).
 	typedef int fd_type;
 
-	/// Input/output events.
+	/// \brief Input/output events.
+	/// \ingroup io
 	enum class event : decltype(poll_event_base::events) {
 		in = EPOLLIN,
 		out = EPOLLOUT,
@@ -74,7 +75,7 @@ namespace sys {
 	File descriptor event wrapper for \link event_poller\endlink.
 	\date 2018-05-22
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper io
 	*/
 	class epoll_event: public poll_event_base {
 

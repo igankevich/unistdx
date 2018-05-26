@@ -30,6 +30,7 @@ namespace sys {
 	\brief IPv4 address class.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	*/
 	union ipv4_addr {
 

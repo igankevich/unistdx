@@ -14,7 +14,8 @@ namespace sys {
 	/// Socket address family type.
 	typedef ::sa_family_t sa_family_type;
 
-	/// Socket address families.
+	/// \brief Socket address families.
+	/// \ingroup net
 	enum struct family_type: sa_family_type {
 		inet = AF_INET,
 		inet6 = AF_INET6,

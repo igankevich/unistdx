@@ -17,7 +17,7 @@ namespace sys {
 	\brief Container, that uses object binary representation as its contents.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup container
+	\ingroup container net
 	\tparam T object type
 	\tparam Ch character (byte) type
 	*/
@@ -189,7 +189,8 @@ namespace sys {
 
 	};
 
-	/// Construct byte sequence from object \p rhs.
+	/// \brief Construct byte sequence from object \p rhs.
+	/// \ingroup net
 	template<class T>
 	inline constexpr bytes<T>
 	make_bytes(T rhs) noexcept {
@@ -212,8 +213,10 @@ namespace sys {
 	}
 
 	/**
+	\brief
 	Converts binary representation of \p n in native byte order
 	to network byte order if needed.
+	\ingroup net
 	*/
 	template<class T>
 	inline T
@@ -223,8 +226,10 @@ namespace sys {
 	}
 
 	/**
+	\brief
 	Converts binary representation of \p n in network byte order
 	to native byte order if needed.
+	\ingroup net
 	*/
 	template<class T>
 	inline T

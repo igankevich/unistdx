@@ -11,6 +11,7 @@ namespace sys {
 	\brief A pair of file descriptors.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup io
 	\details
 	\arg Descriptors are assumed to be for input and output, but it is not
 	enforced.

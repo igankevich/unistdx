@@ -45,6 +45,7 @@ namespace sys {
 	\brief Socket wrapper.
 	\date 2018-05-24
 	\author Ivan Gankevich
+	\ingroup net
 	\details
 	\arg Socket is a file descriptor which is used for communication.
 	\arg Usually, sockets are used for network communication.
@@ -305,6 +306,7 @@ namespace sys {
 	\note On Linux \link socket::credentials\endlink returns credentials
 	without manually sending and receiving this message provided that
 	\link socket::pass_credentials\endlink socket option is set.
+	\ingroup net
 	*/
 	void
 	send_credentials(socket& sock, const void* data, size_t n);
@@ -315,6 +317,7 @@ namespace sys {
 	\note On Linux \link socket::credentials\endlink returns credentials
 	without manually sending and receiving this message provided that
 	\link socket::pass_credentials\endlink socket option is set.
+	\ingroup net
 	*/
 	void
 	receive_credentials(socket& sock, message_header& h, void* data, size_t n);
@@ -325,7 +328,7 @@ namespace sys {
 	Stream buffer traits for \link socket\endlink.
 	\date 2018-05-24
 	\author Ivan Gankevich
-	\ingroup traits
+	\ingroup traits net
 	*/
 	template<>
 	struct streambuf_traits<socket> {

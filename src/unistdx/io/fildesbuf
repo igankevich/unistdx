@@ -20,7 +20,7 @@ namespace sys {
 	\brief Stream buffer that writes and reads from file descriptor.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup streambuf
+	\ingroup streambuf io
 	\see fildes, fildes_pair, socket
 	\tparam Fd File descriptor type. Can be a wrapper class or \c int.
 	\arg Input/output file descriptor operations are assumed

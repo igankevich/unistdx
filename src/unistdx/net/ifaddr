@@ -15,6 +15,7 @@ namespace sys {
 	\brief Network interface address.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	*/
 	template<class Addr>
 	class ifaddr {

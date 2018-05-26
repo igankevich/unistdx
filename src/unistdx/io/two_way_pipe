@@ -10,6 +10,7 @@ namespace sys {
 	\brief Two-way pipe implemented as two one-way pipes.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup io
 	\details
 	\arg The pipe is designed for communication between
 	parent and child processes.

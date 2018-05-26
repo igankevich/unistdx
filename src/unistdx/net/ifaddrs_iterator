@@ -12,7 +12,7 @@ namespace sys {
 	\brief Iterator for interface addresses of the computer.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup iter
+	\ingroup iter net
 	\see \man{getifaddrs,3}
 	*/
 	class ifaddrs_iterator:

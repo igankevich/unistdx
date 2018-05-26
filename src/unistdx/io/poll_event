@@ -17,7 +17,7 @@ namespace sys {
 	File descriptor event wrapper for \man{poll,2} system call.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper io
 	*/
 	struct poll_event: public basic_event {
 

@@ -10,6 +10,7 @@ namespace sys {
 	\brief Returns true if this archiecture uses network byte order (little-endian).
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	\details Compile-time constant expression.
 	*/
 	inline constexpr bool
@@ -27,6 +28,7 @@ namespace sys {
 	to network byte order if needed.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	*/
 	template<class T>
 	inline constexpr T
@@ -40,6 +42,7 @@ namespace sys {
 	to native byte order if needed.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup net
 	*/
 	template<class T>
 	inline constexpr T

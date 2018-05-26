@@ -29,7 +29,7 @@ namespace sys {
 	with network byte order.
 	\date 2018-04-20
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream net
 	\tparam Ch character type
 	\tparam Tr character traits type
 	\tparam Size size type (defaults to 4-byte integer)

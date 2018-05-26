@@ -13,7 +13,7 @@ namespace sys {
 	that uses \link basic_fildesbuf\endlink as stream buffer.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream io
 	\arg The stream is designed to be used with standard file descriptors 0, 1, 2.
 	\arg Underlying file descriptor is not closed or flushed in stream destructor.
 	*/

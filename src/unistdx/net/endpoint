@@ -85,7 +85,7 @@ namespace sys {
 	\brief Socket address wrapper.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper net
 	\details
 	This class wraps all socket address types. Socket address is
 	retrieved with \link sockaddr\endlink method and its length

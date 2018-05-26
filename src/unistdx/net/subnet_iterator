@@ -11,7 +11,7 @@ namespace sys {
 	\brief Iterator, that traverses IP addresses in a subnetwork.
 	\date 2018-05-24
 	\author Ivan Gankevich
-	\ingroup iter
+	\ingroup iter net
 	*/
 	template<class Address>
 	class subnet_iterator:

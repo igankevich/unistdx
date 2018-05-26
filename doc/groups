@@ -54,15 +54,23 @@ Sentry objects that enforce invariants with
 \brief System calls and system structures wrappers.
 
 \defgroup ipc Processes
-\brief Processes and inter-process communication.
+\brief Resource management and parallel execution.
 \ingroup system
 
 \defgroup fs File system
 \brief File and directory manipulation.
 \ingroup system
 
+\defgroup io IO
+\brief Input/output handling.
+\ingroup system
+
+\defgroup net Network
+\brief Network abstractions.
+\ingroup system
+
 \defgroup macros Macros
-\brief Macros that do what functions can not do.
+\brief Macros for system error handling.
 \ingroup system
 
 \defgroup wrapper Wrappers

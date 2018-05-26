@@ -11,7 +11,7 @@ namespace sys {
 	\brief Input stream that reads from file descriptor.
 	\date 2018-05-22
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream io
 	\tparam Fd File descriptor type. Can be a wrapper class or \c int.
 	\details
 	\arg Any type for which \link streambuf_traits\endlink are defined, may
@@ -92,7 +92,7 @@ namespace sys {
 	\brief Output stream that writes to file descriptor.
 	\date 2018-05-22
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream io
 	\details
 	\arg Any type for which \link streambuf_traits\endlink are defined, may
 	be used instead of file descriptor.
@@ -180,7 +180,7 @@ namespace sys {
 	\brief Input/output stream that reads/writes to/from file descriptor.
 	\date 2018-05-22
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream io
 	\details
 	\arg Any type for which \link streambuf_traits\endlink are defined, may
 	be used instead of file descriptor.
@@ -257,13 +257,16 @@ namespace sys {
 
 	};
 
-	/// Character based input file descriptor stream.
+	/// \brief Character based input file descriptor stream.
+	/// \ingroup io
 	typedef basic_ifdstream<char> ifdstream;
 
-	/// Character based output file descriptor stream.
+	/// \brief Character based output file descriptor stream.
+	/// \ingroup io
 	typedef basic_ofdstream<char> ofdstream;
 
-	/// Character based input/output file descriptor stream.
+	/// \brief Character based input/output file descriptor stream.
+	/// \ingroup io
 	typedef basic_fdstream<char> fdstream;
 
 }

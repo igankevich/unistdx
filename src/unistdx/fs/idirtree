@@ -158,7 +158,7 @@ namespace sys {
 	typedef basic_idirtree<ignore_hidden_files, ignore_hidden_dirs> idirtree;
 
 	/// \brief Recursive directory entry input stream iterator.
-	/// \ingorup fs
+	/// \ingroup fs
 	template<class T>
 	using idirtree_iterator = basic_istream_iterator<idirtree, T>;
 

@@ -12,6 +12,7 @@ namespace sys {
 	\brief Flags used when opening file.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup io
 	*/
 	class open_flag {
 
@@ -87,61 +88,31 @@ namespace sys {
 		return op flag_type(rhs); \
 	}
 
-	#define MAKE_BINARY_1(op, return_type) \
+	#define MAKE_BINARY(op, return_type) \
 	inline return_type \
 	operator op(open_flag lhs, open_flag rhs) noexcept { \
 		return flag_type(lhs) op flag_type(rhs); \
-	}
-
-	#define MAKE_BINARY_2(op, return_type) \
+	} \
 	inline return_type \
 	operator op(flag_type lhs, open_flag rhs) noexcept { \
 		return lhs op flag_type(rhs); \
-	}
-
-	#define MAKE_BINARY_3(op, return_type) \
+	} \
 	inline return_type \
 	operator op(open_flag lhs, flag_type rhs) noexcept { \
 		return flag_type(lhs) op rhs; \
 	}
 
-	/// Bit-wise negation.
+	/// \{
 	MAKE_UNARY(~)
-	/// Bit-wise \c OR.
-	MAKE_BINARY_1(|, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_2(|, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_3(|, open_flag)
-	/// Bit-wise \c AND.
-	MAKE_BINARY_1(&, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_2(&, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_3(&, open_flag)
-	/// Bit-wise \c XOR.
-	MAKE_BINARY_1(^, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_2(^, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_3(^, open_flag)
-	/// Comparison operator.
-	MAKE_BINARY_1(==, bool)
-	/// Comparison operator.
-	MAKE_BINARY_2(==, bool)
-	/// Comparison operator.
-	MAKE_BINARY_3(==, bool)
-	/// Comparison operator.
-	MAKE_BINARY_1(!=, bool)
-	/// Comparison operator.
-	MAKE_BINARY_2(!=, bool)
-	/// Comparison operator.
-	MAKE_BINARY_3(!=, bool)
+	MAKE_BINARY(|, open_flag)
+	MAKE_BINARY(&, open_flag)
+	MAKE_BINARY(^, open_flag)
+	MAKE_BINARY(==, bool)
+	MAKE_BINARY(!=, bool)
+	/// \}
 
 	#undef MAKE_UNARY
-	#undef MAKE_BINARY_1
-	#undef MAKE_BINARY_2
-	#undef MAKE_BINARY_3
+	#undef MAKE_BINARY
 
 }
 

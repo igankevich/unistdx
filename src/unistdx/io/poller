@@ -22,7 +22,7 @@ namespace sys {
 	\brief File descriptor poller.
 	\date 2018-05-21
 	\author Ivan Gankevich
-	\ingroup semaphore container
+	\ingroup semaphore container io
 	\details
 	\arg File descriptor poller implemented with \man{epoll_create1,2} system call
 	having condition variable-like interface.

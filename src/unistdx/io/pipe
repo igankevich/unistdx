@@ -9,6 +9,7 @@ namespace sys {
 	\brief A pipe constructed with \man{pipe,2} system call.
 	\date 2018-05-23
 	\author Ivan Gankevich
+	\ingroup io
 	*/
 	union pipe {
 

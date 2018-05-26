@@ -17,7 +17,7 @@ namespace sys {
 	Packet stream that wraps \link basic_packetbuf\endlink.
 	\date 2018-05-24
 	\author Ivan Gankevich
-	\ingroup stream
+	\ingroup stream net
 	*/
 	template<class Ch, class Tr=std::char_traits<Ch>, class Size=u32>
 	class basic_pstream: public basic_bstream<Ch,Tr,Size> {
