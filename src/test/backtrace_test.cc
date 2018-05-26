@@ -48,7 +48,7 @@ print_error() {
 	sys::pipe p;
 	p.in().unsetf(sys::open_flag::non_blocking);
 	p.out().unsetf(sys::open_flag::non_blocking);
-	sys::backtrace(p.out().get_fd());
+	sys::backtrace(p.out().fd());
 	p.out().close();
 	bool func1_found = false;
 	bool func2_found = false;

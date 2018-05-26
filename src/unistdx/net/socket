@@ -180,10 +180,6 @@ namespace sys {
 		set_user_timeout(const duration& d);
 		#endif
 
-		/// @deprecated Use event-based error notifications.
-		int
-		error() const noexcept;
-
 		/**
 		\copybrief name
 		\details
@@ -285,6 +281,16 @@ namespace sys {
 	private:
 		void
 		create_socket_if_necessary(const endpoint& e);
+
+		int
+		error() const noexcept;
+
+		inline std::string
+		status_message() const noexcept {
+			return this->error() == 0
+			       ? "ok"
+				   : std::make_error_code(std::errc(errno)).message();
+		}
 
 	};
 

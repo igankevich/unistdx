@@ -25,13 +25,6 @@ namespace {
 		return sock;
 	}
 
-	inline std::string
-	status_message(const sys::socket& rhs) {
-		return rhs.error() == 0
-		       ? "ok"
-			   : std::make_error_code(std::errc(errno)).message();
-	}
-
 }
 
 sys::socket::socket(const endpoint& bind_addr) {
@@ -188,7 +181,7 @@ sys::socket::error() const noexcept {
 std::ostream&
 sys::operator<<(std::ostream& out, const socket& rhs) {
 	return out
-	       << make_object("fd", rhs._fd, "status", status_message(rhs));
+	       << make_object("fd", rhs._fd, "status", rhs.status_message());
 }
 
 void

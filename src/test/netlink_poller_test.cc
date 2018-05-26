@@ -13,7 +13,7 @@ TEST(NetlinkPoller, First) {
 	);
 	sock.bind(endp);
 	sys::event_poller poller;
-	poller.insert({sock.get_fd(), sys::event::in});
+	poller.insert({sock.fd(), sys::event::in});
 	std::mutex mtx;
 	poller.wait(mtx);
 	for (const sys::epoll_event& ev : poller) {

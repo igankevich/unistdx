@@ -334,7 +334,7 @@ namespace sys {
 			UNISTDX_CHECK_IF_NOT(
 				EINTR,
 				nfds = ::epoll_wait(
-					this->_epollfd.get_fd(),
+					this->_epollfd.fd(),
 					this->_events.data(),
 					this->_events.size(),
 					timeout_millis
@@ -362,7 +362,7 @@ namespace sys {
 
 		inline fd_type
 		epoll_fd() noexcept {
-			return this->_epollfd.get_fd();
+			return this->_epollfd.fd();
 		}
 
 	};

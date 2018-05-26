@@ -134,15 +134,6 @@ namespace sys {
 			return ret;
 		}
 
-		/**
-		\copybrief fd
-		\deprecated use \link fd\endlink method instead
-		*/
-		inline fd_type
-		get_fd() const noexcept {
-			return this->_fd;
-		}
-
 		/// Get bare file descriptor.
 		inline fd_type
 		fd() const noexcept {
