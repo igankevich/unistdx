@@ -2,6 +2,6 @@
 <area shape="rect" id="node2" href="$group__ipc.html" title="Resource management and parallel execution. " alt="" coords="449,81,533,108"/>
 <area shape="rect" id="node3" href="$group__net.html" title="Network abstractions. " alt="" coords="455,200,526,227"/>
 <area shape="rect" id="node4" href="$group__fs.html" title="File and directory manipulation. " alt="" coords="445,289,536,316"/>
-<area shape="rect" id="node6" href="$group__io.html" title="Input/output handling. " alt="" coords="471,364,510,391"/>
+<area shape="rect" id="node6" href="$group__io.html" title="Input/output handling. " alt="" coords="471,408,510,435"/>
 <area shape="rect" id="node5" href="$group__system.html" title="System calls and system structures wrappers. " alt="" coords="5,245,148,272"/>
 </map>

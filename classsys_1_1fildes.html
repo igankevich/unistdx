@@ -119,10 +119,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aec065022de80754a72354777fdf34a4a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#aec065022de80754a72354777fdf34a4a">~fildes</a> ()</td></tr>
 <tr class="memdesc:aec065022de80754a72354777fdf34a4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close file descriptor.  <a href="#aec065022de80754a72354777fdf34a4a">More...</a><br /></td></tr>
 <tr class="separator:aec065022de80754a72354777fdf34a4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a811a1a0448a9292a38f61bcbb4ab47d6"><td class="memItemLeft" align="right" valign="top"><a id="a811a1a0448a9292a38f61bcbb4ab47d6"></a>
-<a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#a811a1a0448a9292a38f61bcbb4ab47d6">operator=</a> (<a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&amp;rhs)</td></tr>
-<tr class="memdesc:a811a1a0448a9292a38f61bcbb4ab47d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move assignment. <br /></td></tr>
-<tr class="separator:a811a1a0448a9292a38f61bcbb4ab47d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefb7351f0cdaa9e8c4db9cd5ce1aeb17"><td class="memItemLeft" align="right" valign="top"><a id="aefb7351f0cdaa9e8c4db9cd5ce1aeb17"></a>
+<a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#aefb7351f0cdaa9e8c4db9cd5ce1aeb17">operator=</a> (<a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&amp;rhs) noexcept</td></tr>
+<tr class="memdesc:aefb7351f0cdaa9e8c4db9cd5ce1aeb17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-assignment. <br /></td></tr>
+<tr class="separator:aefb7351f0cdaa9e8c4db9cd5ce1aeb17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ce5138630d3ee6751d8bdc6d3193d0b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#a4ce5138630d3ee6751d8bdc6d3193d0b">close</a> ()</td></tr>
 <tr class="memdesc:a4ce5138630d3ee6751d8bdc6d3193d0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close file descriptor.  <a href="#a4ce5138630d3ee6751d8bdc6d3193d0b">More...</a><br /></td></tr>
 <tr class="separator:a4ce5138630d3ee6751d8bdc6d3193d0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -173,6 +173,10 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#a1771f1e4cf67466db7c2c189b2fbd801">operator==</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a> rhs) const noexcept</td></tr>
 <tr class="memdesc:a1771f1e4cf67466db7c2c189b2fbd801"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compare file descriptors. <br /></td></tr>
 <tr class="separator:a1771f1e4cf67466db7c2c189b2fbd801"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad748f6dc18061186ef8cfaa9af10efad"><td class="memItemLeft" align="right" valign="top"><a id="ad748f6dc18061186ef8cfaa9af10efad"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#ad748f6dc18061186ef8cfaa9af10efad">swap</a> (<a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;rhs) noexcept</td></tr>
+<tr class="memdesc:ad748f6dc18061186ef8cfaa9af10efad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swap with <code>rhs</code>. <br /></td></tr>
+<tr class="separator:ad748f6dc18061186ef8cfaa9af10efad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9981f9ef760e95a3601ebab3be94fddd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#a9981f9ef760e95a3601ebab3be94fddd">remap</a> ()</td></tr>
 <tr class="memdesc:a9981f9ef760e95a3601ebab3be94fddd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Change file descriptor number to an arbitrrary one by duplicating it with <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)</a> system call.  <a href="#a9981f9ef760e95a3601ebab3be94fddd">More...</a><br /></td></tr>
 <tr class="separator:a9981f9ef760e95a3601ebab3be94fddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -210,10 +214,6 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_ostream.html">std::ostream</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#a2c2b1b50202cc5c649006b043791371b">operator&lt;&lt;</a> (<a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_ostream.html">std::ostream</a> &amp;out, const <a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a2c2b1b50202cc5c649006b043791371b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output file descriptor number. <br /></td></tr>
 <tr class="separator:a2c2b1b50202cc5c649006b043791371b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a754b94f576643f330e04474875fba3f9"><td class="memItemLeft" align="right" valign="top"><a id="a754b94f576643f330e04474875fba3f9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1fildes.html#a754b94f576643f330e04474875fba3f9">swap</a> (<a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;lhs, <a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;rhs)</td></tr>
-<tr class="memdesc:a754b94f576643f330e04474875fba3f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specialisation of <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/swap.html">std::swap</a>. <br /></td></tr>
-<tr class="separator:a754b94f576643f330e04474875fba3f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>File descriptor wrapper. </p>
@@ -464,7 +464,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00317">317</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00318">318</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
 
 <p class="reference">References <a class="el" href="classsys_1_1fildes.html#a4ce5138630d3ee6751d8bdc6d3193d0b">close()</a>, and <a class="el" href="classsys_1_1fildes.html#af604ec034852f9b193f48c6492623587">flags()</a>.</p>
 
@@ -802,7 +802,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00306">306</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00307">307</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
 
 <p class="reference">Referenced by <a class="el" href="classsys_1_1two__way__pipe.html#a8819041b746974df01fe84b4c097f95d">sys::two_way_pipe::validate()</a>.</p>
 

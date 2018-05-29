@@ -71,7 +71,7 @@ $(function() {
 <a href="#friends">Friends</a> &#124;
 <a href="unionsys_1_1pipe-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">sys::pipe Union Reference<div class="ingroups"><a class="el" href="group__system.html">System abstractions</a> &raquo; <a class="el" href="group__io.html">IO</a></div></div>  </div>
+<div class="title">sys::pipe Union Reference<div class="ingroups"><a class="el" href="group__system.html">System abstractions</a> &raquo; <a class="el" href="group__io.html">IO</a><a class="el" href="group__system.html">System abstractions</a> &raquo;  &#124; <a class="el" href="group__wrapper.html">Wrappers</a></div></div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -91,6 +91,16 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#aad549e7335573bdf55ae551ae3f9d3b7">pipe</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a> <a class="el" href="unionsys_1_1pipe.html#adcfe28fb7e8a6f45725890cac4ef4d41">in</a>, <a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a> <a class="el" href="unionsys_1_1pipe.html#a8e88641fb420aff7b9db090e8b989217">out</a>) noexcept</td></tr>
 <tr class="memdesc:aad549e7335573bdf55ae551ae3f9d3b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct pipe with existing file descriptors. <br /></td></tr>
 <tr class="separator:aad549e7335573bdf55ae551ae3f9d3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95fc45c307e9bb1ccd4d0f72eb73cced"><td class="memItemLeft" align="right" valign="top"><a id="a95fc45c307e9bb1ccd4d0f72eb73cced"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>pipe</b> (const <a class="el" href="unionsys_1_1pipe.html">pipe</a> &amp;)=delete</td></tr>
+<tr class="separator:a95fc45c307e9bb1ccd4d0f72eb73cced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a41c8cacc5544c1b5adcbc5e3194ed7"><td class="memItemLeft" align="right" valign="top"><a id="a9a41c8cacc5544c1b5adcbc5e3194ed7"></a>
+<a class="el" href="unionsys_1_1pipe.html">pipe</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="unionsys_1_1pipe.html">pipe</a> &amp;)=delete</td></tr>
+<tr class="separator:a9a41c8cacc5544c1b5adcbc5e3194ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceee4aef6cf27d8a9e389e7c58e3693e"><td class="memItemLeft" align="right" valign="top"><a id="aceee4aef6cf27d8a9e389e7c58e3693e"></a>
+<a class="el" href="unionsys_1_1pipe.html">pipe</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#aceee4aef6cf27d8a9e389e7c58e3693e">operator=</a> (<a class="el" href="unionsys_1_1pipe.html">pipe</a> &amp;&amp;rhs) noexcept</td></tr>
+<tr class="memdesc:aceee4aef6cf27d8a9e389e7c58e3693e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-assignment. <br /></td></tr>
+<tr class="separator:aceee4aef6cf27d8a9e389e7c58e3693e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcfe28fb7e8a6f45725890cac4ef4d41"><td class="memItemLeft" align="right" valign="top"><a id="adcfe28fb7e8a6f45725890cac4ef4d41"></a>
 <a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#adcfe28fb7e8a6f45725890cac4ef4d41">in</a> () noexcept</td></tr>
 <tr class="memdesc:adcfe28fb7e8a6f45725890cac4ef4d41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Input file descriptor. <br /></td></tr>
@@ -113,6 +123,10 @@ const <a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&#160;</td><t
 <tr class="memitem:a9e860f8bc462ab986734e6c31f81863d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a9e860f8bc462ab986734e6c31f81863d">close</a> ()</td></tr>
 <tr class="memdesc:a9e860f8bc462ab986734e6c31f81863d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close both pipe file descriptors.  <a href="#a9e860f8bc462ab986734e6c31f81863d">More...</a><br /></td></tr>
 <tr class="separator:a9e860f8bc462ab986734e6c31f81863d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a418bf3cefe022bf9d59b9a18c1a2b666"><td class="memItemLeft" align="right" valign="top"><a id="a418bf3cefe022bf9d59b9a18c1a2b666"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a418bf3cefe022bf9d59b9a18c1a2b666">swap</a> (<a class="el" href="unionsys_1_1pipe.html">pipe</a> &amp;rhs) noexcept</td></tr>
+<tr class="memdesc:a418bf3cefe022bf9d59b9a18c1a2b666"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swap with <code>rhs</code>. <br /></td></tr>
+<tr class="separator:a418bf3cefe022bf9d59b9a18c1a2b666"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>

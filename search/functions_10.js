@@ -60,6 +60,7 @@ var searchData=
   ['probabilities',['probabilities',['http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution/probabilities.html',1,'std::discrete_distribution']]],
   ['probe',['probe',['../classsys_1_1epoll__event.html#a47daccb10e946b06f40948a721864f6e',1,'sys::epoll_event::probe()'],['../structsys_1_1poll__event.html#a37a5ed7b35b6df75d8c30a9b5215e282',1,'sys::poll_event::probe()']]],
   ['process',['process',['../classsys_1_1process.html#a504e36800bcbfea1dbdb8ec753b402bd',1,'sys::process::process(F f, process_flag pf=process_flag::fork)'],['../classsys_1_1process.html#a9abdd9b8f6156b0d18174946ac737776',1,'sys::process::process(pid_type rhs) noexcept'],['../classsys_1_1process.html#a152e331c17ff05c5b04bb3b7a11d1650',1,'sys::process::process(process &amp;&amp;rhs) noexcept']]],
+  ['process_5fgroup',['process_group',['../classsys_1_1process__group.html#a5c597ad159eacb0edb5361341e26aceb',1,'sys::process_group']]],
   ['process_5fgroup_5fid',['process_group_id',['../namespacesys_1_1this__process.html#af1acca19e1d0f11c206a7b0260b4a64b',1,'sys::this_process']]],
   ['promise',['promise',['http://en.cppreference.com/w/cpp/thread/promise/promise.html',1,'std::promise']]],
   ['ptr',['ptr',['../classsys_1_1shared__mem.html#a8a3ae11ecf3ae36896dd6d5b76adfef8',1,'sys::shared_mem::ptr() noexcept'],['../classsys_1_1shared__mem.html#a6442dc07d8e96cdbc091b9620e9d15da',1,'sys::shared_mem::ptr() const noexcept']]],

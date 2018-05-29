@@ -91,7 +91,7 @@ var searchData=
   ['proc_5fstopped',['proc_stopped',['../group__ipc.html#gga0726dbe0775b5d320d6b893c2611fb49afe2d0a6db22af3f390b26f16734da40e',1,'sys']]],
   ['process',['process',['../classsys_1_1process.html',1,'sys::process'],['../classsys_1_1process.html#a504e36800bcbfea1dbdb8ec753b402bd',1,'sys::process::process(F f, process_flag pf=process_flag::fork)'],['../classsys_1_1process.html#a9abdd9b8f6156b0d18174946ac737776',1,'sys::process::process(pid_type rhs) noexcept'],['../classsys_1_1process.html#a152e331c17ff05c5b04bb3b7a11d1650',1,'sys::process::process(process &amp;&amp;rhs) noexcept'],['../namespacesys.html#a0ae486e39cf65cdd8440c46972386dc4a5075140835d0bc504791c76b04c33d2b',1,'sys::process()']]],
   ['process_5fflag',['process_flag',['../namespacesys.html#aaf7db8316eca007c806fc17cfd343dd0',1,'sys']]],
-  ['process_5fgroup',['process_group',['../classsys_1_1process__group.html',1,'sys']]],
+  ['process_5fgroup',['process_group',['../classsys_1_1process__group.html',1,'sys::process_group'],['../classsys_1_1process__group.html#a5c597ad159eacb0edb5361341e26aceb',1,'sys::process_group::process_group()']]],
   ['process_5fgroup_5fid',['process_group_id',['../namespacesys_1_1this__process.html#af1acca19e1d0f11c206a7b0260b4a64b',1,'sys::this_process']]],
   ['process_5fsemaphore',['process_semaphore',['../classsys_1_1process__semaphore.html',1,'sys']]],
   ['profile',['profile',['../group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a7d97481b1fe66f4b51db90da7e794d9f',1,'sys']]],

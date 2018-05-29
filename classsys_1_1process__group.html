@@ -92,6 +92,20 @@ typedef <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5c597ad159eacb0edb5361341e26aceb"><td class="memItemLeft" align="right" valign="top"><a id="a5c597ad159eacb0edb5361341e26aceb"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process__group.html#a5c597ad159eacb0edb5361341e26aceb">process_group</a> (<a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;&amp;rhs)=default</td></tr>
+<tr class="memdesc:a5c597ad159eacb0edb5361341e26aceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-constructor. <br /></td></tr>
+<tr class="separator:a5c597ad159eacb0edb5361341e26aceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63768c148bb06fa02899a7c4bf047d16"><td class="memItemLeft" align="right" valign="top"><a id="a63768c148bb06fa02899a7c4bf047d16"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>process_group</b> (const <a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;)=delete</td></tr>
+<tr class="separator:a63768c148bb06fa02899a7c4bf047d16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10cbce92a3bb645667c4603554d8be57"><td class="memItemLeft" align="right" valign="top"><a id="a10cbce92a3bb645667c4603554d8be57"></a>
+<a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator=</b> (const <a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;)=delete</td></tr>
+<tr class="separator:a10cbce92a3bb645667c4603554d8be57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f123dc4a28985f0c494e8d6cdaeb314"><td class="memItemLeft" align="right" valign="top"><a id="a3f123dc4a28985f0c494e8d6cdaeb314"></a>
+<a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process__group.html#a3f123dc4a28985f0c494e8d6cdaeb314">operator=</a> (<a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;&amp;rhs)</td></tr>
+<tr class="memdesc:a3f123dc4a28985f0c494e8d6cdaeb314"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move-assignment. <br /></td></tr>
+<tr class="separator:a3f123dc4a28985f0c494e8d6cdaeb314"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00ea74ffcc13dcba94cffa6fa42fbb42"><td class="memTemplParams" colspan="2"><a id="a00ea74ffcc13dcba94cffa6fa42fbb42"></a>
 template&lt;class F &gt; </td></tr>
 <tr class="memitem:a00ea74ffcc13dcba94cffa6fa42fbb42"><td class="memTemplItemLeft" align="right" valign="top">const <a class="el" href="classsys_1_1process.html">process</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1process__group.html#a00ea74ffcc13dcba94cffa6fa42fbb42">emplace</a> (F &amp;&amp;childmain, <a class="el" href="namespacesys.html#aaf7db8316eca007c806fc17cfd343dd0">process_flag</a> pf=process_flag::fork)</td></tr>
@@ -155,6 +169,10 @@ const <a class="el" href="classsys_1_1process.html">process</a> &amp;&#160;</td>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process__group.html#a8e7d624d60c5a74f923bfe49ba9e069a">empty</a> () const noexcept</td></tr>
 <tr class="memdesc:a8e7d624d60c5a74f923bfe49ba9e069a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the group is empty. <br /></td></tr>
 <tr class="separator:a8e7d624d60c5a74f923bfe49ba9e069a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6de0ddb349b3dfef88265f331e9244ec"><td class="memItemLeft" align="right" valign="top"><a id="a6de0ddb349b3dfef88265f331e9244ec"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process__group.html#a6de0ddb349b3dfef88265f331e9244ec">swap</a> (<a class="el" href="classsys_1_1process__group.html">process_group</a> &amp;rhs)</td></tr>
+<tr class="memdesc:a6de0ddb349b3dfef88265f331e9244ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Swap with <code>rhs</code>. <br /></td></tr>
+<tr class="separator:a6de0ddb349b3dfef88265f331e9244ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
@@ -168,7 +186,7 @@ Friends</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00040">40</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00039">39</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="abe4bcd7eed4cf32aa7b0fdf4c282d39d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe4bcd7eed4cf32aa7b0fdf4c282d39d">&#9670;&nbsp;</a></span>send()</h2>
@@ -203,7 +221,7 @@ Friends</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/killpg.2.html">killpg(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00123">123</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00136">136</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
 
 <p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
@@ -242,7 +260,7 @@ Friends</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00134">134</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00147">147</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
 
 <p class="reference">References <a class="el" href="classsys_1_1process__group.html#abe4bcd7eed4cf32aa7b0fdf4c282d39d">send()</a>, and <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">sys::terminate</a>.</p>
 
@@ -301,7 +319,7 @@ template&lt;class Lock , class F &gt; </div>
 <dd>
 <a href="http://man7.org/linux/man-pages/man2/waitid.2.html">waitid(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00091">91</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process__group_source.html#l00104">104</a> of file <a class="el" href="process__group_source.html">process_group</a>.</p>
 
 </div>
 </div>
