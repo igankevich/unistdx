@@ -363,6 +363,11 @@ namespace sys {
 		receive_fds(fd_type* data, size_t n);
 		#endif
 
+		/// Specialisation of \link std::swap\endlink.
+		inline friend void swap(socket& lhs, socket& rhs) {
+			std::swap(lhs._fd, rhs._fd);
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const socket& rhs);
 
