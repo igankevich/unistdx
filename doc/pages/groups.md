@@ -1,5 +1,3 @@
-/**
-
 \defgroup concepts C++ concepts
 \brief Group classes and functions by concept.
 
@@ -46,9 +44,7 @@ Sentry objects that enforce invariants with
 \defgroup exception Exceptions
 \brief Exception classes.
 \ingroup concepts
-*/
 
-/**
 
 \defgroup system System abstractions
 \brief System calls and system structures wrappers.
@@ -76,7 +72,3 @@ Sentry objects that enforce invariants with
 \defgroup wrapper Wrappers
 \brief Wrappers for system structures.
 \ingroup system
-
-*/
-
-// vim:filetype=cpp

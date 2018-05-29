@@ -1,9 +1,3 @@
-/**
-
 \page tutorials Tutorials
 
 WIP
-
-*/
-
-// vim:filetype=cpp

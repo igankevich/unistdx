@@ -1,8 +1,3 @@
-/**
-
 \page advanced Advanced topics
 
 WIP
-*/
-
-// vim:filetype=cpp
