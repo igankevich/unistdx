@@ -27,6 +27,7 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\throw bad_call
+	\see \man{kill,2}
 	*/
 	inline void
 	send(signal s, pid_type p) {
@@ -35,11 +36,17 @@ namespace sys {
 
 	namespace this_process {
 
-		/// Get calling process ID.
+		/**
+		\brief Get calling process ID.
+		\see \man{getpid,2}
+		*/
 		inline pid_type
 		id() noexcept { return ::getpid(); }
 
-		/// Get calling process' parent ID.
+		/**
+		\brief Get calling process' parent ID.
+		\see \man{getppid,2}
+		*/
 		inline pid_type
 		parent_id() noexcept { return ::getppid(); }
 
@@ -47,6 +54,7 @@ namespace sys {
 		\brief Fork child process preventing race conditions by
 		locking global fork mutex (if needed).
 		\throws bad_call
+		\see \man{fork,2}
 		\details
 		The mutex is not locked on systems supporting close-on-exec and
 		non-blocking file descriptor flags.
@@ -67,6 +75,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\throws bad_call
+		\see \man{kill,2}
 		*/
 		inline void
 		send(signal s) {
@@ -78,6 +87,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\throws bad_call
+		\see \man{chdir,2}
 		*/
 		inline void
 		workdir(const char* wd) {
@@ -87,6 +97,7 @@ namespace sys {
 		/**
 		\brief Set calling process group ID.
 		\throws bad_call
+		\see \man{setpgid,2}
 		*/
 		inline void
 		set_group_id(pid_type rhs) {
@@ -97,6 +108,7 @@ namespace sys {
 		/**
 		\brief Set calling process name. Useful for debugging multi-threaded programmes.
 		\throws bad_call
+		\see \man{prctl,2}
 		*/
 		inline void
 		set_name(const char* name) {
@@ -106,6 +118,7 @@ namespace sys {
 		/**
 		\brief Get calling process name.
 		\throws bad_call
+		\see \man{prctl,2}
 		*/
 		inline std::string
 		name() {
@@ -178,6 +191,8 @@ namespace sys {
 		/**
 		\brief Construct new process by forking a child with \p f as main function.
 		\throws bad_call
+		\see \man{clone,2}
+		\see \man{fork,2}
 		*/
 		template<class F>
 		inline explicit
@@ -241,6 +256,7 @@ namespace sys {
 		/**
 		Gracefully terminate the process by sending \link signal::terminate\endlink
 		signal.
+		\see \man{kill,2}
 		*/
 		inline void
 		terminate() {
@@ -252,6 +268,7 @@ namespace sys {
 		Forcibly terminate the process by sending \link signal::kill\endlink
 		signal.
 		\throws bad_call
+		\see \man{kill,2}
 		*/
 		inline void
 		kill() {
@@ -263,6 +280,7 @@ namespace sys {
 		Interrupt the process by sending \link signal::keyboard_interrupt\endlink
 		signal.
 		\throws bad_call
+		\see \man{kill,2}
 		*/
 		inline void
 		interrupt() {
@@ -273,6 +291,7 @@ namespace sys {
 		\brief
 		Interrupt the process by sending \link signal::hang_up\endlink signal.
 		\throws bad_call
+		\see \man{kill,2}
 		*/
 		inline void
 		hang_up() {
@@ -295,6 +314,7 @@ namespace sys {
 		\throws bad_call if system error occurs, except
 		\c std::errc::interrupted
 		\see std::errc
+		\see \man{waitpid,2}
 		*/
 		inline sys::proc_status
 		wait() {
@@ -327,7 +347,10 @@ namespace sys {
 			return this->_pid;
 		}
 
-		/// Get process group ID.
+		/**
+		\brief Get process group ID.
+		\see \man{getpgid,2}
+		*/
 		inline pid_type
 		group_id() const noexcept {
 			return ::getpgid(this->_pid);
@@ -336,6 +359,7 @@ namespace sys {
 		/**
 		\brief Set process group ID.
 		\throws bad_call
+		\see \man{setpgid,2}
 		*/
 		inline void
 		set_group_id(pid_type rhs) const {

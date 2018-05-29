@@ -57,7 +57,7 @@ namespace sys {
 		/**
 		\brief Construct byte buffer with size \p size.
 		\throws bad_call
-		\see \man{mremap,2}
+		\see \man{mmap,2}
 		\see \man{madvise,2}
 		*/
 		explicit

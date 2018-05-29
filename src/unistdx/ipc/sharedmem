@@ -51,6 +51,7 @@ namespace sys {
 		/**
 		\brief Get status for shared memory segment with ID \p id.
 		\throws bad_call
+		\see \man{shmctl,2}
 		*/
 		inline explicit
 		sharedmem_stat(shm_type id) {
@@ -160,13 +161,19 @@ namespace sys {
 		\brief
 		Create and attach shared memory segment with mode \p mode
 		and minimum size \p guaranteed_size.
+		\throws bad_call
+		\see \man{shmget,2}
+		\see \man{shmat,2}
 		*/
 		inline
 		shared_mem(mode_type mode, size_type guaranteed_size) {
 			this->open_as_owner(mode|ipc::create, guaranteed_size);
 		}
 
-		/// Attach shared memory segment with id \p shm.
+		/**
+		\brief Attach shared memory segment with id \p shm.
+		\see \man{shmat,2}
+		*/
 		inline explicit
 		shared_mem(shm_type shm) {
 			this->open_as_user(shm);
@@ -324,6 +331,8 @@ namespace sys {
 		/**
 		\brief Attach shared memory segment.
 		\throws bad_call
+		\see \man{shmat,2}
+		\see \man{shmctl,2}
 		*/
 		inline void
 		open_as_user(shm_type id) {
@@ -335,6 +344,8 @@ namespace sys {
 		/**
 		\brief Create and attach shared memory segment.
 		\throws bad_call
+		\see \man{shmget,2}
+		\see \man{shmat,2}
 		*/
 		inline void
 		open_as_owner(mode_type mode, size_type size) {
@@ -348,6 +359,8 @@ namespace sys {
 		/**
 		\brief Detach and remove (if owner) shared memory segment.
 		\throws bad_call
+		\see \man{shmdt,2}
+		\see \man{shmctl,2}
 		*/
 		inline void
 		close() {

@@ -65,6 +65,7 @@ namespace sys {
 		\brief
 		Construct semaphore with specified \p mode.
 		\throws bad_call
+		\see \man{semget,2}
 		\details The semaphore is owned by the calling process/thread.
 		*/
 		inline explicit
@@ -87,7 +88,10 @@ namespace sys {
 		_owner(false)
 		{}
 
-		/// Remove semaphore (if owner). Terminates on system error.
+		/**
+		\brief Remove semaphore (if owner). Terminates on system error.
+		\see \man{semctl,2}
+		*/
 		inline
 		~sysv_semaphore() {
 			if (this->_owner) {
@@ -130,6 +134,7 @@ namespace sys {
 		\link sysv_semaphore::notify_one\endlink
 		or \link sysv_semaphore::notify_all\endlink on this semaphore.
 		\throws bad_call
+		\see \man{semop,2}
 		*/
 		inline void
 		wait() {
@@ -139,6 +144,7 @@ namespace sys {
 		/**
 		\brief Notify one process that wait on this semaphore.
 		\throws bad_call
+		\see \man{semop,2}
 		*/
 		inline void
 		notify_one() {
@@ -148,6 +154,7 @@ namespace sys {
 		/**
 		\brief Notify all processes that wait on this semaphore.
 		\throws bad_call
+		\see \man{semop,2}
 		*/
 		inline void
 		notify_all() {
@@ -157,6 +164,7 @@ namespace sys {
 		/**
 		\brief Notify \p n processes that wait on this semaphore.
 		\throws bad_call
+		\see \man{semop,2}
 		*/
 		inline void
 		notify_all(int n) {
@@ -166,6 +174,7 @@ namespace sys {
 		/**
 		\brief Wait on the semaphore unlocking \p lock for the duration of the wait.
 		\throws bad_call
+		\see \man{semop,2}
 		*/
 		template<class Lock>
 		void wait(Lock& lock) {
@@ -178,6 +187,7 @@ namespace sys {
 		Wait on the semaphore unlocking \p lock for the duration of the wait until
 		predicate \p pred becomes true.
 		\throws bad_call
+		\see \man{semop,2}
 		\details
 		\arg If \p pred is true upon the call to this method
 		no waiting or unlocking is done
@@ -196,6 +206,7 @@ namespace sys {
 		Wait on the semaphore specified amount of time \p dur
 		unlocking \p lock for the duration of the wait.
 		\throws bad_call
+		\see \man{semtimedop,2}
 		*/
 		template<class Lock, class Rep, class Period>
 		std::cv_status
@@ -216,6 +227,7 @@ namespace sys {
 		predicate \p pred becomes true or timeout occurs.
 		\return predicate value
 		\throws bad_call
+		\see \man{semtimedop,2}
 		\details
 		\arg If \p pred is true upon the call to this method
 		no waiting or unlocking is done
@@ -237,6 +249,7 @@ namespace sys {
 		Wait on the semaphore until specified time \p tp
 		unlocking \p lock for the duration of the wait.
 		\throws bad_call
+		\see \man{semtimedop,2}
 		*/
 		template<class Lock, class Duration>
 		std::cv_status
@@ -251,6 +264,7 @@ namespace sys {
 		predicate \p pred becomes true.
 		\return predicate value
 		\throws bad_call
+		\see \man{semtimedop,2}
 		\details
 		\arg If \p pred is true upon the call to this method
 		no waiting or unlocking is done
@@ -267,6 +281,7 @@ namespace sys {
 		Wait on the semaphore until specified time \p tp
 		unlocking \p lock for the duration of the wait.
 		\throws bad_call
+		\see \man{semtimedop,2}
 		*/
 		template<class Lock, class Clock, class Duration>
 		std::cv_status
@@ -281,6 +296,7 @@ namespace sys {
 		predicate \p pred becomes true or timeout occurs.
 		\return predicate value
 		\throws bad_call
+		\see \man{semtimedop,2}
 		\details
 		\arg If \p pred is true upon the call to this method
 		no waiting or unlocking is done
@@ -361,20 +377,29 @@ namespace sys {
 			this->destroy();
 		}
 
-		/// \copydoc sysv_semaphore::wait()
+		/**
+		\copydoc sysv_semaphore::wait()
+		\see \man{sem_wait,2}
+		*/
 		inline void
 		wait() {
 			UNISTDX_CHECK(::sem_wait(&_sem));
 		}
 
-		/// \copydoc sysv_semaphore::wait(Lock&)
+		/**
+		\copydoc sysv_semaphore::wait(Lock&)
+		\see \man{sem_wait,2}
+		*/
 		template<class Lock>
 		void wait(Lock& lock) {
 			unlock_guard<Lock> unlock(lock);
 			this->wait();
 		}
 
-		/// \copydoc sysv_semaphore::wait(Lock&,Pred)
+		/**
+		\copydoc sysv_semaphore::wait(Lock&,Pred)
+		\see \man{sem_wait,2}
+		*/
 		template<class Lock, class Pred>
 		void wait(Lock& lock, Pred pred) {
 			while (!pred()) {
@@ -385,6 +410,7 @@ namespace sys {
 		#if defined(UNISTDX_HAVE_SEM_TIMEDWAIT)
 		/**
 		\copydoc sysv_semaphore::wait_for(Lock&,const std::chrono::duration<Rep,Period>&)
+		\see \man{sem_timedwait,2}
 		*/
 		template<class Lock, class Rep, class Period>
 		std::cv_status
@@ -394,6 +420,7 @@ namespace sys {
 
 		/**
 		\copydoc sysv_semaphore::wait_for(Lock&,const std::chrono::duration<Rep,Period>&,Pred)
+		\see \man{sem_timedwait,2}
 		*/
 		template<class Lock, class Rep, class Period, class Pred>
 		bool
@@ -406,6 +433,7 @@ namespace sys {
 		Wait on the semaphore until specified time \p tp
 		unlocking \p lock for the duration of the wait.
 		\throws bad_call
+		\see \man{sem_timedwait,2}
 		*/
 		template<class Lock, class Duration>
 		std::cv_status
@@ -434,6 +462,7 @@ namespace sys {
 		predicate \p pred becomes true.
 		\return predicate value
 		\throws bad_call
+		\see \man{sem_timedwait,2}
 		\details
 		\arg If \p pred is true upon the call to this method
 		no waiting or unlocking is done
@@ -452,6 +481,7 @@ namespace sys {
 
 		/**
 		\copydoc sysv_semaphore::wait_until(Lock&,const std::chrono::time_point<Clock,Duration>&)
+		\see \man{sem_timedwait,2}
 		*/
 		template<class Lock, class Clock, class Duration>
 		std::cv_status

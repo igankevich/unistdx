@@ -111,6 +111,7 @@ namespace sys {
 		/**
 		\brief Construct the socket and bind on \p bind_addr and listen.
 		\throws bad_call
+		\see \man{socket,2}
 		*/
 		explicit
 		socket(const endpoint& bind_addr);
@@ -120,6 +121,7 @@ namespace sys {
 		Construct the socket, bind on \p bind_addr and connect
 		to a process listening on \p conn_addr.
 		\throws bad_call
+		\see \man{socket,2}
 		*/
 		socket(const endpoint& bind_addr, const endpoint& conn_addr);
 
@@ -128,6 +130,7 @@ namespace sys {
 		Construct the socket with protocol family \p family, type \p type
 		and protocol \p proto.
 		\throws bad_call
+		\see \man{socket,2}
 		*/
 		socket(
 			family_type family,
@@ -151,6 +154,7 @@ namespace sys {
 		/**
 		\brief Bind on socket address \p e.
 		\throws bad_call
+		\see \man{bind,2}
 		*/
 		void
 		bind(const endpoint& e);
@@ -159,6 +163,7 @@ namespace sys {
 		\brief Connect to socket address \p e.
 		\throws bad_call if system error occurs, except
 		\c std::errc::operation_in_progress
+		\see \man{connect,2}
 		\see std::errc
 		*/
 		void
@@ -167,6 +172,7 @@ namespace sys {
 		/**
 		\brief Listen on previously binded socket address.
 		\throws bad_call
+		\see \man{listen,2}
 		*/
 		void
 		listen();
@@ -176,6 +182,7 @@ namespace sys {
 		\date 2018-05-24
 		\author Ivan Gankevich
 		\throws bad_call
+		\see \man{accept4,2}
 		\param[out] sock socket that initiated a connection (client)
 		\param[out] addr sockt address of the client
 		*/
@@ -186,14 +193,17 @@ namespace sys {
 		\brief Shutdown communication on the socket, but do not close it.
 		\throws bad_call if system error occurs, except
 		\c std::errc::not_connected and \c std::errc::not_supported
+		\see \man{shutdown,2}
 		\see std::errc
 		*/
 		void
 		shutdown(shutdown_how how);
 
 		/**
-		\brief Close the socket.
+		\brief Shutdown and close the socket.
 		\throws bad_call
+		\see \man{shutdown,2}
+		\see \man{close,2}
 		*/
 		void
 		close();
@@ -201,6 +211,7 @@ namespace sys {
 		/**
 		\brief Activate socket option.
 		\throws bad_call
+		\see \man{setsockopt,2}
 		*/
 		void
 		setopt(option opt);
@@ -209,6 +220,8 @@ namespace sys {
 		/**
 		\brief Set TCP user timeout option (see \rfc{5482}).
 		\throws bad_call
+		\see \man{setsockopt,2}
+		\see \man{tcp,7}
 		*/
 		void
 		set_user_timeout(const duration& d);
@@ -216,7 +229,7 @@ namespace sys {
 
 		/**
 		\brief \copybrief name
-		\throws bad_call
+		\see \man{getsockname,2}
 		\details
 		The same as \link name\endlink, but does not throw.
 		*/
@@ -231,6 +244,7 @@ namespace sys {
 		/**
 		\brief Get bound socket address.
 		\throws bad_call
+		\see \man{getsockname,2}
 		*/
 		inline endpoint
 		name() const {
@@ -243,6 +257,7 @@ namespace sys {
 		/**
 		\brief Get address of the client, connected to the socket.
 		\throws bad_call
+		\see \man{getpeername,2}
 		*/
 		inline endpoint
 		peer_name() const {
@@ -255,6 +270,7 @@ namespace sys {
 		/**
 		\brief Send low-level message \p hdr through the socket.
 		\throws_bad_call_non_blocking
+		\see \man{sendmsg,2}
 		*/
 		inline ssize_t
 		send(const message_header& hdr, int flags=0) const {
@@ -268,6 +284,7 @@ namespace sys {
 		/**
 		\brief Receive low-level message \p hdr over the socket.
 		\throws_bad_call_non_blocking
+		\see \man{recvmsg,2}
 		*/
 		inline ssize_t
 		receive(message_header& hdr, int flags=0) const {
@@ -283,6 +300,7 @@ namespace sys {
 		Read \p n bytes from the socket and store them in buffer
 		pointed by \p buf.
 		\throws_bad_call_non_blocking
+		\see \man{recv,2}
 		*/
 		inline ssize_t
 		receive(void* buf, size_t n, int flags=0) const {
@@ -297,9 +315,10 @@ namespace sys {
 		\brief
 		Write \p n bytes from buffer pointed by \p buf to the socket.
 		\throws_bad_call_non_blocking
+		\see \man{send,2}
 		*/
 		inline ssize_t
-		send(const void* buf, size_t n, int flags=0) const noexcept {
+		send(const void* buf, size_t n, int flags=0) const {
 			ssize_t ret = ::send(this->_fd, buf, n, flags);
 			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
 				UNISTDX_THROW_BAD_CALL();
@@ -310,8 +329,10 @@ namespace sys {
 		#if defined(UNISTDX_HAVE_SO_PEERCRED)
 		/**
 		\brief
-		Get UID, GID and PID of the process, that connected to this socket (client).
+		Get UID, GID and PID of the process, that is connected
+		to this socket (client).
 		\throws bad_call
+		\see \man{getsockopt,2}
 		\note The method works only for unix domain sockets.
 		*/
 		user_credentials
@@ -323,6 +344,8 @@ namespace sys {
 		\brief
 		Send an array of \p n file descriptors pointed by \p data.
 		\throws bad_call
+		\see \man{cmsg,3}
+		\see \man{unix,7}
 		\note The method works only for unix domain sockets.
 		*/
 		void
@@ -332,6 +355,8 @@ namespace sys {
 		\brief
 		Receive an array of \p n file descriptors pointed by \p data.
 		\throws bad_call
+		\see \man{cmsg,3}
+		\see \man{unix,7}
 		\note The method works only for unix domain sockets.
 		*/
 		void
@@ -376,6 +401,8 @@ namespace sys {
 	without manually sending and receiving this message provided that
 	\link socket::pass_credentials\endlink socket option is set.
 	\ingroup net
+	\see \man{cmsg,3}
+	\see \man{unix,7}
 	*/
 	void
 	send_credentials(socket& sock, const void* data, size_t n);
@@ -387,6 +414,8 @@ namespace sys {
 	without manually sending and receiving this message provided that
 	\link socket::pass_credentials\endlink socket option is set.
 	\ingroup net
+	\see \man{cmsg,3}
+	\see \man{unix,7}
 	*/
 	void
 	receive_credentials(socket& sock, message_header& h, void* data, size_t n);

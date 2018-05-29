@@ -152,6 +152,7 @@ namespace sys {
 		\author Ivan Gankevich
 		\ingroup ipc
 		\throws bad_call
+		\see \man{sigaction,2}
 		*/
 		inline void
 		bind_signal(signal sig, const signal_action& action) {
@@ -164,6 +165,7 @@ namespace sys {
 		\author Ivan Gankevich
 		\ingroup ipc
 		\throws bad_call
+		\see \man{sigaction,2}
 		\details
 		By default any signal for which callback function
 		is not set may kill the process. This routine allows to ignore
@@ -189,6 +191,7 @@ namespace sys {
 		/**
 		\brief Construct empty signal set.
 		\throws bad_call
+		\see \man{sigemptyset,3}
 		*/
 		inline
 		sigset_type() {
@@ -198,6 +201,7 @@ namespace sys {
 		/**
 		\brief Construct signal set containing only signal \p s.
 		\throws bad_call
+		\see \man{sigaddset,3}
 		*/
 		inline explicit
 		sigset_type(signal_type s):
@@ -208,6 +212,7 @@ namespace sys {
 		/**
 		\brief Call \p func for each signal in the set.
 		\throws bad_call
+		\see \man{sigismember,3}
 		*/
 		template<class F>
 		void
@@ -239,6 +244,7 @@ namespace sys {
 		/**
 		\brief Construct signal guard that blocks all signals in set \p s.
 		\throws bad_call
+		\see \man{sigprocmask,2}
 		*/
 		inline explicit
 		signal_guard(sigset_type s):
@@ -259,6 +265,7 @@ namespace sys {
 		/**
 		\brief Block all specified signals.
 		\throws bad_call
+		\see \man{sigprocmask,2}
 		*/
 		inline void
 		lock() {
@@ -268,6 +275,7 @@ namespace sys {
 		/**
 		\brief Unblock all specified signals.
 		\throws bad_call
+		\see \man{sigprocmask,2}
 		*/
 		inline void
 		unlock() {

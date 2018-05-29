@@ -34,13 +34,17 @@ namespace sys {
 		/**
 		\brief Calls \man{getifaddrs,3}.
 		\throws bad_call
+		\see \man{getifaddrs,3}
 		*/
 		inline
 		ifaddrs() {
 			UNISTDX_CHECK(::getifaddrs(&this->_addrs));
 		}
 
-		/// Calls \man{freeifaddrs,3}.
+		/**
+		\brief Calls \man{freeifaddrs,3}.
+		\see \man{freeifaddrs,3}
+		*/
 		inline
 		~ifaddrs() noexcept {
 			if (this->_addrs) {

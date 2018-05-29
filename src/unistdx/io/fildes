@@ -117,6 +117,7 @@ namespace sys {
 		/**
 		\brief Close file descriptor.
 		\throws bad_call if \man{close,2} system call fails
+		\see \man{close,2}
 		*/
 		inline void
 		close() {
@@ -130,6 +131,7 @@ namespace sys {
 		\brief Read \p n bytes from file descriptor and store them in the array
 		pointed by \p buf.
 		\throws_bad_call_non_blocking
+		\see \man{read,2}
 		*/
 		inline ssize_t
 		read(void* buf, size_t n) const {
@@ -144,6 +146,7 @@ namespace sys {
 		\brief Write \p n bytes to file descriptor copying them from the array
 		pointer by \p buf.
 		\throws_bad_call_non_blocking
+		\see \man{write,2}
 		*/
 		inline ssize_t
 		write(const void* buf, size_t n) const {
@@ -163,6 +166,7 @@ namespace sys {
 		/**
 		\brief Get file descriptor open flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline open_flag
 		flags() const {
@@ -172,6 +176,7 @@ namespace sys {
 		/**
 		\brief Get file descriptor flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline flag_type
 		fd_flags() const {
@@ -181,6 +186,7 @@ namespace sys {
 		/**
 		\brief Set file descriptor open flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline void
 		setf(open_flag rhs) {
@@ -190,6 +196,7 @@ namespace sys {
 		/**
 		\brief Unset file descriptor open flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline void
 		unsetf(open_flag rhs) {
@@ -200,6 +207,7 @@ namespace sys {
 		/**
 		\brief Set file descriptor pipe flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline void
 		setf(pipe_flag rhs) {
@@ -209,6 +217,7 @@ namespace sys {
 		/**
 		\brief Unset file descriptor pipe flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline void
 		unsetf(pipe_flag rhs) {
@@ -219,6 +228,7 @@ namespace sys {
 		/**
 		\brief Set file descriptor flags.
 		\throws bad_call
+		\see \man{fcntl,2}
 		*/
 		inline void
 		setf(fd_flag rhs) {
@@ -271,6 +281,7 @@ namespace sys {
 		Change file descriptor number to an arbitrrary one
 		by duplicating it with \man{dup,2} system call.
 		\throws bad_call
+		\see \man{dup,2}
 		*/
 		void
 		remap();
@@ -280,6 +291,7 @@ namespace sys {
 		Change file descriptor number to \p new_fd
 		by duplicating it with \man{dup2,2} system call.
 		\throws bad_call
+		\see \man{dup2,2}
 		*/
 		void
 		remap(fd_type new_fd);

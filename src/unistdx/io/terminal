@@ -14,6 +14,7 @@ namespace sys {
 	\brief Returns true, if file descriptor \p f refers to a terminal.
 	\ingroup io
 	\throws bad_call
+	\see \man{isatty,3}
 	*/
 	inline bool
 	is_a_terminal(sys::fd_type f) {

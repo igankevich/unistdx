@@ -24,13 +24,17 @@ namespace sys {
 
 	namespace this_process {
 
-		/// Get real UID of the current process.
+		/**
+		\brief Get real UID of the current process.
+		\see \man{getuid,2}
+		*/
 		inline uid_type
 		user() noexcept { return ::getuid(); }
 
 		/**
 		\brief Change process' user.
 		\throws bad_call
+		\see \man{setuid,2}
 		\arg Set both real and effective UID of the current process (if priviledged).
 		\arg Set only effective UID of the current process (if unpriviledged).
 		*/
@@ -39,17 +43,24 @@ namespace sys {
 			UNISTDX_CHECK(::setuid(rhs));
 		}
 
-		/// Get effective UID of the current process.
+		/**
+		\brief Get effective UID of the current process.
+		\see \man{geteuid,2}
+		*/
 		inline uid_type
 		effective_user() noexcept { return ::geteuid(); }
 
-		/// Get real GID of the current process.
+		/**
+		\brief Get real GID of the current process.
+		\see \man{getgid,2}
+		*/
 		inline gid_type
 		group() noexcept { return ::getgid(); }
 
 		/**
 		\brief Change process' group.
 		\throws bad_call
+		\see \man{setgid,2}
 		\arg Set both real and effective GID of the current process (if priviledged).
 		\arg Set only effective GID of the current process (if unpriviledged).
 		*/
@@ -58,7 +69,10 @@ namespace sys {
 			UNISTDX_CHECK(::setgid(rhs));
 		}
 
-		/// Get effective GID of the current process.
+		/**
+		\brief Get effective GID of the current process.
+		\see \man{getegid,2}
+		*/
 		inline gid_type
 		effective_group() noexcept { return ::getegid(); }
 
@@ -68,6 +82,8 @@ namespace sys {
 		\author Ivan Gankevich
 		\ingroup ipc
 		\throws bad_call
+		\see \man{setuid,2}
+		\see \man{setgid,2}
 		\details
 		\arg Sets GID first.
 		\arg Reverts process UID and GID upon error.

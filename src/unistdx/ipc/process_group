@@ -12,13 +12,17 @@ namespace sys {
 
 	namespace this_process {
 
-		/// Get process group ID of the calling process.
+		/**
+		\brief Get process group ID of the calling process.
+		\see \man{getpgrp,2}
+		*/
 		inline pid_type
 		process_group_id() noexcept { return ::getpgrp(); }
 
 		/**
 		\brief Set process group ID of the calling process.
 		\throws bad_call
+		\see \man{setpgid,2}
 		*/
 		inline void
 		set_process_group_id(pid_type rhs) {
@@ -80,6 +84,7 @@ namespace sys {
 		\throws bad_call if system error occurs, except
 		\c std::errc::interrupted
 		\see std::errc
+		\see \man{waitid,2}
 		*/
 		template<class Lock, class F>
 		void
@@ -112,6 +117,7 @@ namespace sys {
 		/**
 		\brief Send signal \p s to all processes in the group.
 		\throws bad_call
+		\see \man{killpg,2}
 		*/
 		inline void
 		send(signal s) {

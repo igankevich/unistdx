@@ -282,7 +282,7 @@ sys::socket::send_fds(const sys::fd_type* data, size_t n) {
 	h.msg_namelen = 0;
 	sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
 	std::copy_n(data, n, fds);
-	UNISTDX_CHECK(this->send(h, 0));
+	this->send(h, 0);
 }
 
 void
@@ -304,7 +304,7 @@ sys::socket::receive_fds(sys::fd_type* data, size_t n) {
 	h.msg_iovlen = 1;
 	h.msg_name = nullptr;
 	h.msg_namelen = 0;
-	UNISTDX_CHECK(this->receive(h))
+	this->receive(h);
 	if (m.h.cmsg_level == SOL_SOCKET && m.h.cmsg_type == SCM_RIGHTS) {
 		sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
 		std::copy_n(fds, n, data);

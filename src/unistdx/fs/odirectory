@@ -97,6 +97,8 @@ namespace sys {
 		/**
 		\brief Copy directory entry \p rhs to output directory of the stream.
 		\throws bad_call
+		\see \man{mkdir,2}
+		\see copy_file
 		*/
 		inline basic_odirectory&
 		operator<<(const pathentry& rhs) {

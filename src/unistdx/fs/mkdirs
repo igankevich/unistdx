@@ -17,6 +17,7 @@ namespace sys {
 	\param[in] m file mode of directories to be created
 	\param[in] offset character offset in path name to start
 	creating directories from
+	\see \man{mkdir,2}
 	\details Create directories assuming all path components that come
 	before \p offset characters from the beginning of \p dir exist.
 	*/
@@ -33,6 +34,7 @@ namespace sys {
 	\param[in] root path, relative to which directories are created
 	\param[in] relative_path path, components of which are created
 	\param[in] m file mode of directories to be created
+	\see \man{mkdir,2}
 	\details Create directories relative to \p root assuming that
 	the root exists.
 	*/

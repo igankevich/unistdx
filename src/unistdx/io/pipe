@@ -10,6 +10,7 @@ namespace sys {
 	\date 2018-05-23
 	\author Ivan Gankevich
 	\ingroup io
+	\see \man{pipe2,2}
 	*/
 	union pipe {
 
@@ -22,6 +23,7 @@ namespace sys {
 		/**
 		\brief Construct pipe with \man{pipe,2} system call.
 		\throws bad_call
+		\see \man{pipe2,2}
 		\details
 		Both file descriptors are in non-blocking mode
 		and have close-on-exec flag set.
@@ -73,12 +75,14 @@ namespace sys {
 		/**
 		\brief Create pipe with \man{pipe,2} system call.
 		\throws bad_call
+		\see \man{pipe2,2}
 		*/
 		void open();
 
 		/**
 		\brief Close both pipe file descriptors.
 		\throws bad_call
+		\see \man{close,2}
 		*/
 		void close();
 

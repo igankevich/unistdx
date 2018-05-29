@@ -58,6 +58,8 @@ namespace sys {
 		/**
 		\brief Construct event poller with \p maxevent number of events.
 		\throws bad_call
+		\see \man{epoll_ctl,2}
+		\see \man{epoll_create1,2}
 		*/
 		inline explicit
 		event_poller(int maxevents=4096/sizeof(epoll_event)):
@@ -116,6 +118,7 @@ namespace sys {
 		file descriptor \p fd and event mask \p ev and
 		add it to the poller.
 		\throws bad_call
+		\see \man{epoll_ctl,2}
 		*/
 		inline void
 		emplace(fd_type fd, event ev) {
@@ -125,13 +128,17 @@ namespace sys {
 		/**
 		\brief Add file descriptor-event mask pair to the poller.
 		\throws bad_call
+		\see \man{epoll_ctl,2}
 		*/
 		inline void
 		insert(const epoll_event& ev) {
 			this->xadd(ev);
 		}
 
-		/// Update event mask for existing file descriptor.
+		/**
+		\brief Update event mask for existing file descriptor.
+		\see \man{epoll_ctl,2}
+		*/
 		inline void
 		replace(const epoll_event& ev) {
 			this->xmod(ev);
@@ -140,6 +147,7 @@ namespace sys {
 		/**
 		\brief Remove file descriptor \p fd from the poller.
 		\throws bad_call
+		\see \man{epoll_ctl,2}
 		*/
 		inline void
 		erase(fd_type fd) {
@@ -149,6 +157,7 @@ namespace sys {
 		/**
 		\brief Remove file descriptor-event mask pair to the poller.
 		\throws bad_call
+		\see \man{epoll_ctl,2}
 		\details
 		Equivalent to <code>erase(ev.fd())</code>.
 		*/
@@ -181,6 +190,7 @@ namespace sys {
 		of the wait until predicate \p pred becomes true.
 		\throws bad_call if system error occurs, except
 		\c std::errc::interrupted
+		\see \man{epoll_wait,2}
 		\see std::errc
 		\details
 		\arg If \p pred is true upon the call to this method
@@ -202,6 +212,7 @@ namespace sys {
 		unlocking \p lock for the duration of the wait.
 		\throws bad_call if system error occurs, except
 		\c std::errc::interrupted
+		\see \man{epoll_wait,2}
 		\see std::errc
 		*/
 		template<class Lock, class Rep, class Period>
