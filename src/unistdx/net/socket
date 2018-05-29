@@ -285,8 +285,13 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Read \p n bytes from the socket and store them in buffer
 		pointed by \p buf.
+		\throws bad_call if system error occurs,
+		except \c std::errc::resource_unavailable_try_again
+		and \c std::errc::operation_in_progress
+		\see std::errc
 		*/
 		inline ssize_t
 		receive(void* buf, size_t n, int flags=0) const {
@@ -298,11 +303,20 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Write \p n bytes from buffer pointed by \p buf to the socket.
+		\throws bad_call if system error occurs,
+		except \c std::errc::resource_unavailable_try_again
+		and \c std::errc::operation_in_progress
+		\see std::errc
 		*/
 		inline ssize_t
 		send(const void* buf, size_t n, int flags=0) const noexcept {
-			return ::send(this->_fd, buf, n, flags);
+			ssize_t ret = ::send(this->_fd, buf, n, flags);
+			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
+				UNISTDX_THROW_BAD_CALL();
+			}
+			return ret;
 		}
 
 		#if defined(UNISTDX_HAVE_SO_PEERCRED)
