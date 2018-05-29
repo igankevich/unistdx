@@ -22,7 +22,7 @@
       <tab type="globals" visible="no" title="" intro="" />
     </tab>
     <tab type="examples" visible="no" title="" intro="" />
-    <tab type="pages" visible="yes" title="" intro="" />
+    <tab type="pages" visible="no" title="" intro="" />
     <tab type="namespaces" visible="no" title="" />
     <tab type="namespacelist" visible="no" title="" intro="" />
     <tab type="classes" visible="no" title="" />
