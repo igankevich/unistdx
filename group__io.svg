@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 391.00 316.38" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 312.3846)">
 <title>IO</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-312.3846 387,-312.3846 387,4 -4,4"/>
 <!-- Node7 -->
 <g id="node1" class="node">
 <title>Node7</title>
 <g id="a_node1"><a xlink:href="group__container.html" target="_top" xlink:title="Classes with container interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="311,-282.8846 311,-301.8846 375,-301.8846 375,-282.8846 311,-282.8846"/>
+<polygon fill="none" stroke="#000000" points="311,-282.8846 311,-301.8846 375,-301.8846 375,-282.8846 311,-282.8846"/>
 <text text-anchor="middle" x="343" y="-289.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Containers</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node3</title>
 <g id="a_node2"><a xlink:href="group__stream.html" target="_top" xlink:title="Classes with member input/output operators. ">
-<polygon fill="#ffffff" stroke="#000000" points="316.5,-215.8846 316.5,-234.8846 369.5,-234.8846 369.5,-215.8846 316.5,-215.8846"/>
+<polygon fill="none" stroke="#000000" points="316.5,-215.8846 316.5,-234.8846 369.5,-234.8846 369.5,-215.8846 316.5,-215.8846"/>
 <text text-anchor="middle" x="343" y="-222.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Streams</text>
 </a>
 </g>
@@ -31,7 +30,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="group__wrapper.html" target="_top" xlink:title="Wrappers for system structures. ">
-<polygon fill="#ffffff" stroke="#000000" points="313.5,-163.8846 313.5,-182.8846 372.5,-182.8846 372.5,-163.8846 313.5,-163.8846"/>
+<polygon fill="none" stroke="#000000" points="313.5,-163.8846 313.5,-182.8846 372.5,-182.8846 372.5,-163.8846 313.5,-163.8846"/>
 <text text-anchor="middle" x="343" y="-170.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Wrappers</text>
 </a>
 </g>
@@ -40,7 +39,7 @@
 <g id="node4" class="node">
 <title>Node5</title>
 <g id="a_node4"><a xlink:href="group__streambuf.html" target="_top" xlink:title="Classes with std::streambuf interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="303,-125.8846 303,-144.8846 383,-144.8846 383,-125.8846 303,-125.8846"/>
+<polygon fill="none" stroke="#000000" points="303,-125.8846 303,-144.8846 383,-144.8846 383,-125.8846 303,-125.8846"/>
 <text text-anchor="middle" x="343" y="-132.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Stream buffers</text>
 </a>
 </g>
@@ -49,7 +48,7 @@
 <g id="node5" class="node">
 <title>Node6</title>
 <g id="a_node5"><a xlink:href="group__semaphore.html" target="_top" xlink:title="Classes with std::condition_variable interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="307.5,-87.8846 307.5,-106.8846 378.5,-106.8846 378.5,-87.8846 307.5,-87.8846"/>
+<polygon fill="none" stroke="#000000" points="307.5,-87.8846 307.5,-106.8846 378.5,-106.8846 378.5,-87.8846 307.5,-87.8846"/>
 <text text-anchor="middle" x="343" y="-94.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Semaphores</text>
 </a>
 </g>
@@ -58,7 +57,7 @@
 <g id="node6" class="node">
 <title>Node4</title>
 <g id="a_node6"><a xlink:href="group__traits.html" target="_top" xlink:title="Traits classes. ">
-<polygon fill="#ffffff" stroke="#000000" points="322.5,-.8846 322.5,-19.8846 363.5,-19.8846 363.5,-.8846 322.5,-.8846"/>
+<polygon fill="none" stroke="#000000" points="322.5,-.8846 322.5,-19.8846 363.5,-19.8846 363.5,-.8846 322.5,-.8846"/>
 <text text-anchor="middle" x="343" y="-7.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Traits</text>
 </a>
 </g>
@@ -67,7 +66,7 @@
 <g id="node7" class="node">
 <title>Node1</title>
 <g id="a_node7"><a xlink:href="group__system.html" target="_top" xlink:title="System calls and system structures wrappers. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-142.8846 0,-161.8846 107,-161.8846 107,-142.8846 0,-142.8846"/>
+<polygon fill="none" stroke="#000000" points="0,-142.8846 0,-161.8846 107,-161.8846 107,-142.8846 0,-142.8846"/>
 <text text-anchor="middle" x="53.5" y="-149.8846" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">System abstractions</text>
 </a>
 </g>

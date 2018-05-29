@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 168.00 106.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 102)">
 <title>sys::sha1</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-102 164,-102 164,4 -4,4"/>
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integer.html" xlink:title="std::uint32_t">
-<polygon fill="#ffffff" stroke="#000000" points="0,-78.5 0,-97.5 71,-97.5 71,-78.5 0,-78.5"/>
+<polygon fill="none" stroke="#000000" points="0,-78.5 0,-97.5 71,-97.5 71,-78.5 0,-78.5"/>
 <text text-anchor="middle" x="35.5" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::uint32_t</text>
 </a>
 </g>
@@ -36,7 +35,7 @@
 <g id="node3" class="node">
 <title>Node3</title>
 <g id="a_node3"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integer.html" xlink:title="std::uint64_t">
-<polygon fill="#ffffff" stroke="#000000" points="89,-78.5 89,-97.5 160,-97.5 160,-78.5 89,-78.5"/>
+<polygon fill="none" stroke="#000000" points="89,-78.5 89,-97.5 160,-97.5 160,-78.5 89,-78.5"/>
 <text text-anchor="middle" x="124.5" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::uint64_t</text>
 </a>
 </g>

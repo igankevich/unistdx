@@ -83,12 +83,14 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for sys::socket:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1socket__inherit__graph.svg" width="102" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1socket__inherit__graph.svg" width="102" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for sys::socket:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1socket__coll__graph.svg" width="102" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1socket__coll__graph.svg" width="102" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -357,6 +359,8 @@ Additional Inherited Members</h2></td></tr>
 <li>Socket is a file descriptor which is used for communication. </li>
 <li>Usually, sockets are used for network communication. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="socket_source.html#l00053">53</a> of file <a class="el" href="socket_source.html">socket</a>.</p>
 </div><h2 class="groupheader">Member Enumeration Documentation</h2>
 <a id="a58964f02ba557cddce89d11fc606c5b5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a58964f02ba557cddce89d11fc606c5b5">&#9670;&nbsp;</a></span>option</h2>
@@ -376,6 +380,8 @@ Additional Inherited Members</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man7/unix.7.html">unix(7)</a> </dd></dl>
 </td></tr>
 </table>
+
+<p class="definition">Definition at line <a class="el" href="socket_source.html#l00069">69</a> of file <a class="el" href="socket_source.html">socket</a>.</p>
 
 </div>
 </div>
@@ -406,6 +412,8 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Construct the socket, bind on <code>bind_addr</code> and connect to a process listening on <code>conn_addr</code>. </p>
+
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00035">35</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
 
 </div>
 </div>
@@ -441,6 +449,8 @@ Additional Inherited Members</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Construct the socket with protocol family <code>family</code>, type <code>type</code> and protocol <code>proto</code>. </p>
+
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00040">40</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
 
 </div>
 </div>
@@ -482,6 +492,10 @@ Additional Inherited Members</h2></td></tr>
   </dd>
 </dl>
 
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00075">75</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00051">sys::fildes::_fd</a>, <a class="el" href="socket_8cc_source.html#l00112">close()</a>, <a class="el" href="endpoint_source.html#l00288">sys::endpoint::sockaddr()</a>, and <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+
 </div>
 </div>
 <a id="a9916d949989a1908506843cc6ee9b0f4"></a>
@@ -509,6 +523,10 @@ Additional Inherited Members</h2></td></tr>
 <p>Get bound socket address.</p>
 <p>The same as <a class="el" href="classsys_1_1socket.html#aa4b0c1a23b2886babffe6468a6cbcad8">name</a>, but does not throw. </p>
 
+<p class="definition">Definition at line <a class="el" href="socket_source.html#l00190">190</a> of file <a class="el" href="socket_source.html">socket</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00051">sys::fildes::_fd</a>, and <a class="el" href="endpoint_source.html#l00288">sys::endpoint::sockaddr()</a>.</p>
+
 </div>
 </div>
 <a id="a65518a7b982b20337bff15d5f2598acb"></a>
@@ -528,6 +546,10 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Get UID, GID and PID of the process, that connected to this socket (client). </p>
 <dl class="section note"><dt>Note</dt><dd>The method works only for unix domain sockets. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00245">245</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -572,6 +594,10 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Read <code>n</code> bytes from the socket and store them in buffer pointed by <code>buf</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="socket_source.html#l00232">232</a> of file <a class="el" href="socket_source.html">socket</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00051">sys::fildes::_fd</a>, and <a class="el" href="fildes_source.html#l00145">sys::fildes::flags()</a>.</p>
+
 </div>
 </div>
 <a id="a382856608623473a83e4a93d4f4cccc4"></a>
@@ -602,6 +628,10 @@ Additional Inherited Members</h2></td></tr>
 
 <p>Receive an array of <code>n</code> file descriptors pointed by <code>data</code>. </p>
 <dl class="section note"><dt>Note</dt><dd>The method works only for unix domain sockets. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00289">289</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/copy_n.html">std::copy_n()</a>, and <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -646,6 +676,10 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <p>Write <code>n</code> bytes from buffer pointed by <code>buf</code> to the socket. </p>
 
+<p class="definition">Definition at line <a class="el" href="socket_source.html#l00240">240</a> of file <a class="el" href="socket_source.html">socket</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00051">sys::fildes::_fd</a>, and <a class="el" href="fildes_source.html#l00145">sys::fildes::flags()</a>.</p>
+
 </div>
 </div>
 <a id="a073843ddb4a6298eb1106ccae0633ae6"></a>
@@ -677,6 +711,10 @@ Additional Inherited Members</h2></td></tr>
 <p>Send an array of <code>n</code> file descriptors pointed by <code>data</code>. </p>
 <dl class="section note"><dt>Note</dt><dd>The method works only for unix domain sockets. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00265">265</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/copy_n.html">std::copy_n()</a>, <a class="el" href="process_source.html#l00031">sys::send()</a>, and <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
@@ -701,12 +739,10 @@ Additional Inherited Members</h2></td></tr>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div><div class="line">            UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC</div></div><!-- fragment --><p>Default socket flags. The socket is non-blocking and automatically closed on child process execution. </p>
 
+<p class="definition">Definition at line <a class="el" href="socket_source.html#l00091">91</a> of file <a class="el" href="socket_source.html">socket</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/net/socket</li>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/net/socket.cc</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -159,6 +159,8 @@ Friends</h2></td></tr>
 <div class="textblock"><p>System process with <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/thread/thread.html">std::thread</a> interface. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00161">161</a> of file <a class="el" href="process_source.html">process</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a53e928f7fc6d642bc41b2c04877b4055"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a53e928f7fc6d642bc41b2c04877b4055">&#9670;&nbsp;</a></span>hang_up()</h2>
@@ -183,6 +185,10 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Interrupt the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4aad55384ac15107b3049219efc6cc875b">signal::hang_up</a> signal. </p>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00255">255</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4aad55384ac15107b3049219efc6cc875b">sys::hang_up</a>, and <a class="el" href="process_source.html#l00261">send()</a>.</p>
 
 </div>
 </div>
@@ -209,6 +215,10 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Interrupt the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a11b7b3e7c502b36e312079b964f59098">signal::keyboard_interrupt</a> signal. </p>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00247">247</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a11b7b3e7c502b36e312079b964f59098">sys::keyboard_interrupt</a>, and <a class="el" href="process_source.html#l00261">send()</a>.</p>
 
 </div>
 </div>
@@ -237,6 +247,10 @@ Friends</h2></td></tr>
 
 <p>Wait until process changes its state or terminates. </p>
 
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00319">319</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="process_source.html#l00269">wait()</a>.</p>
+
 </div>
 </div>
 <a id="a15cf76f078fb1a4b942107d956834508"></a>
@@ -262,6 +276,10 @@ Friends</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Forcibly terminate the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a534735884d341071762ede7af01c53e8">signal::kill</a> signal. </p>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00238">238</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a534735884d341071762ede7af01c53e8">sys::kill</a>, and <a class="el" href="process_source.html#l00261">send()</a>.</p>
 
 </div>
 </div>
@@ -289,11 +307,12 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 <p>Gracefully terminate the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">signal::terminate</a> signal. </p>
 
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00230">230</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="process_source.html#l00261">send()</a>, and <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">sys::terminate</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/ipc/process</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

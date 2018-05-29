@@ -22,7 +22,6 @@ var searchData=
   ['delim_5ftype',['delim_type',['../classsys_1_1intersperse__iterator.html#aaec6ac5cb76047762a362fa68c1639a0',1,'sys::intersperse_iterator']]],
   ['denorm_5fmin',['denorm_min',['http://en.cppreference.com/w/cpp/types/numeric_limits/denorm_min.html',1,'std::numeric_limits::denorm_min()'],['../classstd_1_1numeric__limits_3_01sys_1_1uint128__t_01_4.html#a4a82ca4253fcd534641fc6a5f22dbf1d',1,'std::numeric_limits&lt; sys::uint128_t &gt;::denorm_min()']]],
   ['densities',['densities',['http://en.cppreference.com/w/cpp/numeric/random/piecewise_constant_distribution/params.html',1,'std::piecewise_constant_distribution::densities()'],['http://en.cppreference.com/w/cpp/numeric/random/piecewise_linear_distribution/params.html',1,'std::piecewise_linear_distribution::densities()']]],
-  ['deprecated_20list',['Deprecated List',['../deprecated.html',1,'']]],
   ['deque',['deque',['http://en.cppreference.com/w/cpp/container/deque.html',1,'std::deque'],['http://en.cppreference.com/w/cpp/container/deque/deque.html',1,'std::deque::deque()']]],
   ['deque_5fpopper',['deque_popper',['../namespacesys.html#a2f49e246518616642f3a60ddf43112c8',1,'sys']]],
   ['deque_5fpopper_5fend',['deque_popper_end',['../namespacesys.html#a534f1a1260938f7db4c082565775ab2a',1,'sys']]],

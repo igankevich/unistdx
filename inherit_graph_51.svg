@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 263.00 39.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 35)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-35 259,-35 259,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a xlink:href="structsys_1_1fildes__streambuf__traits.html" target="_top" xlink:title="sys::fildes_streambuf\l_traits\&lt; fildes \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-30.5 110,-30.5 110,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-30.5 110,-30.5 110,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::fildes_streambuf</text>
 <text text-anchor="middle" x="55" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_traits&lt; fildes &gt;</text>
 </a>
@@ -23,7 +22,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="structsys_1_1streambuf__traits_3_01fildes_01_4.html" target="_top" xlink:title="Stream buffer traits for fildes. ">
-<polygon fill="#ffffff" stroke="#000000" points="146,-.5 146,-30.5 255,-30.5 255,-.5 146,-.5"/>
+<polygon fill="none" stroke="#000000" points="146,-.5 146,-30.5 255,-30.5 255,-.5 146,-.5"/>
 <text text-anchor="start" x="154" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::streambuf_traits</text>
 <text text-anchor="middle" x="200.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; fildes &gt;</text>
 </a>

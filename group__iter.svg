@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 362.00 84.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 80)">
 <title>Iterators</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-80 358,-80 358,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a xlink:href="group__net.html" target="_top" xlink:title="Network abstractions. ">
-<polygon fill="#ffffff" stroke="#000000" points="301,-.5 301,-19.5 354,-19.5 354,-.5 301,-.5"/>
+<polygon fill="none" stroke="#000000" points="301,-.5 301,-19.5 354,-19.5 354,-.5 301,-.5"/>
 <text text-anchor="middle" x="327.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Network</text>
 </a>
 </g>
@@ -39,7 +38,7 @@
 <g id="node3" class="node">
 <title>Node1</title>
 <g id="a_node3"><a xlink:href="group__concepts.html" target="_top" xlink:title="Group classes and functions by concept. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-19.5 79,-19.5 79,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-19.5 79,-19.5 79,-.5 0,-.5"/>
 <text text-anchor="middle" x="39.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">C++ concepts</text>
 </a>
 </g>

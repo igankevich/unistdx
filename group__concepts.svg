@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 203.00 332.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 328)">
 <title>C++ concepts</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-328 199,-328 199,4 -4,4"/>
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
 <g id="a_node1"><a xlink:href="group__container.html" target="_top" xlink:title="Classes with container interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="123,-304.5 123,-323.5 187,-323.5 187,-304.5 123,-304.5"/>
+<polygon fill="none" stroke="#000000" points="123,-304.5 123,-323.5 187,-323.5 187,-304.5 123,-304.5"/>
 <text text-anchor="middle" x="155" y="-311.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Containers</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node3</title>
 <g id="a_node2"><a xlink:href="group__stream.html" target="_top" xlink:title="Classes with member input/output operators. ">
-<polygon fill="#ffffff" stroke="#000000" points="128.5,-266.5 128.5,-285.5 181.5,-285.5 181.5,-266.5 128.5,-266.5"/>
+<polygon fill="none" stroke="#000000" points="128.5,-266.5 128.5,-285.5 181.5,-285.5 181.5,-266.5 128.5,-266.5"/>
 <text text-anchor="middle" x="155" y="-273.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Streams</text>
 </a>
 </g>
@@ -31,7 +30,7 @@
 <g id="node3" class="node">
 <title>Node9</title>
 <g id="a_node3"><a xlink:href="group__exception.html" target="_top" xlink:title="Exception classes. ">
-<polygon fill="#ffffff" stroke="#000000" points="122.5,-228.5 122.5,-247.5 187.5,-247.5 187.5,-228.5 122.5,-228.5"/>
+<polygon fill="none" stroke="#000000" points="122.5,-228.5 122.5,-247.5 187.5,-247.5 187.5,-228.5 122.5,-228.5"/>
 <text text-anchor="middle" x="155" y="-235.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Exceptions</text>
 </a>
 </g>
@@ -40,7 +39,7 @@
 <g id="node4" class="node">
 <title>Node2</title>
 <g id="a_node4"><a xlink:href="group__iter.html" target="_top" xlink:title="Classes with iterator interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="128.5,-190.5 128.5,-209.5 181.5,-209.5 181.5,-190.5 128.5,-190.5"/>
+<polygon fill="none" stroke="#000000" points="128.5,-190.5 128.5,-209.5 181.5,-209.5 181.5,-190.5 128.5,-190.5"/>
 <text text-anchor="middle" x="155" y="-197.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Iterators</text>
 </a>
 </g>
@@ -49,7 +48,7 @@
 <g id="node5" class="node">
 <title>Node7</title>
 <g id="a_node5"><a xlink:href="group__guard.html" target="_top" xlink:title="Sentry objects that enforce invariants with RAII. ">
-<polygon fill="#ffffff" stroke="#000000" points="131,-152.5 131,-171.5 179,-171.5 179,-152.5 131,-152.5"/>
+<polygon fill="none" stroke="#000000" points="131,-152.5 131,-171.5 179,-171.5 179,-152.5 131,-152.5"/>
 <text text-anchor="middle" x="155" y="-159.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Guards</text>
 </a>
 </g>
@@ -58,7 +57,7 @@
 <g id="node6" class="node">
 <title>Node4</title>
 <g id="a_node6"><a xlink:href="group__streambuf.html" target="_top" xlink:title="Classes with std::streambuf interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="115,-114.5 115,-133.5 195,-133.5 195,-114.5 115,-114.5"/>
+<polygon fill="none" stroke="#000000" points="115,-114.5 115,-133.5 195,-133.5 195,-114.5 115,-114.5"/>
 <text text-anchor="middle" x="155" y="-121.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Stream buffers</text>
 </a>
 </g>
@@ -67,7 +66,7 @@
 <g id="node7" class="node">
 <title>Node6</title>
 <g id="a_node7"><a xlink:href="group__semaphore.html" target="_top" xlink:title="Classes with std::condition_variable interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="119.5,-76.5 119.5,-95.5 190.5,-95.5 190.5,-76.5 119.5,-76.5"/>
+<polygon fill="none" stroke="#000000" points="119.5,-76.5 119.5,-95.5 190.5,-95.5 190.5,-76.5 119.5,-76.5"/>
 <text text-anchor="middle" x="155" y="-83.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Semaphores</text>
 </a>
 </g>
@@ -76,7 +75,7 @@
 <g id="node8" class="node">
 <title>Node8</title>
 <g id="a_node8"><a xlink:href="group__traits.html" target="_top" xlink:title="Traits classes. ">
-<polygon fill="#ffffff" stroke="#000000" points="134.5,-38.5 134.5,-57.5 175.5,-57.5 175.5,-38.5 134.5,-38.5"/>
+<polygon fill="none" stroke="#000000" points="134.5,-38.5 134.5,-57.5 175.5,-57.5 175.5,-38.5 134.5,-38.5"/>
 <text text-anchor="middle" x="155" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Traits</text>
 </a>
 </g>
@@ -85,7 +84,7 @@
 <g id="node9" class="node">
 <title>Node5</title>
 <g id="a_node9"><a xlink:href="group__mutex.html" target="_top" xlink:title="Classes with std::mutex interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="128,-.5 128,-19.5 182,-19.5 182,-.5 128,-.5"/>
+<polygon fill="none" stroke="#000000" points="128,-.5 128,-19.5 182,-19.5 182,-.5 128,-.5"/>
 <text text-anchor="middle" x="155" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Mutexes</text>
 </a>
 </g>

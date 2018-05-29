@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 115.00 151.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 147)">
 <title>sys::ifaddr_message_header</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-147 111,-147 111,4 -4,4"/>
 <!-- Node3 -->
 <g id="node1" class="node">
 <title>Node3</title>
@@ -20,7 +19,7 @@
 <g id="node2" class="node">
 <title>Node4</title>
 <g id="a_node2"><a xlink:href="classsys_1_1netlink__header.html" target="_top" xlink:title="Netlink message header. ">
-<polygon fill="#ffffff" stroke="#000000" points="3,-67.5 3,-86.5 104,-86.5 104,-67.5 3,-67.5"/>
+<polygon fill="none" stroke="#000000" points="3,-67.5 3,-86.5 104,-86.5 104,-67.5 3,-67.5"/>
 <text text-anchor="middle" x="53.5" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::netlink_header</text>
 </a>
 </g>
@@ -34,7 +33,7 @@
 <!-- Node5 -->
 <g id="node3" class="node">
 <title>Node5</title>
-<polygon fill="#ffffff" stroke="#bfbfbf" points="25.5,-123.5 25.5,-142.5 81.5,-142.5 81.5,-123.5 25.5,-123.5"/>
+<polygon fill="none" stroke="#bfbfbf" points="25.5,-123.5 25.5,-142.5 81.5,-142.5 81.5,-123.5 25.5,-123.5"/>
 <text text-anchor="middle" x="53.5" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">nlmsghdr</text>
 </g>
 <!-- Node5&#45;&gt;Node4 -->

@@ -83,7 +83,8 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for sys::fildes:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1fildes__inherit__graph.svg" width="238" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1fildes__inherit__graph.svg" width="238" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -219,6 +220,8 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <div class="textblock"><p>File descriptor wrapper. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-22 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00029">29</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a293cf00919c253d2e279fd3debfbc273"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a293cf00919c253d2e279fd3debfbc273">&#9670;&nbsp;</a></span>fildes()</h2>
@@ -261,6 +264,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><div class="memdoc">
 <p>Construct file descriptor by opening file <code>filename</code> with open flags <code>flags</code> and mode <code>mode</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00076">76</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00145">flags()</a>, and <a class="el" href="fildes_source.html#l00256">open()</a>.</p>
+
 </div>
 </div>
 <a id="aec065022de80754a72354777fdf34a4a"></a>
@@ -288,6 +295,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 
 <p>Close file descriptor. </p>
 <p>The method ignores errors reported by <a href="http://man7.org/linux/man-pages/man2/close.2.html">close(2)</a> system call. </p>
+
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00086">86</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00104">close()</a>.</p>
 
 </div>
 </div>
@@ -322,6 +333,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
   </table>
   </dd>
 </dl>
+
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00104">104</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00047">bad</a>, and <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="fildes__pair_source.html#l00098">sys::fildes_pair::close()</a>, <a class="el" href="socket_8cc_source.html#l00112">sys::socket::close()</a>, <a class="el" href="fildes_source.html#l00256">open()</a>, <a class="el" href="fildes_8cc_source.html#l00006">remap()</a>, and <a class="el" href="fildes_source.html#l00086">~fildes()</a>.</p>
 
 </div>
 </div>
@@ -366,6 +383,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><div class="memdoc">
 <p>Init file descriptor by opening file <code>filename</code> with open flags <code>flags</code> and mode <code>mode</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00256">256</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00104">close()</a>, and <a class="el" href="fildes_source.html#l00145">flags()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="fildes_source.html#l00076">fildes()</a>.</p>
+
 </div>
 </div>
 <a id="a86bc2b1f6497dc58d76957052b668245"></a>
@@ -403,6 +426,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><div class="memdoc">
 <p>Read <code>n</code> bytes from file descriptor and store them in the array pointed by <code>buf</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00116">116</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00013">UNISTDX_THROW_BAD_CALL</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="netlink__poller_source.html#l00400">sys::netlink_container&lt; T &gt;::read()</a>.</p>
+
 </div>
 </div>
 <a id="a9981f9ef760e95a3601ebab3be94fddd"></a>
@@ -420,6 +449,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <p>Change file descriptor number to an arbitrrary one by duplicating it with <a href="http://man7.org/linux/man-pages/man2/dup.2.html">dup(2)</a> system call. </p>
+
+<p class="definition">Definition at line <a class="el" href="fildes_8cc_source.html#l00006">6</a> of file <a class="el" href="fildes_8cc_source.html">fildes.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00051">_fd</a>, <a class="el" href="fildes_source.html#l00104">close()</a>, and <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -439,6 +472,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
       </table>
 </div><div class="memdoc">
 <p>Change file descriptor number to <code>new_fd</code> by duplicating it with <a href="http://man7.org/linux/man-pages/man2/dup2.2.html">dup2(2)</a> system call. </p>
+
+<p class="definition">Definition at line <a class="el" href="fildes_8cc_source.html#l00014">14</a> of file <a class="el" href="fildes_8cc_source.html">fildes.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -465,6 +502,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </table>
 </div><div class="memdoc">
 <p>Check if this file descriptor exists in the kernel by trying to get its flags </p>
+
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00247">247</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="two__way__pipe_8cc_source.html#l00006">sys::two_way_pipe::validate()</a>.</p>
 
 </div>
 </div>
@@ -503,12 +544,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 </div><div class="memdoc">
 <p>Write <code>n</code> bytes to file descriptor copying them from the array pointer by <code>buf</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="fildes_source.html#l00129">129</a> of file <a class="el" href="fildes_source.html">fildes</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00013">UNISTDX_THROW_BAD_CALL</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poller_source.html#l00084">sys::event_poller::notify_one()</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/io/fildes</li>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/io/fildes.cc</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

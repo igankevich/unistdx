@@ -80,7 +80,8 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for sys::posix_semaphore:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1posix__semaphore__inherit__graph.svg" width="363" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1posix__semaphore__inherit__graph.svg" width="363" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -147,6 +148,8 @@ template&lt;class Lock , class Duration &gt; </td></tr>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
 <p>Suitable for both processes and threads. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00298">298</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="aa0a3adb38ab6ce9ccf57f1133b9039e5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa0a3adb38ab6ce9ccf57f1133b9039e5">&#9670;&nbsp;</a></span>notify_all() <span class="overload">[1/2]</span></h2>
@@ -172,6 +175,10 @@ template&lt;class Lock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 
 <p>Notify all processes that wait on this semaphore. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00439">439</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00124">sys::sysv_semaphore::notify_all()</a>.</p>
 
 </div>
 </div>
@@ -201,6 +208,10 @@ template&lt;class Lock , class Duration &gt; </td></tr>
 
 <p>Notify <code>n</code> processes that wait on this semaphore. </p>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00445">445</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00118">sys::sysv_semaphore::notify_one()</a>.</p>
+
 </div>
 </div>
 <a id="a04a904f891124b216fb73d19de9420ee"></a>
@@ -228,6 +239,12 @@ template&lt;class Lock , class Duration &gt; </td></tr>
 
 <p>Notify one process that wait on this semaphore. </p>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00433">433</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="shmembuf_source.html#l00058">sys::basic_shmembuf&lt; Ch, Tr &gt;::basic_shmembuf()</a>, and <a class="el" href="shmembuf_source.html#l00159">sys::basic_shmembuf&lt; Ch, Tr &gt;::unlock()</a>.</p>
+
 </div>
 </div>
 <a id="a4b43e2e56289c1550f4c31d6138fec4b"></a>
@@ -254,6 +271,12 @@ template&lt;class Lock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 
 <p>Wait until other process/thread calls <a class="el" href="classsys_1_1sysv__semaphore.html#acc7d9ec6f2a28410ea5ed3a401b98c1c">sysv_semaphore::notify_one</a> or <a class="el" href="classsys_1_1sysv__semaphore.html#a367b2b54412c082f0d9574533049273a">sysv_semaphore::notify_all</a> on this semaphore. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00321">321</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="shmembuf_source.html#l00139">sys::basic_shmembuf&lt; Ch, Tr &gt;::lock()</a>.</p>
 
 </div>
 </div>
@@ -284,6 +307,10 @@ template&lt;class Lock &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore unlocking <code>lock</code> for the duration of the wait. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00327">327</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00112">sys::sysv_semaphore::wait()</a>.</p>
 
 </div>
 </div>
@@ -329,6 +356,10 @@ template&lt;class Lock , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00334">334</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00112">sys::sysv_semaphore::wait()</a>.</p>
+
 </div>
 </div>
 <a id="a1ebdae0307800af8fe6595ca8752f3ef"></a>
@@ -368,6 +399,10 @@ template&lt;class Lock , class Rep , class Period &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00346">346</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="semaphore_source.html#l00204">sys::sysv_semaphore::wait_until()</a>.</p>
 
 </div>
 </div>
@@ -420,6 +455,10 @@ template&lt;class Lock , class Rep , class Period , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00355">355</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="semaphore_source.html#l00204">sys::sysv_semaphore::wait_until()</a>.</p>
+
 </div>
 </div>
 <a id="ae7bc52327424552bcd5cab225646317f"></a>
@@ -471,6 +510,10 @@ template&lt;class Lock , class Duration , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00397">397</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00204">sys::sysv_semaphore::wait_until()</a>.</p>
+
 </div>
 </div>
 <a id="aaccdeb881838b897c768d31461bc2d79"></a>
@@ -510,6 +553,10 @@ template&lt;class Lock , class Clock , class Duration &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00411">411</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="semaphore_source.html#l00204">sys::sysv_semaphore::wait_until()</a>.</p>
 
 </div>
 </div>
@@ -562,11 +609,12 @@ template&lt;class Lock , class Clock , class Duration , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00423">423</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="semaphore_source.html#l00204">sys::sysv_semaphore::wait_until()</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/ipc/semaphore</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

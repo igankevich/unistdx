@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 375.00 207.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 203)">
 <title>Streams</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-203 371,-203 371,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node4</title>
 <g id="a_node2"><a xlink:href="group__ipc.html" target="_top" xlink:title="Resource management and parallel execution. ">
-<polygon fill="#ffffff" stroke="#000000" points="301.5,-179.5 301.5,-198.5 364.5,-198.5 364.5,-179.5 301.5,-179.5"/>
+<polygon fill="none" stroke="#000000" points="301.5,-179.5 301.5,-198.5 364.5,-198.5 364.5,-179.5 301.5,-179.5"/>
 <text text-anchor="middle" x="333" y="-186.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Processes</text>
 </a>
 </g>
@@ -34,7 +33,7 @@
 <g id="node3" class="node">
 <title>Node5</title>
 <g id="a_node3"><a xlink:href="group__net.html" target="_top" xlink:title="Network abstractions. ">
-<polygon fill="#ffffff" stroke="#000000" points="306.5,-134.5 306.5,-153.5 359.5,-153.5 359.5,-134.5 306.5,-134.5"/>
+<polygon fill="none" stroke="#000000" points="306.5,-134.5 306.5,-153.5 359.5,-153.5 359.5,-134.5 306.5,-134.5"/>
 <text text-anchor="middle" x="333" y="-141.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Network</text>
 </a>
 </g>
@@ -50,7 +49,7 @@
 <g id="node4" class="node">
 <title>Node2</title>
 <g id="a_node4"><a xlink:href="group__fs.html" target="_top" xlink:title="File and directory manipulation. ">
-<polygon fill="#ffffff" stroke="#000000" points="299,-67.5 299,-86.5 367,-86.5 367,-67.5 299,-67.5"/>
+<polygon fill="none" stroke="#000000" points="299,-67.5 299,-86.5 367,-86.5 367,-67.5 299,-67.5"/>
 <text text-anchor="middle" x="333" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">File system</text>
 </a>
 </g>
@@ -68,7 +67,7 @@
 <g id="node5" class="node">
 <title>Node3</title>
 <g id="a_node5"><a xlink:href="group__io.html" target="_top" xlink:title="Input/output handling. ">
-<polygon fill="#ffffff" stroke="#000000" points="318.5,-.5 318.5,-19.5 347.5,-19.5 347.5,-.5 318.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="318.5,-.5 318.5,-19.5 347.5,-19.5 347.5,-.5 318.5,-.5"/>
 <text text-anchor="middle" x="333" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IO</text>
 </a>
 </g>
@@ -86,7 +85,7 @@
 <g id="node6" class="node">
 <title>Node1</title>
 <g id="a_node6"><a xlink:href="group__concepts.html" target="_top" xlink:title="Group classes and functions by concept. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-100.5 0,-119.5 79,-119.5 79,-100.5 0,-100.5"/>
+<polygon fill="none" stroke="#000000" points="0,-100.5 0,-119.5 79,-119.5 79,-100.5 0,-100.5"/>
 <text text-anchor="middle" x="39.5" y="-107.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">C++ concepts</text>
 </a>
 </g>

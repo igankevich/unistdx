@@ -8,18 +8,17 @@
  viewBox="0.00 0.00 210.00 28.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 24)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-24 206,-24 206,4 -4,4"/>
 <!-- Node84 -->
 <g id="node1" class="node">
 <title>Node84</title>
-<polygon fill="#ffffff" stroke="#bfbfbf" points="0,-.5 0,-19.5 59,-19.5 59,-.5 0,-.5"/>
+<polygon fill="none" stroke="#bfbfbf" points="0,-.5 0,-19.5 59,-19.5 59,-.5 0,-.5"/>
 <text text-anchor="middle" x="29.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">ifaddrmsg</text>
 </g>
 <!-- Node0 -->
 <g id="node2" class="node">
 <title>Node0</title>
 <g id="a_node2"><a xlink:href="classsys_1_1ifaddr__message.html" target="_top" xlink:title="Netlink interaface address message. ">
-<polygon fill="#ffffff" stroke="#000000" points="95,-.5 95,-19.5 202,-19.5 202,-.5 95,-.5"/>
+<polygon fill="none" stroke="#000000" points="95,-.5 95,-19.5 202,-19.5 202,-.5 95,-.5"/>
 <text text-anchor="middle" x="148.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::ifaddr_message</text>
 </a>
 </g>

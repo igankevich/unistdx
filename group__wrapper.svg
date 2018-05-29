@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 406.00 297.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 293)">
 <title>Wrappers</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-293 402,-293 402,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node4</title>
 <g id="a_node2"><a xlink:href="group__ipc.html" target="_top" xlink:title="Resource management and parallel execution. ">
-<polygon fill="#ffffff" stroke="#000000" points="332.5,-212.5 332.5,-231.5 395.5,-231.5 395.5,-212.5 332.5,-212.5"/>
+<polygon fill="none" stroke="#000000" points="332.5,-212.5 332.5,-231.5 395.5,-231.5 395.5,-212.5 332.5,-212.5"/>
 <text text-anchor="middle" x="364" y="-219.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Processes</text>
 </a>
 </g>
@@ -39,7 +38,7 @@
 <g id="node3" class="node">
 <title>Node5</title>
 <g id="a_node3"><a xlink:href="group__net.html" target="_top" xlink:title="Network abstractions. ">
-<polygon fill="#ffffff" stroke="#000000" points="337.5,-123.5 337.5,-142.5 390.5,-142.5 390.5,-123.5 337.5,-123.5"/>
+<polygon fill="none" stroke="#000000" points="337.5,-123.5 337.5,-142.5 390.5,-142.5 390.5,-123.5 337.5,-123.5"/>
 <text text-anchor="middle" x="364" y="-130.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Network</text>
 </a>
 </g>
@@ -59,7 +58,7 @@
 <g id="node4" class="node">
 <title>Node2</title>
 <g id="a_node4"><a xlink:href="group__fs.html" target="_top" xlink:title="File and directory manipulation. ">
-<polygon fill="#ffffff" stroke="#000000" points="330,-56.5 330,-75.5 398,-75.5 398,-56.5 330,-56.5"/>
+<polygon fill="none" stroke="#000000" points="330,-56.5 330,-75.5 398,-75.5 398,-56.5 330,-56.5"/>
 <text text-anchor="middle" x="364" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">File system</text>
 </a>
 </g>
@@ -77,7 +76,7 @@
 <g id="node6" class="node">
 <title>Node3</title>
 <g id="a_node6"><a xlink:href="group__io.html" target="_top" xlink:title="Input/output handling. ">
-<polygon fill="#ffffff" stroke="#000000" points="349.5,-.5 349.5,-19.5 378.5,-19.5 378.5,-.5 349.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="349.5,-.5 349.5,-19.5 378.5,-19.5 378.5,-.5 349.5,-.5"/>
 <text text-anchor="middle" x="364" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IO</text>
 </a>
 </g>
@@ -94,7 +93,7 @@
 <g id="node5" class="node">
 <title>Node1</title>
 <g id="a_node5"><a xlink:href="group__system.html" target="_top" xlink:title="System calls and system structures wrappers. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-89.5 0,-108.5 107,-108.5 107,-89.5 0,-89.5"/>
+<polygon fill="none" stroke="#000000" points="0,-89.5 0,-108.5 107,-108.5 107,-89.5 0,-89.5"/>
 <text text-anchor="middle" x="53.5" y="-96.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">System abstractions</text>
 </a>
 </g>

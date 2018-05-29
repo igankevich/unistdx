@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 116.00 106.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 102)">
 <title>sys::basic_argbuf&lt; Ch, Tr &gt;</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-102 112,-102 112,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -20,7 +19,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/io/basic_streambuf.html" xlink:title="std::basic_streambuf\l\&lt; Ch, Tr \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-67.5 0,-97.5 108,-97.5 108,-67.5 0,-67.5"/>
+<polygon fill="none" stroke="#000000" points="0,-67.5 0,-97.5 108,-97.5 108,-67.5 0,-67.5"/>
 <text text-anchor="start" x="8" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::basic_streambuf</text>
 <text text-anchor="middle" x="54" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>

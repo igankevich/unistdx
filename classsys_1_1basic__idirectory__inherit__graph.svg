@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 226.00 162.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 158)">
 <title>sys::basic_idirectory&lt; FilePred &gt;</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-158 222,-158 222,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -20,7 +19,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="classsys_1_1basic__directory.html" target="_top" xlink:title="Directory entry input/output stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-30.5 104,-30.5 104,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-30.5 104,-30.5 104,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_directory</text>
 <text text-anchor="middle" x="52" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; FilePred &gt;</text>
 </a>
@@ -36,7 +35,7 @@
 <g id="node4" class="node">
 <title>Node3</title>
 <g id="a_node4"><a xlink:href="classsys_1_1basic__idirtree.html" target="_top" xlink:title="Recursive directory entry input stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="122,-.5 122,-30.5 218,-30.5 218,-.5 122,-.5"/>
+<polygon fill="none" stroke="#000000" points="122,-.5 122,-30.5 218,-30.5 218,-.5 122,-.5"/>
 <text text-anchor="start" x="130" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_idirtree</text>
 <text text-anchor="middle" x="170" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; FilePred &gt;</text>
 </a>
@@ -52,7 +51,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1dirstream.html" target="_top" xlink:title="Base class for all directory streams. ">
-<polygon fill="#ffffff" stroke="#000000" points="71.5,-134.5 71.5,-153.5 150.5,-153.5 150.5,-134.5 71.5,-134.5"/>
+<polygon fill="none" stroke="#000000" points="71.5,-134.5 71.5,-153.5 150.5,-153.5 150.5,-134.5 71.5,-134.5"/>
 <text text-anchor="middle" x="111" y="-141.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::dirstream</text>
 </a>
 </g>

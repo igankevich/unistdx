@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 118.00 106.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 102)">
 <title>sys::basic_odirectory&lt; Trans &gt;</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-102 114,-102 114,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -20,7 +19,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1basic__directory.html" target="_top" xlink:title="Directory entry input/output stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="3,-.5 3,-30.5 107,-30.5 107,-.5 3,-.5"/>
+<polygon fill="none" stroke="#000000" points="3,-.5 3,-30.5 107,-30.5 107,-.5 3,-.5"/>
 <text text-anchor="start" x="11" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_directory</text>
 <text text-anchor="middle" x="55" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Trans &gt;</text>
 </a>

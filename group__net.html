@@ -77,7 +77,8 @@ $(function() {
 <div class="dynheader">
 Collaboration diagram for Network:</div>
 <div class="dyncontent">
-<center><table><tr><td><div class="center"><iframe scrolling="no" frameborder="0" src="group__net.svg" width="535" height="464"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<center><table><tr><td><div class="center"><iframe scrolling="no" frameborder="0" src="group__net.svg" width="535" height="464"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 </td></tr></table></center>
 </div>
 <table class="memberdecls">
@@ -303,6 +304,8 @@ template&lt;class T &gt; </td></tr>
 </td></tr>
 </table>
 
+<p class="definition">Definition at line <a class="el" href="family_source.html#l00019">19</a> of file <a class="el" href="family_source.html">family</a>.</p>
+
 </div>
 </div>
 <a id="ga7677cf32e6437c5aadb699e082bf8733"></a>
@@ -336,6 +339,8 @@ template&lt;class T &gt; </td></tr>
 <tr><td class="fieldname"><a id="gga7677cf32e6437c5aadb699e082bf8733a1e46e1861cfdae9068a5a4114c60ab03"></a>overrun&#160;</td><td class="fielddoc"><p>Message data was lost due to buffer overrun. </p>
 </td></tr>
 </table>
+
+<p class="definition">Definition at line <a class="el" href="netlink__poller_source.html#l00044">44</a> of file <a class="el" href="netlink__poller_source.html">netlink_poller</a>.</p>
 
 </div>
 </div>
@@ -373,6 +378,12 @@ template&lt;class T &gt; </div>
 <li>Uses <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/bitset.html">std::bitset</a> for generic implementation. </li>
 <li>There are optimised implementations for standard unsigned integer types. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="bit__count_source.html#l00021">21</a> of file <a class="el" href="bit__count_source.html">bit_count</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/bitset/count.html">std::bitset::count()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ipv4__addr_source.html#l00138">sys::ipv4_addr::to_prefix()</a>, and <a class="el" href="ipv6__addr_source.html#l00155">sys::ipv6_addr::to_prefix()</a>.</p>
 
 </div>
 </div>
@@ -440,6 +451,10 @@ template&lt;class T &gt; </div>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
 <p>Compile-time constant expression. </p>
 
+<p class="definition">Definition at line <a class="el" href="byte__order_source.html#l00017">17</a> of file <a class="el" href="byte__order_source.html">byte_order</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="byte__order_source.html#l00049">sys::to_host_format()</a>, and <a class="el" href="byte__order_source.html#l00035">sys::to_network_format()</a>.</p>
+
 </div>
 </div>
 <a id="gafaf2a39670f2270caee4754ad0a99047"></a>
@@ -483,6 +498,10 @@ template&lt;class T &gt; </div>
 <p>Manually receive process UID, GID, PID as opaque array pointed by <code>data</code>. </p>
 <dl class="section note"><dt>Note</dt><dd>On Linux <a class="el" href="classsys_1_1socket.html#a65518a7b982b20337bff15d5f2598acb">socket::credentials</a> returns credentials without manually sending and receiving this message provided that <a class="el" href="classsys_1_1socket.html#a58964f02ba557cddce89d11fc606c5b5acdcb9e9e7cffbc2de4fcc72ba7d84f61">socket::pass_credentials</a> socket option is set. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00221">221</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="socket_source.html#l00223">sys::socket::receive()</a>.</p>
+
 </div>
 </div>
 <a id="gab87c8d0ce8380aa86895b03c5771a137"></a>
@@ -520,6 +539,10 @@ template&lt;class T &gt; </div>
 <p>Manually send process UID, GID, PID as opaque array pointed by <code>data</code>. </p>
 <dl class="section note"><dt>Note</dt><dd>On Linux <a class="el" href="classsys_1_1socket.html#a65518a7b982b20337bff15d5f2598acb">socket::credentials</a> returns credentials without manually sending and receiving this message provided that <a class="el" href="classsys_1_1socket.html#a58964f02ba557cddce89d11fc606c5b5acdcb9e9e7cffbc2de4fcc72ba7d84f61">socket::pass_credentials</a> socket option is set. </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00208">208</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="socket_source.html#l00217">sys::socket::send()</a>.</p>
+
 </div>
 </div>
 <a id="ga927562ae5de886ed6dd7d48ffd1bf042"></a>
@@ -552,6 +575,12 @@ template&lt;class T &gt; </div>
 <dl class="section date"><dt>Date</dt><dd>2018-05-23 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="byte__order_source.html#l00049">49</a> of file <a class="el" href="byte__order_source.html">byte_order</a>.</p>
+
+<p class="reference">References <a class="el" href="byte__order_source.html#l00017">sys::is_network_byte_order()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="ifaddr_source.html#l00133">sys::ifaddr&lt; Addr &gt;::contains()</a>, <a class="el" href="endpoint_source.html#l00348">sys::ipaddr_traits&lt; ipv4_addr &gt;::port()</a>, <a class="el" href="endpoint_source.html#l00358">sys::ipaddr_traits&lt; ipv6_addr &gt;::port()</a>, <a class="el" href="ipv4__addr_source.html#l00159">sys::ipv4_addr::position()</a>, and <a class="el" href="ipv6__addr_source.html#l00176">sys::ipv6_addr::position()</a>.</p>
+
 </div>
 </div>
 <a id="ga4cf62473ca7c2bd2c851b4e05037bd22"></a>
@@ -583,6 +612,10 @@ template&lt;class T &gt; </div>
 <p>Converts binary representation of <code>n</code> in native byte order to network byte order if needed. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-23 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="byte__order_source.html#l00035">35</a> of file <a class="el" href="byte__order_source.html">byte_order</a>.</p>
+
+<p class="reference">References <a class="el" href="byte__order_source.html#l00017">sys::is_network_byte_order()</a>.</p>
 
 </div>
 </div>

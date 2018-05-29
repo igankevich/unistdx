@@ -167,6 +167,8 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
 <p>Suitable for both processes and threads. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00048">48</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a93305d1f6e54ab0d38d1ad168111da3c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93305d1f6e54ab0d38d1ad168111da3c">&#9670;&nbsp;</a></span>sysv_semaphore() <span class="overload">[1/2]</span></h2>
@@ -194,6 +196,10 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 
 <p>Construct semaphore with specified <code>mode</code>. </p>
 <p>The semaphore is owned by the calling process/thread. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00066">66</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -223,6 +229,8 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 
 <p>Construct semaphore with ID <code>sem</code>. </p>
 <p>The semaphore is not owned by the calling process/thread. </p>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00080">80</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 
 </div>
 </div>
@@ -268,6 +276,10 @@ template&lt;class Lock , class Pred &gt; </div>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00151">151</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00112">wait()</a>.</p>
 
 </div>
 </div>
@@ -320,6 +332,10 @@ template&lt;class Lock , class Rep , class Period , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00188">188</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00165">wait_for()</a>.</p>
+
 </div>
 </div>
 <a id="ad116ac912b3dee71b246e13bed02ef5f"></a>
@@ -370,6 +386,10 @@ template&lt;class Lock , class Duration , class Pred &gt; </div>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00221">221</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="semaphore_source.html#l00165">wait_for()</a>.</p>
 
 </div>
 </div>
@@ -422,11 +442,12 @@ template&lt;class Lock , class Clock , class Duration , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00249">249</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="semaphore_source.html#l00165">wait_for()</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/ipc/semaphore</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

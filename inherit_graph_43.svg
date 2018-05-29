@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 379.00 88.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 84)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-84 375,-84 375,4 -4,4"/>
 <!-- Node157 -->
 <g id="node1" class="node">
 <title>Node157</title>
 <g id="a_node1"><a xlink:href="classsys_1_1basic__odirectory.html" target="_top" xlink:title="Directory entry output stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="115,-49.5 115,-79.5 225,-79.5 225,-49.5 115,-49.5"/>
+<polygon fill="none" stroke="#000000" points="115,-49.5 115,-79.5 225,-79.5 225,-49.5 115,-49.5"/>
 <text text-anchor="start" x="123" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_odirectory</text>
 <text text-anchor="middle" x="170" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Trans &gt;</text>
 </a>
@@ -23,7 +22,7 @@
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a xlink:href="classsys_1_1basic__directory.html" target="_top" xlink:title="Directory entry input/output stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="264,-49.5 264,-79.5 368,-79.5 368,-49.5 264,-49.5"/>
+<polygon fill="none" stroke="#000000" points="264,-49.5 264,-79.5 368,-79.5 368,-49.5 264,-49.5"/>
 <text text-anchor="start" x="272" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_directory</text>
 <text text-anchor="middle" x="316" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; FilePred, Trans &gt;</text>
 </a>
@@ -39,7 +38,7 @@
 <g id="node3" class="node">
 <title>Node0</title>
 <g id="a_node3"><a xlink:href="classsys_1_1dirstream.html" target="_top" xlink:title="Base class for all directory streams. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-6 0,-25 79,-25 79,-6 0,-6"/>
+<polygon fill="none" stroke="#000000" points="0,-6 0,-25 79,-25 79,-6 0,-6"/>
 <text text-anchor="middle" x="39.5" y="-13" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::dirstream</text>
 </a>
 </g>
@@ -48,7 +47,7 @@
 <g id="node4" class="node">
 <title>Node1</title>
 <g id="a_node4"><a xlink:href="classsys_1_1basic__idirectory.html" target="_top" xlink:title="Directory entry input stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="116.5,-.5 116.5,-30.5 223.5,-30.5 223.5,-.5 116.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="116.5,-.5 116.5,-30.5 223.5,-30.5 223.5,-.5 116.5,-.5"/>
 <text text-anchor="start" x="124.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_idirectory</text>
 <text text-anchor="middle" x="170" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; FilePred &gt;</text>
 </a>
@@ -70,7 +69,7 @@
 <g id="node5" class="node">
 <title>Node3</title>
 <g id="a_node5"><a xlink:href="classsys_1_1basic__idirtree.html" target="_top" xlink:title="Recursive directory entry input stream. ">
-<polygon fill="#ffffff" stroke="#000000" points="261,-.5 261,-30.5 371,-30.5 371,-.5 261,-.5"/>
+<polygon fill="none" stroke="#000000" points="261,-.5 261,-30.5 371,-30.5 371,-.5 261,-.5"/>
 <text text-anchor="start" x="269" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_idirtree</text>
 <text text-anchor="middle" x="316" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; FilePred, DirPred &gt;</text>
 </a>

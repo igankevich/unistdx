@@ -82,12 +82,14 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for sys::poll_event:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structsys_1_1poll__event__inherit__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structsys_1_1poll__event__inherit__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for sys::poll_event:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="structsys_1_1poll__event__coll__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="structsys_1_1poll__event__coll__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -224,6 +226,8 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 <div class="textblock"><p>File descriptor event wrapper for <a href="http://man7.org/linux/man-pages/man2/poll.2.html">poll(2)</a> system call. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-23 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00022">22</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8fdb691b9696c3255f9c5fc429bd6a9a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8fdb691b9696c3255f9c5fc429bd6a9a">&#9670;&nbsp;</a></span>poll_event()</h2>
@@ -266,6 +270,8 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </div><div class="memdoc">
 <p>Construct object from file descriptor <code>f</code>, event mask <code>ev</code> and recorded events <code>rev</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00080">80</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -294,6 +300,12 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Returns true, if an error or hang up occurred. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00148">148</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00094">revents()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_source.html#l00212">operator bool()</a>.</p>
+
 </div>
 </div>
 <a id="ad367c59d983424dd2dfdf7dac26e9e1d"></a>
@@ -320,6 +332,12 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </div><div class="memdoc">
 
 <p>Returns true, if file descriptor is invalid. </p>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00118">118</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00112">fd()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_source.html#l00212">operator bool()</a>.</p>
 
 </div>
 </div>
@@ -348,6 +366,8 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Disable polling by setting file descriptor to -1. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00106">106</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
 </div>
 </div>
 <a id="a010f1debd7906a30f18128d34794bf96"></a>
@@ -374,6 +394,12 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </div><div class="memdoc">
 
 <p>Returns true, if an error occurred. </p>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00142">142</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00094">revents()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_8cc_source.html#l00006">sys::operator&lt;&lt;()</a>.</p>
 
 </div>
 </div>
@@ -402,6 +428,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Get event mask. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00100">100</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_8cc_source.html#l00006">sys::operator&lt;&lt;()</a>.</p>
+
 </div>
 </div>
 <a id="a5786ed2e3afdd03cbfc7cf65ab175734"></a>
@@ -428,6 +458,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </div><div class="memdoc">
 
 <p>Get file descriptor. </p>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00112">112</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_source.html#l00118">bad_fd()</a>, <a class="el" href="poll__event_source.html#l00197">operator!=()</a>, <a class="el" href="poll__event_source.html#l00203">operator&lt;()</a>, <a class="el" href="poll__event_8cc_source.html#l00006">sys::operator&lt;&lt;()</a>, <a class="el" href="poll__event_source.html#l00191">operator==()</a>, and <a class="el" href="poll__event_source.html#l00184">probe()</a>.</p>
 
 </div>
 </div>
@@ -457,6 +491,12 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 <p></p>
 <p>Returns true, if hang up event occurred (the other end of the channel was closed). </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00136">136</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00094">revents()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_8cc_source.html#l00006">sys::operator&lt;&lt;()</a>.</p>
+
 </div>
 </div>
 <a id="ae694fa883ab1a5095d8f5a1b2612d028"></a>
@@ -484,6 +524,12 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Returns true, if input event occurred. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00124">124</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00094">revents()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_8cc_source.html#l00006">sys::operator&lt;&lt;()</a>.</p>
+
 </div>
 </div>
 <a id="aaa378ae941a2595fd92a9a1295132151"></a>
@@ -509,6 +555,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </table>
 </div><div class="memdoc">
 <p>Returns true, if file descriptor is valid and no <a class="el" href="structsys_1_1poll__event.html#a4325ac0ab75a8babe6a7b0398205fbdc">bad</a> events occurred. </p>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00212">212</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00148">bad()</a>, and <a class="el" href="poll__event_source.html#l00118">bad_fd()</a>.</p>
 
 </div>
 </div>
@@ -538,6 +588,8 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 <p></p>
 <p>Returns true, if either file descriptor is invalid, or a <a class="el" href="structsys_1_1poll__event.html#a4325ac0ab75a8babe6a7b0398205fbdc">bad</a> event occurred. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00218">218</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
 </div>
 </div>
 <a id="aa01a52c6ebfdcd6ae348334e38636edd"></a>
@@ -565,6 +617,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </div><div class="memdoc">
 
 <p>Returns true, if events have different file descriptors. </p>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00197">197</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00112">fd()</a>.</p>
 
 </div>
 </div>
@@ -594,6 +650,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Compares file descriptors. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00203">203</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00112">fd()</a>.</p>
+
 </div>
 </div>
 <a id="a0f258a201d1b143436406a91c8db46ef"></a>
@@ -622,6 +682,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Returns true, if events have the same file descriptor. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00191">191</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00112">fd()</a>.</p>
+
 </div>
 </div>
 <a id="a0219dcd3ef80e12effe25901bc489d74"></a>
@@ -649,6 +713,12 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Returns true, if output event occurred. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00130">130</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00094">revents()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_8cc_source.html#l00006">sys::operator&lt;&lt;()</a>.</p>
+
 </div>
 </div>
 <a id="a37a5ed7b35b6df75d8c30a9b5215e282"></a>
@@ -675,6 +745,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 </div><div class="memdoc">
 
 <p>Probe file descriptor by peeking a byte from it. </p>
+
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00184">184</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">References <a class="el" href="poll__event_source.html#l00112">fd()</a>.</p>
 
 </div>
 </div>
@@ -704,6 +778,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Set events <code>rhs</code> in event mask. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00154">154</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poll__event_source.html#l00178">setall()</a>.</p>
+
 </div>
 </div>
 <a id="a3714b2ddfcdde5dedcbedd6d2cd0c03f"></a>
@@ -732,11 +810,10 @@ constexpr <a class="el" href="structsys_1_1poll__event.html#abc14ad55fc1836e9d3e
 
 <p>Unset events <code>rhs</code> in event mask. </p>
 
+<p class="definition">Definition at line <a class="el" href="poll__event_source.html#l00160">160</a> of file <a class="el" href="poll__event_source.html">poll_event</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/io/poll_event</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

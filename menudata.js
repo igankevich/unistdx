@@ -31,4 +31,5 @@ var menudata={children:[
 {text:"Variables",url:"variables.html"},
 {text:"Enumerations",url:"enumerations.html"},
 {text:"Typedefs",url:"typedefs.html"},
-{text:"Namespaces",url:"namespaces.html"}]}]}
+{text:"Namespaces",url:"namespaces.html"}]},
+{text:"Related Pages",url:"pages.html"}]}

@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 234.00 137.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 133)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-133 230,-133 230,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integral_constant.html" xlink:title="std::true_type">
-<polygon fill="#ffffff" stroke="#000000" points="0,-55 0,-74 77,-74 77,-55 0,-55"/>
+<polygon fill="none" stroke="#000000" points="0,-55 0,-74 77,-74 77,-55 0,-55"/>
 <text text-anchor="middle" x="38.5" y="-62" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::true_type</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="structstd_1_1is__arithmetic_3_01sys_1_1uint128__t_01_4.html" target="_top" xlink:title="Specialisation of std::is_arithmetic for sys::uint128_t. ">
-<polygon fill="#ffffff" stroke="#000000" points="121.5,-98.5 121.5,-128.5 217.5,-128.5 217.5,-98.5 121.5,-98.5"/>
+<polygon fill="none" stroke="#000000" points="121.5,-98.5 121.5,-128.5 217.5,-128.5 217.5,-98.5 121.5,-98.5"/>
 <text text-anchor="start" x="129.5" y="-116.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::is_arithmetic</text>
 <text text-anchor="middle" x="169.5" y="-105.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; sys::uint128_t &gt;</text>
 </a>
@@ -38,7 +37,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="structstd_1_1is__integral_3_01sys_1_1uint128__t_01_4.html" target="_top" xlink:title="Specialisation of std::is_integral for sys::uint128_t. ">
-<polygon fill="#ffffff" stroke="#000000" points="117,-49.5 117,-79.5 222,-79.5 222,-49.5 117,-49.5"/>
+<polygon fill="none" stroke="#000000" points="117,-49.5 117,-79.5 222,-79.5 222,-49.5 117,-49.5"/>
 <text text-anchor="start" x="125" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::is_integral&lt; sys</text>
 <text text-anchor="middle" x="169.5" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::uint128_t &gt;</text>
 </a>
@@ -54,7 +53,7 @@
 <g id="node4" class="node">
 <title>Node3</title>
 <g id="a_node4"><a xlink:href="structstd_1_1is__unsigned_3_01sys_1_1uint128__t_01_4.html" target="_top" xlink:title="Specialisation of std::is_unsigned for sys::uint128_t. ">
-<polygon fill="#ffffff" stroke="#000000" points="113,-.5 113,-30.5 226,-30.5 226,-.5 113,-.5"/>
+<polygon fill="none" stroke="#000000" points="113,-.5 113,-30.5 226,-30.5 226,-.5 113,-.5"/>
 <text text-anchor="start" x="121" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::is_unsigned&lt; sys</text>
 <text text-anchor="middle" x="169.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::uint128_t &gt;</text>
 </a>

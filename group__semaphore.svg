@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 405.00 134.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 130)">
 <title>Semaphores</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-130 401,-130 401,4 -4,4"/>
 <!-- Node2 -->
 <g id="node1" class="node">
 <title>Node2</title>
 <g id="a_node1"><a xlink:href="group__container.html" target="_top" xlink:title="Classes with container interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="333,-105.5 333,-124.5 397,-124.5 397,-105.5 333,-105.5"/>
+<polygon fill="none" stroke="#000000" points="333,-105.5 333,-124.5 397,-124.5 397,-105.5 333,-105.5"/>
 <text text-anchor="middle" x="365" y="-112.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Containers</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node4</title>
 <g id="a_node2"><a xlink:href="group__ipc.html" target="_top" xlink:title="Resource management and parallel execution. ">
-<polygon fill="#ffffff" stroke="#000000" points="333.5,-38.5 333.5,-57.5 396.5,-57.5 396.5,-38.5 333.5,-38.5"/>
+<polygon fill="none" stroke="#000000" points="333.5,-38.5 333.5,-57.5 396.5,-57.5 396.5,-38.5 333.5,-38.5"/>
 <text text-anchor="middle" x="365" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Processes</text>
 </a>
 </g>
@@ -52,7 +51,7 @@
 <g id="node4" class="node">
 <title>Node3</title>
 <g id="a_node4"><a xlink:href="group__io.html" target="_top" xlink:title="Input/output handling. ">
-<polygon fill="#ffffff" stroke="#000000" points="350.5,-.5 350.5,-19.5 379.5,-19.5 379.5,-.5 350.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="350.5,-.5 350.5,-19.5 379.5,-19.5 379.5,-.5 350.5,-.5"/>
 <text text-anchor="middle" x="365" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">IO</text>
 </a>
 </g>
@@ -67,7 +66,7 @@
 <g id="node5" class="node">
 <title>Node1</title>
 <g id="a_node5"><a xlink:href="group__concepts.html" target="_top" xlink:title="Group classes and functions by concept. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-38.5 0,-57.5 79,-57.5 79,-38.5 0,-38.5"/>
+<polygon fill="none" stroke="#000000" points="0,-38.5 0,-57.5 79,-57.5 79,-38.5 0,-38.5"/>
 <text text-anchor="middle" x="39.5" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">C++ concepts</text>
 </a>
 </g>

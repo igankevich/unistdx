@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 109.00 95.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 91)">
 <title>sys::recursive_spin_mutex</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-91 105,-91 105,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -20,7 +19,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1spin__mutex.html" target="_top" xlink:title="Fast mutex that does not use system calls. ">
-<polygon fill="#ffffff" stroke="#000000" points="6,-67.5 6,-86.5 95,-86.5 95,-67.5 6,-67.5"/>
+<polygon fill="none" stroke="#000000" points="6,-67.5 6,-86.5 95,-86.5 95,-67.5 6,-67.5"/>
 <text text-anchor="middle" x="50.5" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::spin_mutex</text>
 </a>
 </g>

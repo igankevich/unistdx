@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 256.00 39.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 35)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-35 252,-35 252,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/utility/hash.html" xlink:title="std::hash\&lt; sys::ipv4\l_addr::rep_type \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-30.5 106,-30.5 106,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-30.5 106,-30.5 106,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::hash&lt; sys::ipv4</text>
 <text text-anchor="middle" x="53" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_addr::rep_type &gt;</text>
 </a>
@@ -23,7 +22,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="structstd_1_1hash_3_01sys_1_1ipv4__addr_01_4.html" target="_top" xlink:title="Specialisation of std::hash for sys::ipv4_addr. ">
-<polygon fill="#ffffff" stroke="#000000" points="142,-.5 142,-30.5 248,-30.5 248,-.5 142,-.5"/>
+<polygon fill="none" stroke="#000000" points="142,-.5 142,-30.5 248,-30.5 248,-.5 142,-.5"/>
 <text text-anchor="start" x="150" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::hash&lt; sys::ipv4</text>
 <text text-anchor="middle" x="195" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_addr &gt;</text>
 </a>

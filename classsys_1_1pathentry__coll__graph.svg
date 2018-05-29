@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 441.00 99.50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 95.5)">
 <title>sys::pathentry</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-95.5 437,-95.5 437,4 -4,4"/>
 <!-- Node3 -->
 <g id="node1" class="node">
 <title>Node3</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node4</title>
 <g id="a_node2"><a xlink:href="classsys_1_1direntry.html" target="_top" xlink:title="Directory entry. ">
-<polygon fill="#ffffff" stroke="#000000" points="178.5,-68 178.5,-87 249.5,-87 249.5,-68 178.5,-68"/>
+<polygon fill="none" stroke="#000000" points="178.5,-68 178.5,-87 249.5,-87 249.5,-68 178.5,-68"/>
 <text text-anchor="middle" x="214" y="-75" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::direntry</text>
 </a>
 </g>
@@ -33,7 +32,7 @@
 <!-- Node5 -->
 <g id="node3" class="node">
 <title>Node5</title>
-<polygon fill="#ffffff" stroke="#bfbfbf" points="25.5,-72 25.5,-91 90.5,-91 90.5,-72 25.5,-72"/>
+<polygon fill="none" stroke="#bfbfbf" points="25.5,-72 25.5,-91 90.5,-91 90.5,-72 25.5,-72"/>
 <text text-anchor="middle" x="58" y="-79" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">dirent_type</text>
 </g>
 <!-- Node5&#45;&gt;Node4 -->
@@ -46,7 +45,7 @@
 <g id="node4" class="node">
 <title>Node6</title>
 <g id="a_node4"><a xlink:href="classsys_1_1basic__path.html" target="_top" xlink:title="sys::basic_path\&lt; char \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="153,-22 153,-41 275,-41 275,-22 153,-22"/>
+<polygon fill="none" stroke="#000000" points="153,-22 153,-41 275,-41 275,-22 153,-22"/>
 <text text-anchor="middle" x="214" y="-29" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_path&lt; char &gt;</text>
 </a>
 </g>
@@ -62,7 +61,7 @@
 <g id="node5" class="node">
 <title>Node7</title>
 <g id="a_node5"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/string/basic_string.html" xlink:title="std::basic_string\&lt;\l char, std::char_traits\l\&lt; char \&gt;, std::allocator\l\&lt; char \&gt; \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-52.5 116,-52.5 116,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-52.5 116,-52.5 116,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-40.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::basic_string&lt;</text>
 <text text-anchor="start" x="8" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> char, std::char_traits</text>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; char &gt;, std::allocator</text>

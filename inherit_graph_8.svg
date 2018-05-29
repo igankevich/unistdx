@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 222.00 66.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 62)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-62 218,-62 218,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/error/exception.html" xlink:title="std::exception">
-<polygon fill="#ffffff" stroke="#000000" points="0,-19.5 0,-38.5 78,-38.5 78,-19.5 0,-19.5"/>
+<polygon fill="none" stroke="#000000" points="0,-19.5 0,-38.5 78,-38.5 78,-19.5 0,-19.5"/>
 <text text-anchor="middle" x="39" y="-26.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::exception</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1bad__argument.html" target="_top" xlink:title="Invalid command line argument error. ">
-<polygon fill="#ffffff" stroke="#000000" points="114,-38.5 114,-57.5 214,-57.5 214,-38.5 114,-38.5"/>
+<polygon fill="none" stroke="#000000" points="114,-38.5 114,-57.5 214,-57.5 214,-38.5 114,-38.5"/>
 <text text-anchor="middle" x="164" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::bad_argument</text>
 </a>
 </g>
@@ -37,7 +36,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="classsys_1_1bad__file__lock.html" target="_top" xlink:title="An exception indicating file lock error. ">
-<polygon fill="#ffffff" stroke="#000000" points="116.5,-.5 116.5,-19.5 211.5,-19.5 211.5,-.5 116.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="116.5,-.5 116.5,-19.5 211.5,-19.5 211.5,-.5 116.5,-.5"/>
 <text text-anchor="middle" x="164" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::bad_file_lock</text>
 </a>
 </g>

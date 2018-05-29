@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 253.00 186.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 182)">
 <title>sys::container_traits&lt; Container &gt;</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-182 249,-182 249,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -20,7 +19,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="structsys_1_1deque__traits.html" target="_top" xlink:title="Container traits for deque container. ">
-<polygon fill="#ffffff" stroke="#000000" points="144,-147.5 144,-177.5 242,-177.5 242,-147.5 144,-147.5"/>
+<polygon fill="none" stroke="#000000" points="144,-147.5 144,-177.5 242,-177.5 242,-147.5 144,-147.5"/>
 <text text-anchor="start" x="152" y="-165.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::deque_traits&lt;</text>
 <text text-anchor="middle" x="193" y="-154.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> Container &gt;</text>
 </a>
@@ -36,7 +35,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="structsys_1_1priority__queue__traits.html" target="_top" xlink:title="Container traits for priority queue container. ">
-<polygon fill="#ffffff" stroke="#000000" points="141,-98.5 141,-128.5 245,-128.5 245,-98.5 141,-98.5"/>
+<polygon fill="none" stroke="#000000" points="141,-98.5 141,-128.5 245,-128.5 245,-98.5 141,-98.5"/>
 <text text-anchor="start" x="149" y="-116.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::priority_queue</text>
 <text text-anchor="middle" x="193" y="-105.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_traits&lt; Container &gt;</text>
 </a>
@@ -52,7 +51,7 @@
 <g id="node4" class="node">
 <title>Node3</title>
 <g id="a_node4"><a xlink:href="structsys_1_1queue__traits.html" target="_top" xlink:title="Container traits for queue&#45;like containers. ">
-<polygon fill="#ffffff" stroke="#000000" points="144,-49.5 144,-79.5 242,-79.5 242,-49.5 144,-49.5"/>
+<polygon fill="none" stroke="#000000" points="144,-49.5 144,-79.5 242,-79.5 242,-49.5 144,-49.5"/>
 <text text-anchor="start" x="152" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::queue_traits&lt;</text>
 <text text-anchor="middle" x="193" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> Container &gt;</text>
 </a>
@@ -68,7 +67,7 @@
 <g id="node5" class="node">
 <title>Node4</title>
 <g id="a_node5"><a xlink:href="structsys_1_1vector__traits.html" target="_top" xlink:title="Container traits for vector&#45;like containers. ">
-<polygon fill="#ffffff" stroke="#000000" points="147,-.5 147,-30.5 239,-30.5 239,-.5 147,-.5"/>
+<polygon fill="none" stroke="#000000" points="147,-.5 147,-30.5 239,-30.5 239,-.5 147,-.5"/>
 <text text-anchor="start" x="155" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::vector_traits</text>
 <text text-anchor="middle" x="193" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Container &gt;</text>
 </a>

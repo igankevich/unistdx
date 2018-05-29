@@ -79,12 +79,14 @@ $(function() {
 <div class="dynheader">
 Inheritance diagram for sys::file_mutex:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1file__mutex__inherit__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1file__mutex__inherit__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
 Collaboration diagram for sys::file_mutex:</div>
 <div class="dyncontent">
-<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1file__mutex__coll__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe></div>
+<div class="center"><iframe scrolling="no" frameborder="0" src="classsys_1_1file__mutex__coll__graph.svg" width="122" height="112"><p><b>This browser is not able to show SVG: try Firefox, Chrome, Safari, or Opera instead.</b></p></iframe>
+</div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -229,6 +231,8 @@ static const <a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815
 <li>Read locks may be acquired by multiple processes, provided that there no write lock on the file. </li>
 <li>Write lock may be acquired by only one process. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="file__mutex_source.html#l00054">54</a> of file <a class="el" href="file__mutex_source.html">file_mutex</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aed9672883ca97630bf022d3ba95f0f35"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aed9672883ca97630bf022d3ba95f0f35">&#9670;&nbsp;</a></span>file_mutex() <span class="overload">[1/2]</span></h2>
@@ -271,6 +275,10 @@ static const <a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815
 </div><div class="memdoc">
 <p>Construct file mutex with file <code>filename</code>, flags <code>flags</code>, file mode <code>mode</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="file__mutex_source.html#l00077">77</a> of file <a class="el" href="file__mutex_source.html">file_mutex</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00145">sys::fildes::flags()</a>, and <a class="el" href="file__mutex_source.html#l00101">open()</a>.</p>
+
 </div>
 </div>
 <a id="a57f34dd51d78f526c1ab8d1d61e1894c"></a>
@@ -307,6 +315,10 @@ static const <a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815
 </table>
 </div><div class="memdoc">
 <p>Construct file mutex with file <code>filename</code>, read-write permissions, file mode <code>mode</code>. </p>
+
+<p class="definition">Definition at line <a class="el" href="file__mutex_source.html#l00091">91</a> of file <a class="el" href="file__mutex_source.html">file_mutex</a>.</p>
+
+<p class="reference">References <a class="el" href="file__mutex_source.html#l00101">open()</a>.</p>
 
 </div>
 </div>
@@ -345,6 +357,10 @@ static const <a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815
 </table>
 </div><div class="memdoc">
 <p>Open file <code>filename</code> for mutex with read-write permissions and file mode <code>mode</code>. </p>
+
+<p class="definition">Definition at line <a class="el" href="file__mutex_source.html#l00101">101</a> of file <a class="el" href="file__mutex_source.html">file_mutex</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="file__mutex_source.html#l00077">file_mutex()</a>.</p>
 
 </div>
 </div>
@@ -389,12 +405,10 @@ static const <a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815
 </div><div class="memdoc">
 <p>Open file <code>filename</code> for mutex with flags <code>flags</code> and file mode <code>mode</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="file__mutex_8cc_source.html#l00015">15</a> of file <a class="el" href="file__mutex_8cc_source.html">file_mutex.cc</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following files:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/fs/file_mutex</li>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/fs/file_mutex.cc</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

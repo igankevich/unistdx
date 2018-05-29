@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 401.00 348.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 344)">
 <title>Network</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-344 397,-344 397,4 -4,4"/>
 <!-- Node3 -->
 <g id="node1" class="node">
 <title>Node3</title>
 <g id="a_node1"><a xlink:href="group__container.html" target="_top" xlink:title="Classes with container interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="329,-303.5 329,-322.5 393,-322.5 393,-303.5 329,-303.5"/>
+<polygon fill="none" stroke="#000000" points="329,-303.5 329,-322.5 393,-322.5 393,-303.5 329,-303.5"/>
 <text text-anchor="middle" x="361" y="-310.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Containers</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a xlink:href="group__stream.html" target="_top" xlink:title="Classes with member input/output operators. ">
-<polygon fill="#ffffff" stroke="#000000" points="334.5,-258.5 334.5,-277.5 387.5,-277.5 387.5,-258.5 334.5,-258.5"/>
+<polygon fill="none" stroke="#000000" points="334.5,-258.5 334.5,-277.5 387.5,-277.5 387.5,-258.5 334.5,-258.5"/>
 <text text-anchor="middle" x="361" y="-265.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Streams</text>
 </a>
 </g>
@@ -31,7 +30,7 @@
 <g id="node3" class="node">
 <title>Node6</title>
 <g id="a_node3"><a xlink:href="group__iter.html" target="_top" xlink:title="Classes with iterator interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="334.5,-169.5 334.5,-188.5 387.5,-188.5 387.5,-169.5 334.5,-169.5"/>
+<polygon fill="none" stroke="#000000" points="334.5,-169.5 334.5,-188.5 387.5,-188.5 387.5,-169.5 334.5,-169.5"/>
 <text text-anchor="middle" x="361" y="-176.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Iterators</text>
 </a>
 </g>
@@ -40,7 +39,7 @@
 <g id="node4" class="node">
 <title>Node5</title>
 <g id="a_node4"><a xlink:href="group__wrapper.html" target="_top" xlink:title="Wrappers for system structures. ">
-<polygon fill="#ffffff" stroke="#000000" points="331.5,-81.5 331.5,-100.5 390.5,-100.5 390.5,-81.5 331.5,-81.5"/>
+<polygon fill="none" stroke="#000000" points="331.5,-81.5 331.5,-100.5 390.5,-100.5 390.5,-81.5 331.5,-81.5"/>
 <text text-anchor="middle" x="361" y="-88.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Wrappers</text>
 </a>
 </g>
@@ -49,7 +48,7 @@
 <g id="node5" class="node">
 <title>Node4</title>
 <g id="a_node5"><a xlink:href="group__guard.html" target="_top" xlink:title="Sentry objects that enforce invariants with RAII. ">
-<polygon fill="#ffffff" stroke="#000000" points="337,-43.5 337,-62.5 385,-62.5 385,-43.5 337,-43.5"/>
+<polygon fill="none" stroke="#000000" points="337,-43.5 337,-62.5 385,-62.5 385,-43.5 337,-43.5"/>
 <text text-anchor="middle" x="361" y="-50.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Guards</text>
 </a>
 </g>
@@ -106,7 +105,7 @@
 <g id="node7" class="node">
 <title>Node7</title>
 <g id="a_node7"><a xlink:href="group__traits.html" target="_top" xlink:title="Traits classes. ">
-<polygon fill="#ffffff" stroke="#000000" points="340.5,-.5 340.5,-19.5 381.5,-19.5 381.5,-.5 340.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="340.5,-.5 340.5,-19.5 381.5,-19.5 381.5,-.5 340.5,-.5"/>
 <text text-anchor="middle" x="361" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Traits</text>
 </a>
 </g>
@@ -122,7 +121,7 @@
 <g id="node8" class="node">
 <title>Node1</title>
 <g id="a_node8"><a xlink:href="group__system.html" target="_top" xlink:title="System calls and system structures wrappers. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-124.5 0,-143.5 107,-143.5 107,-124.5 0,-124.5"/>
+<polygon fill="none" stroke="#000000" points="0,-124.5 0,-143.5 107,-143.5 107,-124.5 0,-124.5"/>
 <text text-anchor="middle" x="53.5" y="-131.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">System abstractions</text>
 </a>
 </g>

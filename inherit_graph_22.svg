@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 274.00 50.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 46)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-46 270,-46 270,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/iterator/iterator.html" xlink:title="std::iterator\&lt; std\l::random_access_iterator\l_tag, Address \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-41.5 127,-41.5 127,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-41.5 127,-41.5 127,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::iterator&lt; std</text>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::random_access_iterator</text>
 <text text-anchor="middle" x="63.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_tag, Address &gt;</text>
@@ -24,7 +23,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1subnet__iterator.html" target="_top" xlink:title="Iterator, that traverses IP addresses in a subnetwork. ">
-<polygon fill="#ffffff" stroke="#000000" points="163,-6 163,-36 266,-36 266,-6 163,-6"/>
+<polygon fill="none" stroke="#000000" points="163,-6 163,-36 266,-36 266,-6 163,-6"/>
 <text text-anchor="start" x="171" y="-24" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::subnet_iterator</text>
 <text text-anchor="middle" x="214.5" y="-13" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Address &gt;</text>
 </a>

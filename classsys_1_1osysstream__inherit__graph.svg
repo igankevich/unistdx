@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 123.00 106.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 102)">
 <title>sys::osysstream</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-102 119,-102 119,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/io/basic_ostream.html" xlink:title="std::basic_ostream\l\&lt; char, std::char_traits\l\&lt; char \&gt; \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-56.5 0,-97.5 115,-97.5 115,-56.5 0,-56.5"/>
+<polygon fill="none" stroke="#000000" points="0,-56.5 0,-97.5 115,-97.5 115,-56.5 0,-56.5"/>
 <text text-anchor="start" x="8" y="-85.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::basic_ostream</text>
 <text text-anchor="start" x="8" y="-74.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; char, std::char_traits</text>
 <text text-anchor="middle" x="57.5" y="-63.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; char &gt; &gt;</text>

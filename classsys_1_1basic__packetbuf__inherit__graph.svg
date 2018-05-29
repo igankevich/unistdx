@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 426.00 186.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 182)">
 <title>sys::basic_packetbuf&lt; Ch, Tr &gt;</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-182 422,-182 422,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
@@ -20,7 +19,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="classsys_1_1basic__fildesbuf.html" target="_top" xlink:title="basic_fildesbuf\&lt; Ch,\l Tr, fd_type \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="300.5,-147.5 300.5,-177.5 407.5,-177.5 407.5,-147.5 300.5,-147.5"/>
+<polygon fill="none" stroke="#000000" points="300.5,-147.5 300.5,-177.5 407.5,-177.5 407.5,-147.5 300.5,-147.5"/>
 <text text-anchor="start" x="308.5" y="-165.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">basic_fildesbuf&lt; Ch,</text>
 <text text-anchor="middle" x="354" y="-154.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> Tr, fd_type &gt;</text>
 </a>
@@ -36,7 +35,7 @@
 <g id="node4" class="node">
 <title>Node3</title>
 <g id="a_node4"><a xlink:href="classsys_1_1basic__fildesbuf.html" target="_top" xlink:title="Stream buffer that writes and reads from file descriptor. ">
-<polygon fill="#ffffff" stroke="#000000" points="302,-98.5 302,-128.5 406,-128.5 406,-98.5 302,-98.5"/>
+<polygon fill="none" stroke="#000000" points="302,-98.5 302,-128.5 406,-128.5 406,-98.5 302,-98.5"/>
 <text text-anchor="start" x="310" y="-116.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_fildesbuf</text>
 <text text-anchor="middle" x="354" y="-105.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>
@@ -52,7 +51,7 @@
 <g id="node5" class="node">
 <title>Node4</title>
 <g id="a_node5"><a xlink:href="classsys_1_1basic__shmembuf.html" target="_top" xlink:title="Shared memory stream buffer with synchronisation via process_semaphore. ">
-<polygon fill="#ffffff" stroke="#000000" points="297.5,-49.5 297.5,-79.5 410.5,-79.5 410.5,-49.5 297.5,-49.5"/>
+<polygon fill="none" stroke="#000000" points="297.5,-49.5 297.5,-79.5 410.5,-79.5 410.5,-49.5 297.5,-49.5"/>
 <text text-anchor="start" x="305.5" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_shmembuf</text>
 <text text-anchor="middle" x="354" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>
@@ -68,7 +67,7 @@
 <g id="node6" class="node">
 <title>Node5</title>
 <g id="a_node6"><a xlink:href="classsys_1_1basic__websocketbuf.html" target="_top" xlink:title="Stream buffer that encodes/decodes its contents using WebSocket protocol. ">
-<polygon fill="#ffffff" stroke="#000000" points="290,-.5 290,-30.5 418,-30.5 418,-.5 290,-.5"/>
+<polygon fill="none" stroke="#000000" points="290,-.5 290,-30.5 418,-30.5 418,-.5 290,-.5"/>
 <text text-anchor="start" x="298" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_websocketbuf</text>
 <text text-anchor="middle" x="354" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>
@@ -84,7 +83,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/io/basic_streambuf.html" xlink:title="std::basic_streambuf\l\&lt; Ch, Tr \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-73.5 0,-103.5 108,-103.5 108,-73.5 0,-73.5"/>
+<polygon fill="none" stroke="#000000" points="0,-73.5 0,-103.5 108,-103.5 108,-73.5 0,-73.5"/>
 <text text-anchor="start" x="8" y="-91.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::basic_streambuf</text>
 <text text-anchor="middle" x="54" y="-80.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>

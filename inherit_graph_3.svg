@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 248.00 50.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 46)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-46 244,-46 244,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/io/basic_ostream.html" xlink:title="std::basic_ostream\l\&lt; char, std::char_traits\l\&lt; char \&gt; \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-.5 0,-41.5 115,-41.5 115,-.5 0,-.5"/>
+<polygon fill="none" stroke="#000000" points="0,-.5 0,-41.5 115,-41.5 115,-.5 0,-.5"/>
 <text text-anchor="start" x="8" y="-29.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::basic_ostream</text>
 <text text-anchor="start" x="8" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; char, std::char_traits</text>
 <text text-anchor="middle" x="57.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; char &gt; &gt;</text>
@@ -24,7 +23,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1osysstream.html" target="_top" xlink:title="Output stream for standard file descriptors that uses basic_fildesbuf as stream buffer. ">
-<polygon fill="#ffffff" stroke="#000000" points="151,-11.5 151,-30.5 240,-30.5 240,-11.5 151,-11.5"/>
+<polygon fill="none" stroke="#000000" points="151,-11.5 151,-30.5 240,-30.5 240,-11.5 151,-11.5"/>
 <text text-anchor="middle" x="195.5" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::osysstream</text>
 </a>
 </g>

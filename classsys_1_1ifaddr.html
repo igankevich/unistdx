@@ -215,6 +215,8 @@ class sys::ifaddr&lt; Addr &gt;</h3>
 <p>Network interface address. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-23 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00021">21</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a02b010d41cbe4267791121d7e4776939"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a02b010d41cbe4267791121d7e4776939">&#9670;&nbsp;</a></span>ifaddr() <span class="overload">[1/2]</span></h2>
@@ -222,7 +224,7 @@ class sys::ifaddr&lt; Addr &gt;</h3>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Addr &gt; </div>
+template&lt;class Addr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -253,6 +255,8 @@ template&lt;class Addr &gt; </div>
 </div><div class="memdoc">
 <p>Construct interface address from address <code>addr</code> and network mask <code>netmask</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00044">44</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
+
 </div>
 </div>
 <a id="a5442abc1371380e22de2b44083b90a16"></a>
@@ -261,7 +265,7 @@ template&lt;class Addr &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Addr &gt; </div>
+template&lt;class Addr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -292,6 +296,8 @@ template&lt;class Addr &gt; </div>
 </div><div class="memdoc">
 <p>Construct interface address from address <code>addr</code> and network prefix <code>prefix</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00053">53</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -301,7 +307,7 @@ template&lt;class Addr &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Addr &gt; </div>
+template&lt;class Addr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -322,6 +328,10 @@ template&lt;class Addr &gt; </div>
 </div><div class="memdoc">
 <p>Returns true, of the subnetwork contains address <code>rhs</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00133">133</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
+
+<p class="reference">References <a class="el" href="byte__order_source.html#l00049">sys::to_host_format()</a>.</p>
+
 </div>
 </div>
 <a id="a2b4cdbfdfa55a288019833147741f1ee"></a>
@@ -330,7 +340,7 @@ template&lt;class Addr &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Addr &gt; </div>
+template&lt;class Addr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -350,6 +360,10 @@ template&lt;class Addr &gt; </div>
 </div><div class="memdoc">
 <p>Return the number of addresses in the subnetwork, including gateway and broadcast addresses. </p>
 
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00125">125</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
+
+<p class="reference">References <a class="el" href="ifaddr_source.html#l00139">sys::ifaddr&lt; Addr &gt;::first()</a>, and <a class="el" href="ifaddr_source.html#l00145">sys::ifaddr&lt; Addr &gt;::last()</a>.</p>
+
 </div>
 </div>
 <a id="a9e3c5d3463e93e1c1023077d063c969c"></a>
@@ -358,7 +372,7 @@ template&lt;class Addr &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Addr &gt; </div>
+template&lt;class Addr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -378,6 +392,8 @@ template&lt;class Addr &gt; </div>
 </div><div class="memdoc">
 <p>Returns true, if both address and network mask are valid (non-nought). </p>
 
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00167">167</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
+
 </div>
 </div>
 <a id="aff795a49983d59897d9eaae8032add67"></a>
@@ -386,7 +402,7 @@ template&lt;class Addr &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Addr &gt; </div>
+template&lt;class Addr&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -406,11 +422,10 @@ template&lt;class Addr &gt; </div>
 </div><div class="memdoc">
 <p>Returns true, if either address or network mask is invalid (equals nought). </p>
 
+<p class="definition">Definition at line <a class="el" href="ifaddr_source.html#l00176">176</a> of file <a class="el" href="ifaddr_source.html">ifaddr</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/net/ifaddr</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

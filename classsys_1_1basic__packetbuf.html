@@ -392,6 +392,8 @@ class sys::basic_packetbuf&lt; Ch, Tr &gt;</h3>
 <ul>
 <li>By default header size is nought, and packet buffer works as a regular stream buffer. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00048">48</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a931ec25dd79ba82e48831dacce8f9e8a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a931ec25dd79ba82e48831dacce8f9e8a">&#9670;&nbsp;</a></span>end_packet()</h2>
@@ -399,7 +401,7 @@ class sys::basic_packetbuf&lt; Ch, Tr &gt;</h3>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -419,6 +421,12 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Finish writing the packet by updating its header with actual packet size. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00118">118</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">References <a class="el" href="packetbuf_source.html#l00384">sys::basic_packetbuf&lt; Ch, Tr &gt;::opacket_begin()</a>, <a class="el" href="packetbuf_source.html#l00405">sys::basic_packetbuf&lt; Ch, Tr &gt;::opacketsize()</a>, <a class="el" href="packetbuf_source.html#l00332">sys::basic_packetbuf&lt; Ch, Tr &gt;::overwrite_header()</a>, and <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/pbump.html">std::basic_streambuf&lt; Ch, Tr &gt;::pbump()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="pstream_source.html#l00100">sys::basic_pstream&lt; Ch, Tr, Size &gt;::end_packet()</a>.</p>
+
 </div>
 </div>
 <a id="ac7b9eeada1e6bcbc23b35ab5a6173b56"></a>
@@ -427,7 +435,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -449,6 +457,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 
 <p>Reimplemented in <a class="el" href="classsys_1_1basic__websocketbuf.html#a369a92593be7674ff7d30b8dc64249bf">sys::basic_websocketbuf&lt; Ch, Tr &gt;</a>.</p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00100">100</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="a073293c27ff671e8267f8d39ca0e8a9d"></a>
@@ -457,7 +467,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -477,6 +487,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Offset of the first incoming packet byte relative to <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/gptr.html">eback</a>. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00378">378</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="ac7622531da0e2ef891cdfbd88de5a814"></a>
@@ -485,7 +497,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -505,6 +517,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Offset of the first incoming packet payload byte relative to <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/gptr.html">eback</a>. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00369">369</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="ad350eac8c7cec897320e24066c614bdf"></a>
@@ -513,7 +527,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -533,6 +547,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Returns true if packet buffer can be compacted without ruining the state which might have been save by subclasses. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00225">225</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="a08ec552fca510d6c25f3ecaa3e8234a0"></a>
@@ -541,7 +557,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -561,6 +577,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>This function is called when payload becomes ready. Does nothing by default. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00356">356</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="ab0bf0823ac8bc01f036d67018b905785"></a>
@@ -569,7 +587,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -589,6 +607,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Offset of the first outgoing packet byte relative to <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/pptr.html">pbase</a>. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00399">399</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="a13b55ca9f3ddb68e8ce0f458eb518cd6"></a>
@@ -597,7 +617,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -620,6 +640,10 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <p>Overwrite packet header when actual packet size is known. The argument is packet size. </p>
 <dl class="section return"><dt>Returns</dt><dd>header size </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00332">332</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="packetbuf_source.html#l00118">sys::basic_packetbuf&lt; Ch, Tr &gt;::end_packet()</a>.</p>
+
 </div>
 </div>
 <a id="a3dfac40fb21c4df75a7803d08ae56116"></a>
@@ -628,7 +652,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -648,6 +672,10 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Write packet header into the put buffer. Does nothing by default. The method is called in <a class="el" href="classsys_1_1basic__packetbuf.html#a8b2bc3dab2d3480f5ab20d7afe7669cd">begin_packet</a> to write intiial packet header when actual packet size is not known. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00324">324</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="packetbuf_source.html#l00106">sys::basic_packetbuf&lt; Ch, Tr &gt;::begin_packet()</a>.</p>
+
 </div>
 </div>
 <a id="a06d30722d47153613c748ed4a3a810d3"></a>
@@ -656,7 +684,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -677,6 +705,12 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Seeks get buffer position from the beginning of input packet payload. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00306">306</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/gptr.html">std::basic_streambuf&lt; Ch, Tr &gt;::eback()</a>, <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/gptr.html">std::basic_streambuf&lt; Ch, Tr &gt;::egptr()</a>, <a class="el" href="packetbuf_source.html#l00261">sys::basic_packetbuf&lt; Ch, Tr &gt;::ipayload_begin()</a>, and <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/setg.html">std::basic_streambuf&lt; Ch, Tr &gt;::setg()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="packetbuf_source.html#l00622">sys::append_payload()</a>.</p>
+
 </div>
 </div>
 <a id="ad79cde3bb81d20d00ef26af51713e298"></a>
@@ -685,7 +719,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -722,6 +756,8 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Set incoming packet offset to <code>pos1</code>, payload offset to <code>pos2</code> and size to <code>n</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00432">432</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
 </div>
 </div>
 <a id="a1f03c03eefb94e410386d593d7490762"></a>
@@ -730,7 +766,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -750,6 +786,10 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </div><div class="memdoc">
 <p>Move to the next input packet, if the payload of the current packet is ready. </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00180">180</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="pstream_source.html#l00112">sys::basic_pstream&lt; Ch, Tr, Size &gt;::skip_packet()</a>, and <a class="el" href="packetbuf_source.html#l00676">sys::basic_ipacket_guard&lt; Ch, Tr &gt;::~basic_ipacket_guard()</a>.</p>
+
 </div>
 </div>
 <a id="ab7d3b0103752cdba04268ca497a569f6"></a>
@@ -758,7 +798,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -796,6 +836,10 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true, if there are enough bytes to parse the header </dd></dl>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00343">343</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/gptr.html">std::basic_streambuf&lt; Ch, Tr &gt;::egptr()</a>, and <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_streambuf/gptr.html">std::basic_streambuf&lt; Ch, Tr &gt;::gptr()</a>.</p>
+
 </div>
 </div>
 <h2 class="groupheader">Friends And Related Function Documentation</h2>
@@ -805,7 +849,7 @@ template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Ch , class Tr  = std::char_traits&lt;Ch&gt;&gt; </div>
+template&lt;class Ch, class Tr = std::char_traits&lt;Ch&gt;&gt; </div>
 <div class="memtemplate">
 template&lt;class Ch1 , class Tr1 &gt; </div>
 <table class="mlabels">
@@ -846,9 +890,6 @@ template&lt;class Ch1 , class Tr1 &gt; </div>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/base/packetbuf</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

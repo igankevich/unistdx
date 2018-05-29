@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 275.00 88.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 84)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-84 271,-84 271,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/iterator/iterator.html" xlink:title="std::iterator\&lt; std\l::input_iterator_tag, T \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-24.5 0,-54.5 119,-54.5 119,-24.5 0,-24.5"/>
+<polygon fill="none" stroke="#000000" points="0,-24.5 0,-54.5 119,-54.5 119,-24.5 0,-24.5"/>
 <text text-anchor="start" x="8" y="-42.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::iterator&lt; std</text>
 <text text-anchor="middle" x="59.5" y="-31.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">::input_iterator_tag, T &gt;</text>
 </a>
@@ -23,7 +22,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1netlink__attribute__iterator.html" target="_top" xlink:title="Iterator for netlink message attributes. ">
-<polygon fill="#ffffff" stroke="#000000" points="157.5,-49.5 157.5,-79.5 264.5,-79.5 264.5,-49.5 157.5,-49.5"/>
+<polygon fill="none" stroke="#000000" points="157.5,-49.5 157.5,-79.5 264.5,-79.5 264.5,-49.5 157.5,-49.5"/>
 <text text-anchor="start" x="165.5" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::netlink_attribute</text>
 <text text-anchor="middle" x="211" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_iterator&lt; T &gt;</text>
 </a>
@@ -39,7 +38,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="classsys_1_1netlink__message__iterator.html" target="_top" xlink:title="Iterator for netlink multipart messages. ">
-<polygon fill="#ffffff" stroke="#000000" points="155,-.5 155,-30.5 267,-30.5 267,-.5 155,-.5"/>
+<polygon fill="none" stroke="#000000" points="155,-.5 155,-30.5 267,-30.5 267,-.5 155,-.5"/>
 <text text-anchor="start" x="163" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::netlink_message</text>
 <text text-anchor="middle" x="211" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">_iterator&lt; T &gt;</text>
 </a>

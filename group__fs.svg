@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 409.00 166.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 162)">
 <title>File system</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-162 405,-162 405,4 -4,4"/>
 <!-- Node2 -->
 <g id="node1" class="node">
 <title>Node2</title>
 <g id="a_node1"><a xlink:href="group__stream.html" target="_top" xlink:title="Classes with member input/output operators. ">
-<polygon fill="#ffffff" stroke="#000000" points="345,-105.5 345,-124.5 398,-124.5 398,-105.5 345,-105.5"/>
+<polygon fill="none" stroke="#000000" points="345,-105.5 345,-124.5 398,-124.5 398,-105.5 345,-105.5"/>
 <text text-anchor="middle" x="371.5" y="-112.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Streams</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node3</title>
 <g id="a_node2"><a xlink:href="group__wrapper.html" target="_top" xlink:title="Wrappers for system structures. ">
-<polygon fill="#ffffff" stroke="#000000" points="342,-38.5 342,-57.5 401,-57.5 401,-38.5 342,-38.5"/>
+<polygon fill="none" stroke="#000000" points="342,-38.5 342,-57.5 401,-57.5 401,-38.5 342,-38.5"/>
 <text text-anchor="middle" x="371.5" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Wrappers</text>
 </a>
 </g>
@@ -55,7 +54,7 @@
 <g id="node5" class="node">
 <title>Node4</title>
 <g id="a_node5"><a xlink:href="group__mutex.html" target="_top" xlink:title="Classes with std::mutex interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="344.5,-.5 344.5,-19.5 398.5,-19.5 398.5,-.5 344.5,-.5"/>
+<polygon fill="none" stroke="#000000" points="344.5,-.5 344.5,-19.5 398.5,-19.5 398.5,-.5 344.5,-.5"/>
 <text text-anchor="middle" x="371.5" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Mutexes</text>
 </a>
 </g>
@@ -70,7 +69,7 @@
 <g id="node4" class="node">
 <title>Node1</title>
 <g id="a_node4"><a xlink:href="group__system.html" target="_top" xlink:title="System calls and system structures wrappers. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-38.5 0,-57.5 107,-57.5 107,-38.5 0,-38.5"/>
+<polygon fill="none" stroke="#000000" points="0,-38.5 0,-57.5 107,-57.5 107,-38.5 0,-38.5"/>
 <text text-anchor="middle" x="53.5" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">System abstractions</text>
 </a>
 </g>

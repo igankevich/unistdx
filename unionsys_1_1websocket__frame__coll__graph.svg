@@ -8,7 +8,6 @@
  viewBox="0.00 0.00 349.50 205.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 201)">
 <title>sys::websocket_frame</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-201 345.5,-201 345.5,4 -4,4"/>
 <!-- Node1 -->
 <g id="node1" class="node">
 <title>Node1</title>
@@ -19,7 +18,7 @@
 <g id="node2" class="node">
 <title>Node2</title>
 <g id="a_node2"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integer.html" xlink:title="std::uint32_t">
-<polygon fill="#ffffff" stroke="#000000" points="0,-177.5 0,-196.5 71,-196.5 71,-177.5 0,-177.5"/>
+<polygon fill="none" stroke="#000000" points="0,-177.5 0,-196.5 71,-196.5 71,-177.5 0,-177.5"/>
 <text text-anchor="middle" x="35.5" y="-184.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::uint32_t</text>
 </a>
 </g>
@@ -35,7 +34,7 @@
 <g id="node3" class="node">
 <title>Node3</title>
 <g id="a_node3"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integer.html" xlink:title="std::uint16_t">
-<polygon fill="#ffffff" stroke="#000000" points="89,-177.5 89,-196.5 160,-196.5 160,-177.5 89,-177.5"/>
+<polygon fill="none" stroke="#000000" points="89,-177.5 89,-196.5 160,-196.5 160,-177.5 89,-177.5"/>
 <text text-anchor="middle" x="124.5" y="-184.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::uint16_t</text>
 </a>
 </g>
@@ -61,7 +60,7 @@
 <g id="node4" class="node">
 <title>Node4</title>
 <g id="a_node4"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integer.html" xlink:title="std::uint64_t">
-<polygon fill="#ffffff" stroke="#000000" points="178,-177.5 178,-196.5 249,-196.5 249,-177.5 178,-177.5"/>
+<polygon fill="none" stroke="#000000" points="178,-177.5 178,-196.5 249,-196.5 249,-177.5 178,-177.5"/>
 <text text-anchor="middle" x="213.5" y="-184.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::uint64_t</text>
 </a>
 </g>
@@ -77,7 +76,7 @@
 <g id="node5" class="node">
 <title>Node5</title>
 <g id="a_node5"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/types/integer.html" xlink:title="std::uint8_t">
-<polygon fill="#ffffff" stroke="#000000" points="267,-177.5 267,-196.5 332,-196.5 332,-177.5 267,-177.5"/>
+<polygon fill="none" stroke="#000000" points="267,-177.5 267,-196.5 332,-196.5 332,-177.5 267,-177.5"/>
 <text text-anchor="middle" x="299.5" y="-184.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::uint8_t</text>
 </a>
 </g>

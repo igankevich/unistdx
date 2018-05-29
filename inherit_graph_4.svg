@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 426.00 186.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 182)">
 <title>Graphical Class Hierarchy</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-182 422,-182 422,4 -4,4"/>
 <!-- Node0 -->
 <g id="node1" class="node">
 <title>Node0</title>
 <g id="a_node1"><a doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" xlink:href="http://en.cppreference.com/w/cpp/io/basic_streambuf.html" xlink:title="std::basic_streambuf\l\&lt; Ch, Tr \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="0,-97.5 0,-127.5 108,-127.5 108,-97.5 0,-97.5"/>
+<polygon fill="none" stroke="#000000" points="0,-97.5 0,-127.5 108,-127.5 108,-97.5 0,-97.5"/>
 <text text-anchor="start" x="8" y="-115.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">std::basic_streambuf</text>
 <text text-anchor="middle" x="54" y="-104.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>
@@ -23,7 +22,7 @@
 <g id="node2" class="node">
 <title>Node1</title>
 <g id="a_node2"><a xlink:href="classsys_1_1basic__argbuf.html" target="_top" xlink:title="Stream buffer for command line arguments. ">
-<polygon fill="#ffffff" stroke="#000000" points="149,-122.5 149,-152.5 249,-152.5 249,-122.5 149,-122.5"/>
+<polygon fill="none" stroke="#000000" points="149,-122.5 149,-152.5 249,-152.5 249,-122.5 149,-122.5"/>
 <text text-anchor="start" x="157" y="-140.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_argbuf&lt;</text>
 <text text-anchor="middle" x="199" y="-129.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000"> Ch, Tr &gt;</text>
 </a>
@@ -39,7 +38,7 @@
 <g id="node3" class="node">
 <title>Node2</title>
 <g id="a_node3"><a xlink:href="classsys_1_1basic__packetbuf.html" target="_top" xlink:title="Stream buffer that can reads/writes data in packets with arbitrary header. ">
-<polygon fill="#ffffff" stroke="#000000" points="144,-73.5 144,-103.5 254,-103.5 254,-73.5 144,-73.5"/>
+<polygon fill="none" stroke="#000000" points="144,-73.5 144,-103.5 254,-103.5 254,-73.5 144,-73.5"/>
 <text text-anchor="start" x="152" y="-91.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_packetbuf</text>
 <text text-anchor="middle" x="199" y="-80.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>
@@ -55,7 +54,7 @@
 <g id="node4" class="node">
 <title>Node3</title>
 <g id="a_node4"><a xlink:href="classsys_1_1basic__fildesbuf.html" target="_top" xlink:title="sys::basic_fildesbuf\l\&lt; Ch, Tr, fd_type \&gt;">
-<polygon fill="#ffffff" stroke="#000000" points="302,-147.5 302,-177.5 406,-177.5 406,-147.5 302,-147.5"/>
+<polygon fill="none" stroke="#000000" points="302,-147.5 302,-177.5 406,-177.5 406,-147.5 302,-147.5"/>
 <text text-anchor="start" x="310" y="-165.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_fildesbuf</text>
 <text text-anchor="middle" x="354" y="-154.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr, fd_type &gt;</text>
 </a>
@@ -71,7 +70,7 @@
 <g id="node5" class="node">
 <title>Node4</title>
 <g id="a_node5"><a xlink:href="classsys_1_1basic__fildesbuf.html" target="_top" xlink:title="Stream buffer that writes and reads from file descriptor. ">
-<polygon fill="#ffffff" stroke="#000000" points="302,-98.5 302,-128.5 406,-128.5 406,-98.5 302,-98.5"/>
+<polygon fill="none" stroke="#000000" points="302,-98.5 302,-128.5 406,-128.5 406,-98.5 302,-98.5"/>
 <text text-anchor="start" x="310" y="-116.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_fildesbuf</text>
 <text text-anchor="middle" x="354" y="-105.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr, Fd &gt;</text>
 </a>
@@ -87,7 +86,7 @@
 <g id="node6" class="node">
 <title>Node5</title>
 <g id="a_node6"><a xlink:href="classsys_1_1basic__shmembuf.html" target="_top" xlink:title="Shared memory stream buffer with synchronisation via process_semaphore. ">
-<polygon fill="#ffffff" stroke="#000000" points="297.5,-49.5 297.5,-79.5 410.5,-79.5 410.5,-49.5 297.5,-49.5"/>
+<polygon fill="none" stroke="#000000" points="297.5,-49.5 297.5,-79.5 410.5,-79.5 410.5,-49.5 297.5,-49.5"/>
 <text text-anchor="start" x="305.5" y="-67.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_shmembuf</text>
 <text text-anchor="middle" x="354" y="-56.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>
@@ -103,7 +102,7 @@
 <g id="node7" class="node">
 <title>Node6</title>
 <g id="a_node7"><a xlink:href="classsys_1_1basic__websocketbuf.html" target="_top" xlink:title="Stream buffer that encodes/decodes its contents using WebSocket protocol. ">
-<polygon fill="#ffffff" stroke="#000000" points="290,-.5 290,-30.5 418,-30.5 418,-.5 290,-.5"/>
+<polygon fill="none" stroke="#000000" points="290,-.5 290,-30.5 418,-30.5 418,-.5 290,-.5"/>
 <text text-anchor="start" x="298" y="-18.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">sys::basic_websocketbuf</text>
 <text text-anchor="middle" x="354" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">&lt; Ch, Tr &gt;</text>
 </a>

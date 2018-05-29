@@ -54,5 +54,6 @@ var searchData=
   ['grouping',['grouping',['http://en.cppreference.com/w/cpp/locale/moneypunct/grouping.html',1,'std::moneypunct_byname::grouping()'],['http://en.cppreference.com/w/cpp/locale/moneypunct/grouping.html',1,'std::moneypunct::grouping()'],['http://en.cppreference.com/w/cpp/locale/numpunct/grouping.html',1,'std::numpunct_byname::grouping()'],['http://en.cppreference.com/w/cpp/locale/numpunct/grouping.html',1,'std::numpunct::grouping()']]],
   ['groupstream',['groupstream',['../classsys_1_1groupstream.html',1,'sys']]],
   ['grow',['grow',['../classsys_1_1byte__buffer.html#a287011a241f6e55260bd0b17c2522946',1,'sys::byte_buffer']]],
-  ['guards',['Guards',['../group__guard.html',1,'']]]
+  ['guards',['Guards',['../group__guard.html',1,'']]],
+  ['groups',['groups',['../md_pages_groups.html',1,'']]]
 ];

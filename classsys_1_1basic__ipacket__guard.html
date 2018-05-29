@@ -103,6 +103,8 @@ class sys::basic_ipacket_guard&lt; Ch, Tr &gt;</h3>
 <p>Guard object that preserves packet buffer state upon failure. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-22 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00036">36</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2063e6fb7213f5af82248374f015cdfd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2063e6fb7213f5af82248374f015cdfd">&#9670;&nbsp;</a></span>basic_ipacket_guard()</h2>
@@ -130,6 +132,8 @@ template&lt;class Ch , class Tr &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Construct incoming packet guard for packet buffer <code>buf</code>, save buffer state and set get buffer pointers to limit reading only to payload part of the packet buffer. </p>
+
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00665">665</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
 
 </div>
 </div>
@@ -159,11 +163,12 @@ template&lt;class Ch , class Tr &gt; </div>
 </div><div class="memdoc">
 <p>Destroy incoming packet guard, restore buffer state and skip remaining payload bytes (if any). </p>
 
+<p class="definition">Definition at line <a class="el" href="packetbuf_source.html#l00676">676</a> of file <a class="el" href="packetbuf_source.html">packetbuf</a>.</p>
+
+<p class="reference">References <a class="el" href="packetbuf_source.html#l00180">sys::basic_packetbuf&lt; Ch, Tr &gt;::skip_packet()</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/base/packetbuf</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

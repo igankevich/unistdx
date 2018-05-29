@@ -8,12 +8,11 @@
  viewBox="0.00 0.00 441.00 357.00" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 353)">
 <title>Processes</title>
-<polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-353 437,-353 437,4 -4,4"/>
 <!-- Node5 -->
 <g id="node1" class="node">
 <title>Node5</title>
 <g id="a_node1"><a xlink:href="group__container.html" target="_top" xlink:title="Classes with container interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="361,-311.5 361,-330.5 425,-330.5 425,-311.5 361,-311.5"/>
+<polygon fill="none" stroke="#000000" points="361,-311.5 361,-330.5 425,-330.5 425,-311.5 361,-311.5"/>
 <text text-anchor="middle" x="393" y="-318.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Containers</text>
 </a>
 </g>
@@ -22,7 +21,7 @@
 <g id="node2" class="node">
 <title>Node3</title>
 <g id="a_node2"><a xlink:href="group__stream.html" target="_top" xlink:title="Classes with member input/output operators. ">
-<polygon fill="#ffffff" stroke="#000000" points="366.5,-273.5 366.5,-292.5 419.5,-292.5 419.5,-273.5 366.5,-273.5"/>
+<polygon fill="none" stroke="#000000" points="366.5,-273.5 366.5,-292.5 419.5,-292.5 419.5,-273.5 366.5,-273.5"/>
 <text text-anchor="middle" x="393" y="-280.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Streams</text>
 </a>
 </g>
@@ -31,7 +30,7 @@
 <g id="node3" class="node">
 <title>Node4</title>
 <g id="a_node3"><a xlink:href="group__wrapper.html" target="_top" xlink:title="Wrappers for system structures. ">
-<polygon fill="#ffffff" stroke="#000000" points="363.5,-186.5 363.5,-205.5 422.5,-205.5 422.5,-186.5 363.5,-186.5"/>
+<polygon fill="none" stroke="#000000" points="363.5,-186.5 363.5,-205.5 422.5,-205.5 422.5,-186.5 363.5,-186.5"/>
 <text text-anchor="middle" x="393" y="-193.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Wrappers</text>
 </a>
 </g>
@@ -40,7 +39,7 @@
 <g id="node4" class="node">
 <title>Node8</title>
 <g id="a_node4"><a xlink:href="group__guard.html" target="_top" xlink:title="Sentry objects that enforce invariants with RAII. ">
-<polygon fill="#ffffff" stroke="#000000" points="369,-148.5 369,-167.5 417,-167.5 417,-148.5 369,-148.5"/>
+<polygon fill="none" stroke="#000000" points="369,-148.5 369,-167.5 417,-167.5 417,-148.5 369,-148.5"/>
 <text text-anchor="middle" x="393" y="-155.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Guards</text>
 </a>
 </g>
@@ -85,7 +84,7 @@
 <g id="node6" class="node">
 <title>Node2</title>
 <g id="a_node6"><a xlink:href="group__streambuf.html" target="_top" xlink:title="Classes with std::streambuf interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="353,-105.5 353,-124.5 433,-124.5 433,-105.5 353,-105.5"/>
+<polygon fill="none" stroke="#000000" points="353,-105.5 353,-124.5 433,-124.5 433,-105.5 353,-105.5"/>
 <text text-anchor="middle" x="393" y="-112.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Stream buffers</text>
 </a>
 </g>
@@ -101,7 +100,7 @@
 <g id="node7" class="node">
 <title>Node6</title>
 <g id="a_node7"><a xlink:href="group__semaphore.html" target="_top" xlink:title="Classes with std::condition_variable interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="357.5,-38.5 357.5,-57.5 428.5,-57.5 428.5,-38.5 357.5,-38.5"/>
+<polygon fill="none" stroke="#000000" points="357.5,-38.5 357.5,-57.5 428.5,-57.5 428.5,-38.5 357.5,-38.5"/>
 <text text-anchor="middle" x="393" y="-45.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Semaphores</text>
 </a>
 </g>
@@ -119,7 +118,7 @@
 <g id="node9" class="node">
 <title>Node7</title>
 <g id="a_node9"><a xlink:href="group__mutex.html" target="_top" xlink:title="Classes with std::mutex interface. ">
-<polygon fill="#ffffff" stroke="#000000" points="366,-.5 366,-19.5 420,-19.5 420,-.5 366,-.5"/>
+<polygon fill="none" stroke="#000000" points="366,-.5 366,-19.5 420,-19.5 420,-.5 366,-.5"/>
 <text text-anchor="middle" x="393" y="-7.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">Mutexes</text>
 </a>
 </g>
@@ -134,7 +133,7 @@
 <g id="node8" class="node">
 <title>Node1</title>
 <g id="a_node8"><a xlink:href="group__system.html" target="_top" xlink:title="System calls and system structures wrappers. ">
-<polygon fill="#ffffff" stroke="#000000" points="0,-150.5 0,-169.5 107,-169.5 107,-150.5 0,-150.5"/>
+<polygon fill="none" stroke="#000000" points="0,-150.5 0,-169.5 107,-169.5 107,-150.5 0,-150.5"/>
 <text text-anchor="middle" x="53.5" y="-157.5" font-family="Helvetica,sans-Serif" font-size="10.00" fill="#000000">System abstractions</text>
 </a>
 </g>

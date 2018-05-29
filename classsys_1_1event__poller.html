@@ -177,6 +177,8 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <li>File descriptor poller implemented with <a href="http://man7.org/linux/man-pages/man2/epoll_create1.2.html">epoll_create1(2)</a> system call having condition variable-like interface. </li>
 <li>The poller has condition variable interface for waiting and notifying. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00031">31</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a741a7ea2420607ce2742b1982a4b1655"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a741a7ea2420607ce2742b1982a4b1655">&#9670;&nbsp;</a></span>emplace()</h2>
@@ -213,6 +215,8 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 <p>Construct <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> in-place with file descriptor <code>fd</code> and event mask <code>ev</code> and add it to the poller. </p>
 
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00116">116</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
 </div>
 </div>
 <a id="acde0139142e748e4f05d1bcceeff1e3a"></a>
@@ -242,6 +246,10 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <p>Remove file descriptor-event mask pair to the poller. </p>
 <p>Equivalent to <code>erase(ev.fd())</code>. </p>
 
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00144">144</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="el" href="epoll__event_source.html#l00114">sys::epoll_event::fd()</a>.</p>
+
 </div>
 </div>
 <a id="a66a3e9dc44c806a3abced68e92f955d8"></a>
@@ -270,6 +278,10 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <p></p>
 <p>Notify poller of an external event via <a class="el" href="classsys_1_1event__poller.html#ace89c061525258e8784e54b781b8328f">pipe_in</a>. </p>
 
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00094">94</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="el" href="poller_source.html#l00084">notify_one()</a>.</p>
+
 </div>
 </div>
 <a id="aa73fe207912cf069d4a0ebfdf5cd9bd2"></a>
@@ -295,6 +307,12 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </table>
 </div><div class="memdoc">
 <p>Notify poller of an external event via <a class="el" href="classsys_1_1event__poller.html#ace89c061525258e8784e54b781b8328f">pipe_in</a>. </p>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00084">84</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="el" href="pipe_source.html#l00056">sys::pipe::out()</a>, and <a class="el" href="fildes_source.html#l00129">sys::fildes::write()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poller_source.html#l00094">notify_all()</a>.</p>
 
 </div>
 </div>
@@ -322,6 +340,12 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 <p>Returns file descriptor which is used to notify poller of an external event. </p>
 
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00076">76</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="el" href="fildes_source.html#l00139">sys::fildes::fd()</a>, and <a class="el" href="pipe_source.html#l00050">sys::pipe::in()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="poller_source.html#l00060">event_poller()</a>.</p>
+
 </div>
 </div>
 <a id="ac83e9546608a2a2814ee50c74ccaeab1"></a>
@@ -348,6 +372,10 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </table>
 </div><div class="memdoc">
 <p>Change maximum number of events that the poller handles at a time </p>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00152">152</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/vector/resize.html">std::vector::resize()</a>.</p>
 
 </div>
 </div>
@@ -377,6 +405,8 @@ template&lt;class Lock &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Wait for events to occur unlocking <code>lock</code> for the duration of the wait. </p>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00162">162</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 </div>
 </div>
@@ -421,6 +451,8 @@ template&lt;class Lock , class Pred &gt; </div>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00177">177</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 </div>
 </div>
@@ -473,6 +505,10 @@ template&lt;class Lock , class Rep , class Period , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00212">212</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="el" href="poller_source.html#l00191">wait_for()</a>.</p>
+
 </div>
 </div>
 <a id="a0aca0b3155a5a34cf19c0735fc74f8f8"></a>
@@ -523,6 +559,10 @@ template&lt;class Lock , class Duration , class Pred &gt; </div>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00256">256</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/max.html">std::max()</a>, <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/steady_clock/now.html">std::chrono::steady_clock::now()</a>, and <a class="el" href="poller_source.html#l00191">wait_for()</a>.</p>
 
 </div>
 </div>
@@ -575,11 +615,12 @@ template&lt;class Lock , class Clock , class Duration , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00291">291</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/steady_clock/now.html">std::chrono::steady_clock::now()</a>, and <a class="el" href="poller_source.html#l00232">wait_until()</a>.</p>
+
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>/home/igankevich/repos/dev/specs/build/unistdx/src/unistdx/io/poller</li>
-</ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
