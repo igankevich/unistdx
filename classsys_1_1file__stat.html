@@ -277,11 +277,20 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get file status for file <code>filename</code>. </p>
-<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/stat.2.html">stat(2)</a> </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td>if system error occurs, except <code>std::errc::no_such_file_or_directory</code> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/stat.2.html">stat(2)</a> </dd>
+<dd>
+<a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/errc.html">std::errc</a></dd></dl>
+<p>This method will not throw exception, if the file does not exist. Use <a class="el" href="classsys_1_1file__stat.html#aa68c0acf13c903ed4252592975180408">exists</a> to check it. </p>
 
-<p class="definition">Definition at line <a class="el" href="file__stat_source.html#l00188">188</a> of file <a class="el" href="file__stat_source.html">file_stat</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file__stat_source.html#l00194">194</a> of file <a class="el" href="file__stat_source.html">file_stat</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00048">UNISTDX_CHECK_IF_NOT</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga71a3e3d95d2508aca237a7c83772c99a">UNISTDX_CHECK_IF_NOT</a>.</p>
 
 </div>
 </div>

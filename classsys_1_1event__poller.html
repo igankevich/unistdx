@@ -95,9 +95,8 @@ typedef const <a class="el" href="classsys_1_1event__poller.html#a77b4ba90e7897d
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aef46daf96997e58278f206513bc16e55"><td class="memItemLeft" align="right" valign="top"><a id="aef46daf96997e58278f206513bc16e55"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#aef46daf96997e58278f206513bc16e55">event_poller</a> (int maxevents=4096/sizeof(<a class="el" href="classsys_1_1epoll__event.html">epoll_event</a>))</td></tr>
-<tr class="memdesc:aef46daf96997e58278f206513bc16e55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct event poller with <code>maxevent</code> number of events. <br /></td></tr>
+<tr class="memitem:aef46daf96997e58278f206513bc16e55"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#aef46daf96997e58278f206513bc16e55">event_poller</a> (int maxevents=4096/sizeof(<a class="el" href="classsys_1_1epoll__event.html">epoll_event</a>))</td></tr>
+<tr class="memdesc:aef46daf96997e58278f206513bc16e55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct event poller with <code>maxevent</code> number of events.  <a href="#aef46daf96997e58278f206513bc16e55">More...</a><br /></td></tr>
 <tr class="separator:aef46daf96997e58278f206513bc16e55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace89c061525258e8784e54b781b8328f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#ace89c061525258e8784e54b781b8328f">pipe_in</a> () const noexcept</td></tr>
 <tr class="separator:ace89c061525258e8784e54b781b8328f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,18 +113,16 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a19612d552d490c025fd2267806a08b6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns iterator to the end of array of events. <br /></td></tr>
 <tr class="separator:a19612d552d490c025fd2267806a08b6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a741a7ea2420607ce2742b1982a4b1655"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a741a7ea2420607ce2742b1982a4b1655">emplace</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a> fd, <a class="el" href="group__io.html#gaa67d1bc7d43807e0afec8d5c0ffd8609">event</a> ev)</td></tr>
+<tr class="memdesc:a741a7ea2420607ce2742b1982a4b1655"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> in-place with file descriptor <code>fd</code> and event mask <code>ev</code> and add it to the poller.  <a href="#a741a7ea2420607ce2742b1982a4b1655">More...</a><br /></td></tr>
 <tr class="separator:a741a7ea2420607ce2742b1982a4b1655"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e3590d324864f53ef0b39ddb3525cf0"><td class="memItemLeft" align="right" valign="top"><a id="a8e3590d324864f53ef0b39ddb3525cf0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a8e3590d324864f53ef0b39ddb3525cf0">insert</a> (const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;ev)</td></tr>
-<tr class="memdesc:a8e3590d324864f53ef0b39ddb3525cf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add file descriptor-event mask pair to the poller. <br /></td></tr>
+<tr class="memitem:a8e3590d324864f53ef0b39ddb3525cf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a8e3590d324864f53ef0b39ddb3525cf0">insert</a> (const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;ev)</td></tr>
+<tr class="memdesc:a8e3590d324864f53ef0b39ddb3525cf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add file descriptor-event mask pair to the poller.  <a href="#a8e3590d324864f53ef0b39ddb3525cf0">More...</a><br /></td></tr>
 <tr class="separator:a8e3590d324864f53ef0b39ddb3525cf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9f6349c1d6fbb592a96e62d6168410df"><td class="memItemLeft" align="right" valign="top"><a id="a9f6349c1d6fbb592a96e62d6168410df"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a9f6349c1d6fbb592a96e62d6168410df">replace</a> (const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;ev)</td></tr>
-<tr class="memdesc:a9f6349c1d6fbb592a96e62d6168410df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update event mask for existing file descriptor. <br /></td></tr>
+<tr class="memitem:a9f6349c1d6fbb592a96e62d6168410df"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a9f6349c1d6fbb592a96e62d6168410df">replace</a> (const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;ev)</td></tr>
+<tr class="memdesc:a9f6349c1d6fbb592a96e62d6168410df"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update event mask for existing file descriptor.  <a href="#a9f6349c1d6fbb592a96e62d6168410df">More...</a><br /></td></tr>
 <tr class="separator:a9f6349c1d6fbb592a96e62d6168410df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a226849a3b40c3dc0c313946b870261a7"><td class="memItemLeft" align="right" valign="top"><a id="a226849a3b40c3dc0c313946b870261a7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a226849a3b40c3dc0c313946b870261a7">erase</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a> fd)</td></tr>
-<tr class="memdesc:a226849a3b40c3dc0c313946b870261a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove file descriptor <code>fd</code> from the poller. <br /></td></tr>
+<tr class="memitem:a226849a3b40c3dc0c313946b870261a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a226849a3b40c3dc0c313946b870261a7">erase</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a> fd)</td></tr>
+<tr class="memdesc:a226849a3b40c3dc0c313946b870261a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove file descriptor <code>fd</code> from the poller.  <a href="#a226849a3b40c3dc0c313946b870261a7">More...</a><br /></td></tr>
 <tr class="separator:a226849a3b40c3dc0c313946b870261a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acde0139142e748e4f05d1bcceeff1e3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#acde0139142e748e4f05d1bcceeff1e3a">erase</a> (const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;ev)</td></tr>
 <tr class="memdesc:acde0139142e748e4f05d1bcceeff1e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove file descriptor-event mask pair to the poller.  <a href="#acde0139142e748e4f05d1bcceeff1e3a">More...</a><br /></td></tr>
@@ -139,10 +136,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a2d5beefe931912364a3df33603eb8777"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a2d5beefe931912364a3df33603eb8777">wait</a> (Lock &amp;lock, Pred pred)</td></tr>
 <tr class="memdesc:a2d5beefe931912364a3df33603eb8777"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for events to occur unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true.  <a href="#a2d5beefe931912364a3df33603eb8777">More...</a><br /></td></tr>
 <tr class="separator:a2d5beefe931912364a3df33603eb8777"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81e5cc0b20a111341056b1ba772b361d"><td class="memTemplParams" colspan="2"><a id="a81e5cc0b20a111341056b1ba772b361d"></a>
-template&lt;class Lock , class Rep , class Period &gt; </td></tr>
+<tr class="memitem:a81e5cc0b20a111341056b1ba772b361d"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Rep , class Period &gt; </td></tr>
 <tr class="memitem:a81e5cc0b20a111341056b1ba772b361d"><td class="memTemplItemLeft" align="right" valign="top">std::cv_status&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a81e5cc0b20a111341056b1ba772b361d">wait_for</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration.html">std::chrono::duration</a>&lt; Rep, Period &gt; &amp;dur)</td></tr>
-<tr class="memdesc:a81e5cc0b20a111341056b1ba772b361d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for events to occur specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait. <br /></td></tr>
+<tr class="memdesc:a81e5cc0b20a111341056b1ba772b361d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for events to occur specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait.  <a href="#a81e5cc0b20a111341056b1ba772b361d">More...</a><br /></td></tr>
 <tr class="separator:a81e5cc0b20a111341056b1ba772b361d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d76f5ed07e9ab2f23177655501f57ae"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Rep , class Period , class Pred &gt; </td></tr>
 <tr class="memitem:a8d76f5ed07e9ab2f23177655501f57ae"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1event__poller.html#a8d76f5ed07e9ab2f23177655501f57ae">wait_for</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration.html">std::chrono::duration</a>&lt; Rep, Period &gt; &amp;dur, Pred pred)</td></tr>
@@ -179,7 +175,49 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </ul>
 
 <p class="definition">Definition at line <a class="el" href="poller_source.html#l00031">31</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aef46daf96997e58278f206513bc16e55"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef46daf96997e58278f206513bc16e55">&#9670;&nbsp;</a></span>event_poller()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sys::event_poller::event_poller </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>maxevents</em> = <code>4096/sizeof(<a class="el" href="classsys_1_1epoll__event.html">epoll_event</a>)</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct event poller with <code>maxevent</code> number of events. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_ctl.2.html">epoll_ctl(2)</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/epoll_create1.2.html">epoll_create1(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00065">65</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="el" href="classsys_1_1event__poller.html#ace89c061525258e8784e54b781b8328f">pipe_in()</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a741a7ea2420607ce2742b1982a4b1655"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a741a7ea2420607ce2742b1982a4b1655">&#9670;&nbsp;</a></span>emplace()</h2>
 
@@ -213,14 +251,59 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Construct <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> in-place with file descriptor <code>fd</code> and event mask <code>ev</code> and add it to the poller. </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00116">116</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p>Construct <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> in-place with file descriptor <code>fd</code> and event mask <code>ev</code> and add it to the poller. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_ctl.2.html">epoll_ctl(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00124">124</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+</div>
+</div>
+<a id="a226849a3b40c3dc0c313946b870261a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a226849a3b40c3dc0c313946b870261a7">&#9670;&nbsp;</a></span>erase() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::event_poller::erase </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">fd_type</a>&#160;</td>
+          <td class="paramname"><em>fd</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remove file descriptor <code>fd</code> from the poller. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_ctl.2.html">epoll_ctl(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00153">153</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 </div>
 </div>
 <a id="acde0139142e748e4f05d1bcceeff1e3a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acde0139142e748e4f05d1bcceeff1e3a">&#9670;&nbsp;</a></span>erase()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#acde0139142e748e4f05d1bcceeff1e3a">&#9670;&nbsp;</a></span>erase() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -244,11 +327,55 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 
 <p>Remove file descriptor-event mask pair to the poller. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_ctl.2.html">epoll_ctl(2)</a></dd></dl>
 <p>Equivalent to <code>erase(ev.fd())</code>. </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00144">144</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00165">165</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="el" href="epoll__event_source.html#l00114">sys::epoll_event::fd()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1epoll__event.html#a233b21870d9ba6c0f71fdaf31a5a1a98">sys::epoll_event::fd()</a>.</p>
+
+</div>
+</div>
+<a id="a8e3590d324864f53ef0b39ddb3525cf0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e3590d324864f53ef0b39ddb3525cf0">&#9670;&nbsp;</a></span>insert()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::event_poller::insert </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;&#160;</td>
+          <td class="paramname"><em>ev</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Add file descriptor-event mask pair to the poller. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_ctl.2.html">epoll_ctl(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00134">134</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 </div>
 </div>
@@ -278,9 +405,9 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <p></p>
 <p>Notify poller of an external event via <a class="el" href="classsys_1_1event__poller.html#ace89c061525258e8784e54b781b8328f">pipe_in</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00094">94</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00099">99</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="el" href="poller_source.html#l00084">notify_one()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1event__poller.html#aa73fe207912cf069d4a0ebfdf5cd9bd2">notify_one()</a>.</p>
 
 </div>
 </div>
@@ -308,11 +435,11 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 <p>Notify poller of an external event via <a class="el" href="classsys_1_1event__poller.html#ace89c061525258e8784e54b781b8328f">pipe_in</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00084">84</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00089">89</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="el" href="pipe_source.html#l00056">sys::pipe::out()</a>, and <a class="el" href="fildes_source.html#l00129">sys::fildes::write()</a>.</p>
+<p class="reference">References <a class="el" href="unionsys_1_1pipe.html#a8e88641fb420aff7b9db090e8b989217">sys::pipe::out()</a>, and <a class="el" href="classsys_1_1fildes.html#ae431a8d793f88f8682bdf2a1f7620947">sys::fildes::write()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="poller_source.html#l00094">notify_all()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classsys_1_1event__poller.html#a66a3e9dc44c806a3abced68e92f955d8">notify_all()</a>.</p>
 
 </div>
 </div>
@@ -340,11 +467,42 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 <p>Returns file descriptor which is used to notify poller of an external event. </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00076">76</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00081">81</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="el" href="fildes_source.html#l00139">sys::fildes::fd()</a>, and <a class="el" href="pipe_source.html#l00050">sys::pipe::in()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1fildes.html#a778a25d72927c65ba29290ea1b673c2e">sys::fildes::fd()</a>, and <a class="el" href="unionsys_1_1pipe.html#adcfe28fb7e8a6f45725890cac4ef4d41">sys::pipe::in()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="poller_source.html#l00060">event_poller()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classsys_1_1event__poller.html#aef46daf96997e58278f206513bc16e55">event_poller()</a>.</p>
+
+</div>
+</div>
+<a id="a9f6349c1d6fbb592a96e62d6168410df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f6349c1d6fbb592a96e62d6168410df">&#9670;&nbsp;</a></span>replace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::event_poller::replace </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classsys_1_1epoll__event.html">epoll_event</a> &amp;&#160;</td>
+          <td class="paramname"><em>ev</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Update event mask for existing file descriptor. </p>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_ctl.2.html">epoll_ctl(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00143">143</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 </div>
 </div>
@@ -373,7 +531,7 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 <p>Change maximum number of events that the poller handles at a time </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00152">152</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00173">173</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/container/vector/resize.html">std::vector::resize()</a>.</p>
 
@@ -406,7 +564,7 @@ template&lt;class Lock &gt; </div>
 </div><div class="memdoc">
 <p>Wait for events to occur unlocking <code>lock</code> for the duration of the wait. </p>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00162">162</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00183">183</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
 </div>
 </div>
@@ -447,17 +605,81 @@ template&lt;class Lock , class Pred &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait for events to occur unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td>if system error occurs, except <code>std::errc::interrupted</code> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_wait.2.html">epoll_wait(2)</a> </dd>
+<dd>
+<a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/errc.html">std::errc</a></dd></dl>
 <ul>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00177">177</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00202">202</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+</div>
+</div>
+<a id="a81e5cc0b20a111341056b1ba772b361d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a81e5cc0b20a111341056b1ba772b361d">&#9670;&nbsp;</a></span>wait_for() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Lock , class Rep , class Period &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::cv_status sys::event_poller::wait_for </td>
+          <td>(</td>
+          <td class="paramtype">Lock &amp;&#160;</td>
+          <td class="paramname"><em>lock</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration.html">std::chrono::duration</a>&lt; Rep, Period &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dur</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait for events to occur specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td>if system error occurs, except <code>std::errc::interrupted</code> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/epoll_wait.2.html">epoll_wait(2)</a> </dd>
+<dd>
+<a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/errc.html">std::errc</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00220">220</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration/duration_cast.html">std::chrono::duration_cast()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1event__poller.html#a8d76f5ed07e9ab2f23177655501f57ae">wait_for()</a>, and <a class="el" href="classsys_1_1event__poller.html#a38eca00e9299b1b0d9150c5a750e1f6c">wait_until()</a>.</p>
 
 </div>
 </div>
 <a id="a8d76f5ed07e9ab2f23177655501f57ae"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8d76f5ed07e9ab2f23177655501f57ae">&#9670;&nbsp;</a></span>wait_for()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d76f5ed07e9ab2f23177655501f57ae">&#9670;&nbsp;</a></span>wait_for() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -505,9 +727,9 @@ template&lt;class Lock , class Rep , class Period , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00212">212</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00241">241</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="el" href="poller_source.html#l00191">wait_for()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1event__poller.html#a81e5cc0b20a111341056b1ba772b361d">wait_for()</a>.</p>
 
 </div>
 </div>
@@ -560,9 +782,9 @@ template&lt;class Lock , class Duration , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00256">256</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00285">285</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/max.html">std::max()</a>, <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/steady_clock/now.html">std::chrono::steady_clock::now()</a>, and <a class="el" href="poller_source.html#l00191">wait_for()</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/max.html">std::max()</a>, <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/steady_clock/now.html">std::chrono::steady_clock::now()</a>, and <a class="el" href="classsys_1_1event__poller.html#a81e5cc0b20a111341056b1ba772b361d">wait_for()</a>.</p>
 
 </div>
 </div>
@@ -615,9 +837,9 @@ template&lt;class Lock , class Clock , class Duration , class Pred &gt; </div>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="poller_source.html#l00291">291</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
+<p class="definition">Definition at line <a class="el" href="poller_source.html#l00320">320</a> of file <a class="el" href="poller_source.html">poller</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/steady_clock/now.html">std::chrono::steady_clock::now()</a>, and <a class="el" href="poller_source.html#l00232">wait_until()</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/steady_clock/now.html">std::chrono::steady_clock::now()</a>, and <a class="el" href="classsys_1_1event__poller.html#a38eca00e9299b1b0d9150c5a750e1f6c">wait_until()</a>.</p>
 
 </div>
 </div>

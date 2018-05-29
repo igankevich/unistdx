@@ -169,13 +169,52 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gace362b4083cc0c09863a66cbd2cb3baf"><td class="memItemLeft" align="right" valign="top"><a id="gace362b4083cc0c09863a66cbd2cb3baf"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__io.html#gace362b4083cc0c09863a66cbd2cb3baf">sys::is_a_terminal</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">sys::fd_type</a> f)</td></tr>
-<tr class="memdesc:gace362b4083cc0c09863a66cbd2cb3baf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true, if file descriptor <code>f</code> refers to a terminal. <br /></td></tr>
+<tr class="memitem:gace362b4083cc0c09863a66cbd2cb3baf"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__io.html#gace362b4083cc0c09863a66cbd2cb3baf">sys::is_a_terminal</a> (<a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">sys::fd_type</a> f)</td></tr>
+<tr class="memdesc:gace362b4083cc0c09863a66cbd2cb3baf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true, if file descriptor <code>f</code> refers to a terminal.  <a href="group__io.html#gace362b4083cc0c09863a66cbd2cb3baf">More...</a><br /></td></tr>
 <tr class="separator:gace362b4083cc0c09863a66cbd2cb3baf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <p>Input/output handling. </p>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="gace362b4083cc0c09863a66cbd2cb3baf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gace362b4083cc0c09863a66cbd2cb3baf">&#9670;&nbsp;</a></span>is_a_terminal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool sys::is_a_terminal </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="namespacesys.html#a83d3339c4a2905b4b266875b1815da61">sys::fd_type</a>&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns true, if file descriptor <code>f</code> refers to a terminal. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man3/isatty.3.html">isatty(3)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="terminal_source.html#l00020">20</a> of file <a class="el" href="terminal_source.html">terminal</a>.</p>
+
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -371,7 +371,7 @@ Functions</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="sharedmem_source.html#l00022">22</a> of file <a class="el" href="sharedmem_source.html">sharedmem</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sharedmem_source.html#l00026">26</a> of file <a class="el" href="sharedmem_source.html">sharedmem</a>.</p>
 
 </div>
 </div>
@@ -541,7 +541,7 @@ Functions</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00114">114</a> of file <a class="el" href="process_source.html">process</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00140">140</a> of file <a class="el" href="process_source.html">process</a>.</p>
 
 </div>
 </div>
@@ -582,13 +582,20 @@ Functions</h2></td></tr>
 
 <p>Set signal callback function. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/sigaction.2.html">sigaction(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="signal_source.html#l00156">156</a> of file <a class="el" href="signal_source.html">signal</a>.</p>
+<p class="definition">Definition at line <a class="el" href="signal_source.html#l00158">158</a> of file <a class="el" href="signal_source.html">signal</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="signal_source.html#l00171">sys::this_process::ignore_signal()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__ipc.html#gadf48598944012c7eed577acb7561c6c9">sys::this_process::ignore_signal()</a>.</p>
 
 </div>
 </div>
@@ -629,7 +636,15 @@ Functions</h2></td></tr>
 <p>Execute child process with arguments <code>argv</code> and environment <code>envp</code>. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve(2)</a></dd></dl>
 <ul>
 <li>The executable path is specified as the first argument. </li>
 <li>The executable name is <em>not</em> searched in <code>PATH</code>.</li>
@@ -637,11 +652,11 @@ Functions</h2></td></tr>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="execute_8cc-example.html#a2">execute.cc</a>.</dd>
 </dl>
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00028">28</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00030">30</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="execute_source.html#l00040">sys::this_process::execute()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__ipc.html#gab597bcfcb4007a853f3f4cdaa2c0d52b">sys::this_process::execute()</a>.</p>
 
 </div>
 </div>
@@ -680,18 +695,33 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Execute child process with arguments <code>args</code> and environment <code>env</code>. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve(2)</a></dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve(2)</a></dd></dl>
 <ul>
 <li>The executable path is specified as the first argument. </li>
 <li>The executable name is <em>not</em> searched in <code>PATH</code>.</li>
 </ul>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00040">40</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00044">44</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="argstream_source.html#l00164">sys::argstream::argv()</a>, and <a class="el" href="execute_source.html#l00028">sys::this_process::execute()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1argstream.html#ab557a8906cd6ae4a116705dada44a763">sys::argstream::argv()</a>, and <a class="el" href="group__ipc.html#ga6b73bd6ab6309fbe6d689606f9470307">sys::this_process::execute()</a>.</p>
 
 </div>
 </div>
@@ -720,18 +750,33 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Execute child process with arguments <code>argv</code> and calling process environment. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execv.2.html">execv(2)</a></dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve(2)</a></dd></dl>
 <ul>
 <li>The executable path is specified as the first argument. </li>
 <li>The executable name is <em>not</em> searched in <code>PATH</code>.</li>
 </ul>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00051">51</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00057">57</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -760,18 +805,40 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Execute child process with arguments <code>args</code> and calling process environment. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execv.2.html">execv(2)</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execv.2.html">execv(2)</a></dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execve.2.html">execve(2)</a></dd></dl>
 <ul>
 <li>The executable path is specified as the first argument. </li>
 <li>The executable name is <em>not</em> searched in <code>PATH</code>.</li>
 </ul>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00064">64</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00072">72</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="argstream_source.html#l00164">sys::argstream::argv()</a>, and <a class="el" href="execute_source.html#l00028">sys::this_process::execute()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1argstream.html#ab557a8906cd6ae4a116705dada44a763">sys::argstream::argv()</a>, and <a class="el" href="group__ipc.html#ga6b73bd6ab6309fbe6d689606f9470307">sys::this_process::execute()</a>.</p>
 
 </div>
 </div>
@@ -812,7 +879,15 @@ Functions</h2></td></tr>
 <p>Execute child process with arguments <code>argv</code> and environment <code>envp</code>. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execvpe.2.html">execvpe(2)</a></dd></dl>
 <ul>
 <li>The executable is specified as the first argument <code>argv</code>[0]. </li>
 <li>Uses <code>PATH</code> environment variable to search for the executable.</li>
@@ -820,11 +895,11 @@ Functions</h2></td></tr>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 <dl><dt><b>Examples: </b></dt><dd><a class="el" href="execute_command_8cc-example.html#a2">execute_command.cc</a>.</dd>
 </dl>
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00082">82</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00092">92</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="execute_source.html#l00106">sys::this_process::execute_command()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__ipc.html#ga505a357b3be41511699c4723f29b29fb">sys::this_process::execute_command()</a>.</p>
 
 </div>
 </div>
@@ -853,18 +928,33 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Execute child process with arguments <code>argv</code> and calling process environment. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execvp.2.html">execvp(2)</a></dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execvpe.2.html">execvpe(2)</a></dd></dl>
 <ul>
 <li>The executable is specified as the first argument <code>argv</code>[0]. </li>
 <li>Uses <code>PATH</code> environment variable to search for the executable.</li>
 </ul>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00094">94</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00106">106</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -893,18 +983,40 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Execute child process with arguments <code>args</code> and calling process environment. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execvp.2.html">execvp(2)</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/execvp.2.html">execvp(2)</a></dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a></dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classsys_1_1argstream.html" title="Output stream of command line arguments. ">argstream</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/execvpe.2.html">execvpe(2)</a></dd></dl>
 <ul>
 <li>The executable is specified as the first argument <code>argv</code>[0]. </li>
 <li>Uses <code>PATH</code> environment variable to search for the executable.</li>
 </ul>
 <dl class="section user"><dt>How-tos:</dt><dd><a class="el" href="execute.html">Execute child process with arguments and environment (WIP)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="execute_source.html#l00106">106</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
+<p class="definition">Definition at line <a class="el" href="execute_source.html#l00120">120</a> of file <a class="el" href="execute_source.html">execute</a>.</p>
 
-<p class="reference">References <a class="el" href="argstream_source.html#l00164">sys::argstream::argv()</a>, and <a class="el" href="execute_source.html#l00082">sys::this_process::execute_command()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1argstream.html#ab557a8906cd6ae4a116705dada44a763">sys::argstream::argv()</a>, and <a class="el" href="group__ipc.html#ga898f9dd56bbfd5a1ad5cc772a352fdb9">sys::this_process::execute_command()</a>.</p>
 
 </div>
 </div>
@@ -935,11 +1047,18 @@ Functions</h2></td></tr>
 <p>Ignore specified signal. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/sigaction.2.html">sigaction(2)</a></dd></dl>
 <p>By default any signal for which callback function is not set may kill the process. This routine allows to ignore specified signals. </p>
 
-<p class="definition">Definition at line <a class="el" href="signal_source.html#l00171">171</a> of file <a class="el" href="signal_source.html">signal</a>.</p>
+<p class="definition">Definition at line <a class="el" href="signal_source.html#l00175">175</a> of file <a class="el" href="signal_source.html">signal</a>.</p>
 
-<p class="reference">References <a class="el" href="signal_source.html#l00156">sys::this_process::bind_signal()</a>.</p>
+<p class="reference">References <a class="el" href="group__ipc.html#gace8d9fd1f51c2508e54dd86ec3be57fe">sys::this_process::bind_signal()</a>.</p>
 
 </div>
 </div>
@@ -1006,6 +1125,15 @@ Functions</h2></td></tr>
 <p>Set both UID and GID of the current process. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/setuid.2.html">setuid(2)</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/setgid.2.html">setgid(2)</a></dd></dl>
 <ul>
 <li>Sets GID first. </li>
 <li>Reverts process UID and GID upon error. </li>
@@ -1013,7 +1141,7 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="identity_8cc_source.html#l00004">4</a> of file <a class="el" href="identity_8cc_source.html">identity.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>

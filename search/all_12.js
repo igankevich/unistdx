@@ -36,7 +36,7 @@ var searchData=
   ['real_5fname',['real_name',['../classsys_1_1user.html#a5dcca94ef4655bef5437dd1164466118',1,'sys::user']]],
   ['realloc',['realloc',['http://en.cppreference.com/w/cpp/memory/c/realloc.html',1,'std']]],
   ['reason',['reason',['../structsys_1_1basic__status_3_01siginfo__type_01_4.html#a30d967f90b2bb975f0c316fb688c8721',1,'sys::basic_status&lt; siginfo_type &gt;']]],
-  ['receive',['receive',['../classsys_1_1socket.html#a01758b06a6807a76560e2954ef1141fa',1,'sys::socket::receive(message_header &amp;hdr, int flags=0) const noexcept'],['../classsys_1_1socket.html#a26d0e572424f1a20da5891186bdb3858',1,'sys::socket::receive(void *buf, size_t n, int flags=0) const noexcept']]],
+  ['receive',['receive',['../classsys_1_1socket.html#a93bb971a07b58bf478c2ea9f74f63ef4',1,'sys::socket::receive(message_header &amp;hdr, int flags=0) const'],['../classsys_1_1socket.html#a65ac86611b932e14337ff35eaf69f8c2',1,'sys::socket::receive(void *buf, size_t n, int flags=0) const']]],
   ['receive_5fcredentials',['receive_credentials',['../group__net.html#gafaf2a39670f2270caee4754ad0a99047',1,'sys']]],
   ['receive_5ffds',['receive_fds',['../classsys_1_1socket.html#a382856608623473a83e4a93d4f4cccc4',1,'sys::socket']]],
   ['recursive_5fmutex',['recursive_mutex',['http://en.cppreference.com/w/cpp/thread/recursive_mutex.html',1,'std::recursive_mutex'],['http://en.cppreference.com/w/cpp/thread/recursive_mutex/recursive_mutex.html',1,'std::recursive_mutex::recursive_mutex()']]],

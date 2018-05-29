@@ -294,7 +294,13 @@ Functions</h2></td></tr>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/copy_file_range.2.html">copy_file_range(2)</a> </dd>
 <dd>
-<a href="http://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile(2)</a></dd></dl>
+<a href="http://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile(2)</a> </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 <ul>
 <li>Uses <a href="http://man7.org/linux/man-pages/man2/copy_file_range.2.html">copy_file_range(2)</a> on newer kernels. </li>
 <li>Uses <a href="http://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile(2)</a> when available. </li>
@@ -303,9 +309,9 @@ Functions</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="copy__file_8cc_source.html#l00044">44</a> of file <a class="el" href="copy__file_8cc_source.html">copy_file.cc</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_ios/rdbuf.html">std::ifstream::rdbuf()</a>, <a class="el" href="file__stat_source.html#l00116">sys::file_stat::size()</a>, and <a class="el" href="check_source.html#l00013">UNISTDX_THROW_BAD_CALL</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/io/basic_ios/rdbuf.html">std::ifstream::rdbuf()</a>, <a class="el" href="classsys_1_1file__stat.html#a6c3b5ea4edc4a2935cc201ea1f084d6a">sys::file_stat::size()</a>, and <a class="el" href="group__macros.html#ga5c74b08379fcd62583ce7509bf8684ab">UNISTDX_THROW_BAD_CALL</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="odirectory_source.html#l00089">sys::basic_odirectory&lt; Trans &gt;::operator&lt;&lt;()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classsys_1_1basic__odirectory.html#a26521eecb09a8e89469fefceac6f383a">sys::basic_odirectory&lt; Trans &gt;::operator&lt;&lt;()</a>.</p>
 
 </div>
 </div>
@@ -344,19 +350,26 @@ Functions</h2></td></tr>
 <p>Make directories recursively. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-04-25 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">dir</td><td>path, components of which are created </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>file mode of directories to be created </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">offset</td><td>character offset in path name to start creating directories from</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">offset</td><td>character offset in path name to start creating directories from </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/mkdir.2.html">mkdir(2)</a></dd></dl>
 <p>Create directories assuming all path components that come before <code>offset</code> characters from the beginning of <code>dir</code> exist. </p>
 
 <p class="definition">Definition at line <a class="el" href="mkdirs_8cc_source.html#l00008">8</a> of file <a class="el" href="mkdirs_8cc_source.html">mkdirs.cc</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/string/basic_string/size.html">std::basic_string::size()</a>, and <a class="el" href="check_source.html#l00013">UNISTDX_THROW_BAD_CALL</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/string/basic_string/size.html">std::basic_string::size()</a>, and <a class="el" href="group__macros.html#ga5c74b08379fcd62583ce7509bf8684ab">UNISTDX_THROW_BAD_CALL</a>.</p>
 
 </div>
 </div>
@@ -403,17 +416,24 @@ Functions</h2></td></tr>
 <p>Make directories recursively. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-04-25 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">root</td><td>path, relative to which directories are created </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">relative_path</td><td>path, components of which are created </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>file mode of directories to be created</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">m</td><td>file mode of directories to be created </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/mkdir.2.html">mkdir(2)</a></dd></dl>
 <p>Create directories relative to <code>root</code> assuming that the root exists. </p>
 
-<p class="definition">Definition at line <a class="el" href="mkdirs_source.html#l00038">38</a> of file <a class="el" href="mkdirs_source.html">mkdirs</a>.</p>
+<p class="definition">Definition at line <a class="el" href="mkdirs_source.html#l00042">42</a> of file <a class="el" href="mkdirs_source.html">mkdirs</a>.</p>
 
 <p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/string/basic_string/size.html">std::basic_string::size()</a>.</p>
 

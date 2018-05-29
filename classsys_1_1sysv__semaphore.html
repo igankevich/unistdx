@@ -97,9 +97,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6cec66fe1d17d64fe5ecafa8c9efc0a9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a6cec66fe1d17d64fe5ecafa8c9efc0a9">sysv_semaphore</a> (<a class="el" href="classsys_1_1sysv__semaphore.html#a77d76ed17f35a65f615341a80c0b0dab">sem_type</a> sem)</td></tr>
 <tr class="memdesc:a6cec66fe1d17d64fe5ecafa8c9efc0a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct semaphore with ID <code>sem</code>.  <a href="#a6cec66fe1d17d64fe5ecafa8c9efc0a9">More...</a><br /></td></tr>
 <tr class="separator:a6cec66fe1d17d64fe5ecafa8c9efc0a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a554aab41be8521897ce02c8067d9d63d"><td class="memItemLeft" align="right" valign="top"><a id="a554aab41be8521897ce02c8067d9d63d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a554aab41be8521897ce02c8067d9d63d">~sysv_semaphore</a> ()</td></tr>
-<tr class="memdesc:a554aab41be8521897ce02c8067d9d63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove semaphore (if owner). <br /></td></tr>
+<tr class="memitem:a554aab41be8521897ce02c8067d9d63d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a554aab41be8521897ce02c8067d9d63d">~sysv_semaphore</a> ()</td></tr>
+<tr class="memdesc:a554aab41be8521897ce02c8067d9d63d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove semaphore (if owner). Terminates on system error.  <a href="#a554aab41be8521897ce02c8067d9d63d">More...</a><br /></td></tr>
 <tr class="separator:a554aab41be8521897ce02c8067d9d63d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a19fb96e77b18846e833dbdc57036a7cc"><td class="memItemLeft" align="right" valign="top"><a id="a19fb96e77b18846e833dbdc57036a7cc"></a>
 <a class="el" href="classsys_1_1sysv__semaphore.html#a77d76ed17f35a65f615341a80c0b0dab">sem_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a19fb96e77b18846e833dbdc57036a7cc">id</a> () const noexcept</td></tr>
@@ -109,53 +108,45 @@ Public Member Functions</h2></td></tr>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a539e8f890787a7d3d8def6ae6c03a334">owner</a> () const noexcept</td></tr>
 <tr class="memdesc:a539e8f890787a7d3d8def6ae6c03a334"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if this semaphore is owned by this process. <br /></td></tr>
 <tr class="separator:a539e8f890787a7d3d8def6ae6c03a334"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a59665ba5ed44d67852947fe6c98f6a"><td class="memItemLeft" align="right" valign="top"><a id="a2a59665ba5ed44d67852947fe6c98f6a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a2a59665ba5ed44d67852947fe6c98f6a">wait</a> ()</td></tr>
-<tr class="memdesc:a2a59665ba5ed44d67852947fe6c98f6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until other process/thread calls <a class="el" href="classsys_1_1sysv__semaphore.html#acc7d9ec6f2a28410ea5ed3a401b98c1c">sysv_semaphore::notify_one</a> or <a class="el" href="classsys_1_1sysv__semaphore.html#a367b2b54412c082f0d9574533049273a">sysv_semaphore::notify_all</a> on this semaphore. <br /></td></tr>
+<tr class="memitem:a2a59665ba5ed44d67852947fe6c98f6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a2a59665ba5ed44d67852947fe6c98f6a">wait</a> ()</td></tr>
+<tr class="memdesc:a2a59665ba5ed44d67852947fe6c98f6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until other process/thread calls <a class="el" href="classsys_1_1sysv__semaphore.html#acc7d9ec6f2a28410ea5ed3a401b98c1c">sysv_semaphore::notify_one</a> or <a class="el" href="classsys_1_1sysv__semaphore.html#a367b2b54412c082f0d9574533049273a">sysv_semaphore::notify_all</a> on this semaphore.  <a href="#a2a59665ba5ed44d67852947fe6c98f6a">More...</a><br /></td></tr>
 <tr class="separator:a2a59665ba5ed44d67852947fe6c98f6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc7d9ec6f2a28410ea5ed3a401b98c1c"><td class="memItemLeft" align="right" valign="top"><a id="acc7d9ec6f2a28410ea5ed3a401b98c1c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#acc7d9ec6f2a28410ea5ed3a401b98c1c">notify_one</a> ()</td></tr>
-<tr class="memdesc:acc7d9ec6f2a28410ea5ed3a401b98c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify one process that wait on this semaphore. <br /></td></tr>
+<tr class="memitem:acc7d9ec6f2a28410ea5ed3a401b98c1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#acc7d9ec6f2a28410ea5ed3a401b98c1c">notify_one</a> ()</td></tr>
+<tr class="memdesc:acc7d9ec6f2a28410ea5ed3a401b98c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify one process that wait on this semaphore.  <a href="#acc7d9ec6f2a28410ea5ed3a401b98c1c">More...</a><br /></td></tr>
 <tr class="separator:acc7d9ec6f2a28410ea5ed3a401b98c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a367b2b54412c082f0d9574533049273a"><td class="memItemLeft" align="right" valign="top"><a id="a367b2b54412c082f0d9574533049273a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a367b2b54412c082f0d9574533049273a">notify_all</a> ()</td></tr>
-<tr class="memdesc:a367b2b54412c082f0d9574533049273a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify all processes that wait on this semaphore. <br /></td></tr>
+<tr class="memitem:a367b2b54412c082f0d9574533049273a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a367b2b54412c082f0d9574533049273a">notify_all</a> ()</td></tr>
+<tr class="memdesc:a367b2b54412c082f0d9574533049273a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify all processes that wait on this semaphore.  <a href="#a367b2b54412c082f0d9574533049273a">More...</a><br /></td></tr>
 <tr class="separator:a367b2b54412c082f0d9574533049273a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a3034360e93812e43b6ba5b03a7d686"><td class="memItemLeft" align="right" valign="top"><a id="a5a3034360e93812e43b6ba5b03a7d686"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a5a3034360e93812e43b6ba5b03a7d686">notify_all</a> (int n)</td></tr>
-<tr class="memdesc:a5a3034360e93812e43b6ba5b03a7d686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify <code>n</code> processes that wait on this semaphore. <br /></td></tr>
+<tr class="memitem:a5a3034360e93812e43b6ba5b03a7d686"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a5a3034360e93812e43b6ba5b03a7d686">notify_all</a> (int n)</td></tr>
+<tr class="memdesc:a5a3034360e93812e43b6ba5b03a7d686"><td class="mdescLeft">&#160;</td><td class="mdescRight">Notify <code>n</code> processes that wait on this semaphore.  <a href="#a5a3034360e93812e43b6ba5b03a7d686">More...</a><br /></td></tr>
 <tr class="separator:a5a3034360e93812e43b6ba5b03a7d686"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23da600545b877a6df9126463df85584"><td class="memTemplParams" colspan="2"><a id="a23da600545b877a6df9126463df85584"></a>
-template&lt;class Lock &gt; </td></tr>
+<tr class="memitem:a23da600545b877a6df9126463df85584"><td class="memTemplParams" colspan="2">template&lt;class Lock &gt; </td></tr>
 <tr class="memitem:a23da600545b877a6df9126463df85584"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a23da600545b877a6df9126463df85584">wait</a> (Lock &amp;lock)</td></tr>
-<tr class="memdesc:a23da600545b877a6df9126463df85584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore unlocking <code>lock</code> for the duration of the wait. <br /></td></tr>
+<tr class="memdesc:a23da600545b877a6df9126463df85584"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore unlocking <code>lock</code> for the duration of the wait.  <a href="#a23da600545b877a6df9126463df85584">More...</a><br /></td></tr>
 <tr class="separator:a23da600545b877a6df9126463df85584"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74f88b9593915fdd410f0f136f85a7a1"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Pred &gt; </td></tr>
 <tr class="memitem:a74f88b9593915fdd410f0f136f85a7a1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a74f88b9593915fdd410f0f136f85a7a1">wait</a> (Lock &amp;lock, Pred pred)</td></tr>
 <tr class="memdesc:a74f88b9593915fdd410f0f136f85a7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true.  <a href="#a74f88b9593915fdd410f0f136f85a7a1">More...</a><br /></td></tr>
 <tr class="separator:a74f88b9593915fdd410f0f136f85a7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9363c2a8a3dec1c3e3e3284ce9ffc3f1"><td class="memTemplParams" colspan="2"><a id="a9363c2a8a3dec1c3e3e3284ce9ffc3f1"></a>
-template&lt;class Lock , class Rep , class Period &gt; </td></tr>
+<tr class="memitem:a9363c2a8a3dec1c3e3e3284ce9ffc3f1"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Rep , class Period &gt; </td></tr>
 <tr class="memitem:a9363c2a8a3dec1c3e3e3284ce9ffc3f1"><td class="memTemplItemLeft" align="right" valign="top">std::cv_status&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">wait_for</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration.html">std::chrono::duration</a>&lt; Rep, Period &gt; &amp;dur)</td></tr>
-<tr class="memdesc:a9363c2a8a3dec1c3e3e3284ce9ffc3f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait. <br /></td></tr>
+<tr class="memdesc:a9363c2a8a3dec1c3e3e3284ce9ffc3f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait.  <a href="#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">More...</a><br /></td></tr>
 <tr class="separator:a9363c2a8a3dec1c3e3e3284ce9ffc3f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8930bba175b0a9fea86e604a58772856"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Rep , class Period , class Pred &gt; </td></tr>
 <tr class="memitem:a8930bba175b0a9fea86e604a58772856"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a8930bba175b0a9fea86e604a58772856">wait_for</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration.html">std::chrono::duration</a>&lt; Rep, Period &gt; &amp;dur, Pred pred)</td></tr>
 <tr class="memdesc:a8930bba175b0a9fea86e604a58772856"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true or timeout occurs.  <a href="#a8930bba175b0a9fea86e604a58772856">More...</a><br /></td></tr>
 <tr class="separator:a8930bba175b0a9fea86e604a58772856"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adecd1a40e64c653285b379ec0dfbc4fc"><td class="memTemplParams" colspan="2"><a id="adecd1a40e64c653285b379ec0dfbc4fc"></a>
-template&lt;class Lock , class Duration &gt; </td></tr>
+<tr class="memitem:adecd1a40e64c653285b379ec0dfbc4fc"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Duration &gt; </td></tr>
 <tr class="memitem:adecd1a40e64c653285b379ec0dfbc4fc"><td class="memTemplItemLeft" align="right" valign="top">std::cv_status&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#adecd1a40e64c653285b379ec0dfbc4fc">wait_until</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/time_point.html">std::chrono::time_point</a>&lt; <a class="el" href="classsys_1_1sysv__semaphore.html#ab210b9e63a8c8f1cfb89326446eea30f">clock_type</a>, Duration &gt; &amp;tp)</td></tr>
-<tr class="memdesc:adecd1a40e64c653285b379ec0dfbc4fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait. <br /></td></tr>
+<tr class="memdesc:adecd1a40e64c653285b379ec0dfbc4fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait.  <a href="#adecd1a40e64c653285b379ec0dfbc4fc">More...</a><br /></td></tr>
 <tr class="separator:adecd1a40e64c653285b379ec0dfbc4fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad116ac912b3dee71b246e13bed02ef5f"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Duration , class Pred &gt; </td></tr>
 <tr class="memitem:ad116ac912b3dee71b246e13bed02ef5f"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#ad116ac912b3dee71b246e13bed02ef5f">wait_until</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/time_point.html">std::chrono::time_point</a>&lt; <a class="el" href="classsys_1_1sysv__semaphore.html#ab210b9e63a8c8f1cfb89326446eea30f">clock_type</a>, Duration &gt; &amp;tp, Pred pred)</td></tr>
 <tr class="memdesc:ad116ac912b3dee71b246e13bed02ef5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true.  <a href="#ad116ac912b3dee71b246e13bed02ef5f">More...</a><br /></td></tr>
 <tr class="separator:ad116ac912b3dee71b246e13bed02ef5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72437bae8ab2195a57c0671b9b929742"><td class="memTemplParams" colspan="2"><a id="a72437bae8ab2195a57c0671b9b929742"></a>
-template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
+<tr class="memitem:a72437bae8ab2195a57c0671b9b929742"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <tr class="memitem:a72437bae8ab2195a57c0671b9b929742"><td class="memTemplItemLeft" align="right" valign="top">std::cv_status&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a72437bae8ab2195a57c0671b9b929742">wait_until</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/time_point.html">std::chrono::time_point</a>&lt; Clock, Duration &gt; &amp;tp)</td></tr>
-<tr class="memdesc:a72437bae8ab2195a57c0671b9b929742"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait. <br /></td></tr>
+<tr class="memdesc:a72437bae8ab2195a57c0671b9b929742"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait.  <a href="#a72437bae8ab2195a57c0671b9b929742">More...</a><br /></td></tr>
 <tr class="separator:a72437bae8ab2195a57c0671b9b929742"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2584e53c241d2a2d39bb20eac13881f6"><td class="memTemplParams" colspan="2">template&lt;class Lock , class Clock , class Duration , class Pred &gt; </td></tr>
 <tr class="memitem:a2584e53c241d2a2d39bb20eac13881f6"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1sysv__semaphore.html#a2584e53c241d2a2d39bb20eac13881f6">wait_until</a> (Lock &amp;lock, const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/time_point.html">std::chrono::time_point</a>&lt; Clock, Duration &gt; &amp;tp, Pred pred)</td></tr>
@@ -168,7 +159,7 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
 <p>Suitable for both processes and threads. </p>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00048">48</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00052">52</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a93305d1f6e54ab0d38d1ad168111da3c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93305d1f6e54ab0d38d1ad168111da3c">&#9670;&nbsp;</a></span>sysv_semaphore() <span class="overload">[1/2]</span></h2>
@@ -195,11 +186,18 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 </div><div class="memdoc">
 
 <p>Construct semaphore with specified <code>mode</code>. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semget.2.html">semget(2)</a></dd></dl>
 <p>The semaphore is owned by the calling process/thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00066">66</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00072">72</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 
-<p class="reference">References <a class="el" href="check_source.html#l00022">UNISTDX_CHECK</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -230,13 +228,237 @@ template&lt;class Lock , class Clock , class Duration &gt; </td></tr>
 <p>Construct semaphore with ID <code>sem</code>. </p>
 <p>The semaphore is not owned by the calling process/thread. </p>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00080">80</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00086">86</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+</div>
+</div>
+<a id="a554aab41be8521897ce02c8067d9d63d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a554aab41be8521897ce02c8067d9d63d">&#9670;&nbsp;</a></span>~sysv_semaphore()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sys::sysv_semaphore::~sysv_semaphore </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remove semaphore (if owner). Terminates on system error. </p>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semctl.2.html">semctl(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00096">96</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a367b2b54412c082f0d9574533049273a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a367b2b54412c082f0d9574533049273a">&#9670;&nbsp;</a></span>notify_all() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::sysv_semaphore::notify_all </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Notify all processes that wait on this semaphore. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semop.2.html">semop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00160">160</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1posix__semaphore.html#aa0a3adb38ab6ce9ccf57f1133b9039e5">sys::posix_semaphore::notify_all()</a>.</p>
+
+</div>
+</div>
+<a id="a5a3034360e93812e43b6ba5b03a7d686"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a3034360e93812e43b6ba5b03a7d686">&#9670;&nbsp;</a></span>notify_all() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::sysv_semaphore::notify_all </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Notify <code>n</code> processes that wait on this semaphore. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semop.2.html">semop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00170">170</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+</div>
+</div>
+<a id="acc7d9ec6f2a28410ea5ed3a401b98c1c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc7d9ec6f2a28410ea5ed3a401b98c1c">&#9670;&nbsp;</a></span>notify_one()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::sysv_semaphore::notify_one </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Notify one process that wait on this semaphore. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semop.2.html">semop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00150">150</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1posix__semaphore.html#a7c69cf5aecd50752caa0ddac85eab476">sys::posix_semaphore::notify_all()</a>.</p>
+
+</div>
+</div>
+<a id="a2a59665ba5ed44d67852947fe6c98f6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a59665ba5ed44d67852947fe6c98f6a">&#9670;&nbsp;</a></span>wait() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::sysv_semaphore::wait </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait until other process/thread calls <a class="el" href="classsys_1_1sysv__semaphore.html#acc7d9ec6f2a28410ea5ed3a401b98c1c">sysv_semaphore::notify_one</a> or <a class="el" href="classsys_1_1sysv__semaphore.html#a367b2b54412c082f0d9574533049273a">sysv_semaphore::notify_all</a> on this semaphore. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semop.2.html">semop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00140">140</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1sysv__semaphore.html#a23da600545b877a6df9126463df85584">wait()</a>, and <a class="el" href="classsys_1_1posix__semaphore.html#aa913a705de2fd8299f1b239e444e51b9">sys::posix_semaphore::wait()</a>.</p>
+
+</div>
+</div>
+<a id="a23da600545b877a6df9126463df85584"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23da600545b877a6df9126463df85584">&#9670;&nbsp;</a></span>wait() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Lock &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::sysv_semaphore::wait </td>
+          <td>(</td>
+          <td class="paramtype">Lock &amp;&#160;</td>
+          <td class="paramname"><em>lock</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait on the semaphore unlocking <code>lock</code> for the duration of the wait. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semop.2.html">semop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00180">180</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="classsys_1_1sysv__semaphore.html#a2a59665ba5ed44d67852947fe6c98f6a">wait()</a>.</p>
+
+</div>
+</div>
 <a id="a74f88b9593915fdd410f0f136f85a7a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74f88b9593915fdd410f0f136f85a7a1">&#9670;&nbsp;</a></span>wait()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a74f88b9593915fdd410f0f136f85a7a1">&#9670;&nbsp;</a></span>wait() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -272,19 +494,79 @@ template&lt;class Lock , class Pred &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semop.2.html">semop(2)</a></dd></dl>
 <ul>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00151">151</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00197">197</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 
-<p class="reference">References <a class="el" href="semaphore_source.html#l00112">wait()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1sysv__semaphore.html#a2a59665ba5ed44d67852947fe6c98f6a">wait()</a>.</p>
+
+</div>
+</div>
+<a id="a9363c2a8a3dec1c3e3e3284ce9ffc3f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">&#9670;&nbsp;</a></span>wait_for() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Lock , class Rep , class Period &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::cv_status sys::sysv_semaphore::wait_for </td>
+          <td>(</td>
+          <td class="paramtype">Lock &amp;&#160;</td>
+          <td class="paramname"><em>lock</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration.html">std::chrono::duration</a>&lt; Rep, Period &gt; &amp;&#160;</td>
+          <td class="paramname"><em>dur</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait on the semaphore specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semtimedop.2.html">semtimedop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00213">213</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration/count.html">std::chrono::nanoseconds::count()</a>, <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/duration/duration_cast.html">std::chrono::duration_cast()</a>, and <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/algorithm/max.html">std::max()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1sysv__semaphore.html#a8930bba175b0a9fea86e604a58772856">wait_for()</a>, and <a class="el" href="classsys_1_1sysv__semaphore.html#adecd1a40e64c653285b379ec0dfbc4fc">wait_until()</a>.</p>
 
 </div>
 </div>
 <a id="a8930bba175b0a9fea86e604a58772856"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8930bba175b0a9fea86e604a58772856">&#9670;&nbsp;</a></span>wait_for()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a8930bba175b0a9fea86e604a58772856">&#9670;&nbsp;</a></span>wait_for() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -326,20 +608,80 @@ template&lt;class Lock , class Rep , class Period , class Pred &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore specified amount of time <code>dur</code> unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true or timeout occurs. </p>
-<dl class="section return"><dt>Returns</dt><dd>predicate value</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>predicate value </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semtimedop.2.html">semtimedop(2)</a></dd></dl>
 <ul>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00188">188</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00238">238</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 
-<p class="reference">References <a class="el" href="semaphore_source.html#l00165">wait_for()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1sysv__semaphore.html#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">wait_for()</a>.</p>
+
+</div>
+</div>
+<a id="adecd1a40e64c653285b379ec0dfbc4fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adecd1a40e64c653285b379ec0dfbc4fc">&#9670;&nbsp;</a></span>wait_until() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Lock , class Duration &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::cv_status sys::sysv_semaphore::wait_until </td>
+          <td>(</td>
+          <td class="paramtype">Lock &amp;&#160;</td>
+          <td class="paramname"><em>lock</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/time_point.html">std::chrono::time_point</a>&lt; <a class="el" href="classsys_1_1sysv__semaphore.html#ab210b9e63a8c8f1cfb89326446eea30f">clock_type</a>, Duration &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semtimedop.2.html">semtimedop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00256">256</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="classsys_1_1sysv__semaphore.html#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">wait_for()</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1posix__semaphore.html#a1ebdae0307800af8fe6595ca8752f3ef">sys::posix_semaphore::wait_for()</a>, and <a class="el" href="classsys_1_1posix__semaphore.html#ae7bc52327424552bcd5cab225646317f">sys::posix_semaphore::wait_until()</a>.</p>
 
 </div>
 </div>
 <a id="ad116ac912b3dee71b246e13bed02ef5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad116ac912b3dee71b246e13bed02ef5f">&#9670;&nbsp;</a></span>wait_until() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad116ac912b3dee71b246e13bed02ef5f">&#9670;&nbsp;</a></span>wait_until() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -381,20 +723,78 @@ template&lt;class Lock , class Duration , class Pred &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true. </p>
-<dl class="section return"><dt>Returns</dt><dd>predicate value</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>predicate value </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semtimedop.2.html">semtimedop(2)</a></dd></dl>
 <ul>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00221">221</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00275">275</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 
-<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="semaphore_source.html#l00165">wait_for()</a>.</p>
+<p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/system_clock/now.html">std::chrono::system_clock::now()</a>, and <a class="el" href="classsys_1_1sysv__semaphore.html#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">wait_for()</a>.</p>
+
+</div>
+</div>
+<a id="a72437bae8ab2195a57c0671b9b929742"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72437bae8ab2195a57c0671b9b929742">&#9670;&nbsp;</a></span>wait_until() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Lock , class Clock , class Duration &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::cv_status sys::sysv_semaphore::wait_until </td>
+          <td>(</td>
+          <td class="paramtype">Lock &amp;&#160;</td>
+          <td class="paramname"><em>lock</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/chrono/time_point.html">std::chrono::time_point</a>&lt; Clock, Duration &gt; &amp;&#160;</td>
+          <td class="paramname"><em>tp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait on the semaphore until specified time <code>tp</code> unlocking <code>lock</code> for the duration of the wait. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semtimedop.2.html">semtimedop(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00288">288</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+
+<p class="reference">References <a class="el" href="classsys_1_1sysv__semaphore.html#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">wait_for()</a>.</p>
 
 </div>
 </div>
 <a id="a2584e53c241d2a2d39bb20eac13881f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2584e53c241d2a2d39bb20eac13881f6">&#9670;&nbsp;</a></span>wait_until() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a2584e53c241d2a2d39bb20eac13881f6">&#9670;&nbsp;</a></span>wait_until() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -436,15 +836,22 @@ template&lt;class Lock , class Clock , class Duration , class Pred &gt; </div>
 </div><div class="memdoc">
 
 <p>Wait on the semaphore until specified time <code>dur</code> unlocking <code>lock</code> for the duration of the wait until predicate <code>pred</code> becomes true or timeout occurs. </p>
-<dl class="section return"><dt>Returns</dt><dd>predicate value</dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>predicate value </dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/semtimedop.2.html">semtimedop(2)</a></dd></dl>
 <ul>
 <li>If <code>pred</code> is true upon the call to this method no waiting or unlocking is done </li>
 <li>The mutex is locked when checking for the predicate. </li>
 </ul>
 
-<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00249">249</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
+<p class="definition">Definition at line <a class="el" href="semaphore_source.html#l00307">307</a> of file <a class="el" href="semaphore_source.html">semaphore</a>.</p>
 
-<p class="reference">References <a class="el" href="semaphore_source.html#l00165">wait_for()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1sysv__semaphore.html#a9363c2a8a3dec1c3e3e3284ce9ffc3f1">wait_for()</a>.</p>
 
 </div>
 </div>

@@ -96,13 +96,11 @@ typedef <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a162b836e2b2d563203470a9339a9f019"><td class="memItemLeft" align="right" valign="top"><a id="a162b836e2b2d563203470a9339a9f019"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1ifaddrs.html#a162b836e2b2d563203470a9339a9f019">ifaddrs</a> ()</td></tr>
-<tr class="memdesc:a162b836e2b2d563203470a9339a9f019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls <a href="http://man7.org/linux/man-pages/man3/getifaddrs.3.html">getifaddrs(3)</a>. <br /></td></tr>
+<tr class="memitem:a162b836e2b2d563203470a9339a9f019"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1ifaddrs.html#a162b836e2b2d563203470a9339a9f019">ifaddrs</a> ()</td></tr>
+<tr class="memdesc:a162b836e2b2d563203470a9339a9f019"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls <a href="http://man7.org/linux/man-pages/man3/getifaddrs.3.html">getifaddrs(3)</a>.  <a href="#a162b836e2b2d563203470a9339a9f019">More...</a><br /></td></tr>
 <tr class="separator:a162b836e2b2d563203470a9339a9f019"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02e3d510c2e3b8a4bc8848c828faeba4"><td class="memItemLeft" align="right" valign="top"><a id="a02e3d510c2e3b8a4bc8848c828faeba4"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1ifaddrs.html#a02e3d510c2e3b8a4bc8848c828faeba4">~ifaddrs</a> () noexcept</td></tr>
-<tr class="memdesc:a02e3d510c2e3b8a4bc8848c828faeba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls <a href="http://man7.org/linux/man-pages/man3/freeifaddrs.3.html">freeifaddrs(3)</a>. <br /></td></tr>
+<tr class="memitem:a02e3d510c2e3b8a4bc8848c828faeba4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1ifaddrs.html#a02e3d510c2e3b8a4bc8848c828faeba4">~ifaddrs</a> () noexcept</td></tr>
+<tr class="memdesc:a02e3d510c2e3b8a4bc8848c828faeba4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calls <a href="http://man7.org/linux/man-pages/man3/freeifaddrs.3.html">freeifaddrs(3)</a>.  <a href="#a02e3d510c2e3b8a4bc8848c828faeba4">More...</a><br /></td></tr>
 <tr class="separator:a02e3d510c2e3b8a4bc8848c828faeba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85804e63819d86c13a2a77b7483b9061"><td class="memItemLeft" align="right" valign="top"><a id="a85804e63819d86c13a2a77b7483b9061"></a>
 <a class="el" href="classsys_1_1ifaddrs.html#a51594d69ac29baf4ab497cfd8c158e4b">iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1ifaddrs.html#a85804e63819d86c13a2a77b7483b9061">begin</a> () noexcept</td></tr>
@@ -136,7 +134,76 @@ static constexpr <a class="el" href="classsys_1_1ifaddrs.html#a51594d69ac29baf4a
 <p>Wraps <code>ifaddrs</code> system type. </p>
 
 <p class="definition">Definition at line <a class="el" href="ifaddrs_source.html#l00019">19</a> of file <a class="el" href="ifaddrs_source.html">ifaddrs</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a162b836e2b2d563203470a9339a9f019"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a162b836e2b2d563203470a9339a9f019">&#9670;&nbsp;</a></span>ifaddrs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sys::ifaddrs::ifaddrs </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calls <a href="http://man7.org/linux/man-pages/man3/getifaddrs.3.html">getifaddrs(3)</a>. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man3/getifaddrs.3.html">getifaddrs(3)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ifaddrs_source.html#l00040">40</a> of file <a class="el" href="ifaddrs_source.html">ifaddrs</a>.</p>
+
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
+
+</div>
+</div>
+<a id="a02e3d510c2e3b8a4bc8848c828faeba4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02e3d510c2e3b8a4bc8848c828faeba4">&#9670;&nbsp;</a></span>~ifaddrs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sys::ifaddrs::~ifaddrs </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Calls <a href="http://man7.org/linux/man-pages/man3/freeifaddrs.3.html">freeifaddrs(3)</a>. </p>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man3/freeifaddrs.3.html">freeifaddrs(3)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="ifaddrs_source.html#l00049">49</a> of file <a class="el" href="ifaddrs_source.html">ifaddrs</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

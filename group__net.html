@@ -383,7 +383,7 @@ template&lt;class T &gt; </div>
 
 <p class="reference">References <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/utility/bitset/count.html">std::bitset::count()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ipv4__addr_source.html#l00138">sys::ipv4_addr::to_prefix()</a>, and <a class="el" href="ipv6__addr_source.html#l00155">sys::ipv6_addr::to_prefix()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="unionsys_1_1ipv4__addr.html#ad264373bdfa1c46a1c0751e894de7cd9">sys::ipv4_addr::to_prefix()</a>, and <a class="el" href="unionsys_1_1ipv6__addr.html#abe6b1e4f15e9fa43d78d03a67d65d9a4">sys::ipv6_addr::to_prefix()</a>.</p>
 
 </div>
 </div>
@@ -453,7 +453,7 @@ template&lt;class T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="byte__order_source.html#l00017">17</a> of file <a class="el" href="byte__order_source.html">byte_order</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="byte__order_source.html#l00049">sys::to_host_format()</a>, and <a class="el" href="byte__order_source.html#l00035">sys::to_network_format()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="group__net.html#ga927562ae5de886ed6dd7d48ffd1bf042">sys::to_host_format()</a>, and <a class="el" href="group__net.html#ga4cf62473ca7c2bd2c851b4e05037bd22">sys::to_network_format()</a>.</p>
 
 </div>
 </div>
@@ -496,11 +496,14 @@ template&lt;class T &gt; </div>
 </div><div class="memdoc">
 
 <p>Manually receive process UID, GID, PID as opaque array pointed by <code>data</code>. </p>
-<dl class="section note"><dt>Note</dt><dd>On Linux <a class="el" href="classsys_1_1socket.html#a65518a7b982b20337bff15d5f2598acb">socket::credentials</a> returns credentials without manually sending and receiving this message provided that <a class="el" href="classsys_1_1socket.html#a58964f02ba557cddce89d11fc606c5b5acdcb9e9e7cffbc2de4fcc72ba7d84f61">socket::pass_credentials</a> socket option is set. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>On Linux <a class="el" href="classsys_1_1socket.html#a65518a7b982b20337bff15d5f2598acb">socket::credentials</a> returns credentials without manually sending and receiving this message provided that <a class="el" href="classsys_1_1socket.html#a58964f02ba557cddce89d11fc606c5b5acdcb9e9e7cffbc2de4fcc72ba7d84f61">socket::pass_credentials</a> socket option is set.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man3/cmsg.3.html">cmsg(3)</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man7/unix.7.html">unix(7)</a> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00221">221</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="socket_source.html#l00223">sys::socket::receive()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1socket.html#a93bb971a07b58bf478c2ea9f74f63ef4">sys::socket::receive()</a>.</p>
 
 </div>
 </div>
@@ -537,11 +540,14 @@ template&lt;class T &gt; </div>
 </div><div class="memdoc">
 
 <p>Manually send process UID, GID, PID as opaque array pointed by <code>data</code>. </p>
-<dl class="section note"><dt>Note</dt><dd>On Linux <a class="el" href="classsys_1_1socket.html#a65518a7b982b20337bff15d5f2598acb">socket::credentials</a> returns credentials without manually sending and receiving this message provided that <a class="el" href="classsys_1_1socket.html#a58964f02ba557cddce89d11fc606c5b5acdcb9e9e7cffbc2de4fcc72ba7d84f61">socket::pass_credentials</a> socket option is set. </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>On Linux <a class="el" href="classsys_1_1socket.html#a65518a7b982b20337bff15d5f2598acb">socket::credentials</a> returns credentials without manually sending and receiving this message provided that <a class="el" href="classsys_1_1socket.html#a58964f02ba557cddce89d11fc606c5b5acdcb9e9e7cffbc2de4fcc72ba7d84f61">socket::pass_credentials</a> socket option is set.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man3/cmsg.3.html">cmsg(3)</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man7/unix.7.html">unix(7)</a> </dd></dl>
 
 <p class="definition">Definition at line <a class="el" href="socket_8cc_source.html#l00208">208</a> of file <a class="el" href="socket_8cc_source.html">socket.cc</a>.</p>
 
-<p class="reference">References <a class="el" href="socket_source.html#l00217">sys::socket::send()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1socket.html#a0ee815822beaf43bcd0c082135b872b9">sys::socket::send()</a>.</p>
 
 </div>
 </div>
@@ -577,9 +583,9 @@ template&lt;class T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="byte__order_source.html#l00049">49</a> of file <a class="el" href="byte__order_source.html">byte_order</a>.</p>
 
-<p class="reference">References <a class="el" href="byte__order_source.html#l00017">sys::is_network_byte_order()</a>.</p>
+<p class="reference">References <a class="el" href="group__net.html#ga75aabbbd3e4031fd0c881ce40328c25d">sys::is_network_byte_order()</a>.</p>
 
-<p class="reference">Referenced by <a class="el" href="ifaddr_source.html#l00133">sys::ifaddr&lt; Addr &gt;::contains()</a>, <a class="el" href="endpoint_source.html#l00348">sys::ipaddr_traits&lt; ipv4_addr &gt;::port()</a>, <a class="el" href="endpoint_source.html#l00358">sys::ipaddr_traits&lt; ipv6_addr &gt;::port()</a>, <a class="el" href="ipv4__addr_source.html#l00159">sys::ipv4_addr::position()</a>, and <a class="el" href="ipv6__addr_source.html#l00176">sys::ipv6_addr::position()</a>.</p>
+<p class="reference">Referenced by <a class="el" href="classsys_1_1ifaddr.html#aad33899a240bf8bcf47ff70f1b706c2c">sys::ifaddr&lt; Addr &gt;::contains()</a>, <a class="el" href="structsys_1_1ipaddr__traits_3_01ipv4__addr_01_4.html#a56fc5abc2602421c00c9be4564469d70">sys::ipaddr_traits&lt; ipv4_addr &gt;::port()</a>, <a class="el" href="structsys_1_1ipaddr__traits_3_01ipv6__addr_01_4.html#acc60f948d0900d03ccb302393e12eaaf">sys::ipaddr_traits&lt; ipv6_addr &gt;::port()</a>, <a class="el" href="unionsys_1_1ipv4__addr.html#a22e320949187ac726d82364fd3cfe00d">sys::ipv4_addr::position()</a>, and <a class="el" href="unionsys_1_1ipv6__addr.html#ae14331545f9dfe902b16d547fd33b809">sys::ipv6_addr::position()</a>.</p>
 
 </div>
 </div>
@@ -615,7 +621,7 @@ template&lt;class T &gt; </div>
 
 <p class="definition">Definition at line <a class="el" href="byte__order_source.html#l00035">35</a> of file <a class="el" href="byte__order_source.html">byte_order</a>.</p>
 
-<p class="reference">References <a class="el" href="byte__order_source.html#l00017">sys::is_network_byte_order()</a>.</p>
+<p class="reference">References <a class="el" href="group__net.html#ga75aabbbd3e4031fd0c881ce40328c25d">sys::is_network_byte_order()</a>.</p>
 
 </div>
 </div>

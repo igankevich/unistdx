@@ -107,13 +107,11 @@ const <a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&#160;</td><t
 const <a class="el" href="classsys_1_1fildes.html">fildes</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a350ac00d879dfbbc0f1e0246a6f9d402">out</a> () const noexcept</td></tr>
 <tr class="memdesc:a350ac00d879dfbbc0f1e0246a6f9d402"><td class="mdescLeft">&#160;</td><td class="mdescRight">Output file descriptor. <br /></td></tr>
 <tr class="separator:a350ac00d879dfbbc0f1e0246a6f9d402"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d805e25349d83ee00324f71e2ee839c"><td class="memItemLeft" align="right" valign="top"><a id="a5d805e25349d83ee00324f71e2ee839c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a5d805e25349d83ee00324f71e2ee839c">open</a> ()</td></tr>
-<tr class="memdesc:a5d805e25349d83ee00324f71e2ee839c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create pipe with <a href="http://man7.org/linux/man-pages/man2/pipe.2.html">pipe(2)</a> system call. <br /></td></tr>
+<tr class="memitem:a5d805e25349d83ee00324f71e2ee839c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a5d805e25349d83ee00324f71e2ee839c">open</a> ()</td></tr>
+<tr class="memdesc:a5d805e25349d83ee00324f71e2ee839c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create pipe with <a href="http://man7.org/linux/man-pages/man2/pipe.2.html">pipe(2)</a> system call.  <a href="#a5d805e25349d83ee00324f71e2ee839c">More...</a><br /></td></tr>
 <tr class="separator:a5d805e25349d83ee00324f71e2ee839c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e860f8bc462ab986734e6c31f81863d"><td class="memItemLeft" align="right" valign="top"><a id="a9e860f8bc462ab986734e6c31f81863d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a9e860f8bc462ab986734e6c31f81863d">close</a> ()</td></tr>
-<tr class="memdesc:a9e860f8bc462ab986734e6c31f81863d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close both pipe file descriptors. <br /></td></tr>
+<tr class="memitem:a9e860f8bc462ab986734e6c31f81863d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="unionsys_1_1pipe.html#a9e860f8bc462ab986734e6c31f81863d">close</a> ()</td></tr>
+<tr class="memdesc:a9e860f8bc462ab986734e6c31f81863d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Close both pipe file descriptors.  <a href="#a9e860f8bc462ab986734e6c31f81863d">More...</a><br /></td></tr>
 <tr class="separator:a9e860f8bc462ab986734e6c31f81863d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -126,9 +124,10 @@ Friends</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A pipe constructed with <a href="http://man7.org/linux/man-pages/man2/pipe.2.html">pipe(2)</a> system call. </p>
 <dl class="section date"><dt>Date</dt><dd>2018-05-23 </dd></dl>
-<dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
+<dl class="section author"><dt>Author</dt><dd>Ivan Gankevich</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/pipe2.2.html">pipe2(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="pipe_source.html#l00014">14</a> of file <a class="el" href="pipe_source.html">pipe</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pipe_source.html#l00015">15</a> of file <a class="el" href="pipe_source.html">pipe</a>.</p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a33211d7a5efbc103ac33de4bca375705"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a33211d7a5efbc103ac33de4bca375705">&#9670;&nbsp;</a></span>pipe()</h2>
@@ -154,9 +153,77 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Construct pipe with <a href="http://man7.org/linux/man-pages/man2/pipe.2.html">pipe(2)</a> system call. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/pipe2.2.html">pipe2(2)</a></dd></dl>
 <p>Both file descriptors are in non-blocking mode and have close-on-exec flag set. </p>
 
-<p class="definition">Definition at line <a class="el" href="pipe_source.html#l00029">29</a> of file <a class="el" href="pipe_source.html">pipe</a>.</p>
+<p class="definition">Definition at line <a class="el" href="pipe_source.html#l00032">32</a> of file <a class="el" href="pipe_source.html">pipe</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a9e860f8bc462ab986734e6c31f81863d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9e860f8bc462ab986734e6c31f81863d">&#9670;&nbsp;</a></span>close()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::pipe::close </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Close both pipe file descriptors. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/close.2.html">close(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="pipe_8cc_source.html#l00038">38</a> of file <a class="el" href="pipe_8cc_source.html">pipe.cc</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="unionsys_1_1pipe.html#a5d805e25349d83ee00324f71e2ee839c">open()</a>.</p>
+
+</div>
+</div>
+<a id="a5d805e25349d83ee00324f71e2ee839c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d805e25349d83ee00324f71e2ee839c">&#9670;&nbsp;</a></span>open()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::pipe::open </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create pipe with <a href="http://man7.org/linux/man-pages/man2/pipe.2.html">pipe(2)</a> system call. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/pipe2.2.html">pipe2(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="pipe_8cc_source.html#l00032">32</a> of file <a class="el" href="pipe_8cc_source.html">pipe.cc</a>.</p>
+
+<p class="reference">References <a class="el" href="unionsys_1_1pipe.html#a9e860f8bc462ab986734e6c31f81863d">close()</a>.</p>
 
 </div>
 </div>

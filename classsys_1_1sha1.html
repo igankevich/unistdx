@@ -94,8 +94,10 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a809a296ae7dbdb3cdcb5ea41ce475d3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reset SHA-1 object to start computing new hash. <br /></td></tr>
 <tr class="separator:a809a296ae7dbdb3cdcb5ea41ce475d3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a868ba183648a98e156c0bba2b3d8fa42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sha1.html#a868ba183648a98e156c0bba2b3d8fa42">put</a> (const char *first, <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/types/size_t.html">std::size_t</a> n)</td></tr>
+<tr class="memdesc:a868ba183648a98e156c0bba2b3d8fa42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append next <code>n</code> bytes from array pointed by <code>first</code> and compute digest if possible.  <a href="#a868ba183648a98e156c0bba2b3d8fa42">More...</a><br /></td></tr>
 <tr class="separator:a868ba183648a98e156c0bba2b3d8fa42"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae98f2a0a9abc574f3ec362bb6e0e6919"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sha1.html#ae98f2a0a9abc574f3ec362bb6e0e6919">put</a> (const char *first, const char *last)</td></tr>
+<tr class="memdesc:ae98f2a0a9abc574f3ec362bb6e0e6919"><td class="mdescLeft">&#160;</td><td class="mdescRight">Append next byte array between <code>first</code> and <code>last</code> and compute digest if possible.  <a href="#ae98f2a0a9abc574f3ec362bb6e0e6919">More...</a><br /></td></tr>
 <tr class="separator:ae98f2a0a9abc574f3ec362bb6e0e6919"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a206485257e2ebfc8277bde08db80b42d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1sha1.html#a206485257e2ebfc8277bde08db80b42d">compute</a> () noexcept</td></tr>
 <tr class="separator:a206485257e2ebfc8277bde08db80b42d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,7 +151,7 @@ const unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a clas
 </div><div class="memdoc">
 <p>Compute the final digest by padding the last block if needed. If the block does not require padding this method does nothing. </p>
 
-<p class="definition">Definition at line <a class="el" href="sha1_source.html#l00082">82</a> of file <a class="el" href="sha1_source.html">sha1</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sha1_source.html#l00086">86</a> of file <a class="el" href="sha1_source.html">sha1</a>.</p>
 
 </div>
 </div>
@@ -186,9 +188,16 @@ const unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a clas
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Append next <code>n</code> bytes from array pointed by <code>first</code> and compute digest if possible. </p>
 
-<p class="definition">Definition at line <a class="el" href="sha1_source.html#l00063">63</a> of file <a class="el" href="sha1_source.html">sha1</a>.</p>
+<p>Append next <code>n</code> bytes from array pointed by <code>first</code> and compute digest if possible. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/length_error.html">std::length_error</a></td><td>if input size is too large to compute SHA-1 on this system </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="sha1_source.html#l00065">65</a> of file <a class="el" href="sha1_source.html">sha1</a>.</p>
 
 </div>
 </div>
@@ -225,9 +234,16 @@ const unsigned char *&#160;</td><td class="memItemRight" valign="bottom"><a clas
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Append next byte array between <code>first</code> and <code>last</code> and compute digest if possible. </p>
 
-<p class="definition">Definition at line <a class="el" href="sha1_source.html#l00072">72</a> of file <a class="el" href="sha1_source.html">sha1</a>.</p>
+<p>Append next byte array between <code>first</code> and <code>last</code> and compute digest if possible. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/length_error.html">std::length_error</a></td><td>if input size is too large to compute SHA-1 on this system </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="sha1_source.html#l00076">76</a> of file <a class="el" href="sha1_source.html">sha1</a>.</p>
 
 </div>
 </div>

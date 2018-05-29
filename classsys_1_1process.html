@@ -80,10 +80,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a504e36800bcbfea1dbdb8ec753b402bd"><td class="memTemplParams" colspan="2"><a id="a504e36800bcbfea1dbdb8ec753b402bd"></a>
-template&lt;class F &gt; </td></tr>
+<tr class="memitem:a504e36800bcbfea1dbdb8ec753b402bd"><td class="memTemplParams" colspan="2">template&lt;class F &gt; </td></tr>
 <tr class="memitem:a504e36800bcbfea1dbdb8ec753b402bd"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a504e36800bcbfea1dbdb8ec753b402bd">process</a> (F f, <a class="el" href="namespacesys.html#aaf7db8316eca007c806fc17cfd343dd0">process_flag</a> pf=process_flag::fork)</td></tr>
-<tr class="memdesc:a504e36800bcbfea1dbdb8ec753b402bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct new process by forking a child with <code>f</code> as main function. <br /></td></tr>
+<tr class="memdesc:a504e36800bcbfea1dbdb8ec753b402bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct new process by forking a child with <code>f</code> as main function.  <a href="#a504e36800bcbfea1dbdb8ec753b402bd">More...</a><br /></td></tr>
 <tr class="separator:a504e36800bcbfea1dbdb8ec753b402bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9abdd9b8f6156b0d18174946ac737776"><td class="memItemLeft" align="right" valign="top"><a id="a9abdd9b8f6156b0d18174946ac737776"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a9abdd9b8f6156b0d18174946ac737776">process</a> (<a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a> rhs) noexcept</td></tr>
@@ -107,18 +106,19 @@ template&lt;class F &gt; </td></tr>
 <tr class="memitem:a0016d743406063c6d71a1807be63a7d4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a0016d743406063c6d71a1807be63a7d4">terminate</a> ()</td></tr>
 <tr class="separator:a0016d743406063c6d71a1807be63a7d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15cf76f078fb1a4b942107d956834508"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a15cf76f078fb1a4b942107d956834508">kill</a> ()</td></tr>
+<tr class="memdesc:a15cf76f078fb1a4b942107d956834508"><td class="mdescLeft">&#160;</td><td class="mdescRight">Forcibly terminate the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a534735884d341071762ede7af01c53e8">signal::kill</a> signal.  <a href="#a15cf76f078fb1a4b942107d956834508">More...</a><br /></td></tr>
 <tr class="separator:a15cf76f078fb1a4b942107d956834508"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89a43be9bc3644bd61995e898509db97"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a89a43be9bc3644bd61995e898509db97">interrupt</a> ()</td></tr>
+<tr class="memdesc:a89a43be9bc3644bd61995e898509db97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a11b7b3e7c502b36e312079b964f59098">signal::keyboard_interrupt</a> signal.  <a href="#a89a43be9bc3644bd61995e898509db97">More...</a><br /></td></tr>
 <tr class="separator:a89a43be9bc3644bd61995e898509db97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53e928f7fc6d642bc41b2c04877b4055"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a53e928f7fc6d642bc41b2c04877b4055">hang_up</a> ()</td></tr>
+<tr class="memdesc:a53e928f7fc6d642bc41b2c04877b4055"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interrupt the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4aad55384ac15107b3049219efc6cc875b">signal::hang_up</a> signal.  <a href="#a53e928f7fc6d642bc41b2c04877b4055">More...</a><br /></td></tr>
 <tr class="separator:a53e928f7fc6d642bc41b2c04877b4055"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f8493f87cccf9371efcb1d5e4b04832"><td class="memItemLeft" align="right" valign="top"><a id="a3f8493f87cccf9371efcb1d5e4b04832"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a3f8493f87cccf9371efcb1d5e4b04832">send</a> (<a class="el" href="group__ipc.html#gabbd54203abe643c317a3d3acafcc4cc4">sys::signal</a> s)</td></tr>
-<tr class="memdesc:a3f8493f87cccf9371efcb1d5e4b04832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send signal <code>s</code> to the process. <br /></td></tr>
+<tr class="memitem:a3f8493f87cccf9371efcb1d5e4b04832"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a3f8493f87cccf9371efcb1d5e4b04832">send</a> (<a class="el" href="group__ipc.html#gabbd54203abe643c317a3d3acafcc4cc4">sys::signal</a> s)</td></tr>
+<tr class="memdesc:a3f8493f87cccf9371efcb1d5e4b04832"><td class="mdescLeft">&#160;</td><td class="mdescRight">Send signal <code>s</code> to the process.  <a href="#a3f8493f87cccf9371efcb1d5e4b04832">More...</a><br /></td></tr>
 <tr class="separator:a3f8493f87cccf9371efcb1d5e4b04832"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9deccd0d59d8c6dd83756063b0097f65"><td class="memItemLeft" align="right" valign="top"><a id="a9deccd0d59d8c6dd83756063b0097f65"></a>
-<a class="el" href="group__ipc.html#ga4c4816e99df01ac21fbc67093dcc9eb2">sys::proc_status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a9deccd0d59d8c6dd83756063b0097f65">wait</a> ()</td></tr>
-<tr class="memdesc:a9deccd0d59d8c6dd83756063b0097f65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until process changes its state or terminates. <br /></td></tr>
+<tr class="memitem:a9deccd0d59d8c6dd83756063b0097f65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__ipc.html#ga4c4816e99df01ac21fbc67093dcc9eb2">sys::proc_status</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a9deccd0d59d8c6dd83756063b0097f65">wait</a> ()</td></tr>
+<tr class="memdesc:a9deccd0d59d8c6dd83756063b0097f65"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait until process changes its state or terminates.  <a href="#a9deccd0d59d8c6dd83756063b0097f65">More...</a><br /></td></tr>
 <tr class="separator:a9deccd0d59d8c6dd83756063b0097f65"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab7b448cbb9dfb1f4a3399ba2c9a092ef"><td class="memItemLeft" align="right" valign="top"><a id="ab7b448cbb9dfb1f4a3399ba2c9a092ef"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#ab7b448cbb9dfb1f4a3399ba2c9a092ef">operator bool</a> () const noexcept</td></tr>
@@ -132,13 +132,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a5cd4743b2a8a4f0ded484c589f366f44">id</a> () const noexcept</td></tr>
 <tr class="memdesc:a5cd4743b2a8a4f0ded484c589f366f44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get process ID. <br /></td></tr>
 <tr class="separator:a5cd4743b2a8a4f0ded484c589f366f44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6f5671f249772cfa5a9fa01f6201649"><td class="memItemLeft" align="right" valign="top"><a id="ab6f5671f249772cfa5a9fa01f6201649"></a>
-<a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#ab6f5671f249772cfa5a9fa01f6201649">group_id</a> () const noexcept</td></tr>
-<tr class="memdesc:ab6f5671f249772cfa5a9fa01f6201649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get process group ID. <br /></td></tr>
+<tr class="memitem:ab6f5671f249772cfa5a9fa01f6201649"><td class="memItemLeft" align="right" valign="top"><a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#ab6f5671f249772cfa5a9fa01f6201649">group_id</a> () const noexcept</td></tr>
+<tr class="memdesc:ab6f5671f249772cfa5a9fa01f6201649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get process group ID.  <a href="#ab6f5671f249772cfa5a9fa01f6201649">More...</a><br /></td></tr>
 <tr class="separator:ab6f5671f249772cfa5a9fa01f6201649"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1944cffc7b47347f86c3d7af5cd7666a"><td class="memItemLeft" align="right" valign="top"><a id="a1944cffc7b47347f86c3d7af5cd7666a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a1944cffc7b47347f86c3d7af5cd7666a">set_group_id</a> (<a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a> rhs) const</td></tr>
-<tr class="memdesc:a1944cffc7b47347f86c3d7af5cd7666a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set process group ID. <br /></td></tr>
+<tr class="memitem:a1944cffc7b47347f86c3d7af5cd7666a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#a1944cffc7b47347f86c3d7af5cd7666a">set_group_id</a> (<a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a> rhs) const</td></tr>
+<tr class="memdesc:a1944cffc7b47347f86c3d7af5cd7666a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set process group ID.  <a href="#a1944cffc7b47347f86c3d7af5cd7666a">More...</a><br /></td></tr>
 <tr class="separator:a1944cffc7b47347f86c3d7af5cd7666a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad43d5ddbd8f5f371aa023c2894571cf3"><td class="memItemLeft" align="right" valign="top"><a id="ad43d5ddbd8f5f371aa023c2894571cf3"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1process.html#ad43d5ddbd8f5f371aa023c2894571cf3">joinable</a> ()</td></tr>
@@ -160,8 +158,92 @@ Friends</h2></td></tr>
 <dl class="section date"><dt>Date</dt><dd>2018-05-21 </dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Ivan Gankevich </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00161">161</a> of file <a class="el" href="process_source.html">process</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00187">187</a> of file <a class="el" href="process_source.html">process</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a504e36800bcbfea1dbdb8ec753b402bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a504e36800bcbfea1dbdb8ec753b402bd">&#9670;&nbsp;</a></span>process()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class F &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">sys::process::process </td>
+          <td>(</td>
+          <td class="paramtype">F&#160;</td>
+          <td class="paramname"><em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacesys.html#aaf7db8316eca007c806fc17cfd343dd0">process_flag</a>&#160;</td>
+          <td class="paramname"><em>pf</em> = <code>process_flag::fork</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct new process by forking a child with <code>f</code> as main function. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/clone.2.html">clone(2)</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/fork.2.html">fork(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00199">199</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ab6f5671f249772cfa5a9fa01f6201649"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6f5671f249772cfa5a9fa01f6201649">&#9670;&nbsp;</a></span>group_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a> sys::process::group_id </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">noexcept</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get process group ID. </p>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/getpgid.2.html">getpgid(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00355">355</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="namespacesys.html#ad60b5884b3bcf97964312ad7a597f40a">sys::operator&lt;&lt;()</a>.</p>
+
+</div>
+</div>
 <a id="a53e928f7fc6d642bc41b2c04877b4055"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a53e928f7fc6d642bc41b2c04877b4055">&#9670;&nbsp;</a></span>hang_up()</h2>
 
@@ -184,11 +266,19 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Interrupt the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4aad55384ac15107b3049219efc6cc875b">signal::hang_up</a> signal. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/kill.2.html">kill(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00255">255</a> of file <a class="el" href="process_source.html">process</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00297">297</a> of file <a class="el" href="process_source.html">process</a>.</p>
 
-<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4aad55384ac15107b3049219efc6cc875b">sys::hang_up</a>, and <a class="el" href="process_source.html#l00261">send()</a>.</p>
+<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4aad55384ac15107b3049219efc6cc875b">sys::hang_up</a>, and <a class="el" href="classsys_1_1process.html#a3f8493f87cccf9371efcb1d5e4b04832">send()</a>.</p>
 
 </div>
 </div>
@@ -214,11 +304,19 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Interrupt the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a11b7b3e7c502b36e312079b964f59098">signal::keyboard_interrupt</a> signal. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/kill.2.html">kill(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00247">247</a> of file <a class="el" href="process_source.html">process</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00286">286</a> of file <a class="el" href="process_source.html">process</a>.</p>
 
-<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a11b7b3e7c502b36e312079b964f59098">sys::keyboard_interrupt</a>, and <a class="el" href="process_source.html#l00261">send()</a>.</p>
+<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a11b7b3e7c502b36e312079b964f59098">sys::keyboard_interrupt</a>, and <a class="el" href="classsys_1_1process.html#a3f8493f87cccf9371efcb1d5e4b04832">send()</a>.</p>
 
 </div>
 </div>
@@ -246,10 +344,19 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Wait until process changes its state or terminates. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td>if system error occurs, except <code>std::errc::interrupted</code> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/errc.html">std::errc</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/waitpid.2.html">waitpid(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00319">319</a> of file <a class="el" href="process_source.html">process</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00377">377</a> of file <a class="el" href="process_source.html">process</a>.</p>
 
-<p class="reference">References <a class="el" href="process_source.html#l00269">wait()</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1process.html#a9deccd0d59d8c6dd83756063b0097f65">wait()</a>.</p>
 
 </div>
 </div>
@@ -275,11 +382,98 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Forcibly terminate the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a534735884d341071762ede7af01c53e8">signal::kill</a> signal. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/kill.2.html">kill(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00238">238</a> of file <a class="el" href="process_source.html">process</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00274">274</a> of file <a class="el" href="process_source.html">process</a>.</p>
 
-<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a534735884d341071762ede7af01c53e8">sys::kill</a>, and <a class="el" href="process_source.html#l00261">send()</a>.</p>
+<p class="reference">References <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a534735884d341071762ede7af01c53e8">sys::kill</a>, and <a class="el" href="classsys_1_1process.html#a3f8493f87cccf9371efcb1d5e4b04832">send()</a>.</p>
+
+</div>
+</div>
+<a id="a3f8493f87cccf9371efcb1d5e4b04832"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f8493f87cccf9371efcb1d5e4b04832">&#9670;&nbsp;</a></span>send()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::process::send </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__ipc.html#gabbd54203abe643c317a3d3acafcc4cc4">sys::signal</a>&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Send signal <code>s</code> to the process. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00306">306</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1process.html#a53e928f7fc6d642bc41b2c04877b4055">hang_up()</a>, <a class="el" href="classsys_1_1process.html#a89a43be9bc3644bd61995e898509db97">interrupt()</a>, <a class="el" href="classsys_1_1process.html#a15cf76f078fb1a4b942107d956834508">kill()</a>, and <a class="el" href="classsys_1_1process.html#a0016d743406063c6d71a1807be63a7d4">terminate()</a>.</p>
+
+</div>
+</div>
+<a id="a1944cffc7b47347f86c3d7af5cd7666a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1944cffc7b47347f86c3d7af5cd7666a">&#9670;&nbsp;</a></span>set_group_id()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void sys::process::set_group_id </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__ipc.html#gae418c720972b243f3242f999e114bcf8">pid_type</a>&#160;</td>
+          <td class="paramname"><em>rhs</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set process group ID. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/setpgid.2.html">setpgid(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00365">365</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>
@@ -305,11 +499,53 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Gracefully terminate the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">signal::terminate</a> signal. </p>
+<p>Gracefully terminate the process by sending <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">signal::terminate</a> signal. </p><dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/kill.2.html">kill(2)</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="process_source.html#l00230">230</a> of file <a class="el" href="process_source.html">process</a>.</p>
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00262">262</a> of file <a class="el" href="process_source.html">process</a>.</p>
 
-<p class="reference">References <a class="el" href="process_source.html#l00261">send()</a>, and <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">sys::terminate</a>.</p>
+<p class="reference">References <a class="el" href="classsys_1_1process.html#a3f8493f87cccf9371efcb1d5e4b04832">send()</a>, and <a class="el" href="group__ipc.html#ggabbd54203abe643c317a3d3acafcc4cc4a1459e53d3fbaa95cebaf90860dd7a259">sys::terminate</a>.</p>
+
+</div>
+</div>
+<a id="a9deccd0d59d8c6dd83756063b0097f65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9deccd0d59d8c6dd83756063b0097f65">&#9670;&nbsp;</a></span>wait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="group__ipc.html#ga4c4816e99df01ac21fbc67093dcc9eb2">sys::proc_status</a> sys::process::wait </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Wait until process changes its state or terminates. </p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td>if system error occurs, except <code>std::errc::interrupted</code> </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/errc.html">std::errc</a> </dd>
+<dd>
+<a href="http://man7.org/linux/man-pages/man2/waitpid.2.html">waitpid(2)</a> </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="process_source.html#l00320">320</a> of file <a class="el" href="process_source.html">process</a>.</p>
+
+<p class="reference">References <a class="el" href="group__macros.html#ga71a3e3d95d2508aca237a7c83772c99a">UNISTDX_CHECK_IF_NOT</a>.</p>
+
+<p class="reference">Referenced by <a class="el" href="classsys_1_1process.html#a080c302af981bac6a97fbe0703502e03">join()</a>.</p>
 
 </div>
 </div>
