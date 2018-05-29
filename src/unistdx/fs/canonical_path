@@ -60,7 +60,7 @@ namespace sys {
 	Canonical path is a path that
 	\arg contains no special directories "." and "..",
 	\arg contains only one separator per component,
-	\arg contains no symbolic links to directories.
+	\arg contains no symbolic links.
 	*/
 	template <class Ch, class Tr=std::char_traits<Ch>, class Alloc=
 				  std::allocator<Ch>>

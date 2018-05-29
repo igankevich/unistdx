@@ -64,14 +64,14 @@ namespace std {
 			return 0_u128;
 		}
 
-		/// Returns \f$2^128-1\f$.
+		/// Returns \f$2^{128}-1\f$.
 		static constexpr sys::uint128_t
 		max() noexcept {
 			using namespace sys::literals;
 			return 0xffffffffffffffffffffffffffffffff_u128;
 		}
 
-		/// \copydoc min
+		/// \brief \copybrief min
 		static constexpr sys::uint128_t
 		lowest() noexcept {
 			return min();
