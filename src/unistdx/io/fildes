@@ -129,10 +129,7 @@ namespace sys {
 		/**
 		\brief Read \p n bytes from file descriptor and store them in the array
 		pointed by \p buf.
-		\throws bad_call if system error occurs,
-		except \c std::errc::resource_unavailable_try_again
-		and \c std::errc::operation_in_progress
-		\see std::errc
+		\throws_bad_call_non_blocking
 		*/
 		inline ssize_t
 		read(void* buf, size_t n) const {
@@ -146,10 +143,7 @@ namespace sys {
 		/**
 		\brief Write \p n bytes to file descriptor copying them from the array
 		pointer by \p buf.
-		\throws bad_call if system error occurs,
-		except \c std::errc::resource_unavailable_try_again
-		and \c std::errc::operation_in_progress
-		\see std::errc
+		\throws_bad_call_non_blocking
 		*/
 		inline ssize_t
 		write(const void* buf, size_t n) const {

@@ -254,10 +254,7 @@ namespace sys {
 
 		/**
 		\brief Send low-level message \p hdr through the socket.
-		\throws bad_call if system error occurs,
-		except \c std::errc::resource_unavailable_try_again
-		and \c std::errc::operation_in_progress
-		\see std::errc
+		\throws_bad_call_non_blocking
 		*/
 		inline ssize_t
 		send(const message_header& hdr, int flags=0) const {
@@ -270,10 +267,7 @@ namespace sys {
 
 		/**
 		\brief Receive low-level message \p hdr over the socket.
-		\throws bad_call if system error occurs,
-		except \c std::errc::resource_unavailable_try_again
-		and \c std::errc::operation_in_progress
-		\see std::errc
+		\throws_bad_call_non_blocking
 		*/
 		inline ssize_t
 		receive(message_header& hdr, int flags=0) const {
@@ -288,10 +282,7 @@ namespace sys {
 		\brief
 		Read \p n bytes from the socket and store them in buffer
 		pointed by \p buf.
-		\throws bad_call if system error occurs,
-		except \c std::errc::resource_unavailable_try_again
-		and \c std::errc::operation_in_progress
-		\see std::errc
+		\throws_bad_call_non_blocking
 		*/
 		inline ssize_t
 		receive(void* buf, size_t n, int flags=0) const {
@@ -305,10 +296,7 @@ namespace sys {
 		/**
 		\brief
 		Write \p n bytes from buffer pointed by \p buf to the socket.
-		\throws bad_call if system error occurs,
-		except \c std::errc::resource_unavailable_try_again
-		and \c std::errc::operation_in_progress
-		\see std::errc
+		\throws_bad_call_non_blocking
 		*/
 		inline ssize_t
 		send(const void* buf, size_t n, int flags=0) const noexcept {
