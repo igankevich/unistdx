@@ -12,7 +12,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup iter
 	\tparam Base base iterator type
-	\tparam N field index to iterave over
+	\tparam N field index to iterate over
 	\details
 	Field iterator works by aggregating another iterator
 	over tuples and accessing only certain field of the
