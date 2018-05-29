@@ -11,6 +11,10 @@
 #include <unistdx/bits/sharedmem>
 #include <unistdx/base/check>
 
+#ifndef NDEBUG
+#include <unistdx/base/log_message>
+#endif
+
 namespace sys {
 
 	/**
@@ -44,7 +48,10 @@ namespace sys {
 		/// Size type. Alias to \link std::size_t\endlink.
 		typedef std::size_t size_type;
 
-		/// Get status for shared memory segment with ID \p id.
+		/**
+		\brief Get status for shared memory segment with ID \p id.
+		\throws bad_call
+		*/
 		inline explicit
 		sharedmem_stat(shm_type id) {
 			this->getstat(id);
@@ -181,9 +188,27 @@ namespace sys {
 
 		shared_mem(const shared_mem&) = delete;
 
+		/// Terminates on system error.
 		inline
 		~shared_mem() {
-			this->close();
+			try {
+				this->close();
+			#ifndef NDEBUG
+			} catch (const bad_call& err) {
+				log_message(
+					"sys",
+					"failed to close shm _: _",
+					this->_shm,
+					err.what()
+				);
+				std::terminate();
+			#endif
+			} catch (...) {
+				#ifndef NDEBUG
+				log_message("sys", "failed to close shm _", this->_shm);
+				#endif
+				std::terminate();
+			}
 		}
 
 		shared_mem&
@@ -296,7 +321,10 @@ namespace sys {
 			return !operator==(rhs);
 		}
 
-		/// Attach shared memory segment.
+		/**
+		\brief Attach shared memory segment.
+		\throws bad_call
+		*/
 		inline void
 		open_as_user(shm_type id) {
 			this->_shm = id;
@@ -304,7 +332,10 @@ namespace sys {
 			this->_size = this->getsize();
 		}
 
-		/// Create and attach shared memory segment.
+		/**
+		\brief Create and attach shared memory segment.
+		\throws bad_call
+		*/
 		inline void
 		open_as_owner(mode_type mode, size_type size) {
 			this->_shm = this->open(IPC_PRIVATE, size, mode);
@@ -314,7 +345,10 @@ namespace sys {
 			this->memzero();
 		}
 
-		/// Detach and remove (if owner) shared memory segment.
+		/**
+		\brief Detach and remove (if owner) shared memory segment.
+		\throws bad_call
+		*/
 		inline void
 		close() {
 			this->detach();

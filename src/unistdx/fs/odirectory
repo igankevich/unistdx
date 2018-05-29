@@ -94,7 +94,10 @@ namespace sys {
 			return *this;
 		}
 
-		/// Copy directory entry \p rhs to output directory of the stream.
+		/**
+		\brief Copy directory entry \p rhs to output directory of the stream.
+		\throws bad_call
+		*/
 		inline basic_odirectory&
 		operator<<(const pathentry& rhs) {
 			path p(this->_dirpath, this->_trans(rhs));

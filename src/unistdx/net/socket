@@ -108,19 +108,26 @@ namespace sys {
 		socket(fildes&& rhs) noexcept:
 		sys::fildes(std::move(rhs)) {}
 
-		/// Construct the socket and bind on \p bind_addr and listen.
+		/**
+		\brief Construct the socket and bind on \p bind_addr and listen.
+		\throws bad_call
+		*/
 		explicit
 		socket(const endpoint& bind_addr);
 
 		/**
+		\brief
 		Construct the socket, bind on \p bind_addr and connect
 		to a process listening on \p conn_addr.
+		\throws bad_call
 		*/
 		socket(const endpoint& bind_addr, const endpoint& conn_addr);
 
 		/**
+		\brief
 		Construct the socket with protocol family \p family, type \p type
 		and protocol \p proto.
+		\throws bad_call
 		*/
 		socket(
 			family_type family,
@@ -141,15 +148,26 @@ namespace sys {
 			return *this;
 		}
 
-		/// Bind on socket address \p e.
+		/**
+		\brief Bind on socket address \p e.
+		\throws bad_call
+		*/
 		void
 		bind(const endpoint& e);
 
-		/// Connect to socket address \p e.
+		/**
+		\brief Connect to socket address \p e.
+		\throws bad_call if system error occurs, except
+		\c std::errc::operation_in_progress
+		\see std::errc
+		*/
 		void
 		connect(const endpoint& e);
 
-		/// Listen on previously binded socket address.
+		/**
+		\brief Listen on previously binded socket address.
+		\throws bad_call
+		*/
 		void
 		listen();
 
@@ -157,32 +175,48 @@ namespace sys {
 		\brief Accept socket connection.
 		\date 2018-05-24
 		\author Ivan Gankevich
+		\throws bad_call
 		\param[out] sock socket that initiated a connection (client)
 		\param[out] addr sockt address of the client
 		*/
 		void
 		accept(socket& sock, endpoint& addr);
 
-		/// Shutdown communication on the socket, but do not close it.
+		/**
+		\brief Shutdown communication on the socket, but do not close it.
+		\throws bad_call if system error occurs, except
+		\c std::errc::not_connected and \c std::errc::not_supported
+		\see std::errc
+		*/
 		void
 		shutdown(shutdown_how how);
 
-		/// Close the socket.
+		/**
+		\brief Close the socket.
+		\throws bad_call
+		*/
 		void
 		close();
 
-		/// Activate socket option.
+		/**
+		\brief Activate socket option.
+		\throws bad_call
+		*/
 		void
 		setopt(option opt);
 
 		#if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
-		/// Set TCP user timeout option (see \rfc{5482}).
+		/**
+		\brief Set TCP user timeout option (see \rfc{5482}).
+		\throws bad_call
+		*/
 		void
 		set_user_timeout(const duration& d);
 		#endif
 
 		/**
-		\copybrief name
+		\brief \copybrief name
+		\throws bad_call
 		\details
 		The same as \link name\endlink, but does not throw.
 		*/
@@ -194,7 +228,10 @@ namespace sys {
 			return addr;
 		}
 
-		/// Get bound socket address.
+		/**
+		\brief Get bound socket address.
+		\throws bad_call
+		*/
 		inline endpoint
 		name() const {
 			endpoint addr;
@@ -203,7 +240,10 @@ namespace sys {
 			return addr;
 		}
 
-		/// Get address of the client, connected to the socket.
+		/**
+		\brief Get address of the client, connected to the socket.
+		\throws bad_call
+		*/
 		inline endpoint
 		peer_name() const {
 			endpoint addr;
@@ -212,16 +252,36 @@ namespace sys {
 			return addr;
 		}
 
-		/// Send low-level message \p hdr through the socket.
+		/**
+		\brief Send low-level message \p hdr through the socket.
+		\throws bad_call if system error occurs,
+		except \c std::errc::resource_unavailable_try_again
+		and \c std::errc::operation_in_progress
+		\see std::errc
+		*/
 		inline ssize_t
-		send(const message_header& hdr, int flags=0) const noexcept {
-			return ::sendmsg(this->_fd, &hdr, flags);
+		send(const message_header& hdr, int flags=0) const {
+			ssize_t ret = ::sendmsg(this->_fd, &hdr, flags);
+			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
+				UNISTDX_THROW_BAD_CALL();
+			}
+			return ret;
 		}
 
-		/// Receive low-level message \p hdr over the socket.
+		/**
+		\brief Receive low-level message \p hdr over the socket.
+		\throws bad_call if system error occurs,
+		except \c std::errc::resource_unavailable_try_again
+		and \c std::errc::operation_in_progress
+		\see std::errc
+		*/
 		inline ssize_t
-		receive(message_header& hdr, int flags=0) const noexcept {
-			return ::recvmsg(this->_fd, &hdr, flags);
+		receive(message_header& hdr, int flags=0) const {
+			ssize_t ret = ::recvmsg(this->_fd, &hdr, flags);
+			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
+				UNISTDX_THROW_BAD_CALL();
+			}
+			return ret;
 		}
 
 		/**
@@ -229,8 +289,12 @@ namespace sys {
 		pointed by \p buf.
 		*/
 		inline ssize_t
-		receive(void* buf, size_t n, int flags=0) const noexcept {
-			return ::recv(this->_fd, buf, n, flags);
+		receive(void* buf, size_t n, int flags=0) const {
+			ssize_t ret = ::recv(this->_fd, buf, n, flags);
+			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
+				UNISTDX_THROW_BAD_CALL();
+			}
+			return ret;
 		}
 
 		/**
@@ -245,6 +309,7 @@ namespace sys {
 		/**
 		\brief
 		Get UID, GID and PID of the process, that connected to this socket (client).
+		\throws bad_call
 		\note The method works only for unix domain sockets.
 		*/
 		user_credentials
@@ -255,6 +320,7 @@ namespace sys {
 		/**
 		\brief
 		Send an array of \p n file descriptors pointed by \p data.
+		\throws bad_call
 		\note The method works only for unix domain sockets.
 		*/
 		void
@@ -263,6 +329,7 @@ namespace sys {
 		/**
 		\brief
 		Receive an array of \p n file descriptors pointed by \p data.
+		\throws bad_call
 		\note The method works only for unix domain sockets.
 		*/
 		void

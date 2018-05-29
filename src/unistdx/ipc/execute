@@ -16,6 +16,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\ingroup ipc
+		\throws bad_call
 		\see argstream
 		\details
 		\arg The executable path is specified as the first argument.
@@ -34,6 +35,7 @@ namespace sys {
 		/**
 		\brief Execute child process with arguments \p args and environment \p env.
 		\ingroup ipc
+		\throws bad_call
 		\details \copydetails execute(char* const[], char* const[])
 		*/
 		inline int
@@ -45,6 +47,7 @@ namespace sys {
 		\brief
 		Execute child process with arguments \p argv and calling process environment.
 		\ingroup ipc
+		\throws bad_call
 		\details \copydetails execute(char* const[], char* const[])
 		*/
 		inline int
@@ -58,6 +61,7 @@ namespace sys {
 		\brief
 		Execute child process with arguments \p args and calling process environment.
 		\ingroup ipc
+		\throws bad_call
 		\details \copydetails execute(char* const[])
 		*/
 		inline int
@@ -70,6 +74,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\ingroup ipc
+		\throws bad_call
 		\see argstream
 		\details
 		\arg The executable is specified as the first argument \c argv[0].
@@ -88,6 +93,7 @@ namespace sys {
 		/**
 		\brief \copybrief execute(char* const[])
 		\ingroup ipc
+		\throws bad_call
 		\details \copydetails execute_command(char* const[], char* const[])
 		*/
 		inline int
@@ -100,6 +106,7 @@ namespace sys {
 		/**
 		\brief \copybrief execute(const argstream&)
 		\ingroup ipc
+		\throws bad_call
 		\details \copydetails execute_command(char* const[])
 		*/
 		inline int

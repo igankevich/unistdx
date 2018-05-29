@@ -151,6 +151,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\ingroup ipc
+		\throws bad_call
 		*/
 		inline void
 		bind_signal(signal sig, const signal_action& action) {
@@ -162,6 +163,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\ingroup ipc
+		\throws bad_call
 		\details
 		By default any signal for which callback function
 		is not set may kill the process. This routine allows to ignore
@@ -184,20 +186,29 @@ namespace sys {
 	class sigset_type: public ::sigset_t {
 	public:
 
-		/// Construct empty signal set.
+		/**
+		\brief Construct empty signal set.
+		\throws bad_call
+		*/
 		inline
 		sigset_type() {
 			UNISTDX_CHECK(::sigemptyset(this));
 		}
 
-		/// Construct signal set containing only signal \p s.
+		/**
+		\brief Construct signal set containing only signal \p s.
+		\throws bad_call
+		*/
 		inline explicit
 		sigset_type(signal_type s):
 		sigset_type() {
 			UNISTDX_CHECK(::sigaddset(this, s));
 		}
 
-		/// Call \p func for each signal in the set.
+		/**
+		\brief Call \p func for each signal in the set.
+		\throws bad_call
+		*/
 		template<class F>
 		void
 		for_each(F func) {
@@ -225,25 +236,39 @@ namespace sys {
 
 	public:
 
-		/// Construct signal guard that blocks all signals in set \p s.
+		/**
+		\brief Construct signal guard that blocks all signals in set \p s.
+		\throws bad_call
+		*/
 		inline explicit
 		signal_guard(sigset_type s):
 		_signals(s) {
 			this->lock();
 		}
 
+		/// Terminates if \link unlock\endlink fails.
 		inline
 		~signal_guard() {
-			this->unlock();
+			try {
+				this->unlock();
+			} catch (...) {
+				std::terminate();
+			}
 		}
 
-		/// Block all specified signals.
+		/**
+		\brief Block all specified signals.
+		\throws bad_call
+		*/
 		inline void
 		lock() {
 			this->change_mask(SIG_BLOCK);
 		}
 
-		/// Unblock all specified signals.
+		/**
+		\brief Unblock all specified signals.
+		\throws bad_call
+		*/
 		inline void
 		unlock() {
 			this->change_mask(SIG_UNBLOCK);

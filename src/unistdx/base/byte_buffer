@@ -13,6 +13,9 @@ namespace sys {
 	Byte buffer which uses direct memory allocation for maximum performance.
 	\date 2018-05-21
 	\author Ivan Gankevich
+	\see \man{mmap,2}
+	\see \man{mremap,2}
+	\see \man{madvise,2}
 	\details
 	\arg Uses \man{mmap,2} and system calls to bypass memory allocators.
 	\arg Uses \man{mremap,2} to efficiently resize the buffer without copying.
@@ -51,7 +54,12 @@ namespace sys {
 			rhs._data = nullptr;
 		}
 
-		/// Construct byte buffer with size \p size.
+		/**
+		\brief Construct byte buffer with size \p size.
+		\throws bad_call
+		\see \man{mremap,2}
+		\see \man{madvise,2}
+		*/
 		explicit
 		byte_buffer(size_type size);
 
@@ -111,13 +119,21 @@ namespace sys {
 			return !this->operator bool();
 		}
 
-		/// Resize the buffer preserving its contents.
+		/**
+		\brief Resize the buffer preserving its contents.
+		\throws bad_call
+		\see \man{mremap,2}
+		\see \man{madvise,2}
+		*/
 		void
 		resize(size_type new_size);
 
 		/**
 		\brief Double the buffer size.
 		\throws std::length_error when maximum size is reached.
+		\throws bad_call when system error occurs
+		\see \man{mremap,2}
+		\see \man{madvise,2}
 		*/
 		inline void
 		grow() {

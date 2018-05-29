@@ -11,7 +11,7 @@ namespace sys {
 	\brief The length of \p len bytes sequence encoded in BASE64.
 	\see \rfc{4648}
 	\throws std::length_error when \p len is too large to be encoded
-	as BASE64 string on this platform
+	as BASE64 string on this system
 	*/
 	inline size_t
 	base64_encoded_size(size_t len) {

@@ -21,6 +21,7 @@ namespace sys {
 
 		/**
 		\brief Construct pipe with \man{pipe,2} system call.
+		\throws bad_call
 		\details
 		Both file descriptors are in non-blocking mode
 		and have close-on-exec flag set.
@@ -69,10 +70,16 @@ namespace sys {
 			return this->_fds[1];
 		}
 
-		/// Create pipe with \man{pipe,2} system call.
+		/**
+		\brief Create pipe with \man{pipe,2} system call.
+		\throws bad_call
+		*/
 		void open();
 
-		/// Close both pipe file descriptors.
+		/**
+		\brief Close both pipe file descriptors.
+		\throws bad_call
+		*/
 		void close();
 
 		friend std::ostream&

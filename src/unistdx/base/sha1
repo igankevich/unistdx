@@ -56,8 +56,10 @@ namespace sys {
 		}
 
 		/**
-		Append next \p n bytes from array pointed by \p first
+		\brief Append next \p n bytes from array pointed by \p first
 		and compute digest if possible.
+		\throws std::length_error if input size is too large to compute SHA-1
+		on this system
 		*/
 		inline void
 		put(const char* first, std::size_t n) {
@@ -65,8 +67,10 @@ namespace sys {
 		}
 
 		/**
-		Append next byte array between \p first and \p last
+		\brief Append next byte array between \p first and \p last
 		and compute digest if possible.
+		\throws std::length_error if input size is too large to compute SHA-1
+		on this system
 		*/
 		inline void
 		put(const char* first, const char* last) {

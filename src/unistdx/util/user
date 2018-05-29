@@ -109,13 +109,13 @@ namespace sys {
 		/// Compare user IDs.
 		inline bool
 		operator==(const user& rhs) const noexcept {
-			return id() == rhs.id();
+			return this->id() == rhs.id();
 		}
 
 		/// Compare user IDs.
 		inline bool
 		operator!=(const user& rhs) const noexcept {
-			return !operator==(rhs);
+			return !this->operator==(rhs);
 		}
 
 		friend std::ostream&
@@ -154,6 +154,7 @@ namespace sys {
 	\brief
 	Find user in system database by id \p id and store in \p result.
 	\see \man{getpwuid,3}
+	\throws bad_call
 	*/
 	bool
 	find_user(uid_type id, user& result);
@@ -161,6 +162,7 @@ namespace sys {
 	/**
 	\brief Find user in system database by name \p name and store in \p result.
 	\see \man{getpwnam,3}
+	\throws bad_call
 	*/
 	bool
 	find_user(const char* name, user& result);

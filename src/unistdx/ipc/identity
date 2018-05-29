@@ -30,6 +30,7 @@ namespace sys {
 
 		/**
 		\brief Change process' user.
+		\throws bad_call
 		\arg Set both real and effective UID of the current process (if priviledged).
 		\arg Set only effective UID of the current process (if unpriviledged).
 		*/
@@ -48,6 +49,7 @@ namespace sys {
 
 		/**
 		\brief Change process' group.
+		\throws bad_call
 		\arg Set both real and effective GID of the current process (if priviledged).
 		\arg Set only effective GID of the current process (if unpriviledged).
 		*/
@@ -65,6 +67,7 @@ namespace sys {
 		\date 2018-05-21
 		\author Ivan Gankevich
 		\ingroup ipc
+		\throws bad_call
 		\details
 		\arg Sets GID first.
 		\arg Reverts process UID and GID upon error.

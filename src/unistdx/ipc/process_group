@@ -16,7 +16,10 @@ namespace sys {
 		inline pid_type
 		process_group_id() noexcept { return ::getpgrp(); }
 
-		/// Set process group ID of the calling process.
+		/**
+		\brief Set process group ID of the calling process.
+		\throws bad_call
+		*/
 		inline void
 		set_process_group_id(pid_type rhs) {
 			UNISTDX_CHECK(::setpgid(this_process::id(), rhs));
@@ -74,6 +77,9 @@ namespace sys {
 		/**
 		\brief Wait until all processes finish their execution
 		unlocking \p lock for the duration of wait.
+		\throws bad_call if system error occurs, except
+		\c std::errc::interrupted
+		\see std::errc
 		*/
 		template<class Lock, class F>
 		void
@@ -103,7 +109,10 @@ namespace sys {
 			}
 		}
 
-		/// Send signal \p s to all processes in the group.
+		/**
+		\brief Send signal \p s to all processes in the group.
+		\throws bad_call
+		*/
 		inline void
 		send(signal s) {
 			if (this->_gid > 0) {
@@ -111,7 +120,10 @@ namespace sys {
 			}
 		}
 
-		/// Terminate all processes in the group.
+		/**
+		\brief Terminate all processes in the group.
+		\throws bad_call
+		*/
 		inline void
 		terminate() {
 			this->send(signal::terminate);

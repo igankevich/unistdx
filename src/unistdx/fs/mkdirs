@@ -12,6 +12,7 @@ namespace sys {
 	\date 2018-04-25
 	\author Ivan Gankevich
 	\ingroup fs
+	\throws bad_call
 	\param[in] dir path, components of which are created
 	\param[in] m file mode of directories to be created
 	\param[in] offset character offset in path name to start
@@ -28,6 +29,7 @@ namespace sys {
 	\date 2018-04-25
 	\author Ivan Gankevich
 	\ingroup fs
+	\throws bad_call
 	\param[in] root path, relative to which directories are created
 	\param[in] relative_path path, components of which are created
 	\param[in] m file mode of directories to be created

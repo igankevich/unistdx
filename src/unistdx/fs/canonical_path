@@ -12,6 +12,7 @@ namespace sys {
 	/**
 	\brief Make path \p rhs canonical.
 	\return canonical path as a unique pointer to character array
+	\throws bad_call
 	*/
 	inline std::unique_ptr<char[]>
 	make_canonical(const char* rhs) {

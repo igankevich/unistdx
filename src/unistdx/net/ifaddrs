@@ -31,7 +31,10 @@ namespace sys {
 
 	public:
 
-		/// Calls \man{getifaddrs,3}.
+		/**
+		\brief Calls \man{getifaddrs,3}.
+		\throws bad_call
+		*/
 		inline
 		ifaddrs() {
 			UNISTDX_CHECK(::getifaddrs(&this->_addrs));

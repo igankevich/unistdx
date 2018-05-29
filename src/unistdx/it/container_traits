@@ -59,10 +59,13 @@ namespace sys {
 			return cnt.front();
 		}
 
-		/// Unsupported operation.
+		/**
+		\brief Unsupported operation.
+		\throws std::logic_error
+		*/
 		static void
 		pop_front(container_type&) {
-			throw std::runtime_error("unsupported operation pop_front");
+			throw std::logic_error("unsupported operation pop_front");
 		}
 
 		/// Removes the last element in the container.
@@ -119,10 +122,13 @@ namespace sys {
 			cnt.pop();
 		}
 
-		/// Unsupported operation.
+		/**
+		\brief Unsupported operation.
+		\throws std::logic_error
+		*/
 		static void
 		pop_back(container_type&) {
-			throw std::runtime_error("unsupported operation pop_back");
+			throw std::logic_error("unsupported operation pop_back");
 		}
 
 	};
@@ -167,10 +173,13 @@ namespace sys {
 			cnt.pop();
 		}
 
-		/// Unsupported operation.
+		/**
+		\brief Unsupported operation.
+		\throws std::logic_error
+		*/
 		static void
 		pop_back(container_type&) {
-			throw std::runtime_error("unsupported operation pop_back");
+			throw std::logic_error("unsupported operation pop_back");
 		}
 
 	};

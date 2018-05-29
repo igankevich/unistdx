@@ -317,7 +317,6 @@ namespace {
 		result_type* res;
 		buf.resize(get_max_size(traits_type::conf_name()));
 		int ret, i = 0;
-		const int max_iterations = 22;
 		do {
 			ret = traits_type::get(field, u, buf, &res);
 			if (!res) {
@@ -331,10 +330,7 @@ namespace {
 			} else {
 				found = true;
 			}
-		} while (ret == -1 && ++i < max_iterations);
-		if (ret == -1 && i == max_iterations) {
-			throw std::runtime_error("find_entity_r: max iterations reached");
-		}
+		} while (ret == -1);
 		return found;
 	}
 

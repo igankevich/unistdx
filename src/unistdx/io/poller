@@ -55,7 +55,10 @@ namespace sys {
 
 	public:
 
-		/// Construct event poller with \p maxevent number of events.
+		/**
+		\brief Construct event poller with \p maxevent number of events.
+		\throws bad_call
+		*/
 		inline explicit
 		event_poller(int maxevents=4096/sizeof(epoll_event)):
 		_epollfd(::epoll_create1(EPOLL_CLOEXEC)),
@@ -108,16 +111,21 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Construct \link epoll_event\endlink in-place with
 		file descriptor \p fd and event mask \p ev and
 		add it to the poller.
+		\throws bad_call
 		*/
 		inline void
 		emplace(fd_type fd, event ev) {
 			this->xadd(epoll_event(fd, ev));
 		}
 
-		/// Add file descriptor-event mask pair to the poller.
+		/**
+		\brief Add file descriptor-event mask pair to the poller.
+		\throws bad_call
+		*/
 		inline void
 		insert(const epoll_event& ev) {
 			this->xadd(ev);
@@ -129,7 +137,10 @@ namespace sys {
 			this->xmod(ev);
 		}
 
-		/// Remove file descriptor \p fd from the poller.
+		/**
+		\brief Remove file descriptor \p fd from the poller.
+		\throws bad_call
+		*/
 		inline void
 		erase(fd_type fd) {
 			this->xdel(fd);
@@ -137,6 +148,7 @@ namespace sys {
 
 		/**
 		\brief Remove file descriptor-event mask pair to the poller.
+		\throws bad_call
 		\details
 		Equivalent to <code>erase(ev.fd())</code>.
 		*/
@@ -167,6 +179,9 @@ namespace sys {
 		\brief
 		Wait for events to occur unlocking \p lock for the duration
 		of the wait until predicate \p pred becomes true.
+		\throws bad_call if system error occurs, except
+		\c std::errc::interrupted
+		\see std::errc
 		\details
 		\arg If \p pred is true upon the call to this method
 		no waiting or unlocking is done
@@ -185,6 +200,9 @@ namespace sys {
 		\brief
 		Wait for events to occur specified amount of time \p dur
 		unlocking \p lock for the duration of the wait.
+		\throws bad_call if system error occurs, except
+		\c std::errc::interrupted
+		\see std::errc
 		*/
 		template<class Lock, class Rep, class Period>
 		inline std::cv_status

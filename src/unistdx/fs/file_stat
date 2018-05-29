@@ -182,7 +182,13 @@ namespace sys {
 
 		/**
 		\brief Get file status for file \p filename.
+		\throws bad_call if system error occurs, except
+		\c std::errc::no_such_file_or_directory
 		\see \man{stat,2}
+		\see std::errc
+		\details
+		This method will not throw exception, if the file does not exist.
+		Use \link exists\endlink to check it.
 		*/
 		inline void
 		update(const char* filename) {

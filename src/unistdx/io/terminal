@@ -10,8 +10,11 @@ namespace sys {
 
 	typedef int fd_type;
 
-	/// \brief Returns true, if file descriptor \p f refers to a terminal.
-	/// \ingroup io
+	/**
+	\brief Returns true, if file descriptor \p f refers to a terminal.
+	\ingroup io
+	\throws bad_call
+	*/
 	inline bool
 	is_a_terminal(sys::fd_type f) {
 		int ret = ::isatty(f);

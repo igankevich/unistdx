@@ -12,6 +12,7 @@ namespace sys {
 	\ingroup fs
 	\see \man{copy_file_range,2}
 	\see \man{sendfile,2}
+	\throws bad_call
 	\details
 	\arg Uses \man{copy_file_range,2} on newer kernels.
 	\arg Uses \man{sendfile,2} when available.

@@ -26,6 +26,7 @@ namespace sys {
 	Send signal \p s to process \p p.
 	\date 2018-05-21
 	\author Ivan Gankevich
+	\throw bad_call
 	*/
 	inline void
 	send(signal s, pid_type p) {
@@ -45,6 +46,7 @@ namespace sys {
 		/**
 		\brief Fork child process preventing race conditions by
 		locking global fork mutex (if needed).
+		\throws bad_call
 		\details
 		The mutex is not locked on systems supporting close-on-exec and
 		non-blocking file descriptor flags.
@@ -64,6 +66,7 @@ namespace sys {
 		Send signal \p s to the current process.
 		\date 2018-05-21
 		\author Ivan Gankevich
+		\throws bad_call
 		*/
 		inline void
 		send(signal s) {
@@ -74,26 +77,36 @@ namespace sys {
 		\brief Set current process' working directory.
 		\date 2018-05-21
 		\author Ivan Gankevich
+		\throws bad_call
 		*/
 		inline void
 		workdir(const char* wd) {
 			UNISTDX_CHECK(::chdir(wd));
 		}
 
-		/// Set calling process group ID.
+		/**
+		\brief Set calling process group ID.
+		\throws bad_call
+		*/
 		inline void
 		set_group_id(pid_type rhs) {
 			UNISTDX_CHECK(::setpgid(::sys::this_process::id(), rhs));
 		}
 
 		#if defined(UNISTDX_HAVE_PRCTL)
-		/// Set calling process name. Useful for debugging multi-threaded programmes.
+		/**
+		\brief Set calling process name. Useful for debugging multi-threaded programmes.
+		\throws bad_call
+		*/
 		inline void
 		set_name(const char* name) {
 			UNISTDX_CHECK(::prctl(PR_SET_NAME, name));
 		}
 
-		/// Get calling process name.
+		/**
+		\brief Get calling process name.
+		\throws bad_call
+		*/
 		inline std::string
 		name() {
 			std::string nm(16, '\0');
@@ -162,7 +175,10 @@ namespace sys {
 
 	public:
 
-		/// Construct new process by forking a child with \p f as main function.
+		/**
+		\brief Construct new process by forking a child with \p f as main function.
+		\throws bad_call
+		*/
 		template<class F>
 		inline explicit
 		process(F f, process_flag pf=process_flag::fork) {
@@ -232,7 +248,10 @@ namespace sys {
 		}
 
 		/**
-		Forcibly terminate the process by sending \link signal::kill\endlink signal.
+		\brief
+		Forcibly terminate the process by sending \link signal::kill\endlink
+		signal.
+		\throws bad_call
 		*/
 		inline void
 		kill() {
@@ -240,8 +259,10 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Interrupt the process by sending \link signal::keyboard_interrupt\endlink
 		signal.
+		\throws bad_call
 		*/
 		inline void
 		interrupt() {
@@ -249,14 +270,19 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Interrupt the process by sending \link signal::hang_up\endlink signal.
+		\throws bad_call
 		*/
 		inline void
 		hang_up() {
 			this->send(sys::signal::hang_up);
 		}
 
-		/// Send signal \p s to the process.
+		/**
+		\brief Send signal \p s to the process.
+		\throws bad_call
+		*/
 		inline void
 		send(sys::signal s) {
 			if (this->_pid > 0) {
@@ -264,7 +290,12 @@ namespace sys {
 			}
 		}
 
-		/// Wait until process changes its state or terminates.
+		/**
+		\brief Wait until process changes its state or terminates.
+		\throws bad_call if system error occurs, except
+		\c std::errc::interrupted
+		\see std::errc
+		*/
 		inline sys::proc_status
 		wait() {
 			int stat = 0;
@@ -284,7 +315,7 @@ namespace sys {
 		/// Check if process is alive by sending nought signal to it.
 		inline bool
 		operator !() const noexcept {
-			return !operator bool();
+			return !this->operator bool();
 		}
 
 		friend std::ostream&
@@ -302,7 +333,10 @@ namespace sys {
 			return ::getpgid(this->_pid);
 		}
 
-		/// Set process group ID.
+		/**
+		\brief Set process group ID.
+		\throws bad_call
+		*/
 		inline void
 		set_group_id(pid_type rhs) const {
 			UNISTDX_CHECK(::setpgid(_pid, rhs));

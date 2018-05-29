@@ -15,6 +15,10 @@
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/io/open_flag>
 
+#ifndef NDEBUG
+#include <iostream>
+#endif
+
 namespace sys {
 
 	typedef ::mode_t mode_type;
@@ -86,7 +90,21 @@ namespace sys {
 		~fildes() {
 			try {
 				this->close();
-			} catch (...) {}
+			#ifndef NDEBUG
+			} catch (const bad_call& err) {
+				std::clog
+					<< "sys::fildes: failed to close file descriptor "
+					<< this->_fd << ": " << err.what();
+				std::terminate();
+			#endif
+			} catch (...) {
+				#ifndef NDEBUG
+				std::clog
+					<< "sys::fildes: failed to close file descriptor "
+					<< this->_fd;
+				#endif
+				std::terminate();
+			}
 		}
 
 		/// Move assignment.
@@ -109,8 +127,12 @@ namespace sys {
 		}
 
 		/**
-		Read \p n bytes from file descriptor and store them in the array
+		\brief Read \p n bytes from file descriptor and store them in the array
 		pointed by \p buf.
+		\throws bad_call if system error occurs,
+		except \c std::errc::resource_unavailable_try_again
+		and \c std::errc::operation_in_progress
+		\see std::errc
 		*/
 		inline ssize_t
 		read(void* buf, size_t n) const {
@@ -122,8 +144,12 @@ namespace sys {
 		}
 
 		/**
-		Write \p n bytes to file descriptor copying them from the array
+		\brief Write \p n bytes to file descriptor copying them from the array
 		pointer by \p buf.
+		\throws bad_call if system error occurs,
+		except \c std::errc::resource_unavailable_try_again
+		and \c std::errc::operation_in_progress
+		\see std::errc
 		*/
 		inline ssize_t
 		write(const void* buf, size_t n) const {
@@ -140,45 +166,66 @@ namespace sys {
 			return this->_fd;
 		}
 
-		/// Get file descriptor open flags.
+		/**
+		\brief Get file descriptor open flags.
+		\throws bad_call
+		*/
 		inline open_flag
 		flags() const {
 			return this->get_flags(F_GETFL);
 		}
 
-		/// Get file descriptor flags.
+		/**
+		\brief Get file descriptor flags.
+		\throws bad_call
+		*/
 		inline flag_type
 		fd_flags() const {
 			return this->get_flags(F_GETFD);
 		}
 
-		/// Set file descriptor open flags.
+		/**
+		\brief Set file descriptor open flags.
+		\throws bad_call
+		*/
 		inline void
 		setf(open_flag rhs) {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) | rhs);
 		}
 
-		/// Unset file descriptor open flags.
+		/**
+		\brief Unset file descriptor open flags.
+		\throws bad_call
+		*/
 		inline void
 		unsetf(open_flag rhs) {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) & ~rhs);
 		}
 
 		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
-		/// Set file descriptor pipe flags.
+		/**
+		\brief Set file descriptor pipe flags.
+		\throws bad_call
+		*/
 		inline void
 		setf(pipe_flag rhs) {
 			this->set_flag(rhs, 1);
 		}
 
-		/// Unset file descriptor pipe flags.
+		/**
+		\brief Unset file descriptor pipe flags.
+		\throws bad_call
+		*/
 		inline void
 		unsetf(pipe_flag rhs) {
 			this->set_flag(rhs, 0);
 		}
 		#endif
 
-		/// Set file descriptor flags.
+		/**
+		\brief Set file descriptor flags.
+		\throws bad_call
+		*/
 		inline void
 		setf(fd_flag rhs) {
 			this->set_flag(F_SETFD, rhs);
@@ -226,22 +273,28 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Change file descriptor number to an arbitrrary one
 		by duplicating it with \man{dup,2} system call.
+		\throws bad_call
 		*/
 		void
 		remap();
 
 		/**
+		\brief
 		Change file descriptor number to \p new_fd
 		by duplicating it with \man{dup2,2} system call.
+		\throws bad_call
 		*/
 		void
 		remap(fd_type new_fd);
 
 		/**
+		\brief
 		Check if this file descriptor exists in the kernel
 		by trying to get its flags
+		\throws bad_call
 		*/
 		inline void
 		validate() {
@@ -249,8 +302,10 @@ namespace sys {
 		}
 
 		/**
+		\brief
 		Init file descriptor by opening file \p filename with
 		open flags \p flags and mode \p mode.
+		\throws bad_call
 		*/
 		inline void
 		open(const char* filename, open_flag flags, mode_type mode) {
