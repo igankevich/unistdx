@@ -27,9 +27,6 @@ namespace sys {
 
 	public:
 		using typename base_type::iterator_category;
-		using typename base_type::value_type;
-		using typename base_type::pointer;
-		using typename base_type::reference;
 		using typename base_type::difference_type;
 
 	public:
@@ -87,7 +84,6 @@ namespace sys {
 		}
 
 	};
-
 
 }
 

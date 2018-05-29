@@ -246,6 +246,16 @@ test(
 )
 
 test(
+	'it/field_iterator',
+	executable(
+		'field-iterator-test',
+		sources: 'field_iterator_test.cc',
+		include_directories: srcdir,
+		dependencies: gtest
+	)
+)
+
+test(
 	'base/cmdline',
 	executable(
 		'cmdline-test',
