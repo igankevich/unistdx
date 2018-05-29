@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <unistdx/base/unlock_guard>
-#include <unistdx/bits/no_copy_and_move>
 #include <unistdx/ipc/process>
 
 namespace sys {
@@ -52,9 +51,23 @@ namespace sys {
 	public:
 
 		process_group() = default;
+
 		~process_group() = default;
 
-		UNISTDX_NO_COPY_AND_MOVE(process_group)
+		/// Move-constructor.
+		process_group(process_group&& rhs) = default;
+
+		process_group(const process_group&) = delete;
+
+		process_group&
+		operator=(const process_group&) = delete;
+
+		/// Move-assignment.
+		inline process_group&
+		operator=(process_group&& rhs) {
+			this->swap(rhs);
+			return *this;
+		}
 
 		/// Add new process to a group using \p childmain as the main function.
 		template<class F>
@@ -201,10 +214,23 @@ namespace sys {
 			return this->_procs.empty();
 		}
 
+		/// Swap with \p rhs.
+		inline void
+		swap(process_group& rhs) {
+			std::swap(this->_procs, rhs._procs);
+			std::swap(this->_gid, rhs._gid);
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const process_group& rhs);
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link process_group\endlink.
+	inline void
+	swap(process_group& lhs, process_group& rhs) {
+		lhs.swap(rhs);
+	}
 
 	/// Output process group ID and all processes in the group.
 	std::ostream&

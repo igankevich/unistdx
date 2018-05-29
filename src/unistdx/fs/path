@@ -188,6 +188,15 @@ namespace sys {
 			return this->data();
 		}
 
+		/// Swap with \p rhs.
+		inline void
+		swap(basic_path& rhs) {
+			std::swap(
+				static_cast<string_type&>(*this),
+				static_cast<string_type&>(rhs)
+			);
+		}
+
 		/// \nowarn
 		MAKE_OPERATOR_EQ(basic_path&, basic_path&, string_type&, string_type&);
 		MAKE_OPERATOR_EQ(basic_path&, string_type&, string_type&, string_type&);
@@ -214,6 +223,13 @@ namespace sys {
 	#undef MAKE_OPERATOR
 	#undef MAKE_OPERATOR_EQ
 	#undef MAKE_OPERATOR_REL
+
+	/// Overload of \link std::swap\endlink for \link basic_path\endlink.
+	template <class Ch, class Tr, class Alloc>
+	inline void
+	swap(basic_path<Ch,Tr,Alloc>& lhs, basic_path<Ch,Tr,Alloc>& rhs) {
+		lhs.swap(rhs);
+	}
 
 	/**
 	\brief

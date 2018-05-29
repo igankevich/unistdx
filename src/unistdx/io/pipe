@@ -9,13 +9,13 @@ namespace sys {
 	\brief A pipe constructed with \man{pipe,2} system call.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup io
+	\ingroup io wrapper
 	\see \man{pipe2,2}
 	*/
 	union pipe {
 
 	private:
-		sys::fildes _fds[2] = {};
+		fildes _fds[2] = {};
 		fd_type _rawfds[2];
 
 	public:
@@ -44,6 +44,18 @@ namespace sys {
 		pipe(fd_type in, fd_type out) noexcept:
 		_fds {sys::fildes(in), sys::fildes(out)}
 		{}
+
+		pipe(const pipe&) = delete;
+
+		pipe&
+		operator=(const pipe&) = delete;
+
+		/// Move-assignment.
+		inline pipe&
+		operator=(pipe&& rhs) noexcept {
+			this->swap(rhs);
+			return *this;
+		}
 
 		inline
 		~pipe() {}
@@ -86,11 +98,24 @@ namespace sys {
 		*/
 		void close();
 
+		/// Swap with \p rhs.
+		inline void
+		swap(pipe& rhs) noexcept {
+			sys::swap(this->_fds[0], rhs._fds[0]);
+			sys::swap(this->_fds[1], rhs._fds[1]);
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const pipe& rhs);
 
 		static_assert(sizeof(_fds) == sizeof(_rawfds), "bad sys::fildes size");
 	};
+
+	/// Overload of \link std::swap\endlink for \link pipe\endlink.
+	inline void
+	swap(pipe& lhs, pipe& rhs) noexcept {
+		lhs.swap(rhs);
+	}
 
 	/// Print pipe input and output file descriptors for debugging.
 	std::ostream&

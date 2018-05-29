@@ -147,7 +147,7 @@ namespace sys {
 		/// Move-assignment.
 		inline socket&
 		operator=(socket&& rhs) {
-			sys::fildes::operator=(std::move(static_cast<sys::fildes&&>(rhs)));
+			this->swap(rhs);
 			return *this;
 		}
 
@@ -363,9 +363,10 @@ namespace sys {
 		receive_fds(fd_type* data, size_t n);
 		#endif
 
-		/// Specialisation of \link std::swap\endlink.
-		inline friend void swap(socket& lhs, socket& rhs) {
-			std::swap(lhs._fd, rhs._fd);
+		/// Swap with \p rhs.
+		inline void
+		swap(socket& rhs) {
+			this->fildes::swap(static_cast<fildes&>(rhs));
 		}
 
 		friend std::ostream&
@@ -393,6 +394,12 @@ namespace sys {
 		}
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link socket\endlink.
+	inline void
+	swap(socket& lhs, socket& rhs) {
+		lhs.swap(rhs);
+	}
 
 	/// Print socket file descriptor and status.
 	std::ostream&

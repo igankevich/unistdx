@@ -249,7 +249,7 @@ namespace sys {
 		/// Move-assignment.
 		inline process&
 		operator=(process&& rhs) noexcept {
-			std::swap(_pid, rhs._pid);
+			this->swap(rhs);
 			return *this;
 		}
 
@@ -338,6 +338,12 @@ namespace sys {
 			return !this->operator bool();
 		}
 
+		/// Swap with \p rhs.
+		inline void
+		swap(process& rhs) {
+			std::swap(this->_pid, rhs._pid);
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const process& rhs);
 
@@ -363,7 +369,7 @@ namespace sys {
 		*/
 		inline void
 		set_group_id(pid_type rhs) const {
-			UNISTDX_CHECK(::setpgid(_pid, rhs));
+			UNISTDX_CHECK(::setpgid(this->_pid, rhs));
 		}
 
 		/// Always returns true to be compatible with \link std::thread\endlink.
@@ -388,6 +394,12 @@ namespace sys {
 		pid_type _pid = 0;
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link process\endlink.
+	inline void
+	swap(process& lhs, process& rhs) {
+		lhs.swap(rhs);
+	}
 
 	/// Output process ID and process group ID.
 	std::ostream&

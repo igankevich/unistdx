@@ -175,10 +175,29 @@ namespace sys {
 		/// Returns true, if this canonical path is relative to directory \p root.
 		inline bool
 		is_relative_to(const basic_canonical_path& root) {
-			return this->find(root) == 0;
+			return this->compare(0, root.size(), root) == 0;
+		}
+
+		/// Swap with \p rhs.
+		inline void
+		swap(basic_canonical_path& rhs) {
+			std::swap(
+				static_cast<string_type&>(*this),
+				static_cast<string_type&>(rhs)
+			);
 		}
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link basic_canonical_path\endlink.
+	template <class Ch, class Tr, class Alloc>
+	inline void
+	swap(
+		basic_canonical_path<Ch, Tr, Alloc>& lhs,
+		basic_canonical_path<Ch, Tr, Alloc>& rhs
+	) {
+		lhs.swap(rhs);
+	}
 
 	/**
 	\brief

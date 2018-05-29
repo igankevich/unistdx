@@ -107,10 +107,10 @@ namespace sys {
 			}
 		}
 
-		/// Move assignment.
+		/// Move-assignment.
 		inline fildes&
-		operator=(fildes&& rhs) {
-			std::swap(this->_fd, rhs._fd);
+		operator=(fildes&& rhs) noexcept {
+			this->swap(rhs);
 			return *this;
 		}
 
@@ -271,9 +271,10 @@ namespace sys {
 			return out << rhs._fd;
 		}
 
-		/// Specialisation of \link std::swap\endlink.
-		inline friend void swap(fildes& lhs, fildes& rhs) {
-			std::swap(lhs._fd, rhs._fd);
+		/// Swap with \p rhs.
+		inline void
+		swap(fildes& rhs) noexcept {
+			std::swap(this->_fd, rhs._fd);
 		}
 
 		/**
@@ -336,6 +337,12 @@ namespace sys {
 	};
 
 	static_assert(sizeof(fildes) == sizeof(fd_type), "bad fd size");
+
+	/// Overload of \link std::swap\endlink for \link fildes\endlink.
+	inline void
+	swap(fildes& lhs, fildes& rhs) noexcept {
+		lhs.swap(rhs);
+	}
 
 	/**
 	\brief

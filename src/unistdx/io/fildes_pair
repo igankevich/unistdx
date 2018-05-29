@@ -11,7 +11,7 @@ namespace sys {
 	\brief A pair of file descriptors.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup io
+	\ingroup io wrapper
 	\details
 	\arg Descriptors are assumed to be for input and output, but it is not
 	enforced.
@@ -53,14 +53,11 @@ namespace sys {
 
 		/// Move-constructor.
 		inline
-		fildes_pair(fildes_pair&& rhs):
-		_in(std::move(rhs._in)),
-		_out(std::move(rhs._out))
-		{}
+		fildes_pair(fildes_pair&& rhs) = default;
 
 		/// Move-assignment.
 		inline fildes_pair&
-		operator=(fildes_pair&& rhs) {
+		operator=(fildes_pair&& rhs) noexcept {
 			this->_in = std::move(rhs._in);
 			this->_out = std::move(rhs._out);
 			return *this;
@@ -100,7 +97,20 @@ namespace sys {
 			this->_out.close();
 		}
 
+		/// Swap with \p rhs.
+		inline void
+		swap(fildes_pair& rhs) noexcept {
+			sys::swap(this->_in, rhs._in);
+			sys::swap(this->_out, rhs._out);
+		}
+
 	};
+
+	/// Overload of \link std::swap\endlink for \link fildes_pair\endlink.
+	inline void
+	swap(fildes_pair& lhs, fildes_pair& rhs) noexcept {
+		lhs.swap(rhs);
+	}
 
 	/**
 	\brief

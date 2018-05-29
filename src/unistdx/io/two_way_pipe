@@ -10,7 +10,7 @@ namespace sys {
 	\brief Two-way pipe implemented as two one-way pipes.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup io
+	\ingroup io wrapper
 	\details
 	\arg The pipe is designed for communication between
 	parent and child processes.
@@ -35,6 +35,13 @@ namespace sys {
 
 		two_way_pipe&
 		operator=(two_way_pipe&) = delete;
+
+		/// Move-assignment.
+		two_way_pipe&
+		operator=(two_way_pipe&& rhs) noexcept {
+			this->swap(rhs);
+			return *this;
+		}
 
 		/// Parent input file descriptor.
 		inline fildes&
@@ -146,10 +153,24 @@ namespace sys {
 		void
 		validate();
 
+		/// Swap with \p rhs.
+		inline void
+		swap(two_way_pipe& rhs) noexcept {
+			sys::swap(this->_pipe1, rhs._pipe1);
+			sys::swap(this->_pipe2, rhs._pipe2);
+			std::swap(this->_owner, rhs._owner);
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const two_way_pipe& rhs);
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link two_way_pipe\endlink.
+	inline void
+	swap(two_way_pipe& lhs, two_way_pipe& rhs) noexcept {
+		lhs.swap(rhs);
+	}
 
 	/// Output both pipes.
 	std::ostream&

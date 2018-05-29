@@ -228,6 +228,14 @@ namespace sys {
 			}
 		}
 
+		/// Swap with \p rhs.
+		inline void
+		swap(basic_fildesbuf& rhs) {
+			swap(this->_fd, rhs._fd);
+			this->_gbuf.swap(rhs._gbuf);
+			this->_pbuf.swap(rhs._pbuf);
+		}
+
 	private:
 
 		inline std::streamsize
@@ -349,6 +357,13 @@ namespace sys {
 		#endif
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link basic_fildesbuf\endlink.
+	template<class Ch, class Tr, class Fd>
+	inline void
+	swap(basic_fildesbuf<Ch,Tr,Fd>& lhs, basic_fildesbuf<Ch,Tr,Fd>& rhs) {
+		lhs.swap(rhs);
+	}
 
 	/// Alias to basic_fildesbuf<char>.
 	typedef basic_fildesbuf<char> fildesbuf;

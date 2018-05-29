@@ -224,11 +224,17 @@ namespace sys {
 		/// Move-assigment.
 		inline shared_mem&
 		operator=(shared_mem&& rhs) noexcept {
+			this->swap(rhs);
+			return *this;
+		}
+
+		/// Swap with \p rhs.
+		inline void
+		swap(shared_mem& rhs) {
 			std::swap(this->_shm, rhs._shm);
 			std::swap(this->_addr, rhs._addr);
 			std::swap(this->_size, rhs._size);
 			std::swap(this->_owner, rhs._owner);
-			return *this;
 		}
 
 		/// Get raw pointer to the contents of shared memory segment.
@@ -431,6 +437,13 @@ namespace sys {
 		bool _owner = false;
 
 	};
+
+	/// Overload of \link std::swap\endlink for \link shared_mem\endlink.
+	template <class T>
+	inline void
+	swap(shared_mem<T>& lhs, shared_mem<T>& rhs) {
+		lhs.swap(rhs);
+	}
 
 }
 

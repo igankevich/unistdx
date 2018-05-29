@@ -13,6 +13,7 @@ namespace sys {
 	Byte buffer which uses direct memory allocation for maximum performance.
 	\date 2018-05-21
 	\author Ivan Gankevich
+	\ingroup container
 	\see \man{mmap,2}
 	\see \man{mremap,2}
 	\see \man{madvise,2}
@@ -149,7 +150,20 @@ namespace sys {
 			return std::numeric_limits<size_type>::max();
 		}
 
+		/// Swap with \p rhs.
+		inline void
+		swap(byte_buffer& rhs) noexcept {
+			std::swap(this->_data, rhs._data);
+			std::swap(this->_size, rhs._size);
+		}
+
 	};
+
+	/// Overload of \link std::swap\endlink for \link byte_buffer\endlink.
+	inline void
+	swap(byte_buffer& lhs, byte_buffer& rhs) noexcept {
+		lhs.swap(rhs);
+	}
 
 }
 
