@@ -1,278 +1,58 @@
-test(
-	'ipc/semaphore',
-	executable(
-		'semaphore-test',
-		sources: 'semaphore_test.cc',
-		include_directories: srcdir,
-		dependencies: [threads,unistdx,gtest],
-	)
-)
+all_tests = [
+	['base/cmdline', [unistdx,gtest], []],
+	['base/sha1', [unistdx,gtest], []],
+	['base/spin_mutex', [threads,unistdx,gtest], []],
+	['base/uint128', [unistdx,gtest], []],
+	['base/websocket', [unistdx,gtest], []],
+	['fs/file_mutex', [unistdx,gtest], []],
+	['fs/idirectory', [unistdx,gtest], []],
+	['fs/idirtree', [unistdx,gtest], []],
+	['fs/mkdirs', [unistdx,gtest], []],
+	['fs/path', [unistdx,gtest], []],
+	['io/fildesbuf', [unistdx,gtest], [
+		'-DUNISTDX_DEBUG_PACKETBUF',
+		'-DUNISTDX_DEBUG_FILDESBUF'
+	]],
+	['io/poller', [unistdx,gtest], []],
+	['ipc/identity', [unistdx,gtest], []],
+	['ipc/process', [unistdx,gtest], []],
+	['ipc/semaphore', [threads,unistdx,gtest], []],
+	['ipc/sharedmem', [threads,unistdx,gtest], []],
+	['ipc/signal', [unistdx,gtest], []],
+	['it/field_iterator', [unistdx,gtest], []],
+	['it/queue_pusher', [unistdx,gtest], []],
+	['net/base64', [unistdx,gtest], []],
+	['net/byte_swap', [unistdx,gtest], []],
+	['net/endian', [unistdx,gtest], []],
+	['net/endpoint', [unistdx,gtest], []],
+	['net/ifaddr', [unistdx,gtest], []],
+	['net/ipv4_addr', [unistdx,gtest], []],
+	['net/netlink_poller', [threads,unistdx,gtest], []],
+	['net/socket', [threads,unistdx,gtest], []],
+	['util/system', [unistdx,gtest], []],
+	['util/users', [unistdx,gtest], []],
+]
 
-test(
-	'net/socket',
-	executable(
-		'socket-test',
-		sources: 'socket_test.cc',
-		include_directories: srcdir,
-		dependencies: [threads,unistdx,gtest],
+foreach conf : all_tests
+	test_name = conf[0]
+	executable_name = test_name.underscorify() + '_test'
+	source_name = executable_name + '.cc'
+	test(
+		test_name,
+		executable(
+			executable_name,
+			sources: source_name,
+			include_directories: srcdir,
+			dependencies: conf[1],
+			cpp_args: conf[2]
+		)
 	)
-)
-
-executable(
-	'netlink-poller-test',
-	sources: 'netlink_poller_test.cc',
-	include_directories: srcdir,
-	dependencies: [threads,unistdx,gtest],
-)
-
-test(
-	'base/spin_mutex',
-	executable(
-		'spin-mutex-test',
-		sources: 'spin_mutex_test.cc',
-		include_directories: srcdir,
-		dependencies: [threads,unistdx,gtest],
-	)
-)
-
-test(
-	'ipc/sharedmem',
-	executable(
-		'sharedmem-test',
-		sources: 'sharedmem_test.cc',
-		include_directories: srcdir,
-		dependencies: [threads,unistdx,gtest],
-	)
-)
-
-test(
-	'net/endpoint',
-	executable(
-		'endpoint-test',
-		sources: 'endpoint_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-	)
-)
-
-test(
-	'net/byte_swap',
-	executable(
-		'byte-swap-test',
-		sources: 'byte_swap_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-	)
-)
-
-test(
-	'io/poller',
-	executable(
-		'poller-test',
-		sources: 'poller_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-	)
-)
-
-test(
-	'filesystem',
-	executable(
-		'filesystem-test',
-		sources: 'filesystem_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'ipc/process',
-	executable(
-		'process-test',
-		sources: 'process_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-	)
-)
-
-test(
-	'ipc/identity',
-	executable(
-		'identity-test',
-		sources: 'identity_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-	)
-)
-
-test(
-	'io/fildesbuf',
-	executable(
-		'buffer-test',
-		sources: 'buffer_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-		cpp_args: [
-			'-DUNISTDX_DEBUG_PACKETBUF',
-			'-DUNISTDX_DEBUG_FILDESBUF'
-		]
-	)
-)
-
-test(
-	'util/users',
-	executable(
-		'users-test',
-		sources: 'users_test.cc',
-		include_directories: srcdir,
-		dependencies: [unistdx,gtest],
-	)
-)
+endforeach
 
 executable(
 	'POSIX',
 	sources: 'posix_test.cc',
 	include_directories: srcdir,
-)
-
-test(
-	'util/system',
-	executable(
-		'system-test',
-		sources: 'system_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'fs/file_mutex',
-	executable(
-		'file-mutex-test',
-		sources: 'file_mutex_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'ipc/signal',
-	executable(
-		'signal-test',
-		sources: 'signal_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'fs/path',
-	executable(
-		'path-test',
-		sources: 'path_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'fs/canonical_path',
-	executable(
-		'canonical-path-test',
-		sources: 'canonical_path_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'net/ifaddr',
-	executable(
-		'ifaddr-test',
-		sources: 'ifaddr_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'net/ipv4_addr',
-	executable(
-		'ipv4-addr-test',
-		sources: 'ipv4_addr_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'net/endian',
-	executable(
-		'endian-test',
-		sources: 'endian_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx],
-	)
-)
-
-test(
-	'net/base64',
-	executable(
-		'base64-test',
-		sources: ['base64_test.cc'],
-		include_directories: srcdir,
-		dependencies: [gtest, unistdx]
-	)
-)
-
-test(
-	'base/uint128-builtin',
-	executable(
-		'uint128-test',
-		sources: 'uint128_test.cc',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
-	'it/queue_pusher',
-	executable(
-		'queue-pusher-test',
-		sources: 'queue_pusher_test.cc',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
-	'it/field_iterator',
-	executable(
-		'field-iterator-test',
-		sources: 'field_iterator_test.cc',
-		include_directories: srcdir,
-		dependencies: gtest
-	)
-)
-
-test(
-	'base/cmdline',
-	executable(
-		'cmdline-test',
-		sources: 'cmdline_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx]
-	)
-)
-
-test(
-	'base/sha1',
-	executable(
-		'sha1-test',
-		sources: 'sha1_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx]
-	)
 )
 
 benchmark(
@@ -285,22 +65,13 @@ benchmark(
 	)
 )
 
-test(
-	'base/websocket',
-	executable(
-		'websocket-test',
-		sources: 'websocket_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx],
-	)
-)
-
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	backtrace_test = executable(
 		'backtrace-test',
 		sources: 'backtrace_test.cc',
 		include_directories: srcdir,
 		dependencies: [unistdx,threads],
+		cpp_args: ['-fno-omit-frame-pointer']
 	)
 	foreach type : ['signal', 'terminate']
 		test(
@@ -311,16 +82,7 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	endforeach
 endif
 
-test(
-	'io/fildes',
-	executable(
-		'fildes-test',
-		sources: 'fildes_test.cc',
-		include_directories: srcdir,
-		dependencies: [gtest,unistdx]
-	)
-)
-
+# test coverage {{{
 coverage = configuration_data()
 lcov = find_program('lcov', required: false)
 if lcov.found()
@@ -341,3 +103,4 @@ if lcov.found() and genhtml.found()
 		command: join_paths(meson.current_build_dir(), 'coverage')
 	)
 endif
+# }}}

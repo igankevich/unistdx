@@ -15,7 +15,7 @@ TEST(NetlinkPoller, First) {
 	sys::event_poller poller;
 	poller.insert({sock.fd(), sys::event::in});
 	std::mutex mtx;
-	poller.wait(mtx);
+	poller.wait_for(mtx, std::chrono::seconds(1));
 	for (const sys::epoll_event& ev : poller) {
 		std::clog << "ev=" << ev << std::endl;
 		if (ev.fd() == sock.fd()) {
