@@ -13,7 +13,8 @@ namespace sys {
 	\details
 	It is like character traits, but for containers, in a sense that
 	you need to always carry traits type template parameter together with
-	the container type template parameter.
+	the container type template parameter. This type allows to use any
+	container as a queue.
 	*/
 	template <class Container>
 	struct container_traits {
@@ -28,6 +29,7 @@ namespace sys {
 	/**
 	\brief Container traits for vector-like containers.
 	\ingroup traits
+	Method \c pop is not supported.
 	*/
 	template <class Container>
 	struct vector_traits: public container_traits<Container> {
@@ -36,42 +38,21 @@ namespace sys {
 		using typename container_traits<Container>::value_type;
 
 		/// Push element to the container.
-		static void
+		inline static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push_back(rhs);
 		}
 
-		/// Construct element in-place in the container.
-		static void
-		emplace(container_type& cnt, const value_type&& rhs) {
-			cnt.emplace_back(std::forward<value_type>(rhs));
-		}
-
 		/// Returns the first element in the container.
-		static value_type&
+		inline static value_type&
 		front(container_type& cnt) {
 			return cnt.front();
 		}
 
 		/// Returns the first element in the container.
-		static const value_type&
+		inline static const value_type&
 		front(const container_type& cnt) {
 			return cnt.front();
-		}
-
-		/**
-		\brief Unsupported operation.
-		\throws std::logic_error
-		*/
-		static void
-		pop_front(container_type&) {
-			throw std::logic_error("unsupported operation pop_front");
-		}
-
-		/// Removes the last element in the container.
-		static void
-		pop_back(container_type& cnt) {
-			cnt.pop_back();
 		}
 
 	};
@@ -87,48 +68,27 @@ namespace sys {
 		using typename container_traits<Container>::value_type;
 
 		/// Push element to the container.
-		static void
+		inline static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push(rhs);
 		}
 
-		/// Construct element in-place in the container.
-		static void
-		emplace(container_type& cnt, const value_type&& rhs) {
-			cnt.emplace(std::forward<value_type>(rhs));
-		}
-
 		/// Returns the first element in the container.
-		static value_type&
+		inline static value_type&
 		front(container_type& cnt) {
 			return cnt.front();
 		}
 
 		/// Returns the first element in the container.
-		static const value_type&
+		inline static const value_type&
 		front(const container_type& cnt) {
 			return cnt.front();
 		}
 
 		/// Removes the first element in the container.
-		static void
+		inline static void
 		pop(container_type& cnt) {
 			cnt.pop();
-		}
-
-		/// Removes the first element in the container.
-		static void
-		pop_front(container_type& cnt) {
-			cnt.pop();
-		}
-
-		/**
-		\brief Unsupported operation.
-		\throws std::logic_error
-		*/
-		static void
-		pop_back(container_type&) {
-			throw std::logic_error("unsupported operation pop_back");
 		}
 
 	};
@@ -144,42 +104,21 @@ namespace sys {
 		using typename container_traits<Container>::value_type;
 
 		/// Push element to the container.
-		static void
+		inline static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push(rhs);
 		}
 
-		/// Construct element in-place in the container.
-		static void
-		emplace(container_type& cnt, const value_type&& rhs) {
-			cnt.emplace(std::forward<value_type>(rhs));
-		}
-
 		/// Returns the first element in the container.
-		static const value_type&
+		inline static const value_type&
 		front(const container_type& cnt) {
 			return cnt.top();
 		}
 
 		/// Removes the first element in the container.
-		static void
+		inline static void
 		pop(container_type& cnt) {
 			cnt.pop();
-		}
-
-		/// Removes the first element in the container.
-		static void
-		pop_front(container_type& cnt) {
-			cnt.pop();
-		}
-
-		/**
-		\brief Unsupported operation.
-		\throws std::logic_error
-		*/
-		static void
-		pop_back(container_type&) {
-			throw std::logic_error("unsupported operation pop_back");
 		}
 
 	};
@@ -195,45 +134,27 @@ namespace sys {
 		using typename container_traits<Container>::value_type;
 
 		/// Push element to the container.
-		static void
+		inline static void
 		push(container_type& cnt, const value_type& rhs) {
 			cnt.push_back(rhs);
 		}
 
-		/// Construct element in-place in the container.
-		static void
-		emplace(container_type& cnt, const value_type&& rhs) {
-			cnt.emplace_back(std::forward<value_type>(rhs));
-		}
-
 		/// Returns the first element in the container.
-		static value_type&
+		inline static value_type&
 		front(container_type& cnt) {
 			return cnt.front();
 		}
 
 		/// Returns the first element in the container.
-		static const value_type&
+		inline static const value_type&
 		front(const container_type& cnt) {
 			return cnt.front();
 		}
 
 		/// Removes the first element in the container.
-		static void
+		inline static void
 		pop(container_type& cnt) {
 			cnt.pop_front();
-		}
-
-		/// Removes the first element in the container.
-		static void
-		pop_front(container_type& cnt) {
-			cnt.pop_front();
-		}
-
-		/// Removes the last element in the container.
-		static void
-		pop_back(container_type& cnt) {
-			cnt.pop_back();
 		}
 
 	};
