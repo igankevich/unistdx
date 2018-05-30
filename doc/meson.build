@@ -71,7 +71,7 @@ if doxygen.found()
 			join_paths(meson.build_root(), 'header.html'),
 			join_paths(meson.build_root(), 'footer.html'),
 			join_paths(meson.build_root(), 'doxygen.css'),
-			join_paths(meson.current_source_dir(), 'Doxyfile')
+			join_paths(meson.current_build_dir(), 'Doxyfile')
 		]
 	)
 	run_target(

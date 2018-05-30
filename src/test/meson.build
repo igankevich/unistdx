@@ -1,53 +1,10 @@
-all_tests = [
-	['base/cmdline', [unistdx,gtest], []],
-	['base/sha1', [unistdx,gtest], []],
-	['base/spin_mutex', [threads,unistdx,gtest], []],
-	['base/uint128', [unistdx,gtest], []],
-	['base/websocket', [unistdx,gtest], []],
-	['fs/file_mutex', [unistdx,gtest], []],
-	['fs/idirectory', [unistdx,gtest], []],
-	['fs/idirtree', [unistdx,gtest], []],
-	['fs/mkdirs', [unistdx,gtest], []],
-	['fs/path', [unistdx,gtest], []],
-	['io/fildesbuf', [unistdx,gtest], [
-		'-DUNISTDX_DEBUG_PACKETBUF',
-		'-DUNISTDX_DEBUG_FILDESBUF'
-	]],
-	['io/poller', [unistdx,gtest], []],
-	['ipc/identity', [unistdx,gtest], []],
-	['ipc/process', [unistdx,gtest], []],
-	['ipc/semaphore', [threads,unistdx,gtest], []],
-	['ipc/sharedmem', [threads,unistdx,gtest], []],
-	['ipc/signal', [unistdx,gtest], []],
-	['it/field_iterator', [unistdx,gtest], []],
-	['it/queue_pusher', [unistdx,gtest], []],
-	['net/base64', [unistdx,gtest], []],
-	['net/byte_swap', [unistdx,gtest], []],
-	['net/endian', [unistdx,gtest], []],
-	['net/endpoint', [unistdx,gtest], []],
-	['net/ifaddr', [unistdx,gtest], []],
-	['net/ipv4_addr', [unistdx,gtest], []],
-	['net/netlink_poller', [threads,unistdx,gtest], []],
-	['net/socket', [threads,unistdx,gtest], []],
-	['util/system', [unistdx,gtest], []],
-	['util/users', [unistdx,gtest], []],
-]
-
-foreach conf : all_tests
-	test_name = conf[0]
-	executable_name = test_name + '_test'
-	source_name = executable_name + '.cc'
-	test(
-		test_name,
-		executable(
-			executable_name,
-			sources: source_name,
-			include_directories: srcdir,
-			dependencies: conf[1],
-			cpp_args: conf[2]
-		)
-	)
-endforeach
+subdir('base')
+subdir('fs')
+subdir('io')
+subdir('ipc')
+subdir('it')
+subdir('net')
+subdir('util')
 
 executable(
 	'POSIX',
