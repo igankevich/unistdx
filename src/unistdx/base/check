@@ -52,6 +52,23 @@ with error code and error location unless \man{errno,3} equals \p good_err.
 	} \
 }
 
+/**
+\brief
+Check if \p func equals -1 and throw \link sys::bad_call\endlink
+with error code and error location unless \man{errno,3} equals \c EAGAIN
+or \c EINPROGRESS. In that case set \p func to 0.
+\ingroup macros
+*/
+#define UNISTDX_CHECK_IO(func) \
+{ \
+	if (func == -1) { \
+		if (errno != EAGAIN && errno != EINPROGRESS) { \
+			throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+		} \
+		func = 0; \
+	} \
+}
+
 namespace sys {
 
 	/**

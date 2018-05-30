@@ -1,23 +1,20 @@
 #include "copy_file"
 
-#include <fstream>
-
 #include <unistdx/config>
+#include <unistdx/fs/file_stat>
+#include <unistdx/io/fildes>
+
 #if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 #include <sys/syscall.h>
 #include <unistd.h>
-#include <unistdx/fs/file_stat>
-#include <unistdx/io/fildes>
 #elif defined(UNISTDX_HAVE_SENDFILE)
 #include <sys/sendfile.h>
-#include <unistdx/fs/file_stat>
-#include <unistdx/io/fildes>
 #endif
 
-#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 namespace {
 
-	loff_t
+	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
+	inline loff_t
 	copy_file_range_priv(
 		int fd_in,
 		loff_t* off_in,
@@ -36,13 +33,32 @@ namespace {
 			flags
 		);
 	}
+	#endif
+
+	inline void
+	copy_file_simple(
+		sys::fildes& in,
+		sys::fildes& out,
+		sys::offset_type file_size
+	) {
+		const size_t n = 4096;
+		char buf[n];
+		ssize_t nread = 0;
+		do {
+			ssize_t m = in.read(buf, n);
+			//std::clog << "read " << m << std::endl;
+			nread += m;
+			ssize_t nwritten = 0;
+			do {
+				nwritten += out.write(buf, m);
+			} while (nwritten != m);
+		} while (nread != file_size);
+	}
 
 }
-#endif
 
 void
 sys::copy_file(const path& src, const path& dest) {
-	#if defined(UNISTDX_HAVE_SENDFILE) || defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 	fildes in(
 		src,
 		open_flag::read_only |
@@ -57,10 +73,11 @@ sys::copy_file(const path& src, const path& dest) {
 		open_flag::close_on_exec,
 		0644
 	);
-	fd_type ifd = in.fd();
-	fd_type ofd = in.fd();
 	file_stat st(src);
 	offset_type size = st.size();
+	#if defined(UNISTDX_HAVE_SENDFILE) || defined(UNISTDX_HAVE_COPY_FILE_RANGE)
+	fd_type ifd = in.fd();
+	fd_type ofd = out.fd();
 	ssize_t n;
 	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 	while ((n = ::copy_file_range_priv(ifd, nullptr, ofd, nullptr, size, 0)) > 0) {
@@ -70,7 +87,7 @@ sys::copy_file(const path& src, const path& dest) {
 		if (errno != EXDEV && errno != EBADF && errno != ENOSYS) {
 			UNISTDX_THROW_BAD_CALL();
 		}
-		std::ofstream(dest) << std::ifstream(src).rdbuf();
+		copy_file_simple(in, out, size);
 	}
 	#elif defined(UNISTDX_HAVE_SENDFILE)
 	offset_type offset = 0;
@@ -81,11 +98,11 @@ sys::copy_file(const path& src, const path& dest) {
 		if (errno != EINVAL && errno != ENOSYS) {
 			UNISTDX_THROW_BAD_CALL();
 		}
-		std::ofstream(dest) << std::ifstream(src).rdbuf();
+		copy_file_simple(in, out, size);
 	}
 	#endif
 	#else
-	std::ofstream(dest) << std::ifstream(src).rdbuf();
+	copy_file_simple(in, out, size);
 	#endif // if defined(UNISTDX_HAVE_SENDFILE) ||
 	// defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 }

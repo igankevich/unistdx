@@ -275,9 +275,7 @@ namespace sys {
 		inline ssize_t
 		send(const message_header& hdr, int flags=0) const {
 			ssize_t ret = ::sendmsg(this->_fd, &hdr, flags);
-			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
-				UNISTDX_THROW_BAD_CALL();
-			}
+			UNISTDX_CHECK_IO(ret);
 			return ret;
 		}
 
@@ -289,9 +287,7 @@ namespace sys {
 		inline ssize_t
 		receive(message_header& hdr, int flags=0) const {
 			ssize_t ret = ::recvmsg(this->_fd, &hdr, flags);
-			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
-				UNISTDX_THROW_BAD_CALL();
-			}
+			UNISTDX_CHECK_IO(ret);
 			return ret;
 		}
 
@@ -305,9 +301,7 @@ namespace sys {
 		inline ssize_t
 		receive(void* buf, size_t n, int flags=0) const {
 			ssize_t ret = ::recv(this->_fd, buf, n, flags);
-			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
-				UNISTDX_THROW_BAD_CALL();
-			}
+			UNISTDX_CHECK_IO(ret);
 			return ret;
 		}
 
@@ -320,9 +314,7 @@ namespace sys {
 		inline ssize_t
 		send(const void* buf, size_t n, int flags=0) const {
 			ssize_t ret = ::send(this->_fd, buf, n, flags);
-			if (ret == -1 && errno != EAGAIN && errno != EINPROGRESS) {
-				UNISTDX_THROW_BAD_CALL();
-			}
+			UNISTDX_CHECK_IO(ret);
 			return ret;
 		}
 

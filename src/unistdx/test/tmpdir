@@ -104,4 +104,10 @@ namespace test {
 
 }
 
+#define UNISTDX_TMPDIR \
+	(::sys::path(std::string(__func__) + "_" + ::test::current_test_name()))
+
+#define UNISTDX_TMPDIR_OUT \
+	(::sys::path(std::string(__func__) + "_" + ::test::current_test_name() + "_out"))
+
 #endif // vim:filetype=cpp

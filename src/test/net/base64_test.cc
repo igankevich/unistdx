@@ -78,7 +78,7 @@ INSTANTIATE_TEST_CASE_P(
 template<class T>
 void test_base64(size_t k, bool spoil) {
 	typedef std::basic_string<T> string;
-	string text = random_string<T>(k);
+	string text = test::random_string<T>(k);
 	string encoded(base64_encoded_size(k), '_');
 	string decoded(base64_max_decoded_size(encoded.size()), '_');
 	base64_encode(text.data(), text.data() + text.size(), &encoded[0]);

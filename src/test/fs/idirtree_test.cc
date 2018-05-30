@@ -15,14 +15,14 @@
 
 TEST(idirtree, open_close) {
 	std::vector<std::string> files {"a", "b", "c"};
-	test::tmpdir tdir(files.begin(), files.end());
+	test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
 	sys::idirtree tree;
 	test::test_open_close(tree, tdir);
 }
 
 TEST(idirtree, current_dir) {
 	std::vector<std::string> files {"a", "b", "c"};
-	test::tmpdir tdir(files.begin(), files.end());
+	test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
 	sys::idirtree tree(tdir);
 	EXPECT_EQ(tree.current_dir(), static_cast<const sys::path&>(tdir));
 }
@@ -31,14 +31,14 @@ TEST(idirtree, Iterator) {
 	std::vector<std::string> files {"a", "b", "c"};
 	std::vector<std::string> files_d {"e", "f", "g"};
 	std::vector<std::string> files_h {"i", "j", "k", "l"};
-	test::tmpdir tdir(files.begin(), files.end());
+	test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
 	test::tmpdir tdir_d(
-		sys::path(test::current_test_name(), "d"),
+		sys::path(UNISTDX_TMPDIR, "d"),
 		files_d.begin(),
 		files_d.end()
 	);
 	test::tmpdir tdir_h(
-		sys::path(test::current_test_name(), "h"),
+		sys::path(UNISTDX_TMPDIR, "h"),
 		files_h.begin(),
 		files_h.end()
 	);

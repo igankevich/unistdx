@@ -1,4 +1,5 @@
 foreach conf : [
+	['copy_file', [unistdx,gtest]],
 	['file_mutex', [unistdx,gtest]],
 	['idirectory', [unistdx,gtest]],
 	['idirtree', [unistdx,gtest]],

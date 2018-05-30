@@ -45,7 +45,7 @@ TEST_P(PacketSizeTest, Write) {
 	typedef websocketbuf packetbuf_type;
 	typedef typename packetbuf_type::role_type role;
 
-	std::string packet_in = random_string<char>(GetParam());
+	std::string packet_in = test::random_string<char>(GetParam());
 	std::string packet_out(packet_in.size(), '_');
 
 	packetbuf_type buf;
