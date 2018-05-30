@@ -18,3 +18,14 @@ foreach conf : [
 		)
 	)
 endforeach
+
+benchmark(
+	'base/sha1',
+	executable(
+		'sha1-benchmark',
+		sources: 'sha1_benchmark.cc',
+		include_directories: srcdir,
+		dependencies: [unistdx]
+	)
+)
+

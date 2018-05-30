@@ -15,3 +15,21 @@ foreach conf : [
 		)
 	)
 endforeach
+
+if config.get('UNISTDX_HAVE_BACKTRACE', false)
+	backtrace_test = executable(
+		'backtrace-test',
+		sources: 'backtrace_test.cc',
+		include_directories: srcdir,
+		dependencies: [unistdx,threads],
+		cpp_args: ['-fno-omit-frame-pointer']
+	)
+	foreach type : ['signal', 'terminate']
+		test(
+			'util/backtrace-' + type,
+			backtrace_test,
+			args: [type]
+		)
+	endforeach
+endif
+

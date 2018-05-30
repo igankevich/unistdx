@@ -7,37 +7,10 @@ subdir('net')
 subdir('util')
 
 executable(
-	'POSIX',
+	'posix-test',
 	sources: 'posix_test.cc',
 	include_directories: srcdir,
 )
-
-benchmark(
-	'base/sha1',
-	executable(
-		'sha1-benchmark',
-		sources: 'base/sha1_benchmark.cc',
-		include_directories: srcdir,
-		dependencies: [unistdx]
-	)
-)
-
-if config.get('UNISTDX_HAVE_BACKTRACE', false)
-	backtrace_test = executable(
-		'backtrace-test',
-		sources: 'util/backtrace_test.cc',
-		include_directories: srcdir,
-		dependencies: [unistdx,threads],
-		cpp_args: ['-fno-omit-frame-pointer']
-	)
-	foreach type : ['signal', 'terminate']
-		test(
-			'util/backtrace-' + type,
-			backtrace_test,
-			args: [type]
-		)
-	endforeach
-endif
 
 # test coverage {{{
 coverage = configuration_data()
