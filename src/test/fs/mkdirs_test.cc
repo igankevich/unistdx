@@ -2,11 +2,10 @@
 
 #include <unistdx/fs/file_stat>
 #include <unistdx/fs/mkdirs>
-
-#include "tmpdir.hh"
+#include <unistdx/test/tmpdir>
 
 TEST(MakeDirectories, Full) {
-	sys::path root(test::current_test_name(), "mkdirs-1");
+	sys::path root(__func__);
 	test::tmpdir tdir_h(root);
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "1", "2", "3")));
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "a", "b")));

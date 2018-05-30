@@ -1,12 +1,13 @@
-#ifndef TEST_THREAD_MUTEX_TEST_HH
-#define TEST_THREAD_MUTEX_TEST_HH
+#ifndef UNISTDX_TEST_THREAD_MUTEX_TEST
+#define UNISTDX_TEST_THREAD_MUTEX_TEST
 
 #include <chrono>
 #include <condition_variable>
-#include <gtest/gtest.h>
+#include <iostream>
 #include <mutex>
 #include <thread>
-#include <iostream>
+
+#include <gtest/gtest.h>
 
 template <class Mutex>
 struct ThreadMutexTest: public ::testing::Test {

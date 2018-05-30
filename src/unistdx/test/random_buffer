@@ -1,5 +1,5 @@
-#ifndef TEST_RANDOM_BUFFER_HH
-#define TEST_RANDOM_BUFFER_HH
+#ifndef UNISTDX_TEST_RANDOM_BUFFER
+#define UNISTDX_TEST_RANDOM_BUFFER
 
 #include <random>
 #include <sstream>

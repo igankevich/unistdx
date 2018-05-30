@@ -1,5 +1,5 @@
-#ifndef TEST_COLOR_HH
-#define TEST_COLOR_HH
+#ifndef UNISTDX_TEST_COLOR
+#define UNISTDX_TEST_COLOR
 
 #include <unistd.h>
 #include <stdlib.h>

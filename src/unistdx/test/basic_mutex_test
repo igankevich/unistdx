@@ -1,10 +1,11 @@
-#ifndef TEST_BASIC_MUTEX_TEST_HH
-#define TEST_BASIC_MUTEX_TEST_HH
+#ifndef UNISTDX_TEST_BASIC_MUTEX_TEST
+#define UNISTDX_TEST_BASIC_MUTEX_TEST
 
-#include <unistdx/base/types>
+#include <thread>
 
 #include <gtest/gtest.h>
-#include <thread>
+
+#include <unistdx/base/types>
 
 template <class T>
 struct BasicMutexTest: public ::testing::Test {

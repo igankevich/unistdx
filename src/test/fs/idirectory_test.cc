@@ -6,7 +6,7 @@
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/odirectory>
 
-#include "fs_base.hh"
+#include "base.hh"
 
 TEST(idirectory, open_close) {
 	std::vector<std::string> files {"a", "b", "c"};

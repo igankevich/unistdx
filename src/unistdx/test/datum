@@ -1,5 +1,5 @@
-#ifndef TEST_DATUM_HH
-#define TEST_DATUM_HH
+#ifndef UNISTDX_TEST_DATUM
+#define UNISTDX_TEST_DATUM
 
 #include <random>
 #include <chrono>

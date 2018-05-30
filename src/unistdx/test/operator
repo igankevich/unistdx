@@ -1,5 +1,5 @@
-#ifndef TEST_IO_HH
-#define TEST_IO_HH
+#ifndef UNISTDX_TEST_OPERATOR
+#define UNISTDX_TEST_OPERATOR
 
 #include <gtest/gtest.h>
 

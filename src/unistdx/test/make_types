@@ -1,5 +1,5 @@
-#ifndef TEST_MAKE_TYPES_HH
-#define TEST_MAKE_TYPES_HH
+#ifndef UNISTDX_TEST_MAKE_TYPES
+#define UNISTDX_TEST_MAKE_TYPES
 
 #define MAKE_TYPES(...) ::testing::Types<__VA_ARGS__>
 

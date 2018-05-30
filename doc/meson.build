@@ -28,7 +28,8 @@ doxyfile.set('OUTPUT_DIRECTORY', meson.build_root())
 doxyfile.set('TAGFILES', std_tag_xml + '=' + std_tag_url)
 excluded_files = [
 	'meson.build',
-	join_paths(meson.source_root(), 'src', 'unistdx', 'bits')
+	join_paths(meson.source_root(), 'src', 'unistdx', 'bits'),
+	join_paths(meson.source_root(), 'src', 'unistdx', 'test')
 ]
 doxyfile.set('EXCLUDE', ' '.join(excluded_files))
 input_files = [

@@ -4,8 +4,8 @@
 #include <random>
 #include <cmath>
 
-#include "io.hh"
-#include "make_types.hh"
+#include <unistdx/test/make_types>
+#include <unistdx/test/operator>
 
 std::default_random_engine rng;
 

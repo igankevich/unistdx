@@ -1,15 +1,16 @@
-#ifndef TEST_SEMAPHORE_WAIT_TEST_HH
-#define TEST_SEMAPHORE_WAIT_TEST_HH
+#ifndef UNISTDX_TEST_SEMAPHORE_WAIT_TEST
+#define UNISTDX_TEST_SEMAPHORE_WAIT_TEST
 
 #include <algorithm>
 #include <chrono>
+#include <condition_variable>
 #include <functional>
-#include <gtest/gtest.h>
 #include <mutex>
 #include <random>
 #include <thread>
 #include <vector>
-#include <condition_variable>
+
+#include <gtest/gtest.h>
 
 #include <unistdx/base/log_message>
 #include <unistdx/ipc/process>

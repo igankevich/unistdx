@@ -35,7 +35,7 @@ all_tests = [
 
 foreach conf : all_tests
 	test_name = conf[0]
-	executable_name = test_name.underscorify() + '_test'
+	executable_name = test_name + '_test'
 	source_name = executable_name + '.cc'
 	test(
 		test_name,
@@ -59,7 +59,7 @@ benchmark(
 	'base/sha1',
 	executable(
 		'sha1-benchmark',
-		sources: 'sha1_benchmark.cc',
+		sources: 'base/sha1_benchmark.cc',
 		include_directories: srcdir,
 		dependencies: [unistdx]
 	)
@@ -68,7 +68,7 @@ benchmark(
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	backtrace_test = executable(
 		'backtrace-test',
-		sources: 'backtrace_test.cc',
+		sources: 'util/backtrace_test.cc',
 		include_directories: srcdir,
 		dependencies: [unistdx,threads],
 		cpp_args: ['-fno-omit-frame-pointer']

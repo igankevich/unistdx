@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-#include "tmpdir.hh"
+#include <unistdx/test/tmpdir>
 
 namespace test {
 

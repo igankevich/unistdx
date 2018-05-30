@@ -11,7 +11,7 @@
 
 #include <gtest/gtest.h>
 
-#include "fs_base.hh"
+#include "base.hh"
 
 TEST(idirtree, open_close) {
 	std::vector<std::string> files {"a", "b", "c"};

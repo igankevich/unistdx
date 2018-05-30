@@ -10,7 +10,7 @@
 #include <random>
 #include <mutex>
 
-#include "make_types.hh"
+#include <unistdx/test/make_types>
 
 template <class T>
 struct SharedMemTest: public ::testing::Test {};

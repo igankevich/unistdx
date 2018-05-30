@@ -1,8 +1,7 @@
-#include <unistdx/base/base64>
-
 #include <gtest/gtest.h>
 
-#include "random_string.hh"
+#include <unistdx/base/base64>
+#include <unistdx/test/random_string>
 
 using sys::base64_decode;
 using sys::base64_encode;

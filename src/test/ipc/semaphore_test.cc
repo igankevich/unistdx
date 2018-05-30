@@ -14,10 +14,10 @@
 
 #include <gtest/gtest.h>
 
-#include "basic_mutex_test.hh"
-#include "thread_mutex_test.hh"
-#include "semaphore_wait_test.hh"
-#include "make_types.hh"
+#include <unistdx/test/basic_mutex_test>
+#include <unistdx/test/make_types>
+#include <unistdx/test/semaphore_wait_test>
+#include <unistdx/test/thread_mutex_test>
 
 using sys::u64;
 

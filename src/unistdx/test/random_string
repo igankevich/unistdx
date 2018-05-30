@@ -1,5 +1,5 @@
-#ifndef TEST_RANDOM_STRING_HH
-#define TEST_RANDOM_STRING_HH
+#ifndef UNISTDX_TEST_RANDOM_STRING
+#define UNISTDX_TEST_RANDOM_STRING
 
 #include <algorithm>
 #include <functional>

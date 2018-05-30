@@ -1,7 +1,6 @@
 #include <unistdx/io/poller>
-
-#include "semaphore_wait_test.hh"
-#include "make_types.hh"
+#include <unistdx/test/make_types>
+#include <unistdx/test/semaphore_wait_test>
 
 TYPED_TEST_CASE(SemaphoreWaitTest, MAKE_TYPES(sys::event_poller));
 

@@ -3,7 +3,7 @@
 #include <random>
 #include <unistdx/net/endpoint>
 
-#include "make_types.hh"
+#include <unistdx/test/make_types>
 
 void
 check_read(const char* str, sys::endpoint expected_result) {

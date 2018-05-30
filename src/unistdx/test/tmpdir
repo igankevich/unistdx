@@ -1,5 +1,5 @@
-#ifndef TEST_TMPDIR_HH
-#define TEST_TMPDIR_HH
+#ifndef UNISTDX_TEST_TMPDIR
+#define UNISTDX_TEST_TMPDIR
 
 #include <fstream>
 

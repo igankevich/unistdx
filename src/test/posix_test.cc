@@ -4,7 +4,7 @@
 
 #include <unistd.h>
 
-#include "color.hh"
+#include <unistdx/test/color>
 
 struct support {
 unsigned int num_supported = 0;

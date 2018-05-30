@@ -1,6 +1,6 @@
-#include "basic_mutex_test.hh"
-#include "thread_mutex_test.hh"
-#include "make_types.hh"
+#include <unistdx/test/basic_mutex_test>
+#include <unistdx/test/thread_mutex_test>
+#include <unistdx/test/make_types>
 
 #include <mutex>
 #include <unistdx/base/recursive_spin_mutex>

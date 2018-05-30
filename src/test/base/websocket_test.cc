@@ -11,8 +11,7 @@
 #include <unistdx/base/websocketbuf>
 #include <unistdx/io/fildesbuf>
 #include <unistdx/io/pipe>
-
-#include "random_string.hh"
+#include <unistdx/test/random_string>
 
 using sys::u16;
 
