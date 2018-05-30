@@ -8,6 +8,7 @@
 #include <unistdx/fs/odirectory>
 #include <unistdx/fs/odirtree>
 #include <unistdx/fs/path>
+#include <unistdx/test/temporary_file>
 
 #include <gtest/gtest.h>
 
@@ -66,25 +67,26 @@ TEST(FileStat, Exists) {
 }
 
 TEST(GetFileType, DirEntry) {
-	const char* filename = "get_file_type_1";
-	std::ofstream(filename) << "hello world";
+	test::temporary_file tmp(UNISTDX_TMPFILE);
+	std::ofstream(tmp.path()) << "hello world";
 	sys::path cwd(".");
 	sys::idirectory dir(cwd);
 	sys::idirectory_iterator<sys::direntry> end;
-	auto result = std::find_if(
-		sys::idirectory_iterator<sys::direntry>(dir),
-		end,
-		[&filename] (const sys::direntry& rhs) {
-		    return std::strcmp(rhs.name(), filename) == 0;
-		}
-	              );
+	auto result =
+		std::find_if(
+			sys::idirectory_iterator<sys::direntry>(dir),
+			end,
+			[&] (const sys::direntry& rhs) {
+			    return rhs.name() == tmp.path();
+			}
+		);
 	EXPECT_NE(result, end);
 	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(cwd, *result));
 }
 
 TEST(GetFileType, PathEntry) {
-	const char* filename = "get_file_type_2";
-	std::ofstream(filename) << "hello world";
+	test::temporary_file tmp(UNISTDX_TMPFILE);
+	std::ofstream(tmp.path()) << "hello world";
 	sys::path cwd(".");
 	sys::idirtree dir(cwd);
 	sys::idirtree_iterator<sys::pathentry> end;
@@ -92,8 +94,8 @@ TEST(GetFileType, PathEntry) {
 		std::find_if(
 			sys::idirtree_iterator<sys::pathentry>(dir),
 			end,
-			[&filename] (const sys::pathentry& rhs) {
-			    return std::strcmp(rhs.name(), filename) == 0;
+			[&] (const sys::pathentry& rhs) {
+			    return rhs.name() == tmp.path();
 			}
 		);
 	EXPECT_NE(result, end);

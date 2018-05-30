@@ -2,19 +2,20 @@
 #include <mutex>
 #include <thread>
 
-#include <unistdx/base/make_object>
+#include <gtest/gtest.h>
+
 #include <unistdx/fs/file_mutex>
 #include <unistdx/ipc/process>
-#include <gtest/gtest.h>
+#include <unistdx/test/temporary_file>
 
 TEST(FileMutex, Check) {
 	typedef sys::file_mutex mutex_type;
 	typedef std::lock_guard<mutex_type> lock_type;
-	const char* filename = "file_mutex_test.lock";
-	mutex_type mtx(filename, 0600);
+	test::temporary_file tmp(UNISTDX_TMPFILE);
+	mutex_type mtx(tmp.path(), 0600);
 	EXPECT_TRUE(static_cast<bool>(mtx));
-	sys::process child([filename] () {
-		mutex_type mtx2(filename, 0600);
+	sys::process child([&tmp] () {
+		mutex_type mtx2(tmp.path(), 0600);
 		lock_type lock(mtx2);
 		::pause();
 		return 0;
