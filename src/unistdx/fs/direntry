@@ -129,7 +129,7 @@ namespace sys {
 	Falls back to \link file_stat\endlink if directory entry itself
 	does not have valid file type.
 	*/
-	inline sys::file_type
+	inline file_type
 	get_file_type(const path& dirname, const direntry& entry) {
 		return entry.has_type()
 		       ? entry.type()

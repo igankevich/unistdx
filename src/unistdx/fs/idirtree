@@ -77,6 +77,12 @@ namespace sys {
 			return this->_dirpred;
 		}
 
+		/// Get directory predicate.
+		inline dirpred_type&
+		getdirpred() noexcept {
+			return this->_dirpred;
+		}
+
 		/// Set directory predicate.
 		inline void
 		setdirpred(dirpred_type rhs) {
@@ -129,22 +135,55 @@ namespace sys {
 	\date 2018-05-25
 	\author Ivan Gankevich
 	\details
-	This is the default directory predicate for \link idirectory\endlink.
+	\arg Default directory predicate for \link idirtree\endlink.
+	\arg Caches file status, which is accessed with \link status\endlink method.
+	\arg File status is updated only if file system does not return file type in
+	\link direntry\endlink.
 	\ingroup fs
 	*/
 	struct ignore_hidden_dirs {
 
+	private:
+		file_stat _stat;
+
+	public:
+
 		/// Returns true, if directory entry is not hidden.
 		inline bool
-		operator()(const path& prefix, const direntry& rhs) const {
-			return !rhs.is_hidden()
-			       && get_file_type(prefix, rhs) == file_type::directory;
+		operator()(const path& prefix, const direntry& rhs) {
+			return !rhs.is_hidden() && this->type(prefix, rhs) == file_type::directory;
 		}
 
 		/// Returns true, if directory entry is not hidden.
 		inline bool
-		operator()(const path&, const pathentry& rhs) const {
-			return !rhs.is_hidden() && get_file_type(rhs) == file_type::directory;
+		operator()(const path&, const pathentry& rhs) {
+			return !rhs.is_hidden() && this->type(rhs) == file_type::directory;
+		}
+
+		/// Get file status.
+		inline const file_stat&
+		status() const noexcept {
+			return this->_stat;
+		}
+
+		/// Get file status.
+		inline file_stat&
+		status() noexcept {
+			return this->_stat;
+		}
+
+	private:
+
+		inline file_type
+		type(const path& dirname, const direntry& entry) {
+			return entry.has_type()
+				? entry.type()
+				: this->_stat.update(path(dirname, entry.name())).type();
+		}
+
+		inline file_type
+		type(const pathentry& entry) {
+			return this->type(entry.dirname(), entry);
 		}
 
 	};
