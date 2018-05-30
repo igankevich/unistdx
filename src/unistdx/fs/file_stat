@@ -172,8 +172,7 @@ namespace sys {
 		}
 
 		/**
-		Return true, if the file exists
-		(previous call to \link update\endlink succeeded).
+		Return true, if the file exists.
 		*/
 		inline bool
 		exists() const noexcept {
@@ -182,18 +181,17 @@ namespace sys {
 
 		/**
 		\brief Get file status for file \p filename.
-		\throws bad_call if system error occurs, except
-		\c std::errc::no_such_file_or_directory
+		\returns reference to this object
+		\throws bad_call
 		\see \man{stat,2}
 		\see std::errc
 		\details
-		This method will not throw exception, if the file does not exist.
-		Use \link exists\endlink to check it.
+		Throws exception, if the file does not exist.
 		*/
-		inline void
+		inline file_stat&
 		update(const char* filename) {
-			this->st_ino = 0;
-			UNISTDX_CHECK_IF_NOT(ENOENT, ::stat(filename, this));
+			UNISTDX_CHECK(::stat(filename, this));
+			return *this;
 		}
 
 		/// Get time of last access.

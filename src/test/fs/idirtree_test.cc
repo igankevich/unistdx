@@ -56,7 +56,12 @@ TEST(idirtree, Iterator) {
 TEST(FileStat, Exists) {
 	sys::canonical_path cwd(".");
 	sys::path non_existent_file(cwd, "asdasdasd");
-	sys::file_stat stat(non_existent_file);
+	sys::file_stat stat;
+	try {
+		stat.update(non_existent_file);
+	} catch (const sys::bad_call& err) {
+		EXPECT_EQ(ENOENT, err.code().value());
+	}
 	EXPECT_FALSE(stat.exists());
 }
 
