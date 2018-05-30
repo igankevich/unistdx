@@ -158,7 +158,7 @@ namespace sys {
 		template <class T>
 		inline iterator_pair<netlink_message_iterator<T>>
 		messages(int len) noexcept {
-			return make_iterator_pair(this->begin<T>(len), this->end<T>());
+			return make_view(this->begin<T>(len), this->end<T>());
 		}
 
 	};
@@ -310,10 +310,7 @@ namespace sys {
 		/// Returns all attributes as traversable container.
 		inline iterator_pair<netlink_attribute_iterator<attr_type>>
 		attributes(int len) {
-			return iterator_pair<netlink_attribute_iterator<attr_type>>(
-				this->begin(len),
-				this->end()
-			);
+			return make_view(this->begin(len), this->end());
 		}
 
 	};

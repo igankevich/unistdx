@@ -61,7 +61,7 @@ namespace sys {
 	/// Construct iterator pair from \p first and \p last.
 	template <class T>
 	inline iterator_pair<T>
-	make_iterator_pair(T first, T last) noexcept {
+	make_view(T first, T last) noexcept {
 		return iterator_pair<T>(first, last);
 	}
 

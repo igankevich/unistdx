@@ -139,7 +139,7 @@ namespace sys {
 		template <class Entry>
 		inline iterator_pair<basic_istream_iterator<basic_idirectory,Entry>>
 		entries() noexcept {
-			return iterator_pair<basic_istream_iterator<basic_idirectory,Entry>>(
+			return make_view(
 				basic_istream_iterator<basic_idirectory,Entry>(*this),
 				basic_istream_iterator<basic_idirectory,Entry>()
 			);
