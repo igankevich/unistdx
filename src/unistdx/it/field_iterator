@@ -97,7 +97,7 @@ namespace sys {
 	/// Construct field iterator view from container \p cont.
 	template <size_t N, class C>
 	inline iterator_pair<field_iterator<typename C::iterator,N>>
-	make_view(C cont) noexcept {
+	make_view(C& cont) noexcept {
 		return make_view<N,typename C::iterator>(cont.begin(), cont.end());
 	}
 

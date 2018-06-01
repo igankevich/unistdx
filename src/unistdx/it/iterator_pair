@@ -44,6 +44,12 @@ namespace sys {
 		_last(last)
 		{}
 
+		/// Move-constructor.
+		iterator_pair(iterator_pair&&) = default;
+
+		/// Copy-constructor.
+		iterator_pair(const iterator_pair&) = default;
+
 		/// Returns iterator to the beginning of attribute sequence.
 		inline iterator
 		begin() noexcept {
