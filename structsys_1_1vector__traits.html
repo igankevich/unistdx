@@ -74,7 +74,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Container traits for vector-like containers.  
+<p>Container traits for vector-like containers.Method <code>pop</code> is not supported.  
  <a href="structsys_1_1vector__traits.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for sys::vector_traits&lt; Container &gt;:</div>
@@ -95,10 +95,6 @@ Static Public Member Functions</h2></td></tr>
 static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1vector__traits.html#a7f94ffe5c49f2c503a3a073518401efd">push</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt, const <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a7f94ffe5c49f2c503a3a073518401efd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Push element to the container. <br /></td></tr>
 <tr class="separator:a7f94ffe5c49f2c503a3a073518401efd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52060cc8e556f6a706b34660bdb4a807"><td class="memItemLeft" align="right" valign="top"><a id="a52060cc8e556f6a706b34660bdb4a807"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1vector__traits.html#a52060cc8e556f6a706b34660bdb4a807">emplace</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt, const <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;&amp;rhs)</td></tr>
-<tr class="memdesc:a52060cc8e556f6a706b34660bdb4a807"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct element in-place in the container. <br /></td></tr>
-<tr class="separator:a52060cc8e556f6a706b34660bdb4a807"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa2f4f6f05141a552b7c96145b2e856a4"><td class="memItemLeft" align="right" valign="top"><a id="aa2f4f6f05141a552b7c96145b2e856a4"></a>
 static <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1vector__traits.html#aa2f4f6f05141a552b7c96145b2e856a4">front</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
 <tr class="memdesc:aa2f4f6f05141a552b7c96145b2e856a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element in the container. <br /></td></tr>
@@ -107,13 +103,6 @@ static <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358
 static const <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1vector__traits.html#abd83e020f7c5ea306e11cb8fd5b9b482">front</a> (const <a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
 <tr class="memdesc:abd83e020f7c5ea306e11cb8fd5b9b482"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element in the container. <br /></td></tr>
 <tr class="separator:abd83e020f7c5ea306e11cb8fd5b9b482"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed55b79a7402f1a5de9b3db792cb24ad"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1vector__traits.html#aed55b79a7402f1a5de9b3db792cb24ad">pop_front</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;)</td></tr>
-<tr class="memdesc:aed55b79a7402f1a5de9b3db792cb24ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unsupported operation.  <a href="#aed55b79a7402f1a5de9b3db792cb24ad">More...</a><br /></td></tr>
-<tr class="separator:aed55b79a7402f1a5de9b3db792cb24ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc858f9e03c4bca853a8416a974dd4eb"><td class="memItemLeft" align="right" valign="top"><a id="afc858f9e03c4bca853a8416a974dd4eb"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1vector__traits.html#afc858f9e03c4bca853a8416a974dd4eb">pop_back</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
-<tr class="memdesc:afc858f9e03c4bca853a8416a974dd4eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the last element in the container. <br /></td></tr>
-<tr class="separator:afc858f9e03c4bca853a8416a974dd4eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -131,49 +120,11 @@ typedef Container::value_type&#160;</td><td class="memItemRight" valign="bottom"
 <div class="textblock"><h3>template&lt;class Container&gt;<br />
 struct sys::vector_traits&lt; Container &gt;</h3>
 
-<p>Container traits for vector-like containers. </p>
+<p>Container traits for vector-like containers.</p>
+<p>Method <code>pop</code> is not supported. </p>
 
-<p class="definition">Definition at line <a class="el" href="container__traits_source.html#l00033">33</a> of file <a class="el" href="container__traits_source.html">container_traits</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aed55b79a7402f1a5de9b3db792cb24ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed55b79a7402f1a5de9b3db792cb24ad">&#9670;&nbsp;</a></span>pop_front()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class Container &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">static void <a class="el" href="structsys_1_1vector__traits.html">sys::vector_traits</a>&lt; Container &gt;::pop_front </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Unsupported operation. </p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname"><a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/logic_error.html">std::logic_error</a></td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-
-<p class="definition">Definition at line <a class="el" href="container__traits_source.html#l00067">67</a> of file <a class="el" href="container__traits_source.html">container_traits</a>.</p>
-
-</div>
-</div>
-</div><!-- contents -->
+<p class="definition">Definition at line <a class="el" href="container__traits_source.html#l00035">35</a> of file <a class="el" href="container__traits_source.html">container_traits</a>.</p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

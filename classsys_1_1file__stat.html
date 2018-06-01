@@ -194,9 +194,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="separator:a372aa328c2d4d43c895d84451147b30d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa68c0acf13c903ed4252592975180408"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1file__stat.html#aa68c0acf13c903ed4252592975180408">exists</a> () const noexcept</td></tr>
 <tr class="separator:aa68c0acf13c903ed4252592975180408"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac367c77e0817a1cd422847c9b6c9957e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1file__stat.html#ac367c77e0817a1cd422847c9b6c9957e">update</a> (const char *filename)</td></tr>
-<tr class="memdesc:ac367c77e0817a1cd422847c9b6c9957e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get file status for file <code>filename</code>.  <a href="#ac367c77e0817a1cd422847c9b6c9957e">More...</a><br /></td></tr>
-<tr class="separator:ac367c77e0817a1cd422847c9b6c9957e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3362c518c3efba7437db05ce9a97611"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsys_1_1file__stat.html">file_stat</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1file__stat.html#ad3362c518c3efba7437db05ce9a97611">update</a> (const char *filename)</td></tr>
+<tr class="memdesc:ad3362c518c3efba7437db05ce9a97611"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get file status for file <code>filename</code>.  <a href="#ad3362c518c3efba7437db05ce9a97611">More...</a><br /></td></tr>
+<tr class="separator:ad3362c518c3efba7437db05ce9a97611"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8618cbbfba14a5e7284e9a311ac8844b"><td class="memItemLeft" align="right" valign="top"><a id="a8618cbbfba14a5e7284e9a311ac8844b"></a>
 <a class="el" href="classsys_1_1file__stat.html#a62dd340f235b14e3c464f8262a8f92ba">time_point</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsys_1_1file__stat.html#a8618cbbfba14a5e7284e9a311ac8844b">last_accessed</a> () const noexcept</td></tr>
 <tr class="memdesc:a8618cbbfba14a5e7284e9a311ac8844b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get time of last access. <br /></td></tr>
@@ -246,14 +246,14 @@ Friends</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Return true, if the file exists (previous call to <a class="el" href="classsys_1_1file__stat.html#ac367c77e0817a1cd422847c9b6c9957e">update</a> succeeded). </p>
+<p>Return true, if the file exists. </p>
 
-<p class="definition">Definition at line <a class="el" href="file__stat_source.html#l00179">179</a> of file <a class="el" href="file__stat_source.html">file_stat</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file__stat_source.html#l00178">178</a> of file <a class="el" href="file__stat_source.html">file_stat</a>.</p>
 
 </div>
 </div>
-<a id="ac367c77e0817a1cd422847c9b6c9957e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac367c77e0817a1cd422847c9b6c9957e">&#9670;&nbsp;</a></span>update()</h2>
+<a id="ad3362c518c3efba7437db05ce9a97611"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3362c518c3efba7437db05ce9a97611">&#9670;&nbsp;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -262,7 +262,7 @@ Friends</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void sys::file_stat::update </td>
+          <td class="memname"><a class="el" href="classsys_1_1file__stat.html">file_stat</a>&amp; sys::file_stat::update </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>filename</em></td><td>)</td>
@@ -277,20 +277,21 @@ Friends</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Get file status for file <code>filename</code>. </p>
+<dl class="section return"><dt>Returns</dt><dd>reference to this object </dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td>if system error occurs, except <code>std::errc::no_such_file_or_directory</code> </td></tr>
+    <tr><td class="paramname"><a class="el" href="classsys_1_1bad__call.html" title="A std::system_error that records file, line and function where the exception was thrown. ">bad_call</a></td><td></td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section see"><dt>See also</dt><dd><a href="http://man7.org/linux/man-pages/man2/stat.2.html">stat(2)</a> </dd>
 <dd>
 <a class="elRef" doxygen="/home/igankevich/repos/dev/specs/build/unistdx/build/std.tag.xml:http://en.cppreference.com/w/" href="http://en.cppreference.com/w/cpp/error/errc.html">std::errc</a></dd></dl>
-<p>This method will not throw exception, if the file does not exist. Use <a class="el" href="classsys_1_1file__stat.html#aa68c0acf13c903ed4252592975180408">exists</a> to check it. </p>
+<p>Throws exception, if the file does not exist. </p>
 
-<p class="definition">Definition at line <a class="el" href="file__stat_source.html#l00194">194</a> of file <a class="el" href="file__stat_source.html">file_stat</a>.</p>
+<p class="definition">Definition at line <a class="el" href="file__stat_source.html#l00192">192</a> of file <a class="el" href="file__stat_source.html">file_stat</a>.</p>
 
-<p class="reference">References <a class="el" href="group__macros.html#ga71a3e3d95d2508aca237a7c83772c99a">UNISTDX_CHECK_IF_NOT</a>.</p>
+<p class="reference">References <a class="el" href="group__macros.html#ga52065ca678f17d05d619aa809e310b06">UNISTDX_CHECK</a>.</p>
 
 </div>
 </div>

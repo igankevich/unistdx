@@ -95,10 +95,6 @@ Static Public Member Functions</h2></td></tr>
 static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1deque__traits.html#a8c8f27630d2fedb1282cd1aaf9383928">push</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt, const <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;rhs)</td></tr>
 <tr class="memdesc:a8c8f27630d2fedb1282cd1aaf9383928"><td class="mdescLeft">&#160;</td><td class="mdescRight">Push element to the container. <br /></td></tr>
 <tr class="separator:a8c8f27630d2fedb1282cd1aaf9383928"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93265ddd108ad999d3001a4b2d83fcd6"><td class="memItemLeft" align="right" valign="top"><a id="a93265ddd108ad999d3001a4b2d83fcd6"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1deque__traits.html#a93265ddd108ad999d3001a4b2d83fcd6">emplace</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt, const <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;&amp;rhs)</td></tr>
-<tr class="memdesc:a93265ddd108ad999d3001a4b2d83fcd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct element in-place in the container. <br /></td></tr>
-<tr class="separator:a93265ddd108ad999d3001a4b2d83fcd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3f536026fbd75f9c4d32d67a2fa7b62"><td class="memItemLeft" align="right" valign="top"><a id="ad3f536026fbd75f9c4d32d67a2fa7b62"></a>
 static <a class="el" href="structsys_1_1container__traits.html#a8085166665c9f358ecf698dc924a26f4">value_type</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1deque__traits.html#ad3f536026fbd75f9c4d32d67a2fa7b62">front</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
 <tr class="memdesc:ad3f536026fbd75f9c4d32d67a2fa7b62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the first element in the container. <br /></td></tr>
@@ -111,14 +107,6 @@ static const <a class="el" href="structsys_1_1container__traits.html#a8085166665
 static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1deque__traits.html#aa5a599d38f80f6079b36f950222940b7">pop</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
 <tr class="memdesc:aa5a599d38f80f6079b36f950222940b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the first element in the container. <br /></td></tr>
 <tr class="separator:aa5a599d38f80f6079b36f950222940b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a996315270bf8810420f4a3e00afb7f1c"><td class="memItemLeft" align="right" valign="top"><a id="a996315270bf8810420f4a3e00afb7f1c"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1deque__traits.html#a996315270bf8810420f4a3e00afb7f1c">pop_front</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
-<tr class="memdesc:a996315270bf8810420f4a3e00afb7f1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the first element in the container. <br /></td></tr>
-<tr class="separator:a996315270bf8810420f4a3e00afb7f1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9daef043eae7ae55bc223306a8df2c9"><td class="memItemLeft" align="right" valign="top"><a id="ad9daef043eae7ae55bc223306a8df2c9"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsys_1_1deque__traits.html#ad9daef043eae7ae55bc223306a8df2c9">pop_back</a> (<a class="el" href="structsys_1_1container__traits.html#aac6d9fb3583d3dd8c5ed43aa278b905f">container_type</a> &amp;cnt)</td></tr>
-<tr class="memdesc:ad9daef043eae7ae55bc223306a8df2c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes the last element in the container. <br /></td></tr>
-<tr class="separator:ad9daef043eae7ae55bc223306a8df2c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -138,7 +126,7 @@ struct sys::deque_traits&lt; Container &gt;</h3>
 
 <p>Container traits for deque container. </p>
 
-<p class="definition">Definition at line <a class="el" href="container__traits_source.html#l00192">192</a> of file <a class="el" href="container__traits_source.html">container_traits</a>.</p>
+<p class="definition">Definition at line <a class="el" href="container__traits_source.html#l00131">131</a> of file <a class="el" href="container__traits_source.html">container_traits</a>.</p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
