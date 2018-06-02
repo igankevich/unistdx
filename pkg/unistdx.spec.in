@@ -55,7 +55,7 @@ developing applications that use %{name}.
 %{_libdir}/libunistdx.so
 
 %changelog
-* Sat Jun 02 2018 Ivan Gankevich <igankevich@ya.ru  0.2.0-1
+* Sat Jun 02 2018 Ivan Gankevich <igankevich@ya.ru  0.2.2-1
 Repackage with the new version number.
 * Sat Feb 10 2018 Ivan Gankevich <igankevich@ya.ru> 3.1-1
 Added build requirements.
