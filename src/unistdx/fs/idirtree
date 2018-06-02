@@ -145,7 +145,7 @@ namespace sys {
 
 	private:
 		file_stat _stat;
-		bool _hastype = false;
+		file_type _type = file_type(DT_UNKNOWN);
 
 	public:
 
@@ -176,15 +176,30 @@ namespace sys {
 		/// Returns true if file status was queried for the current file.
 		inline bool
 		has_status() const noexcept {
-			return !this->_hastype;
+			return this->_type == file_type(DT_UNKNOWN);
+		}
+
+		/// Returns true if file status was not queried for the current file.
+		inline bool
+		has_type() const noexcept {
+			return !this->has_status();
+		}
+
+		/// Get or compute file status.
+		inline const file_stat&
+		status(const path& p) {
+			if (!this->has_status()) {
+				this->_stat.update(p);
+			}
+			return this->_stat;
 		}
 
 	private:
 
 		inline file_type
 		type(const path& dirname, const direntry& entry) {
-			this->_hastype = entry.has_type();
-			return this->_hastype
+			this->_type = entry.type();
+			return entry.has_type()
 				? entry.type()
 				: this->_stat.update(path(dirname, entry.name())).type();
 		}
