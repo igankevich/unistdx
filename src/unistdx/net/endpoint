@@ -223,11 +223,11 @@ namespace sys {
 		friend std::istream&
 		operator>>(std::istream& in, endpoint& rhs);
 
-		friend pstream&
-		operator<<(pstream& out, const endpoint& rhs);
+		friend bstream&
+		operator<<(bstream& out, const endpoint& rhs);
 
-		friend pstream&
-		operator>>(pstream& in, endpoint& rhs);
+		friend bstream&
+		operator>>(bstream& in, endpoint& rhs);
 
 		/// Get endpoint port.
 		inline constexpr port_type
@@ -326,12 +326,12 @@ namespace sys {
 	operator>>(std::istream& in, endpoint& rhs);
 
 	/// Put endpoint in binary form.
-	pstream&
-	operator<<(pstream& out, const endpoint& rhs);
+	bstream&
+	operator<<(bstream& out, const endpoint& rhs);
 
 	/// Get endpoint in binary form.
-	pstream&
-	operator>>(pstream& in, endpoint& rhs);
+	bstream&
+	operator>>(bstream& in, endpoint& rhs);
 
 	static_assert(sizeof(port_type) == 2, "bad port_type size");
 

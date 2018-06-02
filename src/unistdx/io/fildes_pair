@@ -150,7 +150,7 @@ namespace sys {
 		/// Check if the source/sink is blocking.
 		inline static bool
 		is_blocking(const fildes_pair& pair) {
-			return fildes_pair::is_blocking(pair);
+			return fildes_traits::is_blocking(pair.in());
 		}
 
 		/**
@@ -159,7 +159,7 @@ namespace sys {
 		*/
 		inline static std::streamsize
 		in_avail(fildes_pair& pair) {
-			return fildes_traits::in_avail(rhs.in());
+			return fildes_traits::in_avail(pair.in());
 		}
 
 	};

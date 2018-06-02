@@ -19,7 +19,7 @@ namespace sys {
 		public std::iterator<std::input_iterator_tag, ifaddrs_type> {
 
 	private:
-		typedef typename std::iterator<std::input_iterator_tag, Value>
+		typedef typename std::iterator<std::input_iterator_tag, ifaddrs_type>
 			base_type;
 
 	public:

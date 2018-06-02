@@ -101,8 +101,8 @@ sys::operator>>(std::istream& in, endpoint& rhs) {
 	return in;
 }
 
-sys::pstream&
-sys::operator<<(pstream& out, const endpoint& rhs) {
+sys::bstream&
+sys::operator<<(bstream& out, const endpoint& rhs) {
 	out << rhs.family();
 	if (rhs.family() == family_type::inet6) {
 		out << rhs.addr6() << make_bytes(rhs.port6());
@@ -112,8 +112,8 @@ sys::operator<<(pstream& out, const endpoint& rhs) {
 	return out;
 }
 
-sys::pstream&
-sys::operator>>(pstream& in, endpoint& rhs) {
+sys::bstream&
+sys::operator>>(bstream& in, endpoint& rhs) {
 	family_type fam;
 	in >> fam;
 	rhs._addr6.sin6_family = static_cast<sa_family_type>(fam);

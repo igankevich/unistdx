@@ -376,7 +376,7 @@ namespace sys {
 		inline static bool
 		is_blocking(const T& rhs) {
 			try {
-				return !bool(rhs.flags() & T::non_blocking);
+				return rhs.flags().is_blocking();
 			} catch (sys::bad_call& err) {
 				return false;
 			}
