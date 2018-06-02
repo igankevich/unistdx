@@ -5,6 +5,7 @@ install_headers(
 	'cstring_iterator',
 	'field_iterator',
 	'intersperse_iterator',
+	'iterator_pair',
 	'queue_popper',
 	'queue_pusher',
 	subdir: join_paths(meson.project_name(), 'it')
