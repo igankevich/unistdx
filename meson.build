@@ -1,7 +1,7 @@
 project(
 	'unistdx',
 	'cpp',
-	version: '3.2',
+	version: '0.2.0',
 	meson_version: '>=0.31',
 	default_options: ['cpp_std=c++11']
 )
@@ -132,7 +132,6 @@ foreach name : ['getgrnam_r', 'getgrgid_r']
 		config.set('UNISTDX_HAVE_' + name, true)
 	endif
 endforeach
-config.set('UNISTDX_VERSION', meson.project_version())
 if cpp.has_header_symbol('sys/mman.h', 'mmap')
 	config.set('UNISTDX_HAVE_MMAP', true)
 endif
@@ -154,6 +153,11 @@ endif
 if cpp.has_header_symbol('unistd.h', 'pipe2')
 	config.set('UNISTDX_HAVE_PIPE2', true)
 endif
+config.set('UNISTDX_VERSION', meson.project_version())
+unistdx_version = meson.project_version().split('.')
+config.set('UNISTDX_MAJOR', unistdx_version[0])
+config.set('UNISTDX_MINOR', unistdx_version[1])
+config.set('UNISTDX_PATCHLEVEL', unistdx_version[2])
 # }}}
 
 threads = dependency('threads')
