@@ -135,7 +135,7 @@ namespace sys {
 		*/
 		inline static std::streamsize
 		write(fildes_pair& pair, const char_type* s, std::streamsize n) {
-			return fildes_traits::write(sink.out(), s, n);
+			return fildes_traits::write(pair.out(), s, n);
 		}
 
 		/**
@@ -144,7 +144,7 @@ namespace sys {
 		*/
 		inline static std::streamsize
 		read(fildes_pair& pair, char_type* s, std::streamsize n) {
-			return fildes_traits::read(src.in(), s, n);
+			return fildes_traits::read(pair.in(), s, n);
 		}
 
 		/// Check if the source/sink is blocking.
