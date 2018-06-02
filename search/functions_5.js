@@ -35,6 +35,7 @@ var searchData=
   ['erf',['erf',['http://en.cppreference.com/w/cpp/numeric/math/erf.html',1,'std']]],
   ['erfc',['erfc',['http://en.cppreference.com/w/cpp/numeric/math/erfc.html',1,'std']]],
   ['err',['err',['../classsys_1_1epoll__event.html#ad96960e2a12279b10bff1be95774be62',1,'sys::epoll_event::err()'],['../structsys_1_1poll__event.html#a010f1debd7906a30f18128d34794bf96',1,'sys::poll_event::err()']]],
+  ['errc',['errc',['../classsys_1_1bad__call.html#a3a17928dfa652f5d210bedb9f6aeea25',1,'sys::bad_call']]],
   ['error',['error',['../classsys_1_1netlink__header.html#a6d4b3ca4aa21228b51f01e2daafe1b70',1,'sys::netlink_header']]],
   ['error_5fcategory',['error_category',['http://en.cppreference.com/w/cpp/error/error_category/error_category.html',1,'std::error_category']]],
   ['error_5fcode',['error_code',['http://en.cppreference.com/w/cpp/error/error_code/error_code.html',1,'std::error_code']]],
