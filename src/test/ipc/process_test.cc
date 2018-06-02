@@ -15,9 +15,11 @@ TEST(Process, Fork) {
 		[pid] () {
 			sys::pid_type parent_pid = sys::this_process::parent_id();
 			sys::pid_type child_pid = sys::this_process::id();
-			assert(child_pid != pid);
-			assert(parent_pid == pid);
-			return 0;
+			int ret = 1;
+			if (child_pid != pid && parent_pid == pid) {
+				ret = 0;
+			}
+			return ret;
 		}
 	};
 	sys::proc_status status = child.wait();
