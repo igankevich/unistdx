@@ -13,7 +13,7 @@ sys::mkdirs(sys::path dir, file_mode m, path::size_type offset) {
 		if (i == n-1) {
 			eof = true;
 		}
-		if (ch == '/' || eof) {
+		if ((ch == '/' && i > 0) || eof) {
 			if (!eof) {
 				dir[i] = '\0';
 			}
