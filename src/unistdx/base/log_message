@@ -71,7 +71,13 @@ namespace sys {
 			this->format_msg(fmt, tokens ...);
 		}
 
-		~log_message();
+		/// Append newline character and flush the stream.
+		inline
+		~log_message() {
+			char ch = '\n';
+			this->_str.buf().sputn(&ch, 1);
+			this->_str.buf().pubflush();
+		}
 
 		/// Insert object \p rhs to log message stream.
 		template<class T>

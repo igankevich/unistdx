@@ -3,7 +3,6 @@ libunistdx_src += files([
 	'byte_buffer.cc',
 	'check.cc',
 	'cmdline.cc',
-	'log_message.cc',
 	'sha1.cc',
 	'websocket.cc',
 	'websocketbuf.cc',
