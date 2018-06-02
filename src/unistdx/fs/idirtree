@@ -47,7 +47,7 @@ namespace sys {
 
 		/**
 		Construct recursive directory entry input stream for
-		input directory \p starting_point
+		input directory \p starting_point.
 		*/
 		inline explicit
 		basic_idirtree(const path& starting_point):
@@ -145,6 +145,7 @@ namespace sys {
 
 	private:
 		file_stat _stat;
+		bool _hastype = false;
 
 	public:
 
@@ -172,11 +173,18 @@ namespace sys {
 			return this->_stat;
 		}
 
+		/// Returns true if file status was queried for the current file.
+		inline bool
+		has_status() const noexcept {
+			return !this->_hastype;
+		}
+
 	private:
 
 		inline file_type
 		type(const path& dirname, const direntry& entry) {
-			return entry.has_type()
+			this->_hastype = entry.has_type();
+			return this->_hastype
 				? entry.type()
 				: this->_stat.update(path(dirname, entry.name())).type();
 		}
