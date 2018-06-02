@@ -80,6 +80,11 @@ namespace sys {
 	*/
 	class bad_call: public std::system_error {
 
+	private:
+		const char* _file;
+		const int _line;
+		const char* _function;
+
 	public:
 
 		/// Construct the error with precise location where it was thrown.
@@ -92,10 +97,12 @@ namespace sys {
 		friend std::ostream&
 		operator<<(std::ostream& out, const bad_call& rhs);
 
-	private:
-		const char* _file;
-		const int _line;
-		const char* _function;
+		/// Get error condition.
+		inline std::errc
+		errc() const noexcept {
+			return std::errc(this->code().value());
+		}
+
 	};
 
 	/// Output error message prefixed by the location where it was thrown.
