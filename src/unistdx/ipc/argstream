@@ -1,10 +1,13 @@
 #ifndef UNISTDX_IPC_ARGSTREAM
 #define UNISTDX_IPC_ARGSTREAM
 
+#include <algorithm>
 #include <cassert>
 #include <ostream>
 #include <streambuf>
 #include <vector>
+
+#include <unistdx/it/intersperse_iterator>
 
 namespace sys {
 
@@ -190,6 +193,17 @@ namespace sys {
 		append(const T& first, const Args& ... args) {
 			append(first);
 			append(args...);
+		}
+
+		/// Print all command line arguments.
+		inline friend std::ostream&
+		operator<<(std::ostream& out, const argstream& rhs) {
+			std::copy_n(
+				rhs.argv(),
+				rhs.argc(),
+				intersperse_iterator<const char*,char>(out, ' ')
+			);
+			return out;
 		}
 
 	};
