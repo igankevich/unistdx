@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+cd "$MESON_BUILD_ROOT"
+ninja rpm-setup-tree
+ninja archive
+mv -v '@archive_name@' $HOME/rpmbuild/SOURCES
+ninja rpm-build
+mv -v \
+	$HOME/rpmbuild/RPMS/@arch@/@name@*@version@-@release@*.rpm \
+	$HOME/rpmbuild/SRPMS/@name@*@version@-@release@*.src.rpm \
+	"$MESON_BUILD_ROOT/pkg"

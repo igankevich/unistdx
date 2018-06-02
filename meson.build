@@ -3,7 +3,8 @@ project(
 	'cpp',
 	version: '0.2.2',
 	meson_version: '>=0.31',
-	default_options: ['cpp_std=c++11']
+	default_options: ['cpp_std=c++11'],
+	license: ['Public domain']
 )
 
 if not get_option('buildtype').contains('debug')
@@ -165,6 +166,7 @@ gtest = dependency('gtest', main: true)
 
 subdir('src')
 subdir('doc')
+subdir('pkg')
 
 # pkgconfig {{{
 pkgconfig = import('pkgconfig')
@@ -223,19 +225,4 @@ if clang_tidy.found()
 		]
 	)
 endif
-# }}}
-# archive {{{
-archive_name = meson.project_name() + '-' + meson.project_version()
-run_target(
-	'archive',
-	command: [
-		'git',
-		'archive',
-		'-o',
-		join_paths(meson.build_root(), archive_name + '.tar.xz'),
-		'--prefix',
-		archive_name + '/',
-		'HEAD'
-	]
-)
 # }}}
