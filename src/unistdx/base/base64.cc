@@ -118,7 +118,7 @@ sys::base64_decode(
 		++first;
 	}
 	// process last four bytes
-	if (first[2] == pad_character) {
+	if (first[2] == pad_character && first[3] == pad_character) {
 		bits24 bits{};
 		bits.i0 = char_to_index(*first);
 		bits.i1 = char_to_index(*++first);

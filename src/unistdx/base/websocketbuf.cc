@@ -76,22 +76,14 @@ namespace {
 	}
 
 	void
-	websocket_accept_header(
-		const std::string& web_socket_key,
-		char* result
-	) {
+	websocket_accept_header(const std::string& web_socket_key, char* result) {
 		using namespace sys;
-		bytes<u32[5]> hash;
+		bytes<char[20]> hash;
 		sha1 sha;
 		sha.put(web_socket_key.data(), web_socket_key.size());
 		sha.put(websocket_guid.data(), websocket_guid.size());
 		sha.compute();
-		sha.digest(hash.value());
-		#if !defined(UNISTDX_BIG_ENDIAN)
-		for (u32& i : hash.value()) {
-			i = to_network_format(i);
-		}
-		#endif
+		sha.digest(hash.begin());
 		base64_encode(hash.begin(), hash.end(), result);
 	}
 

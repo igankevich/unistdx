@@ -1,4 +1,5 @@
 foreach conf : [
+	['byte_buffer', [unistdx,gtest]],
 	['cmdline', [unistdx,gtest]],
 	['sha1', [unistdx,gtest]],
 	['spin_mutex', [threads,unistdx,gtest]],

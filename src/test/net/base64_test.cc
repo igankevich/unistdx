@@ -1,6 +1,9 @@
+#include <unordered_set>
+
 #include <gtest/gtest.h>
 
 #include <unistdx/base/base64>
+#include <unistdx/base/log_message>
 #include <unistdx/test/random_string>
 
 using sys::base64_decode;
@@ -84,12 +87,18 @@ void test_base64(size_t k, T spoil) {
 	base64_encode(text.data(), text.data() + text.size(), &encoded[0]);
 	if (spoil && k > 0) {
 		const size_t m = std::min(size_t(4), encoded.size());
+		const size_t esize = encoded.size();
+		std::unordered_set<size_t> positions;
+		// first four indices
 		for (size_t pos=0; pos<m; ++pos) {
-			if (encoded.size()%4 == 0 && pos == 3) {
-				continue;
-			}
-			const size_t pos1 = encoded.size()-4+pos;
-			std::swap(encoded[pos1], spoil);
+			positions.insert(pos);
+		}
+		// last four indices
+		for (size_t pos=std::max(esize, size_t(4))-4; pos<esize; ++pos) {
+			positions.insert(pos);
+		}
+		for (size_t pos : positions) {
+			std::swap(encoded[pos], spoil);
 			EXPECT_THROW(
 				base64_decode(
 					encoded.data(),
@@ -98,7 +107,7 @@ void test_base64(size_t k, T spoil) {
 				),
 				std::invalid_argument
 			);
-			std::swap(encoded[pos1], spoil);
+			std::swap(encoded[pos], spoil);
 		}
 	} else {
 		size_t decoded_size = base64_decode(
@@ -127,7 +136,7 @@ INSTANTIATE_TEST_CASE_P(
 TEST_P(BigSizeTest, Base64EncodeDecode) {
 	size_t k = GetParam();
 	EXPECT_THROW(test_base64<char>(k, 0), std::length_error);
-	EXPECT_THROW(test_base64<char>(k, 1), std::length_error);
+	EXPECT_THROW(test_base64<char>(k, '|'), std::length_error);
 	EXPECT_THROW(test_base64<char>(k, 128), std::length_error);
 }
 

@@ -33,6 +33,7 @@ namespace sys {
 		union {
 			u32 _digest[5];
 			unsigned char _bytes[20];
+			char _chars[20];
 		};
 		unsigned char* _blockptr;
 		std::size_t _length = 0;
@@ -99,9 +100,18 @@ namespace sys {
 
 		/// Copy SHA-1 digest to byte array pointed by \p result.
 		inline void
+		digest(unsigned char* result) noexcept {
+			assert(result != nullptr); // LCOV_EXCL_LINE
+			for (int i=0; i<digest_bytes_length(); ++i) {
+				result[i] = this->_bytes[i];
+			}
+		}
+
+		/// Copy SHA-1 digest to character array pointed by \p result.
+		inline void
 		digest(char* result) noexcept {
 			assert(result != nullptr); // LCOV_EXCL_LINE
-			for (int i=0; i<20; ++i) {
+			for (int i=0; i<digest_bytes_length(); ++i) {
 				result[i] = this->_bytes[i];
 			}
 		}
@@ -110,7 +120,7 @@ namespace sys {
 		inline void
 		digest(u32* result) noexcept {
 			assert(result != nullptr); // LCOV_EXCL_LINE
-			for (int i=0; i<5; ++i) {
+			for (int i=0; i<digest_length(); ++i) {
 				result[i] = this->_digest[i];
 			}
 		}
@@ -127,10 +137,28 @@ namespace sys {
 			return this->_bytes;
 		}
 
+		/// Get SHA-1 digest as a pointer to character array.
+		inline const char*
+		digest_chars() const noexcept {
+			return this->_chars;
+		}
+
 		/// Get the length of SHA1 input in bits.
 		inline std::size_t
 		length() const noexcept {
 			return this->_length;
+		}
+
+		/// Returns 5.
+		static constexpr inline int
+		digest_length() noexcept {
+			return 5;
+		}
+
+		/// Returns 20.
+		static constexpr inline int
+		digest_bytes_length() noexcept {
+			return 20;
 		}
 
 	private:

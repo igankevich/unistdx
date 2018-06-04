@@ -138,9 +138,11 @@ namespace sys {
 		*/
 		inline void
 		grow() {
+			// LCOV_EXCL_START
 			if (this->max_size() / 2 < this->_size) {
 				throw std::length_error("byte_buffer size is too large");
 			}
+			// LCOV_EXCL_STOP
 			this->resize(this->_size*2);
 		}
 

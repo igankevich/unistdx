@@ -4,6 +4,8 @@
 #include <vector>
 
 #include <unistdx/base/sha1>
+#include <unistdx/net/byte_order>
+#include <unistdx/net/bytes>
 
 #include <gtest/gtest.h>
 
@@ -39,15 +41,49 @@ const std::vector<std::tuple<std::string, std::string>> KNOWN_HASHES = {
 const std::string SHA_OF_ONE_MILLION_OF_A = "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f";
 const std::string SHA_OF_64_OF_A = "0098ba82 4b5c1642 7bd7a112 2a5a442a 25ec644d";
 
-std::string sha1_digest_to_string(const std::vector<u32>& result) {
+std::string sha1_digest_to_string(const u32* first, const u32* last) {
 	std::stringstream str;
 	str << std::hex << std::setfill('0');
-	std::for_each(result.begin(), result.end(), [&str] (u32 n) {
+	std::for_each(first, last, [&str] (u32 n) {
 		str << std::setw(8) << n << ' ';
 	});
 	std::string output = str.str();
 	output.pop_back(); // remove space character
 	return output;
+}
+
+std::string sha1_digest_to_string(const std::vector<u32>& result) {
+	return sha1_digest_to_string(result.data(), result.data() + result.size());
+}
+
+std::string sha1_digest_to_string(
+	const unsigned char* first,
+	const unsigned char* last
+) {
+	EXPECT_EQ(sys::sha1::digest_bytes_length(), last-first);
+	sys::bytes<u32> arr[sys::sha1::digest_length()];
+	u32 arr2[sys::sha1::digest_length()];
+	for (int i=0; i<sys::sha1::digest_length(); ++i) {
+		std::copy(first + i*4, first + (i+1)*4, arr[i].begin());
+//		arr[i].to_host_format();
+		arr2[i] = arr[i].value();
+	}
+	return sha1_digest_to_string(arr2, arr2 + sys::sha1::digest_length());
+}
+
+std::string sha1_digest_to_string(const char* first, const char* last) {
+	return sha1_digest_to_string(
+		reinterpret_cast<const unsigned char*>(first),
+		reinterpret_cast<const unsigned char*>(last)
+	);
+}
+
+std::string sha1_digest_to_string(const std::vector<unsigned char>& result) {
+	return sha1_digest_to_string(result.data(), result.data() + result.size());
+}
+
+std::string sha1_digest_to_string(const std::vector<char>& result) {
+	return sha1_digest_to_string(result.data(), result.data() + result.size());
 }
 
 TEST_P(SHA1Test, All) {
@@ -108,4 +144,39 @@ TEST(SHA1, RepeatingCompute) {
 	sha.digest(result.data());
 	std::string output = sha1_digest_to_string(result);
 	EXPECT_EQ(SHA_OF_64_OF_A, output) << "SHA of 64 of 'a' failed";
+}
+
+TEST(SHA1, Put) {
+	std::vector<char> a(64, 'a');
+	sys::sha1 sha;
+	sha.put(a.data(), a.size()/2);
+	sha.put(a.data() + a.size()/2, a.data() + a.size());
+	sha.compute();
+	{
+		std::vector<u32> result(5);
+		sha.digest(result.data());
+		EXPECT_EQ(SHA_OF_64_OF_A, sha1_digest_to_string(result));
+	}
+	EXPECT_EQ(
+		SHA_OF_64_OF_A,
+		sha1_digest_to_string(sha.digest(), sha.digest() + 5)
+	);
+	{
+		std::vector<unsigned char> result(sys::sha1::digest_bytes_length());
+		sha.digest(result.data());
+		EXPECT_EQ(SHA_OF_64_OF_A, sha1_digest_to_string(result));
+	}
+	EXPECT_EQ(
+		SHA_OF_64_OF_A,
+		sha1_digest_to_string(sha.digest_bytes(), sha.digest_bytes() + 20)
+	);
+	{
+		std::vector<char> result(sys::sha1::digest_bytes_length());
+		sha.digest(result.data());
+		EXPECT_EQ(SHA_OF_64_OF_A, sha1_digest_to_string(result));
+	}
+	EXPECT_EQ(
+		SHA_OF_64_OF_A,
+		sha1_digest_to_string(sha.digest_chars(), sha.digest_chars() + 20)
+	);
 }
