@@ -1,6 +1,5 @@
 foreach conf : [
 	['field_iterator', [unistdx,gtest]],
-	['queue_pusher', [unistdx,gtest]],
 ]
 	test_name = join_paths('it', conf[0])
 	executable_name = conf[0] + '_test'
