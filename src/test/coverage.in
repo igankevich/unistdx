@@ -1,7 +1,8 @@
 #!/bin/sh
 
-lcov="@lcov_path@"
-genhtml="@genhtml_path@"
+options="--rc lcov_branch_coverage=1 --rc genhtml_branch_coverage=1"
+lcov="@lcov_path@ $options"
+genhtml="@genhtml_path@ $options"
 
 set -e
 cd "$MESON_BUILD_ROOT"

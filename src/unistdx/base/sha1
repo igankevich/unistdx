@@ -1,6 +1,9 @@
 #ifndef UNISTDX_BASE_SHA1
 #define UNISTDX_BASE_SHA1
 
+#include <iostream>
+#include <cassert>
+
 #include <unistdx/base/types>
 
 namespace sys {
@@ -33,6 +36,7 @@ namespace sys {
 		};
 		unsigned char* _blockptr;
 		std::size_t _length = 0;
+		bool _computed = false;
 
 	public:
 
@@ -53,6 +57,7 @@ namespace sys {
 			this->_digest[4] = h4;
 			this->_blockptr = this->_block;
 			this->_length = 0;
+			this->_computed = false;
 		}
 
 		/**
@@ -63,6 +68,7 @@ namespace sys {
 		*/
 		inline void
 		put(const char* first, std::size_t n) {
+			assert(first != nullptr); // LCOV_EXCL_LINE
 			this->xput(first, first+n, n);
 		}
 
@@ -74,6 +80,7 @@ namespace sys {
 		*/
 		inline void
 		put(const char* first, const char* last) {
+			assert(first != nullptr); // LCOV_EXCL_LINE
 			this->xput(first, last, last-first);
 		}
 
@@ -84,14 +91,16 @@ namespace sys {
 		*/
 		inline void
 		compute() noexcept {
-			if (this->_blockptr != this->block_end()) {
+			if (!this->_computed) {
 				this->pad_block();
+				this->_computed = true;
 			}
 		}
 
 		/// Copy SHA-1 digest to byte array pointed by \p result.
 		inline void
 		digest(char* result) noexcept {
+			assert(result != nullptr); // LCOV_EXCL_LINE
 			for (int i=0; i<20; ++i) {
 				result[i] = this->_bytes[i];
 			}
@@ -100,6 +109,7 @@ namespace sys {
 		/// Copy SHA-1 digest to unsigned integer array pointed by \p result.
 		inline void
 		digest(u32* result) noexcept {
+			assert(result != nullptr); // LCOV_EXCL_LINE
 			for (int i=0; i<5; ++i) {
 				result[i] = this->_digest[i];
 			}
@@ -115,6 +125,12 @@ namespace sys {
 		inline const unsigned char*
 		digest_bytes() const noexcept {
 			return this->_bytes;
+		}
+
+		/// Get the length of SHA1 input in bits.
+		inline std::size_t
+		length() const noexcept {
+			return this->_length;
 		}
 
 	private:

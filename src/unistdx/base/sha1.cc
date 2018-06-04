@@ -7,14 +7,14 @@
 #include <unistdx/config>
 #include <unistdx/net/byte_order>
 
-#if defined(__GNUC__)
+#if defined(NDEBUG) && defined(__GNUC__)
 #define ALWAYS_INLINE [[gnu::always_inline]] inline
 #else
 #define ALWAYS_INLINE inline
 #endif
 
 // enable full optimisation
-#if defined(__GNUC__)
+#if defined(NDEBUG) && defined(__GNUC__)
 #pragma GCC optimize("O3", "unroll-all-loops")
 #endif
 
@@ -104,8 +104,9 @@ sys::sha1::process_block() noexcept {
 
 void
 sys::sha1::xput(const char* s, const char* sn, std::size_t n) {
-	if (std::numeric_limits<size_t>::max() - n*8 < this->_length) {
-		throw std::length_error("sha1 input is too large");
+	if (n >= std::numeric_limits<size_t>::max()/8 ||
+		n >= std::numeric_limits<size_t>::max()/8 - this->_length/8) {
+		throw std::length_error("sha1 input is too large"); // LCOV_EXCL_LINE
 	}
 	unsigned char* first = this->_blockptr;
 	unsigned char* last = this->block_end();

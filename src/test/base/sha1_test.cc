@@ -37,6 +37,7 @@ const std::vector<std::tuple<std::string, std::string>> KNOWN_HASHES = {
 };
 
 const std::string SHA_OF_ONE_MILLION_OF_A = "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f";
+const std::string SHA_OF_64_OF_A = "0098ba82 4b5c1642 7bd7a112 2a5a442a 25ec644d";
 
 std::string sha1_digest_to_string(const std::vector<u32>& result) {
 	std::stringstream str;
@@ -80,4 +81,31 @@ TEST(SHA1, OneMillionOfAs) {
 	std::string output = sha1_digest_to_string(result);
 	EXPECT_EQ(SHA_OF_ONE_MILLION_OF_A, output)
 		<< "SHA of one million of 'a' failed";
+}
+
+TEST(SHA1, BigInputs) {
+	sys::sha1 sha;
+	EXPECT_THROW(
+		sha.put("", std::numeric_limits<size_t>::max()),
+		std::length_error
+	);
+	sha.reset();
+	sha.put("a", 1);
+	EXPECT_THROW(
+		sha.put("", std::numeric_limits<size_t>::max()/8-1),
+		std::length_error
+	);
+}
+
+TEST(SHA1, RepeatingCompute) {
+	sys::sha1 sha;
+	std::vector<char> a(64, 'a');
+	sha.put(a.data(), a.size());
+	sha.compute();
+	EXPECT_EQ(a.size()*8, sha.length());
+	sha.compute();
+	std::vector<u32> result(5);
+	sha.digest(result.data());
+	std::string output = sha1_digest_to_string(result);
+	EXPECT_EQ(SHA_OF_64_OF_A, output) << "SHA of 64 of 'a' failed";
 }

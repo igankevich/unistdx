@@ -16,7 +16,7 @@ namespace sys {
 	inline size_t
 	base64_encoded_size(size_t len) {
 		if (len > std::numeric_limits<size_t>::max()/4u*3u-2u) {
-			throw std::length_error("base64 length is too large");
+			throw std::length_error("base64 length is too large"); // LCOV_EXCL_LINE
 		}
 		return ((len + 2u) / 3u) * 4u;
 	}

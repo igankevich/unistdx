@@ -76,23 +76,30 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 template<class T>
-void test_base64(size_t k, bool spoil) {
+void test_base64(size_t k, T spoil) {
 	typedef std::basic_string<T> string;
 	string text = test::random_string<T>(k);
 	string encoded(base64_encoded_size(k), '_');
 	string decoded(base64_max_decoded_size(encoded.size()), '_');
 	base64_encode(text.data(), text.data() + text.size(), &encoded[0]);
-	if (spoil && !encoded.empty()) {
-		size_t pos = encoded.size()/2u;
-		encoded[pos] = -1;
-		EXPECT_THROW(
-			base64_decode(
-				encoded.data(),
-				encoded.data() + encoded.size(),
-				&decoded[0]
-			),
-			std::invalid_argument
-		);
+	if (spoil && k > 0) {
+		const size_t m = std::min(size_t(4), encoded.size());
+		for (size_t pos=0; pos<m; ++pos) {
+			if (encoded.size()%4 == 0 && pos == 3) {
+				continue;
+			}
+			const size_t pos1 = encoded.size()-4+pos;
+			std::swap(encoded[pos1], spoil);
+			EXPECT_THROW(
+				base64_decode(
+					encoded.data(),
+					encoded.data() + encoded.size(),
+					&decoded[0]
+				),
+				std::invalid_argument
+			);
+			std::swap(encoded[pos1], spoil);
+		}
 	} else {
 		size_t decoded_size = base64_decode(
 			encoded.data(),
@@ -106,8 +113,9 @@ void test_base64(size_t k, bool spoil) {
 
 TEST_P(SmallSizeTest, Base64EncodeDecode) {
 	size_t k = GetParam();
-	test_base64<char>(k, false);
-	test_base64<char>(k, true);
+	test_base64<char>(k, 0);
+	test_base64<char>(k, '|');
+	test_base64<char>(k, 128);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -118,8 +126,9 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST_P(BigSizeTest, Base64EncodeDecode) {
 	size_t k = GetParam();
-	EXPECT_THROW(test_base64<char>(k, false), std::length_error);
-	EXPECT_THROW(test_base64<char>(k, true), std::length_error);
+	EXPECT_THROW(test_base64<char>(k, 0), std::length_error);
+	EXPECT_THROW(test_base64<char>(k, 1), std::length_error);
+	EXPECT_THROW(test_base64<char>(k, 128), std::length_error);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -163,6 +172,18 @@ INSTANTIATE_TEST_CASE_P(
 	Base64DecodeTest,
 	::testing::ValuesIn(decode_pairs)
 );
+
+TEST(base64, invalid_argument) {
+	EXPECT_THROW(sys::base64_decode("", 1, nullptr), std::invalid_argument);
+	EXPECT_THROW(sys::base64_decode("", 2, nullptr), std::invalid_argument);
+	EXPECT_THROW(sys::base64_decode("", 3, nullptr), std::invalid_argument);
+	EXPECT_THROW(sys::base64_decode("", 5, nullptr), std::invalid_argument);
+	EXPECT_THROW(sys::base64_decode("", 6, nullptr), std::invalid_argument);
+	EXPECT_THROW(sys::base64_decode("", 7, nullptr), std::invalid_argument);
+	EXPECT_NO_THROW(
+		sys::base64_decode((const char*)nullptr, size_t(0), (char*)nullptr)
+	);
+}
 
 /*
 TEST(Base63, GenerateTable) {
