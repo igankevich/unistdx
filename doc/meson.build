@@ -22,6 +22,7 @@ endif
 csd = meson.current_source_dir()
 cbd = meson.current_build_dir()
 examples = join_paths(csd, 'examples')
+html_output_dir = join_paths(meson.build_root(), 'html')
 doxyfile = configuration_data()
 doxyfile.set('EXAMPLE_PATH', examples)
 doxyfile.set('LAYOUT_FILE', join_paths(csd, 'layout.xml'))
@@ -51,6 +52,7 @@ else
 	doxyfile.set('HAVE_DOT', 'NO')
 endif
 doxyfile.set('HTML_EXTRA_STYLESHEET', join_paths(csd, 'doxygen-extra.css'))
+doxyfile.set('HTML_OUTPUT', html_output_dir)
 configure_file(
 	input: 'Doxyfile.in',
 	output: 'Doxyfile',
@@ -78,6 +80,10 @@ if doxygen.found()
 		command: join_paths(csd, 'rename')
 	)
 	run_target('doc', command: join_paths(csd, 'all'))
+	run_target(
+		'doc-copy-examples',
+		command: ['cp', '-r', examples, html_output_dir]
+	)
 endif
 
 

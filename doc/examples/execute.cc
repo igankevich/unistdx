@@ -1,7 +1,7 @@
 #include <unistdx/ipc/execute>
 
 /**
-\example execute.cc
+\unistdx_example{execute.cc}
 \details
 The following code executes \c errno to display description
 of error code 42 in Russian locale.
