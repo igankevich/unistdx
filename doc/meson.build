@@ -19,11 +19,12 @@ elif curl.found()
 endif
 # }}}
 # generate Doxyfile {{{
-cwd = meson.current_source_dir()
-examples = join_paths(cwd, 'examples')
+csd = meson.current_source_dir()
+cbd = meson.current_build_dir()
+examples = join_paths(csd, 'examples')
 doxyfile = configuration_data()
 doxyfile.set('EXAMPLE_PATH', examples)
-doxyfile.set('LAYOUT_FILE', join_paths(cwd, 'layout.xml'))
+doxyfile.set('LAYOUT_FILE', join_paths(csd, 'layout.xml'))
 doxyfile.set('OUTPUT_DIRECTORY', meson.build_root())
 doxyfile.set('TAGFILES', std_tag_xml + '=' + std_tag_url)
 excluded_files = [
@@ -35,7 +36,7 @@ doxyfile.set('EXCLUDE', ' '.join(excluded_files))
 input_files = [
 	join_paths(meson.source_root(), 'src', 'unistdx'),
 	examples,
-	join_paths(meson.current_source_dir(), 'pages'),
+	join_paths(csd, 'pages'),
 ]
 doxyfile.set('INPUT', ' '.join(input_files))
 perl = find_program('perl', required: false)
@@ -49,6 +50,7 @@ if dot.found()
 else
 	doxyfile.set('HAVE_DOT', 'NO')
 endif
+doxyfile.set('HTML_EXTRA_STYLESHEET', join_paths(csd, 'doxygen-extra.css'))
 configure_file(
 	input: 'Doxyfile.in',
 	output: 'Doxyfile',
@@ -58,10 +60,7 @@ configure_file(
 
 doxygen = find_program('doxygen', required: false)
 if doxygen.found()
-	run_target(
-		'doc-doxygen',
-		command: [doxygen, join_paths(meson.current_build_dir(), 'Doxyfile')]
-	)
+	run_target('doc-doxygen', command: [doxygen, join_paths(cbd, 'Doxyfile')])
 	run_target(
 		'doc-temp',
 		command: [
@@ -71,18 +70,18 @@ if doxygen.found()
 			join_paths(meson.build_root(), 'header.html'),
 			join_paths(meson.build_root(), 'footer.html'),
 			join_paths(meson.build_root(), 'doxygen.css'),
-			join_paths(meson.current_build_dir(), 'Doxyfile')
+			join_paths(cbd, 'Doxyfile')
 		]
 	)
 	run_target(
 		'doc-rename',
-		command: join_paths(meson.current_source_dir(), 'rename')
+		command: join_paths(csd, 'rename')
 	)
-	run_target('doc', command: join_paths(meson.current_source_dir(), 'all'))
+	run_target('doc', command: join_paths(csd, 'all'))
 endif
 
 
 xsltproc = find_program('xsltproc', required: false)
 if xsltproc.found()
-	run_target('man', command: join_paths(meson.current_source_dir(), 'man'))
+	run_target('man', command: join_paths(csd, 'man'))
 endif
