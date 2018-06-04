@@ -12,7 +12,6 @@ namespace sys {
 	\date 2018-05-25
 	\author Ivan Gankevich
 	\ingroup wrapper fs
-	\deprecated
 	\details
 	This class stores a path to a directory where entry is located,
 	which makes it convenient for recursive directory traversals.
@@ -93,7 +92,6 @@ namespace sys {
 	/**
 	\brief Reliably get file type of a directory entry.
 	\param rhs directory entry
-	\deprecated
 	\details
 	Falls back to \link file_stat\endlink if directory entry itself
 	does not have valid file type.
