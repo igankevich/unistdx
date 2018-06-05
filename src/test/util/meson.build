@@ -25,10 +25,14 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 		cpp_args: ['-fno-omit-frame-pointer']
 	)
 	foreach type : ['signal', 'terminate']
+		test('util/backtrace-' + type, backtrace_test, args: [type])
 		test(
-			'util/backtrace-' + type,
+			'util/backtrace-stub-' + type,
 			backtrace_test,
-			args: [type]
+			args: [type],
+			env: [
+				'LD_PRELOAD=' + backtrace_stub.full_path()
+			]
 		)
 	endforeach
 endif

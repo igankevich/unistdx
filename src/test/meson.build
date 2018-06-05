@@ -1,3 +1,4 @@
+subdir('stub')
 subdir('base')
 subdir('fs')
 subdir('io')
