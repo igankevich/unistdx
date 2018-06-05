@@ -43,7 +43,7 @@ namespace sys {
 
 	private:
 		typedef const pointer const_pointer;
-		typedef const reference const_reference;
+		typedef typename std::add_const<reference>::type const_reference;
 
 	public:
 
