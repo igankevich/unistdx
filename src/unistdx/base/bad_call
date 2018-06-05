@@ -4,6 +4,8 @@
 #include <system_error>
 #include <iosfwd>
 
+#include <unistdx/bits/macros>
+
 namespace sys {
 
 	/**
@@ -23,7 +25,7 @@ namespace sys {
 	public:
 
 		/// Construct the error with precise location where it was thrown.
-		inline
+		UNISTDX_NON_NULL_ALL inline
 		bad_call(const char* file, const int line, const char* function) noexcept:
 		std::system_error(errno, std::generic_category()),
 		_file(file), _line(line), _function(function)

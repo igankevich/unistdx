@@ -3,13 +3,8 @@
 
 #include <cassert>
 
+#include <unistdx/bits/macros>
 #include <unistdx/io/sysstream>
-
-#if defined(__GNUC__)
-#define UNISTDX_NON_NULL(...) [[gnu::nonnull(__VA_ARGS__)]]
-#else
-#define UNISTDX_NON_NULL(...)
-#endif
 
 namespace sys {
 

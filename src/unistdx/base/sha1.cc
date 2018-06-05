@@ -4,16 +4,9 @@
 #include <limits>
 #include <stdexcept>
 
+#include <unistdx/bits/macros>
 #include <unistdx/config>
 #include <unistdx/net/byte_order>
-
-#if defined(NDEBUG) && defined(__GNUC__)
-#define ALWAYS_INLINE [[gnu::always_inline]] inline
-#define UNISTDX_CONST [[gnu::const]]
-#else
-#define ALWAYS_INLINE inline
-#define UNISTDX_CONST
-#endif
 
 // enable full optimisation
 #if defined(NDEBUG) && defined(__GNUC__)
@@ -30,28 +23,28 @@ namespace {
 	const u32 k_60_79 = 0xca62c1d6u;
 
 	// circular left shift
-	ALWAYS_INLINE UNISTDX_CONST u32
+	UNISTDX_CONST u32
 	cls(int n, u32 x) noexcept {
 		return (x << n) | (x >> (32-n));
 	}
 
 	// logical functions {{{
-	ALWAYS_INLINE UNISTDX_CONST u32
+	UNISTDX_CONST u32
 	f_0_19(u32 b, u32 c, u32 d) noexcept {
 		return (b & c) | ((~b) & d);
 	}
 
-	ALWAYS_INLINE UNISTDX_CONST u32
+	UNISTDX_CONST u32
 	f_20_39(u32 b, u32 c, u32 d) noexcept {
 		return b ^ c ^ d;
 	}
 
-	ALWAYS_INLINE UNISTDX_CONST u32
+	UNISTDX_CONST u32
 	f_40_59(u32 b, u32 c, u32 d) noexcept {
 		return (b & c) | (b & d) | (c & d);
 	}
 
-	ALWAYS_INLINE UNISTDX_CONST u32
+	UNISTDX_CONST u32
 	f_60_79(u32 b, u32 c, u32 d) noexcept {
 		return f_20_39(b, c, d);
 	}

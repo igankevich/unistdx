@@ -1,0 +1,22 @@
+#ifndef UNISTDX_BITS_MACROS
+#define UNISTDX_BITS_MACROS
+
+#if defined(__GNUC__)
+#define UNISTDX_PURE [[gnu::pure]]
+#define UNISTDX_INLINE [[gnu::always_inline]] inline
+#define UNISTDX_NON_NULL(...) [[gnu::nonnull(__VA_ARGS__)]]
+#define UNISTDX_NON_NULL_ALL [[gnu::nonnull]]
+#define UNISTDX_CONST [[gnu::const]] UNISTDX_INLINE constexpr
+#define UNISTDX_FLATTEN [[gnu::flatten]]
+#define UNISTDX_DEPRECATED [[gnu::deprecated]]
+#else
+#define UNISTDX_PURE
+#define UNISTDX_INLINE inline
+#define UNISTDX_NON_NULL(...)
+#define UNISTDX_NON_NULL_ALL
+#define UNISTDX_CONST inline constexpr
+#define UNISTDX_FLATTEN
+#define UNISTDX_DEPRECATED
+#endif
+
+#endif // vim:filetype=cpp

@@ -5,6 +5,8 @@
 #include <limits>
 #include <stdexcept>
 
+#include <unistdx/bits/macros>
+
 namespace sys {
 
 	/**
@@ -25,7 +27,7 @@ namespace sys {
 	\brief The length of \p len bytes sequence decoded from BASE64.
 	\see \rfc{4648}
 	*/
-	inline constexpr size_t
+	UNISTDX_CONST size_t
 	base64_max_decoded_size(size_t len) noexcept {
 		return (len / 4u) * 3u;
 	}
@@ -38,7 +40,7 @@ namespace sys {
 	with BASE64 and put result to memory location pointed by
 	\p result.
 	*/
-	void
+	UNISTDX_NON_NULL(1,3) UNISTDX_FLATTEN void
 	base64_encode(const char* first, size_t n, char* result) noexcept;
 
 	/**
@@ -49,7 +51,7 @@ namespace sys {
 	with BASE64 and put result to memory location pointed by
 	\p result.
 	*/
-	inline void
+	UNISTDX_NON_NULL(1,2,3) inline void
 	base64_encode(const char* first, const char* last, char* result) noexcept {
 		base64_encode(first, last-first, result);
 	}
@@ -63,7 +65,7 @@ namespace sys {
 	Decode BASE64 byte sequence pointed by \p first with length \p n
 	and put result to memory location pointed by \p result.
 	*/
-	size_t
+	UNISTDX_NON_NULL(1,3) UNISTDX_FLATTEN size_t
 	base64_decode(const char* first, size_t n, char* result);
 
 	/**
@@ -75,7 +77,7 @@ namespace sys {
 	Decode BASE64 byte sequence between \p first and \p last
 	and put result to memory location pointed by \p result.
 	*/
-	inline size_t
+	UNISTDX_NON_NULL(1,2,3) inline size_t
 	base64_decode(const char* first, const char* last, char* result) {
 		return base64_decode(first, last-first, result);
 	}

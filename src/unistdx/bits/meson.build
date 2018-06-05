@@ -8,6 +8,7 @@ install_headers(
 	'entity',
 	'for_each_file_descriptor',
 	'ifaddrs',
+	'macros',
 	'make_object',
 	'no_copy_and_move',
 	'octet',

@@ -45,7 +45,7 @@ namespace {
 
 	static_assert(sizeof(bits24) >= 3, "bad 24-bit group size");
 
-	unsigned char
+	inline unsigned char
 	char_to_index(unsigned char ch) {
 		if (ch >= 128) {
 			throw std::invalid_argument("bad base64 string"); // LCOV_EXCL_LINE
