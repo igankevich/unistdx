@@ -1,0 +1,25 @@
+#ifndef UNISTDX_TEST_BSTREAM_INSERT_EXTRACT
+#define UNISTDX_TEST_BSTREAM_INSERT_EXTRACT
+
+#include <sstream>
+
+#include <gtest/gtest.h>
+
+#include <unistdx/net/bstream>
+
+namespace test {
+
+	template <class T>
+	inline void
+	bstream_insert_extract(const T& rhs) {
+		std::stringbuf buf;
+		sys::bstream str(&buf);
+		str << rhs;
+		T copy;
+		str >> copy;
+		EXPECT_EQ(rhs, copy);
+	}
+
+}
+
+#endif // vim:filetype=cpp

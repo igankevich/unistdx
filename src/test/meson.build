@@ -64,7 +64,6 @@ if lcov.found() and genhtml.found()
 	)
 endif
 # }}}
-
 # gcovr {{{
 gcovr = find_program('gcovr', required: false)
 if gcovr.found()
@@ -81,8 +80,11 @@ if gcovr.found()
 			'--object-directory',
 			meson.build_root(),
 			'--exclude=.*test.*',
+			'--exclude=/usr/include/.*',
 			'--gcov-exclude=.*test.*',
+			'--gcov-exclude=/usr/include/.*',
 			'--exclude-directories=.*test.*',
+			'--exclude-directories=/usr/include',
 			'--print-summary',
 			'--output',
 			join_paths(meson.build_root(), 'gcovr', 'index.html')

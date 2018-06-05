@@ -25,6 +25,13 @@ namespace sys {
 	typedef struct ::sigaction sigaction_type;
 
 	/**
+	\brief Alias for \c siginfo_t system type.
+	\date 2018-06-05
+	\author Ivan Gankevich
+	*/
+	typedef ::siginfo_t signal_info_type;
+
+	/**
 	\brief Process signals.
 	\date 2018-05-21
 	\author Ivan Gankevich

@@ -212,32 +212,6 @@ namespace sys {
 		return out;
 	}
 
-	/**
-	\brief
-	Converts binary representation of \p n in native byte order
-	to network byte order if needed.
-	\ingroup net
-	*/
-	template<class T>
-	inline T
-	to_network_format(bytes<T> n) noexcept {
-		n.to_network_format();
-		return n.value();
-	}
-
-	/**
-	\brief
-	Converts binary representation of \p n in network byte order
-	to native byte order if needed.
-	\ingroup net
-	*/
-	template<class T>
-	inline T
-	to_host_format(bytes<T> n) noexcept {
-		n.to_host_format();
-		return n.value();
-	}
-
 }
 
 #endif // vim:filetype=cpp

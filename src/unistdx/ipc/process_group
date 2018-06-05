@@ -101,7 +101,7 @@ namespace sys {
 		*/
 		template<class Lock, class F>
 		void
-		wait(Lock& lock, F callback, wait_flags flags=wait_flags::proc_exited) {
+		wait(Lock& lock, F callback, wait_flags flags=wait_flags::exited) {
 			sys::siginfo_type info;
 			sys::proc_info status;
 			const_iterator result;

@@ -4,6 +4,9 @@
 
 #include <unistdx/bits/for_each_file_descriptor>
 #include <unistdx/io/pipe>
+#include <unistdx/io/fildes>
+
+#include <unistdx/test/temporary_file>
 
 TEST(ForEachFileDescriptor, Pipe) {
 	sys::pipe p;
@@ -17,4 +20,10 @@ TEST(ForEachFileDescriptor, Pipe) {
 		}
 	);
 	EXPECT_EQ(expected, actual);
+}
+
+TEST(fildes, remap) {
+	sys::fildes f(UNISTDX_TMPFILE, sys::open_flag::create, 0644);
+	EXPECT_NO_THROW(f.remap());
+	EXPECT_NO_THROW(f.remap(1000));
 }

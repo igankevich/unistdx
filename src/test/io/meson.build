@@ -1,9 +1,13 @@
 foreach conf : [
+	['epoll_event', [unistdx,gtest], []],
+	['fildes', [unistdx,gtest], []],
 	['fildesbuf', [unistdx,gtest], [
 		'-DUNISTDX_DEBUG_PACKETBUF',
 		'-DUNISTDX_DEBUG_FILDESBUF'
 	]],
+	['poll_event', [unistdx,gtest], []],
 	['poller', [unistdx,gtest], []],
+	['two_way_pipe', [unistdx,gtest], []],
 ]
 	test_name = join_paths('io', conf[0])
 	executable_name = conf[0] + '_test'

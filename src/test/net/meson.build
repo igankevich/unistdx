@@ -1,8 +1,11 @@
 foreach conf : [
 	['base64', [unistdx,gtest]],
+	['bit_count', [unistdx,gtest]],
 	['byte_swap', [unistdx,gtest]],
+	['bytes', [unistdx,gtest]],
 	['endian', [unistdx,gtest]],
 	['endpoint', [unistdx,gtest]],
+	['family', [unistdx,gtest]],
 	['ifaddr', [unistdx,gtest]],
 	['ipv4_addr', [unistdx,gtest]],
 	['netlink_poller', [threads,unistdx,gtest]],

@@ -1,6 +1,8 @@
 foreach conf : [
 	['identity', [unistdx,gtest]],
+	['proc_status', [unistdx,gtest]],
 	['process', [unistdx,gtest]],
+	['process_group', [unistdx,gtest]],
 	['semaphore', [threads,unistdx,gtest]],
 	['sharedmem', [threads,unistdx,gtest]],
 	['signal', [unistdx,gtest]],

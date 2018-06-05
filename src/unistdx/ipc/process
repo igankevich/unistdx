@@ -139,13 +139,13 @@ namespace sys {
 	*/
 	enum class wait_flags: int {
 		/// Process exited by calling \man{exit,2}.
-		proc_exited = WEXITED,
+		exited = WEXITED,
 		/// Process execution was stopped by a signal.
-		proc_stopped = WSTOPPED,
+		stopped = WSTOPPED,
 		/**
 		Process execution was continued with \link signal::resume\endlink signal.
 		*/
-		proc_continued = WCONTINUED
+		continued = WCONTINUED
 	};
 
 	/**
@@ -317,10 +317,14 @@ namespace sys {
 		\see \man{waitpid,2}
 		*/
 		inline sys::proc_status
-		wait() {
+		wait(wait_flags flags = wait_flags(0)) {
 			int stat = 0;
 			if (this->_pid > 0) {
-				UNISTDX_CHECK_IF_NOT(EINTR, ::waitpid(this->_pid, &stat, 0));
+				UNISTDX_CHECK_IF_NOT(EINTR, ::waitpid(
+					this->_pid,
+					&stat,
+					static_cast<int>(flags)
+				));
 				this->_pid = 0;
 			}
 			return sys::proc_status(stat);

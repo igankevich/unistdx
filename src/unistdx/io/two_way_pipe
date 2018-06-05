@@ -24,7 +24,12 @@ namespace sys {
 
 	public:
 
-		two_way_pipe() = default;
+		inline
+		two_way_pipe():
+		_pipe1(),
+		_pipe2(),
+		_owner(this_process::id())
+		{}
 
 		~two_way_pipe() = default;
 

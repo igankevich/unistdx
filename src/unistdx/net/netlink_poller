@@ -39,12 +39,34 @@ namespace sys {
 
 	}
 
+	/// \brief Netlink message flags.
+	/// \ingroup net
+	enum class netlink_message_flags: u16 {
+		request = NLM_F_REQUEST,
+		multipart = NLM_F_MULTI,
+		acknowledge = NLM_F_ACK,
+		echo = NLM_F_ECHO,
+		dump_inconsistent = NLM_F_DUMP_INTR,
+		dump_filtered = NLM_F_DUMP_FILTERED,
+		root = NLM_F_ROOT,
+		all_matching = NLM_F_MATCH,
+		atomic = NLM_F_ATOMIC,
+		dump = NLM_F_DUMP
+	};
+
+	/// \{
+	inline netlink_message_flags
+	operator|(netlink_message_flags lhs, netlink_message_flags rhs) {
+		return netlink_message_flags(static_cast<u16>(lhs) | static_cast<u16>(rhs));
+	}
+	/// \}
+
 	/// \brief Netlink message types.
 	/// \ingroup net
 	enum class netlink_message_type: u16 {
 		/// Message is to be ignored.
 		noop = NLMSG_NOOP,
-		/// Message is an error and its payload is \c mlmsgerr system structure.
+		/// Message is an error and its payload is \c nlmsgerr system structure.
 		error = NLMSG_ERROR,
 		/// Message is the last part of multipart message.
 		done = NLMSG_DONE,
@@ -71,6 +93,12 @@ namespace sys {
 			return this->nlmsg_len;
 		}
 
+		/// Set the length of the message with header.
+		inline void
+		length(u32 rhs) noexcept {
+			this->nlmsg_len = rhs;
+		}
+
 		/// Payload type
 		inline netlink_message_type
 		type() const noexcept {
@@ -81,6 +109,18 @@ namespace sys {
 		inline u16
 		flags() const noexcept {
 			return this->nlmsg_flags;
+		}
+
+		/// Set additional flags.
+		inline void
+		flags(u16 rhs) noexcept {
+			this->nlmsg_flags = rhs;
+		}
+
+		/// Set additional flags.
+		inline void
+		flags(netlink_message_flags rhs) noexcept {
+			this->nlmsg_flags = static_cast<u16>(rhs);
 		}
 
 		/// Message sequence number.
@@ -235,6 +275,14 @@ namespace sys {
 	std::ostream&
 	operator<<(std::ostream& out, const ifaddr_attribute& rhs);
 
+	/// \brief Interface address message types.
+	/// \ingroup net
+	enum class ifaddr_message_type: u16 {
+		get_address = RTM_GETADDR,
+		new_address = RTM_NEWADDR,
+		delete_address = RTM_DELADDR,
+	};
+
 	/**
 	\brief Netlink interaface address message.
 	\date 2018-05-24
@@ -254,6 +302,12 @@ namespace sys {
 		inline family_type
 		family() const noexcept {
 			return static_cast<family_type>(this->ifa_family);
+		}
+
+		/// Set address family.
+		inline void
+		family(family_type rhs) noexcept {
+			this->ifa_family = static_cast<u8>(rhs);
 		}
 
 		/// Get address prefix.
@@ -278,6 +332,12 @@ namespace sys {
 		inline int
 		index() const noexcept {
 			return this->ifa_index;
+		}
+
+		/// Set address index.
+		inline void
+		index(int rhs) noexcept {
+			this->ifa_index = rhs;
 		}
 
 		/// Get route attributes.
@@ -331,19 +391,19 @@ namespace sys {
 		/// Returns true, if the message contains address that was added.
 		inline bool
 		new_address() const noexcept {
-			return this->type() == netlink_message_type(RTM_NEWADDR);
+			return this->netlink_header::type() == netlink_message_type(RTM_NEWADDR);
 		}
 
 		/// Returns true, if the message contains address that was deleted.
 		inline bool
 		delete_address() const noexcept {
-			return this->type() == netlink_message_type(RTM_DELADDR);
+			return this->netlink_header::type() == netlink_message_type(RTM_DELADDR);
 		}
 
 		/// Returns true, if the message contains address.
 		inline bool
 		get_address() const noexcept {
-			return this->type() == netlink_message_type(RTM_GETADDR);
+			return this->netlink_header::type() == netlink_message_type(RTM_GETADDR);
 		}
 
 		/// Returns pointer to message payload.
@@ -362,6 +422,12 @@ namespace sys {
 		inline int
 		payload_length() const noexcept {
 			return NLMSG_PAYLOAD(this, sizeof(::ifaddrmsg));
+		}
+
+		/// Set message type.
+		inline void
+		type(ifaddr_message_type rhs) noexcept {
+			this->nlmsg_type = static_cast<u16>(rhs);
 		}
 
 	};

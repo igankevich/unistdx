@@ -2,6 +2,8 @@ foreach conf : [
 	['copy_file', [unistdx,gtest]],
 	['file_mode', [unistdx,gtest]],
 	['file_mutex', [unistdx,gtest]],
+	['file_stat', [unistdx,gtest]],
+	['file_type', [unistdx,gtest]],
 	['idirectory', [unistdx,gtest]],
 	['idirtree', [unistdx,gtest]],
 	['mkdirs', [unistdx,gtest]],

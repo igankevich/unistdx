@@ -8,6 +8,7 @@
 #include <string>
 
 #include <unistdx/base/types>
+#include <unistdx/bits/macros>
 #include <unistdx/config>
 #include <unistdx/net/bytes>
 
@@ -106,14 +107,14 @@ namespace sys {
 		/// Synchronise both input and output buffers.
 		inline void
 		sync() {
-			assert(this->_buf);
+			assert(this->_buf); // LCOV_EXCL_LINE
 			this->_buf->pubsync();
 		}
 
 		/// Synchronise both input and output buffers.
 		inline void
 		flush() {
-			assert(this->_buf);
+			assert(this->_buf); // LCOV_EXCL_LINE
 			this->_buf->pubsync();
 		}
 
@@ -168,10 +169,10 @@ namespace sys {
 		Put \p n bytes from byte buffer pointed by \p buf
 		to binary stream.
 		*/
-		inline basic_bstream&
+		UNISTDX_NON_NULL(1) inline basic_bstream&
 		write(const char_type* buf, std::streamsize n) {
-			assert(this->_buf);
-			assert(n == 0 || (buf && n > 0));
+			assert(this->_buf); // LCOV_EXCL_LINE
+			assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
 			this->_buf->sputn(buf, n);
 			return *this;
 		}
@@ -180,10 +181,10 @@ namespace sys {
 		Get \p n bytes from binary stream and store them
 		in byte buffer pointed by \p buf.
 		*/
-		inline basic_bstream&
+		UNISTDX_NON_NULL(1) inline basic_bstream&
 		read(char_type* buf, std::streamsize n) {
-			assert(this->_buf);
-			assert(n == 0 || (buf && n > 0));
+			assert(this->_buf); // LCOV_EXCL_LINE
+			assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
 			this->_buf->sgetn(buf, n);
 			return *this;
 		}

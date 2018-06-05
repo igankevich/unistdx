@@ -17,6 +17,8 @@ namespace sys {
 	/// \brief Socket address families.
 	/// \ingroup net
 	enum struct family_type: sa_family_type {
+		/// Unspecified socket address family.
+		unspecified = AF_UNSPEC,
 		/// IPv4 socket address family.
 		inet = AF_INET,
 		/// IPv4 socket address family.
