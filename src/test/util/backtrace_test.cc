@@ -72,6 +72,8 @@ print_error() {
 		ret = EXIT_FAILURE;
 		sys::backtrace(STDERR_FILENO);
 	}
+	// Skip test, as it unreliable in some build environments.
+	ret = 77;
 	std::exit(ret);
 }
 
@@ -102,8 +104,6 @@ func1(Test_type type) {
 }
 
 int main(int argc, char* argv[]) {
-	// Skip test, as it unreliable in some build environments.
-	std::exit(77);
 	if (argc != 2) {
 		throw std::invalid_argument("bad command line arguments");
 	}

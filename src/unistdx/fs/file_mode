@@ -148,6 +148,18 @@ namespace sys {
 			return !this->operator==(rhs);
 		}
 
+		/// Comparison.
+		inline bool
+		operator==(const mode_type& rhs) const noexcept {
+			return this->_mode == rhs;
+		}
+
+		/// Comparison.
+		inline bool
+		operator!=(const mode_type& rhs) const noexcept {
+			return this->_mode != rhs;
+		}
+
 		friend std::ostream&
 		operator<<(std::ostream& out, const file_mode& rhs);
 

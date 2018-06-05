@@ -15,9 +15,11 @@ namespace {
 
 	void
 	init_pages(void* addr, size_t n) {
-		UNISTDX_CHECK(::madvise(addr, n, MADV_SEQUENTIAL)); // LCOV_EXCL_BR_LINE
-		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTFORK)); // LCOV_EXCL_BR_LINE
-		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTDUMP)); // LCOV_EXCL_BR_LINE
+		// LCOV_EXCL_START
+		UNISTDX_CHECK(::madvise(addr, n, MADV_SEQUENTIAL));
+		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTFORK));
+		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTDUMP));
+		// LCOV_EXCL_STOP
 	}
 
 }

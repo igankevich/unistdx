@@ -5,6 +5,7 @@
 
 #include <unistdx/base/check>
 #include <unistdx/fs/path>
+#include <unistdx/io/fildes>
 #include <unistdx/test/tmpdir>
 
 namespace sys {
@@ -27,13 +28,15 @@ namespace test {
 
 		inline explicit
 		temporary_file(const char* filename):
-		_filename(filename)
+		temporary_file(sys::path(filename))
 		{}
 
 		inline explicit
 		temporary_file(const sys::path& filename):
 		_filename(filename)
-		{}
+		{
+			sys::fildes(filename, sys::open_flag::create, 0644);
+		}
 
 		inline
 		~temporary_file() {

@@ -1,7 +1,7 @@
 libunistdx_src += files([
+	'bad_call.cc',
 	'base64.cc',
 	'byte_buffer.cc',
-	'check.cc',
 	'cmdline.cc',
 	'sha1.cc',
 	'websocket.cc',
@@ -9,6 +9,7 @@ libunistdx_src += files([
 ])
 
 install_headers(
+	'bad_call',
 	'base64',
 	'byte_buffer',
 	'check',

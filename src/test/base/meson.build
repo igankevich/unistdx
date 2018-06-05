@@ -1,6 +1,9 @@
 foreach conf : [
+	['bad_call', [unistdx,gtest]],
 	['byte_buffer', [unistdx,gtest]],
 	['cmdline', [unistdx,gtest]],
+	['delete_each', [unistdx,gtest]],
+	['log_message', [unistdx,gtest]],
 	['sha1', [unistdx,gtest]],
 	['spin_mutex', [threads,unistdx,gtest]],
 	['uint128', [unistdx,gtest]],
