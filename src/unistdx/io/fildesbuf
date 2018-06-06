@@ -113,7 +113,7 @@ namespace sys {
 		/// Overrides \link std::streambuf::underflow\endlink.
 		int_type
 		underflow() override {
-			assert(gptr() == egptr());
+			assert(gptr() == egptr()); // LCOV_EXCL_LINE
 			this->reset_gbuf();
 			return this->fill() == 0
 			       ? traits_type::eof()
@@ -123,7 +123,7 @@ namespace sys {
 		/// Overrides \link std::streambuf::overflow\endlink.
 		int_type
 		overflow(int_type c) override {
-			assert(pptr() == epptr());
+			assert(pptr() == epptr()); // LCOV_EXCL_LINE
 			if (c != traits_type::eof()) {
 				pgrow();
 				if (pptr() != epptr()) {
@@ -246,7 +246,7 @@ namespace sys {
 			}
 			char_type* first = egptr();
 			char_type* last = glast();
-			assert(first != last);
+			assert(first != last); // LCOV_EXCL_LINE
 			std::streamsize n = 0;
 			while ((n = straits_type::read(_fd, first, last-first)) > 0) {
 				first += n;
@@ -314,8 +314,8 @@ namespace sys {
 			#endif
 			char_type* base = this->gfirst();
 			setg(base, base + gptr_offset, base + egptr_offset);
-			assert(gptr() - eback() == gptr_offset);
-			assert(egptr() - eback() == egptr_offset);
+			assert(gptr() - eback() == gptr_offset); // LCOV_EXCL_LINE
+			assert(egptr() - eback() == egptr_offset); // LCOV_EXCL_LINE
 		}
 
 		inline char_type*
@@ -330,7 +330,7 @@ namespace sys {
 
 		inline void
 		pgrow(std::streamsize new_size) {
-			assert(new_size > std::streamsize(this->_pbuf.size()));
+			assert(new_size > std::streamsize(this->_pbuf.size())); // LCOV_EXCL_LINE
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
 			this->log("pgrow size=_", new_size);
 			#endif
@@ -339,8 +339,8 @@ namespace sys {
 			this->_pbuf.resize(new_size);
 			setp(pfirst() + pbase_offset, plast());
 			pbump(pptr_offset);
-			assert(pptr() - pbase() == pptr_offset);
-			assert(pbase() - pfirst() == pbase_offset);
+			assert(pptr() - pbase() == pptr_offset); // LCOV_EXCL_LINE
+			assert(pbase() - pfirst() == pbase_offset); // LCOV_EXCL_LINE
 		}
 
 		inline void

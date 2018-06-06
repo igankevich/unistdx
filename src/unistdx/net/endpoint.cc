@@ -54,8 +54,7 @@ sys::operator<<(std::ostream& out, const endpoint& rhs) {
 	if (s) {
 		if (rhs.family() == family_type::inet6) {
 			port_type port = to_host_format<port_type>(rhs.port6());
-			out << Left_br() << rhs.addr6() << Right_br()
-			    << Colon() << port;
+			out << Left_br() << rhs.addr6() << Right_br() << Colon() << port;
 		} else if (rhs.family() == family_type::inet) {
 			port_type port = to_host_format<port_type>(rhs.port4());
 			out << rhs.addr4() << Colon() << port;

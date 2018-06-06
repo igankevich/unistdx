@@ -20,7 +20,7 @@ TEST_P(family_test, bstream_insert_extract) {
 }
 
 INSTANTIATE_TEST_CASE_P(
-	_,
+	for_each_family,
 	family_test,
 	::testing::ValuesIn(all_families)
 );

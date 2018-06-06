@@ -113,6 +113,16 @@ namespace sys {
 			return execute_command(args.argv());
 		}
 
+		/**
+		\brief \copybrief execute(char* const[], char* const[])
+		\ingroup ipc
+		\details \copydetails execute_command(char* const[], char* const[])
+		*/
+		inline int
+		execute_command(const argstream& args, const argstream& env) {
+			return execute_command(args.argv(), env.argv());
+		}
+
 	}
 
 }

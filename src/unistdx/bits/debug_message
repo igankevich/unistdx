@@ -26,8 +26,8 @@ namespace sys {
 			const Args& ... tokens
 		):
 		_spec(spec) {
-			assert(name);
-			assert(fmt);
+			assert(name); // LCOV_EXCL_LINE
+			assert(fmt); // LCOV_EXCL_LINE
 			this->write_name(name);
 			this->format_msg(fmt, tokens ...);
 		}

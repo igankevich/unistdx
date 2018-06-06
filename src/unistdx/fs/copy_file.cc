@@ -5,38 +5,16 @@
 #include <unistdx/io/fildes>
 
 #if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
-#include <sys/syscall.h>
 #include <unistd.h>
-#elif defined(UNISTDX_HAVE_SENDFILE)
+#endif
+#if defined(UNISTDX_HAVE_SENDFILE)
 #include <sys/sendfile.h>
 #endif
 
 namespace {
 
-	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
-	inline loff_t
-	copy_file_range_priv(
-		int fd_in,
-		loff_t* off_in,
-		int fd_out,
-		loff_t* off_out,
-		size_t len,
-		unsigned int flags
-	) {
-		return syscall(
-			__NR_copy_file_range,
-			fd_in,
-			off_in,
-			fd_out,
-			off_out,
-			len,
-			flags
-		);
-	}
-	#endif
-
 	inline void
-	copy_file_simple(
+	do_simple_copy(
 		sys::fildes& in,
 		sys::fildes& out,
 		sys::offset_type file_size
@@ -54,6 +32,55 @@ namespace {
 			} while (nwritten != m);
 		} while (nread != file_size);
 	}
+
+	#if defined(UNISTDX_HAVE_SENDFILE)
+	void
+	do_sendfile(
+		sys::fildes& in,
+		sys::fildes& out,
+		sys::offset_type size
+	) {
+		sys::fd_type ifd = in.fd();
+		sys::fd_type ofd = out.fd();
+		sys::offset_type offset = 0;
+		ssize_t n;
+		while ((n = ::sendfile(ofd, ifd, &offset, size)) > 0) {
+			size -= n;
+		}
+		if (size != 0) {
+			if (errno != EINVAL && errno != ENOSYS) {
+				UNISTDX_THROW_BAD_CALL();
+			}
+			do_simple_copy(in, out, size);
+		}
+	}
+	#endif
+
+	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
+	inline void
+	do_copy_file_range(
+		sys::fildes& in,
+		sys::fildes& out,
+		sys::offset_type size
+	) {
+		sys::fd_type ifd = in.fd();
+		sys::fd_type ofd = out.fd();
+		ssize_t n;
+		while ((n = ::copy_file_range(ifd, nullptr, ofd, nullptr, size, 0)) > 0) {
+			size -= n;
+		}
+		if (size != 0) {
+			if (errno != EXDEV && errno != EBADF && errno != ENOSYS) {
+				UNISTDX_THROW_BAD_CALL();
+			}
+			#if defined(UNISTDX_HAVE_SENDFILE)
+			do_sendfile(in, out, size);
+			#else
+			do_simple_copy(in, out, size);
+			#endif
+		}
+	}
+	#endif
 
 }
 
@@ -74,35 +101,12 @@ sys::copy_file(const path& src, const path& dest) {
 		0644
 	);
 	file_stat st(src);
-	offset_type size = st.size();
-	#if defined(UNISTDX_HAVE_SENDFILE) || defined(UNISTDX_HAVE_COPY_FILE_RANGE)
-	fd_type ifd = in.fd();
-	fd_type ofd = out.fd();
-	ssize_t n;
+	const offset_type size = st.size();
 	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
-	while ((n = ::copy_file_range_priv(ifd, nullptr, ofd, nullptr, size, 0)) > 0) {
-		size -= n;
-	}
-	if (size != 0) {
-		if (errno != EXDEV && errno != EBADF && errno != ENOSYS) {
-			UNISTDX_THROW_BAD_CALL();
-		}
-		copy_file_simple(in, out, size);
-	}
+	do_copy_file_range(in, out, size);
 	#elif defined(UNISTDX_HAVE_SENDFILE)
-	offset_type offset = 0;
-	while ((n = ::sendfile(ofd, ifd, &offset, size)) > 0) {
-		size -= n;
-	}
-	if (size != 0) {
-		if (errno != EINVAL && errno != ENOSYS) {
-			UNISTDX_THROW_BAD_CALL();
-		}
-		copy_file_simple(in, out, size);
-	}
-	#endif
+	do_sendfile(in, out, size);
 	#else
-	copy_file_simple(in, out, size);
-	#endif // if defined(UNISTDX_HAVE_SENDFILE) ||
-	// defined(UNISTDX_HAVE_COPY_FILE_RANGE)
+	do_simple_copy(in, out, size);
+	#endif
 }

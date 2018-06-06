@@ -14,7 +14,6 @@
 #include <unistdx/base/check>
 #include <unistdx/bits/safe_calls>
 #include <unistdx/ipc/proc_info>
-#include <unistdx/ipc/proc_status>
 #include <unistdx/ipc/signal>
 
 namespace sys {
@@ -143,9 +142,11 @@ namespace sys {
 		/// Process execution was stopped by a signal.
 		stopped = WSTOPPED,
 		/**
-		Process execution was continued with \link signal::resume\endlink signal.
+		Process execution was resumed with \link signal::resume\endlink signal.
 		*/
-		continued = WCONTINUED
+		resumed = WCONTINUED,
+		/// Return immediately, do not wait for child process to exit.
+		non_blocking = WNOHANG
 	};
 
 	/**
@@ -154,10 +155,11 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	*/
-	enum class process_flag {
+	enum class process_flag: int {
 		fork
 		#if defined(UNISTDX_HAVE_CLONE)
-		, wait_for_exec
+		, wait_for_exec = CLONE_VFORK
+		, new_process_namespace = CLONE_NEWPID
 		#endif
 	};
 
@@ -209,12 +211,12 @@ namespace sys {
 					std::exit(ret);
 				}
 			#if defined(UNISTDX_HAVE_CLONE)
-			} else if (pf == process_flag::wait_for_exec) {
+			} else {
 				char stack[4096] = {0};
 				UNISTDX_CHECK(this->_pid = ::clone(
 					&bits::child_main<F>,
 					stack + sizeof(stack),
-					CLONE_VFORK | SIGCHLD,
+					static_cast<int>(pf) | SIGCHLD,
 					&f
 				));
 			#endif
@@ -299,14 +301,34 @@ namespace sys {
 		}
 
 		/**
+		\brief
+		Interrupt the process by sending \link signal::stop\endlink signal.
+		\throws bad_call
+		\see \man{kill,2}
+		*/
+		inline void
+		stop() {
+			this->send(sys::signal::stop);
+		}
+
+		/**
+		\brief
+		Interrupt the process by sending \link signal::resume\endlink signal.
+		\throws bad_call
+		\see \man{kill,2}
+		*/
+		inline void
+		resume() {
+			this->send(sys::signal::resume);
+		}
+
+		/**
 		\brief Send signal \p s to the process.
 		\throws bad_call
 		*/
 		inline void
 		send(sys::signal s) {
-			if (this->_pid > 0) {
-		    	UNISTDX_CHECK(do_kill(s));
-			}
+			UNISTDX_CHECK(this->do_kill(s));
 		}
 
 		/**
@@ -316,18 +338,17 @@ namespace sys {
 		\see std::errc
 		\see \man{waitpid,2}
 		*/
-		inline sys::proc_status
-		wait(wait_flags flags = wait_flags(0)) {
-			int stat = 0;
+		inline sys::proc_info
+		wait(wait_flags flags = wait_flags::exited) {
+			sys::siginfo_type info;
 			if (this->_pid > 0) {
-				UNISTDX_CHECK_IF_NOT(EINTR, ::waitpid(
-					this->_pid,
-					&stat,
-					static_cast<int>(flags)
-				));
+				UNISTDX_CHECK_IF_NOT(
+					EINTR,
+					::waitid(P_PID, this->_pid, &info, static_cast<int>(flags))
+				);
 				this->_pid = 0;
 			}
-			return sys::proc_status(stat);
+			return sys::proc_info(info);
 		}
 
 		/// Check if process is alive by sending nought signal to it.

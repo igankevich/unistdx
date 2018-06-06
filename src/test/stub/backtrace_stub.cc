@@ -1,6 +1,6 @@
 #include <execinfo.h>
 
 char**
-backtrace_symbols(void *const *__array, int __size) {
+backtrace_symbols(void *const *, int) {
 	return nullptr;
 }

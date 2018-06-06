@@ -1,8 +1,16 @@
-#include <gtest/gtest.h>
+#include <unistdx/config>
+
+#if defined(UNISTDX_HAVE_NETLINK)
+#include <linux/rtnetlink.h>
+#endif
+
 #include <iostream>
 #include <random>
+#include <vector>
+
 #include <unistdx/net/endpoint>
 
+#include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/make_types>
 
 void
@@ -67,6 +75,10 @@ TYPED_TEST(EndpointTest, WriteReadMultiple) {
 }
 
 TEST(EndpointIPv4Test, All) {
+	EXPECT_EQ(
+		sizeof(sys::sockinet4_type),
+		sys::endpoint({127,0,0,1}, 0).sockaddrlen()
+	);
 	// basic functionality
 	check_read("0.0.0.0:0", sys::endpoint({0,0,0,0}, 0));
 	check_read("0.0.0.0:1234", sys::endpoint({0,0,0,0}, 1234));
@@ -106,6 +118,10 @@ TEST(EndpointIPv4Test, All) {
 }
 
 TEST(EndpointIPv6Test, All) {
+	EXPECT_EQ(
+		sizeof(sys::sockinet6_type),
+		sys::endpoint({0x0,0,0,0,0,0,0,1}, 0).sockaddrlen()
+	);
 	// basic functionality
 	check_read("[::1]:0", sys::endpoint({0x0,0,0,0,0,0,0,1}, 0));
 	check_read("[1::1]:0", sys::endpoint({0x1,0,0,0,0,0,0,1}, 0));
@@ -232,11 +248,62 @@ TEST(Endpoint, Literals) {
 	EXPECT_EQ(endpU, endpV);
 }
 
-TEST(Endpoint, UnixDomain) {
+TEST(endpoint, unix_domain) {
+	EXPECT_EQ(sys::family_type::unix, sys::endpoint("/path").family());
 	std::clog << sys::endpoint("/path/to/socket") << std::endl;
 	std::clog << sys::endpoint("\0/path/to/socket") << std::endl;
 	EXPECT_EQ(sys::endpoint("/path"), sys::endpoint("/path"));
 	EXPECT_EQ(sys::endpoint("\0/path"), sys::endpoint("\0/path"));
 	EXPECT_NE(sys::endpoint("\0/path"), sys::endpoint("/path"));
 	EXPECT_NE(sys::endpoint("/path"), sys::endpoint("\0/path"));
+	EXPECT_NE(sys::endpoint("/path"), sys::endpoint("\0/path"));
+	EXPECT_FALSE(sys::endpoint("/path") < sys::endpoint("/path"));
+}
+
+struct endpoint_test: public ::testing::TestWithParam<sys::endpoint> {};
+
+std::vector<sys::endpoint> all_endpoints{
+	sys::endpoint(),
+	sys::endpoint({192,168,0,1},1000),
+	sys::endpoint({0,0,0,0,0,0,0,1},1000),
+};
+
+TEST_P(endpoint_test, bstream_insert_extract) {
+	test::bstream_insert_extract(GetParam());
+}
+
+INSTANTIATE_TEST_CASE_P(
+	for_all_endpoints,
+	endpoint_test,
+	::testing::ValuesIn(all_endpoints)
+);
+
+#if defined(UNISTDX_HAVE_NETLINK)
+TEST(endpoint, netlink) {
+	EXPECT_EQ(
+		sys::family_type::netlink,
+		sys::endpoint(RTMGRP_IPV4_IFADDR).family()
+	);
+	EXPECT_EQ(
+		sys::endpoint(RTMGRP_IPV4_IFADDR),
+		sys::endpoint(RTMGRP_IPV4_IFADDR)
+	);
+	EXPECT_FALSE(
+		sys::endpoint(RTMGRP_IPV4_IFADDR)
+		<
+		sys::endpoint(RTMGRP_IPV4_IFADDR)
+	);
+	EXPECT_NE(sys::endpoint(), sys::endpoint(RTMGRP_IPV4_IFADDR));
+}
+#endif
+
+TEST(endpoint, bad_family) {
+	sys::endpoint a;
+	a.sockaddr()->sa_family = 1111;
+	sys::endpoint b;
+	b.sockaddr()->sa_family = 1111;
+	EXPECT_FALSE(a < b);
+	EXPECT_NE(a, b);
+	EXPECT_EQ(0, a.sockaddrlen());
+	EXPECT_EQ(0, b.sockaddrlen());
 }

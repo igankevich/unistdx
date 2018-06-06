@@ -92,6 +92,7 @@ namespace {
 template<class Ch, class Tr>
 void
 sys::basic_websocketbuf<Ch,Tr>::put_header() {
+	// LCOV_EXCL_START
 	assert(this->_valid);
 	assert(
 		(this->_role == role_type::server &&
@@ -99,6 +100,7 @@ sys::basic_websocketbuf<Ch,Tr>::put_header() {
 		(this->_role == role_type::client &&
 		 this->_cstate == client_state::end)
 	);
+	// LCOV_EXCL_STOP
 	// put dummy frame with the max length
 	constexpr const size_t n = websocket_frame::max_size();
 	char buf[n] = {0};
@@ -108,6 +110,7 @@ sys::basic_websocketbuf<Ch,Tr>::put_header() {
 template<class Ch, class Tr>
 std::streamsize
 sys::basic_websocketbuf<Ch,Tr>::overwrite_header(std::streamsize n) {
+	// LCOV_EXCL_START
 	assert(this->_valid);
 	assert(
 		(this->_role == role_type::server &&
@@ -115,6 +118,7 @@ sys::basic_websocketbuf<Ch,Tr>::overwrite_header(std::streamsize n) {
 		(this->_role == role_type::client &&
 		 this->_cstate == client_state::end)
 	);
+	// LCOV_EXCL_STOP
 	// put real frame with the correct length
 	constexpr const size_t max_hs = websocket_frame::max_size();
 	websocket_frame frame;
@@ -138,6 +142,7 @@ sys::basic_websocketbuf<Ch,Tr>::xgetheader(
 	std::streamsize& header_size,
 	std::streamsize& payload_size
 ) {
+	// LCOV_EXCL_START
 	assert(this->_valid);
 	assert(
 		(this->_role == role_type::server &&
@@ -145,6 +150,7 @@ sys::basic_websocketbuf<Ch,Tr>::xgetheader(
 		(this->_role == role_type::client &&
 		 this->_cstate == client_state::end)
 	);
+	// LCOV_EXCL_STOP
 	bool success = false;
 	const size_t n = this->egptr() - this->gptr();
 	constexpr const size_t min_hs = websocket_frame::min_size();

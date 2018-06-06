@@ -121,7 +121,7 @@ namespace sys {
 			// check if the header size has changed
 			// depending on the length of the payload
 			const std::streamsize new_hs = this->overwrite_header(ps);
-			assert(new_hs <= hs);
+			assert(new_hs <= hs); // LCOV_EXCL_LINE
 			if (new_hs < hs) {
 				const std::streamsize delta = new_hs - hs;
 				char_type* src = this->opacket_begin();
@@ -147,7 +147,7 @@ namespace sys {
 			if (!this->_ofinished) {
 				off_type offset = this->pptr() - this->pbase();
 				this->pbump(this->_opacketpos - offset);
-				assert(this->pbase() + this->_opacketpos == this->pptr());
+				assert(this->pbase() + this->_opacketpos == this->pptr()); // LCOV_EXCL_LINE
 				this->_opacketpos = 0;
 			}
 		}
@@ -304,8 +304,8 @@ namespace sys {
 		*/
 		inline void
 		seek_ipayloadpos(off_type off) noexcept {
-			assert(this->eback() <= this->ipayload_begin() + off);
-			assert(this->ipayload_begin() + off <= this->egptr());
+			assert(this->eback() <= this->ipayload_begin() + off); // LCOV_EXCL_LINE
+			assert(this->ipayload_begin() + off <= this->egptr()); // LCOV_EXCL_LINE
 			this->setg(
 				this->eback(),
 				this->ipayload_begin() + off,
@@ -433,8 +433,8 @@ namespace sys {
 			this->_ipacketpos = pos1;
 			this->_ipayloadpos = pos2;
 			this->_ipacketsize = n;
-			assert(this->_ipacketpos <= this->_ipayloadpos);
-			assert(this->_ipayloadpos <= this->_ipacketpos + n);
+			assert(this->_ipacketpos <= this->_ipayloadpos); // LCOV_EXCL_LINE
+			assert(this->_ipayloadpos <= this->_ipacketpos + n); // LCOV_EXCL_LINE
 		}
 
 		/**
@@ -579,8 +579,8 @@ namespace sys {
 
 		void
 		setgptr(const streamptr<Ch>& rhs) {
-			assert(this->gptr() <= this->ipayload_end());
-			assert(this->egptr() <= rhs._egptr);
+			assert(this->gptr() <= this->ipayload_end()); // LCOV_EXCL_LINE
+			assert(this->egptr() <= rhs._egptr); // LCOV_EXCL_LINE
 			this->setg(this->eback(), this->ipayload_end(), rhs._egptr);
 		}
 

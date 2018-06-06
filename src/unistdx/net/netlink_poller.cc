@@ -3,7 +3,7 @@
 const char*
 sys::to_string(ifaddr_attribute rhs) {
 	switch (rhs) {
-		case ifaddr_attribute::unknown: return "unknown";
+		case ifaddr_attribute::unspecified: return "unspecified";
 		case ifaddr_attribute::address: return "interface_address";
 		case ifaddr_attribute::local_address: return "local_address";
 		case ifaddr_attribute::interface_name: return "interface_name";

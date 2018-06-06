@@ -3,6 +3,7 @@
 
 namespace sys {
 
+	/// Process exit code type.
 	typedef int code_type;
 
 	/**

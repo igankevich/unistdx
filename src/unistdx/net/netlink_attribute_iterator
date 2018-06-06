@@ -42,8 +42,10 @@ namespace sys {
 		netlink_attribute_iterator(attr_type* rhs, int len):
 		_attr(rhs),
 		_len(len) {
+			// LCOV_EXCL_START
 			assert(this->_attr);
 			assert(this->_len >= 0);
+			// LCOV_EXCL_STOP
 		}
 
 		netlink_attribute_iterator() = default;
@@ -128,7 +130,7 @@ namespace sys {
 
 		inline void
 		do_next() noexcept {
-			assert(this->_attr);
+			assert(this->_attr); // LCOV_EXCL_LINE
 			this->_attr = this->next();
 			if (!this->ok()) {
 				this->_attr = nullptr;

@@ -1,6 +1,8 @@
 #ifndef UNISTDX_FS_IDIRECTORY
 #define UNISTDX_FS_IDIRECTORY
 
+#include <cassert>
+
 #include <unistdx/fs/direntry>
 #include <unistdx/fs/dirstream>
 #include <unistdx/fs/pathentry>
@@ -124,6 +126,7 @@ namespace sys {
 		/// Get next directory entry as \link direntry\endlink.
 		inline basic_idirectory&
 		operator>>(direntry& rhs) {
+			assert(this->is_open()); // LCOV_EXCL_LINE
 			this->read_direntry(rhs);
 			return *this;
 		}
@@ -131,6 +134,7 @@ namespace sys {
 		/// Get next directory entry as \link pathentry\endlink.
 		inline basic_idirectory&
 		operator>>(pathentry& rhs) {
+			assert(this->is_open()); // LCOV_EXCL_LINE
 			this->read_direntry(rhs);
 			return *this;
 		}
@@ -149,12 +153,14 @@ namespace sys {
 
 		inline direntry*
 		read_direntry() noexcept {
+			assert(this->is_open()); // LCOV_EXCL_LINE
 			return static_cast<direntry*>(::readdir(this->_dir));
 		}
 
 		template<class Entry>
 		inline void
 		read_direntry(Entry& rhs) {
+			assert(this->is_open()); // LCOV_EXCL_LINE
 			if (good()) {
 				bool success = false;
 				while (!success && !this->eof()) {
@@ -173,6 +179,7 @@ namespace sys {
 
 		inline void
 		read_direntry(direntry& rhs) {
+			assert(this->is_open()); // LCOV_EXCL_LINE
 			if (this->good()) {
 				bool success = false;
 				while (!success && !this->eof()) {

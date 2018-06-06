@@ -11,6 +11,7 @@
 #include <mutex>
 
 #include <unistdx/test/make_types>
+#include <unistdx/test/exception>
 
 template <class T>
 struct SharedMemTest: public ::testing::Test {};
@@ -60,10 +61,8 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
 	typedef TypeParam T;
 	typedef typename sys::shared_mem<T> shmem;
 	typedef typename sys::basic_shmembuf<T> shmembuf;
-	typedef typename shmem::size_type size_type;
 	typedef std::lock_guard<shmembuf> shmembuf_guard;
-	const size_type SHMEM_SIZE = sys::page_size()*4;
-	shmembuf buf1(shmem(0600, SHMEM_SIZE));
+	shmembuf buf1(shmem(0600, sys::page_size()*4));
 	// generated random data
 	const size_t ninputs = 12;
 	std::default_random_engine rng;
@@ -102,6 +101,16 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
 		shmembuf_guard lock(buf1);
 		buf1.sputn(input.data(), input.size());
 	}
-	sys::proc_status status = consumer.wait();
+	sys::proc_info status = consumer.wait();
 	EXPECT_TRUE(status.exited() && status.exit_code() == EXIT_SUCCESS);
+}
+
+TEST(shmembuf, errors) {
+	sys::size_type page_size =  sys::page_size();
+	sys::shmembuf buf(sys::shared_mem<char>(0600, page_size));
+	std::vector<char> tmp(page_size*2);
+	UNISTDX_EXPECT_ERROR(
+		std::errc::not_enough_memory,
+		buf.sputn(tmp.data(), tmp.size())
+	);
 }

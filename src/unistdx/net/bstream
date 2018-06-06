@@ -169,7 +169,7 @@ namespace sys {
 		Put \p n bytes from byte buffer pointed by \p buf
 		to binary stream.
 		*/
-		UNISTDX_NON_NULL(1) inline basic_bstream&
+		UNISTDX_NON_NULL_1 inline basic_bstream&
 		write(const char_type* buf, std::streamsize n) {
 			assert(this->_buf); // LCOV_EXCL_LINE
 			assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
@@ -181,7 +181,7 @@ namespace sys {
 		Get \p n bytes from binary stream and store them
 		in byte buffer pointed by \p buf.
 		*/
-		UNISTDX_NON_NULL(1) inline basic_bstream&
+		UNISTDX_NON_NULL_1 inline basic_bstream&
 		read(char_type* buf, std::streamsize n) {
 			assert(this->_buf); // LCOV_EXCL_LINE
 			assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE

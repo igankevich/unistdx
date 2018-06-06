@@ -125,12 +125,12 @@ if cpp.has_header('execinfo.h')
 endif
 foreach name : ['getpwnam_r' , 'getpwuid_r']
 	if cpp.has_header_symbol('pwd.h', name)
-		config.set('UNISTDX_HAVE_' + name, true)
+		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
 	endif
 endforeach
 foreach name : ['getgrnam_r', 'getgrgid_r']
 	if cpp.has_header_symbol('grp.h', name)
-		config.set('UNISTDX_HAVE_' + name, true)
+		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
 	endif
 endforeach
 if cpp.has_header_symbol('sys/mman.h', 'mmap')
@@ -142,18 +142,17 @@ endif
 if cpp.has_header_symbol('sys/sendfile.h', 'sendfile')
 	config.set('UNISTDX_HAVE_SENDFILE', true)
 endif
-if cpp.has_header_symbol('sys/syscall.h', '__NR_copy_file_range')
-	config.set('UNISTDX_HAVE_COPY_FILE_RANGE', true)
-endif
 if cpp.has_header_symbol('sched.h', 'clone')
 	config.set('UNISTDX_HAVE_CLONE', true)
 endif
 if cpp.has_header_symbol('sys/prctl.h', 'prctl')
 	config.set('UNISTDX_HAVE_PRCTL', true)
 endif
-if cpp.has_header_symbol('unistd.h', 'pipe2')
-	config.set('UNISTDX_HAVE_PIPE2', true)
-endif
+foreach name : ['pipe2', 'copy_file_range']
+	if cpp.has_header_symbol('unistd.h', name)
+		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
+	endif
+endforeach
 config.set('UNISTDX_VERSION', meson.project_version())
 unistdx_version = meson.project_version().split('.')
 config.set('UNISTDX_MAJOR', unistdx_version[0])

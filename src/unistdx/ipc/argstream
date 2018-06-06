@@ -61,7 +61,7 @@ namespace sys {
 		/// Overrides \link std::streambuf::overflow\endlink.
 		inline int_type
 		overflow(int_type c) override {
-			assert(pptr() == epptr());
+			assert(pptr() == epptr()); // LCOV_EXCL_LINE
 			if (not traits_type::eq_int_type(c, traits_type::eof())) {
 				arg_type& arg = this->_args.back();
 				arg.push_back(traits_type::to_char_type(c));

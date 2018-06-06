@@ -11,25 +11,6 @@
 
 namespace sys {
 
-	/**
-	\brief An exception indicating file lock error.
-	\ingroup exception
-	*/
-	class bad_file_lock: public std::exception {
-
-	public:
-		bad_file_lock() noexcept = default;
-
-		~bad_file_lock() noexcept = default;
-
-		/// Error text.
-		const char*
-		what() const noexcept override {
-			return "bad file lock";
-		}
-
-	};
-
 	/// File lock types.
 	enum struct file_lock_type: int {
 		/// Shared read lock.

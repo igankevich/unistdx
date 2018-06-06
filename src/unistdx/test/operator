@@ -33,11 +33,14 @@ namespace test {
 	inline void
 	stream_insert_equals(const char* s, const T& obj) {
 		EXPECT_EQ(s, stream_insert<T>(obj));
-		std::stringstream str;
-		str.fill(' ');
-		str.fill(' ');
-		str << obj;
-		EXPECT_EQ(s, str.str());
+	}
+
+	template <class T>
+	inline void
+	stream_insert_contains(const char* s, const T& obj) {
+		std::string str = stream_insert<T>(obj);
+		EXPECT_TRUE(str.find(s) != std::string::npos)
+			<< "string=" << str;
 	}
 
 	template <class T>

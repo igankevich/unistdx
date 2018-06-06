@@ -1,5 +1,4 @@
 foreach conf : [
-	['copy_file', [unistdx,gtest]],
 	['file_mode', [unistdx,gtest]],
 	['file_mutex', [unistdx,gtest]],
 	['file_stat', [unistdx,gtest]],
@@ -22,3 +21,22 @@ foreach conf : [
 		)
 	)
 endforeach
+
+# copy_file + stubs {{{
+copy_file_test = executable(
+	'copy_file_test',
+	sources: 'copy_file_test.cc',
+	include_directories: srcdir,
+	dependencies: [unistdx,gtest]
+)
+
+stub1 = copy_file_range_stub.full_path()
+stub2 = ':'.join([
+	copy_file_range_stub.full_path(),
+	sendfile_stub.full_path()
+])
+
+test('fs/copy_file', copy_file_test)
+test('fs/copy_file-stub-1', copy_file_test, env: ['LD_PRELOAD=' + stub1])
+test('fs/copy_file-stub-2', copy_file_test, env: ['LD_PRELOAD=' + stub2])
+# }}}

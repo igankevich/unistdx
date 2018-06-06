@@ -1,7 +1,9 @@
 #ifndef UNISTDX_TEST_TMPDIR
 #define UNISTDX_TEST_TMPDIR
 
+#include <algorithm>
 #include <fstream>
+#include <sstream>
 
 #include <unistdx/ipc/execute>
 #include <unistdx/ipc/process>
@@ -10,9 +12,19 @@
 
 namespace test {
 
-	inline const char*
+	inline std::string
 	current_test_name() {
-		return ::testing::UnitTest::GetInstance()->current_test_info()->name();
+		std::string name =
+			::testing::UnitTest::GetInstance()->current_test_info()->name();
+		std::transform(
+			name.begin(),
+			name.end(),
+			name.begin(),
+			[] (char ch) {
+				return ch == '/' ? '_' : ch;
+			}
+		);
+		return name;
 	}
 
 	template <class It>
@@ -35,7 +47,7 @@ namespace test {
 
 		inline
 		tmpdir():
-		tmpdir(current_test_name()) {}
+		tmpdir(current_test_name().data()) {}
 
 		inline explicit
 		tmpdir(const char* dirname):
@@ -81,7 +93,7 @@ namespace test {
 					return sys::this_process::execute_command(args);
 				}
 			};
-			sys::proc_status status = child.wait();
+			sys::proc_info status = child.wait();
 			ASSERT_TRUE(status.exited());
 			ASSERT_EQ(0, status.exit_code());
 		}
@@ -96,7 +108,7 @@ namespace test {
 					return sys::this_process::execute_command(args);
 				}
 			};
-			sys::proc_status status = child.wait();
+			sys::proc_info status = child.wait();
 			ASSERT_TRUE(status.exited());
 			ASSERT_EQ(0, status.exit_code());
 		}
@@ -120,12 +132,19 @@ namespace test {
 
 	};
 
+	inline sys::path
+	unique_path(const char* func, const char* suffix) {
+		std::stringstream str;
+		str << func << '_';
+		str << current_test_name() << '_';
+		str << sys::this_process::id() << '_';
+		str << suffix;
+		return sys::path(str.str());
+	}
+
 }
 
-#define UNISTDX_TMPDIR \
-	(::sys::path(std::string(__func__) + "_" + ::test::current_test_name()))
-
-#define UNISTDX_TMPDIR_OUT \
-	(::sys::path(std::string(__func__) + "_" + ::test::current_test_name() + "_out"))
+#define UNISTDX_TMPDIR (::test::unique_path(__func__, "in"))
+#define UNISTDX_TMPDIR_OUT (::test::unique_path(__func__, "out"))
 
 #endif // vim:filetype=cpp

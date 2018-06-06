@@ -200,7 +200,7 @@ namespace sys {
 		/// \copydoc operator<
 		inline bool
 		operator!=(const endpoint& rhs) const noexcept {
-			return !operator==(rhs);
+			return !this->operator==(rhs);
 		}
 
 		/// Returns true, if endpoint has valid address and family.

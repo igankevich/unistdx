@@ -122,16 +122,20 @@ namespace sys {
 		/// Append packet payload starting from the beginning.
 		inline void
 		append_payload(basic_pstream& rhs) {
+			// LCOV_EXCL_START
 			assert(this->rdbuf());
 			assert(rhs.rdbuf());
+			// LCOV_EXCL_STOP
 			::sys::append_payload(*this->rdbuf(), *rhs.rdbuf());
 		}
 
 		/// Append packet payload starting from the current position.
 		inline void
 		append_payload_cur(basic_pstream& src) {
+			// LCOV_EXCL_START
 			assert(this->rdbuf());
 			assert(src.rdbuf());
+			// LCOV_EXCL_STOP
 			::sys::append_payload(
 				*this->rdbuf(),
 				*src.rdbuf(),

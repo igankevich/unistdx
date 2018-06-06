@@ -196,50 +196,6 @@ sys::socket::create_socket_if_necessary(const endpoint& e) {
 	}
 }
 
-#if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
-namespace {
-	union user_credentials_message {
-		sys::cmessage_header h;
-		char bytes[CMSG_SPACE(sizeof(sys::user_credentials))];
-	};
-}
-
-void
-sys::send_credentials(socket& sock, const void* data, size_t n) {
-	message_header h;
-	io_vector v {const_cast<void*>(data), n};
-	h.msg_iov = &v;
-	h.msg_iovlen = 1;
-	h.msg_name = nullptr;
-	h.msg_namelen = 0;
-	h.msg_control = nullptr;
-	h.msg_controllen = 0;
-	sock.send(&h, 0);
-}
-
-void
-sys::receive_credentials(
-	socket& sock,
-	message_header& h,
-	void* data,
-	size_t n
-) {
-	user_credentials_message m;
-	m.h.cmsg_len = CMSG_LEN(sizeof(m));
-	m.h.cmsg_level = SOL_SOCKET;
-	m.h.cmsg_type = SCM_CREDENTIALS;
-	io_vector v {data, n};
-	h.msg_iov = &v;
-	h.msg_iovlen = 1;
-	h.msg_name = nullptr;
-	h.msg_namelen = 0;
-	h.msg_control = m.bytes;
-	h.msg_controllen = sizeof(m.bytes);
-	sock.receive(&h, 0);
-}
-
-#endif // if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
-
 #if defined(UNISTDX_HAVE_SO_PEERCRED)
 sys::user_credentials
 sys::socket::credentials() const {

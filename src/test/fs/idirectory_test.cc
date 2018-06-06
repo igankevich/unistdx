@@ -6,6 +6,8 @@
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/odirectory>
 
+#include <unistdx/test/operator>
+
 #include "base.hh"
 
 TEST(idirectory, open_close) {
@@ -72,5 +74,33 @@ TEST(idirectory, insert) {
 	EXPECT_EQ(orig, copied)
 	    << "bad file copy from " << tdir.name()
 	    << " to " << otdir.name();
+}
+
+TEST(direntry, members) {
+	std::vector<std::string> files {"a", "b", "c"};
+	test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
+	sys::idirectory dir(tdir);
+	sys::direntry ent1, ent2, ent3;
+	EXPECT_TRUE(dir);
+	EXPECT_TRUE(dir.is_open());
+	dir >> ent1;
+	EXPECT_TRUE(dir);
+	EXPECT_EQ(ent1.name(), test::stream_insert(ent1));
+	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(dir.getpath(), ent1));
+	EXPECT_NE(0, ent1.inode());
+	EXPECT_FALSE(ent1.is_parent_dir());
+	EXPECT_FALSE(ent1.is_working_dir());
+	dir >> ent2;
+	EXPECT_TRUE(dir);
+	EXPECT_EQ(ent2.name(), test::stream_insert(ent2));
+	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(dir.getpath(), ent2));
+	EXPECT_STRNE(ent1.name(), ent2.name());
+	EXPECT_NE(ent1, ent2);
+	ent3 = ent1;
+	EXPECT_EQ(ent1, ent3);
+	sys::direntry ent4(ent2);
+	EXPECT_EQ(ent2, ent4);
+	sys::direntry ent5(std::move(ent4));
+	EXPECT_EQ(ent5, ent4);
 }
 

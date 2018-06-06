@@ -26,7 +26,8 @@ namespace sys {
 	*/
 	typedef struct ::cmsghdr cmessage_header;
 
-	#if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
+	#if defined(UNISTDX_HAVE_SCM_CREDENTIALS) || \
+		defined(UNISTDX_HAVE_SO_PEERCRED)
 	/// Alias to \c ucred system type.
 	typedef struct ::ucred user_credentials;
 	#endif
@@ -396,34 +397,6 @@ namespace sys {
 	/// Print socket file descriptor and status.
 	std::ostream&
 	operator<<(std::ostream& out, const socket& rhs);
-
-	#if defined(UNISTDX_HAVE_SCM_CREDENTIALS)
-	/**
-	\brief
-	Manually send process UID, GID, PID as opaque array pointed by \p data.
-	\note On Linux \link socket::credentials\endlink returns credentials
-	without manually sending and receiving this message provided that
-	\link socket::pass_credentials\endlink socket option is set.
-	\ingroup net
-	\see \man{cmsg,3}
-	\see \man{unix,7}
-	*/
-	void
-	send_credentials(socket& sock, const void* data, size_t n);
-
-	/**
-	\brief
-	Manually receive process UID, GID, PID as opaque array pointed by \p data.
-	\note On Linux \link socket::credentials\endlink returns credentials
-	without manually sending and receiving this message provided that
-	\link socket::pass_credentials\endlink socket option is set.
-	\ingroup net
-	\see \man{cmsg,3}
-	\see \man{unix,7}
-	*/
-	void
-	receive_credentials(socket& sock, message_header& h, void* data, size_t n);
-	#endif
 
 	/**
 	\brief

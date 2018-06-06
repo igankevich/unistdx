@@ -1,4 +1,5 @@
 foreach conf : [
+	['execute', [unistdx,gtest]],
 	['identity', [unistdx,gtest]],
 	['proc_status', [unistdx,gtest]],
 	['process', [unistdx,gtest]],
@@ -20,3 +21,14 @@ foreach conf : [
 		)
 	)
 endforeach
+
+test(
+	'ipc/identity-stub',
+	executable(
+		'identity_stub_test',
+		sources: 'identity_stub_test.cc',
+		include_directories: srcdir,
+		dependencies: [unistdx,gtest]
+	),
+	env: ['LD_PRELOAD=' + setgid_stub.full_path()]
+)

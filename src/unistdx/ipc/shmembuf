@@ -50,6 +50,9 @@ namespace sys {
 			pos_type poff = 0;
 		};
 
+	private:
+		sys::shared_mem<char_type> _sharedmem;
+		shmem_header* _sharedpart = nullptr;
 
 	public:
 
@@ -79,35 +82,6 @@ namespace sys {
 			return this->_sharedmem;
 		}
 
-		/// Overrides \link std::streambuf::overflow\endlink.
-		int_type
-		overflow(int_type c = traits_type::eof()) override {
-			int_type ret;
-			if (c != traits_type::eof()) {
-				this->grow_sharedmem();
-				*this->pptr() = c;
-				this->pbump(1);
-				this->setg(this->eback(), this->gptr(), this->egptr()+1);
-				ret = traits_type::to_int_type(c);
-			} else {
-				ret = traits_type::eof();
-			}
-			return ret;
-		}
-
-		/// Overrides \link std::streambuf::underflow\endlink.
-		int_type
-		underflow() override {
-			int_type ret;
-			if (this->egptr() < this->pptr()) {
-				this->setg(this->eback(), this->gptr(), this->pptr());
-				ret = traits_type::to_int_type(*this->gptr());
-			} else {
-				ret = traits_type::eof();
-			}
-			return ret;
-		}
-
 		/// Overrides \link std::streambuf::xsputn\endlink.
 		std::streamsize
 		xsputn(const char_type* s, std::streamsize n) override {
@@ -122,8 +96,12 @@ namespace sys {
 			const char_type* last = first + n;
 			while (first != last) {
 				if (this->epptr() == this->pptr()) {
-					this->overflow(*first);
-					++first;
+					throw bad_call(
+						std::errc::not_enough_memory,
+						__FILE__,
+						__LINE__,
+						__func__
+					);
 				}
 				const std::streamsize
 				    m = std::min(last-first, this->epptr() - this->pptr());
@@ -132,6 +110,14 @@ namespace sys {
 				first += m;
 			}
 			return n;
+		}
+
+		/// Overrides \link std::streambuf::xsgetn\endlink.
+		std::streamsize
+		xsgetn(char_type* s, std::streamsize n) override {
+			const std::streamsize m = std::min(n, this->available());
+			traits_type::copy(s, this->gptr(), m);
+			return m;
 		}
 
 		/// Lock shared memory buffer.
@@ -222,36 +208,10 @@ namespace sys {
 		#endif
 
 		inline void
-		grow_sharedmem() {
-			#ifndef NDEBUG
-			debug("grow");
-			#endif
-			/*
-			_sharedmem.resize(_sharedmem.size() * size_type(2));
-			_sharedpart = static_cast<shmem_header*>(_sharedmem.ptr());
-			*/
-			this->updatebufs();
-			#ifndef NDEBUG
-			debug("after grow");
-			#endif
-		}
-
-		inline void
 		sync_sharedmem() {
 			//this->_sharedmem.sync();
 			this->_sharedpart = static_cast<shmem_header*>(_sharedmem.ptr());
 			this->readoffs();
-		}
-
-		inline void
-		updatebufs() {
-			const std::ptrdiff_t poff = this->pptr() - this->pbase();
-			const std::ptrdiff_t goff = this->gptr() - this->eback();
-			char_type* base = _sharedmem.begin() + sizeof(shmem_header);
-			char_type* end = _sharedmem.end();
-			this->setp(base, end);
-			this->pbump(poff);
-			this->setg(base, base + goff, base + poff);
 		}
 
 		inline void
@@ -278,9 +238,6 @@ namespace sys {
 			this->debug(__func__);
 			#endif
 		}
-
-		sys::shared_mem<char_type> _sharedmem;
-		shmem_header* _sharedpart = nullptr;
 
 	};
 

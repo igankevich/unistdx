@@ -66,7 +66,7 @@ TEST(two_way_pipe, child_close_in_child) {
 	};
 	p.close_in_parent();
 	EXPECT_NO_THROW(p.validate());
-	sys::proc_status status = child.wait();
+	sys::proc_info status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 
@@ -91,7 +91,7 @@ TEST(two_way_pipe, child_close_unused) {
 	};
 	p.close_in_parent();
 	EXPECT_NO_THROW(p.validate());
-	sys::proc_status status = child.wait();
+	sys::proc_info status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 

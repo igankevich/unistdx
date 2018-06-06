@@ -256,7 +256,7 @@ namespace sys {
 	/// \brief Interface address attributes.
 	/// \ingroup net
 	enum class ifaddr_attribute: u32 {
-		unknown = IFA_UNSPEC,
+		unspecified = IFA_UNSPEC,
 		address = IFA_ADDRESS,
 		local_address = IFA_LOCAL,
 		interface_name = IFA_LABEL,

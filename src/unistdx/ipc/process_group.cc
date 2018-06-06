@@ -7,7 +7,7 @@ int
 sys::process_group::wait() {
 	int ret = 0;
 	for (process& p : this->_procs) {
-		sys::proc_status x = p.wait();
+		sys::proc_info x = p.wait();
 		#ifndef NDEBUG
 		log_message("sys", "process _ terminated with status _", p, x);
 		#endif

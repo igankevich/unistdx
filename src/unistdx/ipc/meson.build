@@ -1,7 +1,6 @@
 libunistdx_src += files([
 	'identity.cc',
 	'proc_info.cc',
-	'proc_status.cc',
 	'process.cc',
 	'process_group.cc',
 	'signal.cc',
@@ -13,7 +12,6 @@ install_headers(
 	'execute',
 	'identity',
 	'proc_info',
-	'proc_status',
 	'process',
 	'process_group',
 	'process_semaphore',

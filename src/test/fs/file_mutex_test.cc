@@ -1,4 +1,5 @@
 #include <chrono>
+#include <cstdlib>
 #include <mutex>
 #include <thread>
 
@@ -27,4 +28,17 @@ TEST(FileMutex, Check) {
 	child.terminate();
 	child.join();
 	EXPECT_TRUE(mtx.try_lock());
+	EXPECT_NO_THROW(mtx.lock());
+	EXPECT_NO_THROW(mtx.unlock());
 }
+
+TEST(file_mutex, bad_lock) {
+	sys::file_mutex mtx;
+	EXPECT_NO_THROW(mtx.open(UNISTDX_TMPFILE, 600));
+	EXPECT_NO_THROW(mtx.close());
+	EXPECT_NO_THROW(sys::remove(UNISTDX_TMPFILE));
+	EXPECT_THROW(mtx.try_lock(), sys::bad_call);
+	EXPECT_THROW(mtx.lock(), sys::bad_call);
+	EXPECT_THROW(mtx.unlock(), sys::bad_call);
+}
+

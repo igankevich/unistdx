@@ -26,10 +26,23 @@ namespace sys {
 
 		/// Construct the error with precise location where it was thrown.
 		UNISTDX_NON_NULL_ALL inline
-		bad_call(const char* file, const int line, const char* function) noexcept:
-		std::system_error(errno, std::generic_category()),
-		_file(file), _line(line), _function(function)
-		{}
+		bad_call(
+			std::errc errcond,
+			const char* file,
+			const int line,
+			const char* function
+		) noexcept:
+		std::system_error(int(errcond), std::generic_category()),
+		_file(file), _line(line), _function(function) {}
+
+		/// Construct the error with precise location where it was thrown.
+		UNISTDX_NON_NULL_ALL inline
+		bad_call(
+			const char* file,
+			const int line,
+			const char* function
+		) noexcept:
+		bad_call(std::errc(errno), file, line, function) {}
 
 		friend std::ostream&
 		operator<<(std::ostream& out, const bad_call& rhs);

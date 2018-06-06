@@ -108,3 +108,29 @@ TEST(ifaddr_attribute, print) {
 		sys::ifaddr_attribute(1111)
 	);
 }
+
+struct ifaddr_attribute_test:
+	public ::testing::TestWithParam<sys::ifaddr_attribute> {};
+
+std::vector<sys::ifaddr_attribute> all_attributes{
+	sys::ifaddr_attribute::unspecified,
+	sys::ifaddr_attribute::address,
+	sys::ifaddr_attribute::local_address,
+	sys::ifaddr_attribute::interface_name,
+	sys::ifaddr_attribute::broadcast_address,
+	sys::ifaddr_attribute::anycast_address,
+	sys::ifaddr_attribute::address_info,
+	sys::ifaddr_attribute::multicast_address,
+	sys::ifaddr_attribute::flags,
+};
+
+TEST_P(ifaddr_attribute_test, print) {
+	EXPECT_NE("unknown", test::stream_insert(GetParam()));
+}
+
+INSTANTIATE_TEST_CASE_P(
+	for_all_ifaddr_attributes,
+	ifaddr_attribute_test,
+	::testing::ValuesIn(all_attributes)
+);
+

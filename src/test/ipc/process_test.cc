@@ -22,7 +22,7 @@ TEST(Process, Fork) {
 			return ret;
 		}
 	};
-	sys::proc_status status = child.wait();
+	sys::proc_info status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 
@@ -34,7 +34,7 @@ TEST(Process, ForkExec) {
 			return sys::this_process::execute_command(args.argv());
 		}
 	};
-	sys::proc_status status = child.wait();
+	sys::proc_info status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 
@@ -100,7 +100,7 @@ TEST(Process, LogMessage) {
 		sys::log_message("parent", "message a=_, b=_, c=_", i, i, i);
 	}
 	thr.join();
-	sys::proc_status status = child.wait();
+	sys::proc_info status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 */

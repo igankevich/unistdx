@@ -11,6 +11,8 @@
 #include <unistdx/base/websocketbuf>
 #include <unistdx/io/fildesbuf>
 #include <unistdx/io/pipe>
+
+#include <unistdx/test/operator>
 #include <unistdx/test/random_string>
 
 using sys::u16;
@@ -50,10 +52,14 @@ TEST_P(PacketSizeTest, Write) {
 
 	packetbuf_type buf;
 	buf.role(role::client);
+	EXPECT_EQ(role::client, buf.role());
 	EXPECT_FALSE(buf.client_handshake());
+	EXPECT_FALSE(buf.handshake());
 	buf.pubsync();
 	buf.role(role::server);
+	EXPECT_EQ(role::server, buf.role());
 	EXPECT_FALSE(buf.server_handshake());
+	EXPECT_FALSE(buf.handshake());
 	buf.pubsync();
 	buf.role(role::client);
 	EXPECT_TRUE(buf.client_handshake());
@@ -77,3 +83,9 @@ INSTANTIATE_TEST_CASE_P(
 	::testing::ValuesIn(packet_sizes)
 );
 
+
+TEST(websocket_frame, members) {
+	sys::websocket_frame frame;
+	frame.mask(0);
+	EXPECT_NE("", test::stream_insert(frame));
+}
