@@ -340,12 +340,14 @@ namespace sys {
 		\return true, if there are enough bytes to parse the header
 		*/
 		virtual bool
-		xgetheader(
+		xgetheader( // LCOV_EXCL_LINE
 			std::streamsize& header_size,
 			std::streamsize& payload_size
 		) {
+			// LCOV_EXCL_START
 			payload_size = this->egptr() - this->gptr();
 			return true;
+			// LCOV_EXCL_STOP
 		}
 
 		/**
@@ -461,12 +463,14 @@ namespace sys {
 				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
 				sys::debug_message(this->_name, "_ hs=_,ps=_", __func__, hs, payload_size);
 				#endif
+				// LCOV_EXCL_START
 				if (hs < 0) {
 					throw std::invalid_argument("header size is less than nought");
 				}
 				if (payload_size < 0) {
 					throw std::invalid_argument("payload size is less than nought");
 				}
+				// LCOV_EXCL_STOP
 				const std::streamsize ps = hs + payload_size;
 				const off_type p = this->gptr() - this->eback();
 				this->set_ipacket(p, p + hs, ps);
@@ -505,7 +509,7 @@ namespace sys {
 			case state_type::initial: out << "initial"; break;
 			case state_type::header_is_ready: out << "header_is_ready"; break;
 			case state_type::payload_is_ready: out << "payload_is_ready"; break;
-			default: break;
+			default: break; // LCOV_EXCL_LINE
 			}
 			return out;
 		}
@@ -595,9 +599,7 @@ namespace sys {
 		/// can be read with a call to \link setg\endlink.
 		void
 		begin_payload() {
-			if (this->_state != state_type::payload_is_ready) {
-				return;
-			}
+			assert(this->_state == state_type::payload_is_ready); // LCOV_EXCL_LINE
 			this->setg(
 				this->eback(),
 				this->ipayload_begin(),

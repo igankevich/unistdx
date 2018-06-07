@@ -114,9 +114,7 @@ namespace sys {
 
 		inline void
 		write() {
-			if (!(*this->_stream << _value)) {
-				this->_stream = nullptr;
-			}
+			*this->_stream << this->_value;
 		}
 
 		stream_type* _stream = nullptr;

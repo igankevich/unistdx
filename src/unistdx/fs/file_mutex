@@ -36,13 +36,19 @@ namespace sys {
 
 	public:
 
+		using fildes::open;
+
 		/// Acquire file lock of type \p tp.
-		void
-		lock(file_lock_type tp=file_lock_type::write_lock);
+		inline void
+		lock(file_lock_type tp=file_lock_type::write_lock) {
+			this->do_lock(int(tp));
+		}
 
 		/// Release file lock.
-		void
-		unlock();
+		inline void
+		unlock() {
+			this->do_lock(LOCK_UN);
+		}
 
 		/// Try to acquire file lock of type \p tp.
 		bool
@@ -80,22 +86,17 @@ namespace sys {
 		*/
 		inline void
 		open(const char* filename, mode_type mode) noexcept {
-			this->open(filename, open_flag::read_write, mode);
+			this->open(filename, open_flag::read_write|open_flag::create, mode);
 		}
-
-		/**
-		Open file \p filename for mutex with flags \p flags and
-		file mode \p mode.
-		*/
-		void
-		open(const char* filename, open_flag flags, mode_type mode) noexcept;
 
 		UNISTDX_NO_COPY_AND_MOVE(file_mutex)
 
 	private:
 
-		void
-		do_lock(int cmd);
+		inline void
+		do_lock(int cmd) {
+			UNISTDX_CHECK(::flock(this->_fd, cmd));
+		}
 
 	};
 

@@ -122,6 +122,10 @@ TEST(EndpointIPv6Test, All) {
 		sizeof(sys::sockinet6_type),
 		sys::endpoint({0x0,0,0,0,0,0,0,1}, 0).sockaddrlen()
 	);
+	EXPECT_EQ(
+		sys::endpoint(sys::endpoint({0x0,0,0,0,0,0,0,1}, 1234), 100),
+		sys::endpoint({0x0,0,0,0,0,0,0,1}, 100)
+	);
 	// basic functionality
 	check_read("[::1]:0", sys::endpoint({0x0,0,0,0,0,0,0,1}, 0));
 	check_read("[1::1]:0", sys::endpoint({0x1,0,0,0,0,0,0,1}, 0));

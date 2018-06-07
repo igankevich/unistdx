@@ -1,5 +1,6 @@
-#include <algorithm>
 #include <gtest/gtest.h>
+
+#include <algorithm>
 #include <iomanip>
 #include <limits>
 #include <ostream>
@@ -89,3 +90,67 @@ TEST(websocket_frame, members) {
 	frame.mask(0);
 	EXPECT_NE("", test::stream_insert(frame));
 }
+
+struct websocket_test_params {
+	std::string method;
+	std::string header;
+	std::string status;
+};
+
+struct websocketbuf_test:
+	public ::testing::TestWithParam<websocket_test_params> {};
+
+std::vector<websocket_test_params> all_headers {
+	{"\r\n", "", ""},
+	{"GED / HTTP/1.1\r\n", "", ""},
+	{"GET / HTTP/1.1\r\ngarbage\r\n", "", ""},
+	{"GET / HTTP/1.1\r\n\r\n", "", ""},
+	{"", "", "\r\n"},
+	{"", "", "HDDP\r\n"},
+	{"", "", "HTTP/1.1\r\n"},
+	{"", "", "HTTP/1.1 1\r\n"},
+	{"", "", "HTTP/1.1 999\r\n"},
+};
+
+TEST_P(websocketbuf_test, errors) {
+
+	typedef char T;
+	typedef std::char_traits<T> Tr;
+	typedef std::basic_stringbuf<T> Fd;
+	class websocketbuf:
+		public sys::basic_websocketbuf<T,Tr>,
+		public sys::basic_fildesbuf<T,Tr,Fd> {};
+	typedef websocketbuf packetbuf_type;
+	typedef typename packetbuf_type::role_type role;
+
+	std::string bad_method = GetParam().method;
+	std::string bad_header = GetParam().header;
+	std::string bad_status = GetParam().status;
+	packetbuf_type buf;
+	buf.role(role::client);
+	if (!bad_method.empty()) {
+		buf.sputn(bad_method.data(), bad_method.size());
+	}
+	EXPECT_FALSE(buf.client_handshake());
+	if (!bad_header.empty()) {
+		buf.sputn(bad_header.data(), bad_header.size());
+	}
+	buf.pubsync();
+	buf.role(role::server);
+	if (!bad_status.empty()) {
+		buf.sputn(bad_status.data(), bad_status.size());
+	}
+	EXPECT_FALSE(buf.server_handshake());
+	buf.pubsync();
+	buf.role(role::client);
+	EXPECT_FALSE(buf.client_handshake());
+	buf.pubsync();
+	buf.role(role::server);
+	EXPECT_FALSE(buf.server_handshake());
+}
+
+INSTANTIATE_TEST_CASE_P(
+	_,
+	websocketbuf_test,
+	::testing::ValuesIn(all_headers)
+);

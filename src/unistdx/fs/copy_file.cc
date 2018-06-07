@@ -24,10 +24,9 @@ namespace {
 		ssize_t nread = 0;
 		do {
 			ssize_t m = in.read(buf, n);
-			//std::clog << "read " << m << std::endl;
 			nread += m;
 			ssize_t nwritten = 0;
-			do {
+			do { // LCOV_EXCL_LINE
 				nwritten += out.write(buf, m);
 			} while (nwritten != m);
 		} while (nread != file_size);
@@ -49,7 +48,7 @@ namespace {
 		}
 		if (size != 0) {
 			if (errno != EINVAL && errno != ENOSYS) {
-				UNISTDX_THROW_BAD_CALL();
+				UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
 			}
 			do_simple_copy(in, out, size);
 		}
@@ -71,7 +70,7 @@ namespace {
 		}
 		if (size != 0) {
 			if (errno != EXDEV && errno != EBADF && errno != ENOSYS) {
-				UNISTDX_THROW_BAD_CALL();
+				UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
 			}
 			#if defined(UNISTDX_HAVE_SENDFILE)
 			do_sendfile(in, out, size);

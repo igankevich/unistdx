@@ -53,7 +53,7 @@ TEST(Group, Enumerate) {
 }
 
 TEST(User, FindBy) {
-	sys::user u1, u2;
+	sys::user u1, u2, u3;
 	bool success;
 	success = sys::find_user(sys::this_process::user(), u1);
 	EXPECT_TRUE(success);
@@ -69,41 +69,9 @@ TEST(User, FindBy) {
 	sys::user copy(std::move(u2));
 	EXPECT_EQ(u1, copy);
 	test::stream_insert_starts_with(u1.name(), u1);
+	success = sys::find_user("a", u3);
+	EXPECT_FALSE(success);
 }
-
-struct args_and_count {
-
-	size_t count;
-	std::vector<const char*> args;
-
-	inline const char**
-	get_args() const noexcept {
-		return const_cast<const char**>(args.data());
-	}
-
-};
-
-class CSrtingIteratorTest: public ::testing::TestWithParam<args_and_count> {};
-
-TEST_P(CSrtingIteratorTest, All) {
-	const args_and_count& param = GetParam();
-	const size_t cnt =
-		std::distance(
-			sys::cstring_iterator<const char*>(param.get_args()),
-			sys::cstring_iterator<const char*>()
-		);
-	EXPECT_EQ(param.count, cnt);
-}
-
-INSTANTIATE_TEST_CASE_P(
-	AllSizes,
-	CSrtingIteratorTest,
-	::testing::Values(
-		args_and_count{2, {"1", "2", 0}},
-		args_and_count{1, {"1", 0}},
-		args_and_count{0, {0}}
-	)
-);
 
 TEST(Group, FindBy) {
 	sys::group g1, g2;

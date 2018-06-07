@@ -22,3 +22,8 @@ sendfile_stub = shared_library(
 	'sendfile_stub',
 	sources: 'sendfile_stub.cc'
 )
+
+sysconf_stub = shared_library(
+	'sysconf_stub',
+	sources: 'sysconf_stub.cc'
+)

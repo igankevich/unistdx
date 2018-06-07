@@ -77,7 +77,7 @@ namespace sys {
 		open flags \p flags and mode \p mode.
 		*/
 		inline
-		fildes(const char* filename, open_flag flags, mode_type mode) {
+		fildes(const char* filename, open_flag flags=0, mode_type mode=0) {
 			this->open(filename, flags, mode);
 		}
 
@@ -88,23 +88,7 @@ namespace sys {
 		*/
 		inline
 		~fildes() {
-			try {
-				this->close();
-			#ifndef NDEBUG
-			} catch (const bad_call& err) {
-				std::clog
-					<< "sys::fildes: failed to close file descriptor "
-					<< this->_fd << ": " << err.what();
-				std::terminate();
-			#endif
-			} catch (...) {
-				#ifndef NDEBUG
-				std::clog
-					<< "sys::fildes: failed to close file descriptor "
-					<< this->_fd;
-				#endif
-				std::terminate();
-			}
+			this->close();
 		}
 
 		/// Move-assignment.
@@ -237,6 +221,12 @@ namespace sys {
 			return this->_fd == rhs._fd;
 		}
 
+		/// Compare file descriptors.
+		inline bool
+		operator!=(const fildes& rhs) const noexcept {
+			return !this->operator==(rhs);
+		}
+
 		/// Returns true, if file descriptor is valid.
 		inline explicit
 		operator bool() const noexcept {
@@ -247,18 +237,6 @@ namespace sys {
 		inline bool
 		operator !() const noexcept {
 			return !this->operator bool();
-		}
-
-		/// Compare file descriptors.
-		inline bool
-		operator==(fd_type rhs) const noexcept {
-			return this->_fd == rhs;
-		}
-
-		/// Compare file descriptors.
-		inline friend bool
-		operator==(fd_type lhs, const fildes& rhs) noexcept {
-			return rhs._fd == lhs;
 		}
 
 		/// Output file descriptor number.
@@ -311,9 +289,10 @@ namespace sys {
 		\throws bad_call
 		*/
 		inline void
-		open(const char* filename, open_flag flags, mode_type mode) {
+		open(const char* filename, open_flag flags=0, mode_type mode=0) {
 			this->close();
-			this->_fd = ::open(filename, flags, mode);
+			this->_fd = ::open(filename, flags|open_flag::close_on_exec, mode);
+			UNISTDX_CHECK(this->_fd);
 		}
 
 	private:
@@ -333,6 +312,30 @@ namespace sys {
 	};
 
 	static_assert(sizeof(fildes) == sizeof(fd_type), "bad fd size");
+
+	/// Compare file descriptors.
+	inline bool
+	operator==(fd_type lhs, const fildes& rhs) noexcept {
+		return rhs.fd() == lhs;
+	}
+
+	/// Compare file descriptors.
+	inline bool
+	operator==(const fildes& lhs, fd_type rhs) noexcept {
+		return lhs.fd() == rhs;
+	}
+
+	/// Compare file descriptors.
+	inline bool
+	operator!=(fd_type lhs, const fildes& rhs) noexcept {
+		return !operator==(lhs, rhs);
+	}
+
+	/// Compare file descriptors.
+	inline bool
+	operator!=(const fildes& lhs, fd_type rhs) noexcept {
+		return !operator==(lhs, rhs);
+	}
 
 	/// Overload of \link std::swap\endlink for \link fildes\endlink.
 	inline void
@@ -430,7 +433,9 @@ namespace sys {
 		*/
 		inline static std::streamsize
 		write(fd_type sink, const char_type* s, std::streamsize n) {
-			return ::write(sink, s, n);
+			ssize_t ret = ::write(sink, s, n);
+			UNISTDX_CHECK_IO(ret);
+			return ret;
 		}
 
 		/**
@@ -438,7 +443,9 @@ namespace sys {
 		*/
 		inline static std::streamsize
 		read(fd_type src, char_type* s, std::streamsize n) {
-			return ::read(src, s, n);
+			ssize_t ret = ::read(src, s, n);
+			UNISTDX_CHECK_IO(ret);
+			return ret;
 		}
 
 	};

@@ -98,11 +98,7 @@ namespace sys {
 		inline
 		~sysv_semaphore() {
 			if (this->_owner) {
-				try {
-					UNISTDX_CHECK(::semctl(this->_sem, IPC_RMID, 0));
-				} catch (...) {
-					std::terminate();
-				}
+				this->remove();
 			}
 		}
 
@@ -292,6 +288,11 @@ namespace sys {
 	private:
 
 		inline void
+		remove() {
+			UNISTDX_CHECK(::semctl(this->_sem, IPC_RMID, 0));
+		}
+
+		inline void
 		increment(int how) {
 			assert(how != 0); // LCOV_EXCL_LINE
 			sembuf_type buf;
@@ -315,7 +316,7 @@ namespace sys {
 				if (errno == EAGAIN) {
 					st = std::cv_status::timeout;
 				} else {
-					UNISTDX_THROW_BAD_CALL();
+					UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
 				}
 			}
 			return st;
@@ -431,7 +432,7 @@ namespace sys {
 				if (errno == ETIMEDOUT) {
 					st = std::cv_status::timeout;
 				} else {
-					UNISTDX_THROW_BAD_CALL();
+					UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
 				}
 			}
 			return st;

@@ -20,11 +20,7 @@ namespace sys {
 	*/
 	inline size_type
 	page_size() noexcept {
-		#if defined(PAGESIZE)
-			#define UNISTDX_SYSCONF_PAGE_SIZE PAGESIZE
-		#elif defined(PAGE_SIZE)
-			#define UNISTDX_SYSCONF_PAGE_SIZE PAGE_SIZE
-		#elif defined(_SC_PAGESIZE)
+		#if defined(_SC_PAGESIZE)
 			#define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGESIZE
 		#elif defined(_SC_PAGE_SIZE)
 			#define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGE_SIZE

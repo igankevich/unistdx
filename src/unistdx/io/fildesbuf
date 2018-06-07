@@ -120,22 +120,6 @@ namespace sys {
 				   : traits_type::to_int_type(*gptr());
 		}
 
-		/// Overrides \link std::streambuf::overflow\endlink.
-		int_type
-		overflow(int_type c) override {
-			assert(pptr() == epptr()); // LCOV_EXCL_LINE
-			if (c != traits_type::eof()) {
-				pgrow();
-				if (pptr() != epptr()) {
-					*pptr() = c;
-					pbump(1);
-				}
-			} else {
-				flush();
-			}
-			return c;
-		}
-
 		/// Overrides \link std::streambuf::xsgetn\endlink.
 		std::streamsize
 		xsgetn(char_type* s, std::streamsize n) override {
@@ -241,9 +225,6 @@ namespace sys {
 		inline std::streamsize
 		fill() {
 			const std::streamsize old_egptr_offset = egptr() - eback();
-			if (egptr() == glast()) {
-				ggrow();
-			}
 			char_type* first = egptr();
 			char_type* last = glast();
 			assert(first != last); // LCOV_EXCL_LINE
@@ -341,11 +322,6 @@ namespace sys {
 			pbump(pptr_offset);
 			assert(pptr() - pbase() == pptr_offset); // LCOV_EXCL_LINE
 			assert(pbase() - pfirst() == pbase_offset); // LCOV_EXCL_LINE
-		}
-
-		inline void
-		pgrow() {
-			this->pgrow(this->_pbuf.size() * 2);
 		}
 
 		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)

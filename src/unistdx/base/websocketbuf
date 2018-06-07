@@ -156,6 +156,20 @@ namespace sys {
 			return result != this->_headers.end() && result->second == value;
 		}
 
+		inline void
+		ensure_header(const std::string& key) {
+			if (!this->has_header(key)) {
+				throw 11; // LCOV_EXCL_LINE
+			}
+		}
+
+		inline void
+		ensure_header(const std::string& key, const std::string& value) {
+			if (!this->has_header(key, value)) {
+				throw 22;
+			}
+		}
+
 		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
 		void
 		setstate(server_state s);

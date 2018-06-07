@@ -1,6 +1,5 @@
 foreach conf : [
 	['system', [unistdx,gtest]],
-	['users', [unistdx,gtest]],
 ]
 	test_name = join_paths('util', conf[0])
 	executable_name = conf[0] + '_test'
@@ -16,6 +15,7 @@ foreach conf : [
 	)
 endforeach
 
+# backtrace test + stubs {{{
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
 	backtrace_test = executable(
 		'backtrace-test',
@@ -44,4 +44,19 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 		)
 	endforeach
 endif
+# }}}
 
+# users test + stubs {{{
+users_test = executable(
+	'users_test',
+	sources: 'users_test.cc',
+	include_directories: srcdir,
+	dependencies: [unistdx,gtest]
+)
+test('util/users', users_test)
+test(
+	'util/users-stub',
+	users_test,
+	env: ['LD_PRELOAD=' + sysconf_stub.full_path()]
+)
+# }}}

@@ -198,9 +198,6 @@ sys::basic_websocketbuf<Ch,Tr>::on_payload() {
 template<class Ch, class Tr>
 bool
 sys::basic_websocketbuf<Ch,Tr>::server_handshake() {
-	if (this->_sstate == server_state::end) {
-		return this->_valid;
-	}
 	server_state old_state;
 	do {
 		old_state = this->_sstate;
@@ -231,9 +228,6 @@ sys::basic_websocketbuf<Ch,Tr>::server_handshake() {
 template<class Ch, class Tr>
 bool
 sys::basic_websocketbuf<Ch,Tr>::client_handshake() {
-	if (this->_cstate == client_state::end) {
-		return this->_valid;
-	}
 	client_state old_state;
 	do {
 		old_state = this->_cstate;
@@ -339,13 +333,13 @@ sys::basic_websocketbuf<Ch,Tr>::parse_http_method() {
 template<class Ch, class Tr>
 void
 sys::basic_websocketbuf<Ch,Tr>::parse_http_status() {
-	char_type* result = this->find_the_end_of_the_line();
-	if (result != this->egptr()) {
-	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
-		log_message("ws", "_ _", __func__, std::string(this->gptr(), result));
-	#endif
+	char_type* last = this->find_the_end_of_the_line();
+	if (last != this->egptr()) {
+		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+		log_message("ws", "_ _", __func__, std::string(this->gptr(), last));
+		#endif
 		int cmp;
-		const std::streamsize n = result - this->gptr();
+		const std::streamsize n = last - this->gptr();
 		try {
 			// skip bad lines
 			if (n < 4) {
@@ -358,10 +352,10 @@ sys::basic_websocketbuf<Ch,Tr>::parse_http_status() {
 			}
 			// find HTTP status
 			const char_type* result2 = traits_type::find(this->gptr(), n, ' ');
-			if (result2 == this->egptr()) {
+			if (!result2) {
 				throw 2;
 			}
-			if (this->egptr() - result2 < 3) {
+			if (last - result2 < 3) {
 				throw 3;
 			}
 			cmp = traits_type::compare(result2+1, "101", 3);
@@ -386,12 +380,10 @@ sys::basic_websocketbuf<Ch,Tr>::parse_http_headers() {
 	while (!finished) {
 		char_type* result = this->find_the_end_of_the_line();
 		const size_t n = result - this->gptr();
-		if (result == this->egptr()) {
-			finished = true;
-		} else if (n > sizeof(http_header_separator)-1) {
+		if (n > sizeof(http_header_separator)-1) {
 			try {
 				const char_type* sep = traits_type::find(this->gptr(), n, ':');
-				if (sep == this->egptr()) {
+				if (!sep) {
 					throw 0;
 				}
 				#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
@@ -426,53 +418,47 @@ sys::basic_websocketbuf<Ch,Tr>::parse_http_headers() {
 template<class Ch, class Tr>
 void
 sys::basic_websocketbuf<Ch,Tr>::validate_http_headers() {
-	bool success = false;
-	if (this->_valid) {
+	try {
+		if (!this->_valid) {
+			throw 0;
+		}
+		this->ensure_header("sec-websocket-protocol", "binary");
+		this->ensure_header("upgrade", "websocket");
+		this->ensure_header("connection", "Upgrade");
 		if (this->_role == role_type::server) {
-			success = this->has_header("sec-websocket-key") &&
-			          this->has_header("sec-websocket-version");
+			this->ensure_header("sec-websocket-key");
+			this->ensure_header("sec-websocket-version");
+			// write response
+			this->sputn(websocket_response, sizeof(websocket_response)-1);
+			this->put_websocket_accept_header();
+			this->sputn("\r\n\r\n", 4);
+			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
+			log_message(
+				"ws",
+				"server response >\n_",
+				std::string(this->pbase(), this->pptr())
+			);
+			#endif
+		this->setstate(server_state::writing_handshake);
 		} else {
 			char encoded[28];
 			websocket_accept_header(
 				this->_headers["sec-websocket-key"],
 				encoded
 			);
-			success = this->has_header(
+			this->ensure_header(
 				"sec-websocket-accept",
 				std::string(encoded, 28)
-			          );
+			);
+			this->setstate(client_state::end);
 		}
-		success = success &&
-		          this->has_header("sec-websocket-protocol", "binary") &&
-		          this->has_header("upgrade", "websocket") &&
-		          this->has_header("connection", "Upgrade");
-	}
-	if (this->_role == role_type::server) {
-		if (success) {
-			this->sputn(websocket_response, sizeof(websocket_response)-1);
-			this->put_websocket_accept_header();
-			this->sputn("\r\n\r\n", 4);
-		} else {
-			this->_valid = false;
+	} catch (...) {
+		this->_valid = false;
+		if (this->_role == role_type::server) {
 			this->sputn(
 				websocket_bad_response,
-				sizeof(websocket_bad_response)-
-				1
+				sizeof(websocket_bad_response)-1
 			);
-		}
-		#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)
-		log_message(
-			"ws",
-			"server response >\n_",
-			std::string(this->pbase(), this->pptr())
-		);
-		#endif
-		this->setstate(server_state::writing_handshake);
-	} else {
-		if (success) {
-			this->setstate(client_state::end);
-		} else {
-			this->_valid = false;
 		}
 	}
 	#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_WEBSOCKETBUF)

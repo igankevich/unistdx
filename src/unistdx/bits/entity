@@ -14,10 +14,7 @@
 #include <unistdx/util/group>
 #include <unistdx/util/user>
 
-#if !defined(UNISTDX_HAVE_GETPWUID_R) || \
-    !defined(UNISTDX_HAVE_GETPWNAM_R) || \
-    !defined(UNISTDX_HAVE_GETGRGID_R) || \
-    !defined(UNISTDX_HAVE_GETGRNAM_R)
+#if defined(UNISTDX_ENTITY_MUTEX)
 #include <mutex>
 #endif
 
@@ -62,11 +59,6 @@ namespace {
 			return this->_byname;
 		}
 
-		inline bool
-		by_uid() const noexcept {
-			return !this->_byname;
-		}
-
 		union {
 			const char* _name;
 			Id _id;
@@ -75,10 +67,7 @@ namespace {
 
 	};
 
-	#if !defined(UNISTDX_HAVE_GETPWUID_R) || \
-	!defined(UNISTDX_HAVE_GETPWNAM_R) || \
-	!defined(UNISTDX_HAVE_GETGRGID_R) || \
-	!defined(UNISTDX_HAVE_GETGRNAM_R)
+	#if defined(UNISTDX_ENTITY_MUTEX)
 	std::mutex ent_mutex;
 	#endif
 
@@ -122,9 +111,7 @@ namespace {
 			}
 			return ret;
 		}
-
-		#endif
-
+		#else
 		inline static result_type*
 		get(const By<id_type>& field) {
 			result_type* res;
@@ -135,6 +122,7 @@ namespace {
 			}
 			return res;
 		}
+		#endif
 
 		#if !defined(UNISTDX_HAVE_GETPWUID_R) || \
 		!defined(UNISTDX_HAVE_GETPWNAM_R)
@@ -210,9 +198,7 @@ namespace {
 			}
 			return ret;
 		}
-
-		#endif
-
+		#else
 		inline static result_type*
 		get(const By<id_type>& field) {
 			result_type* res;
@@ -223,6 +209,7 @@ namespace {
 			}
 			return res;
 		}
+		#endif
 
 		#if !defined(UNISTDX_HAVE_GETGRGID_R) || \
 		!defined(UNISTDX_HAVE_GETGRNAM_R)
@@ -272,10 +259,8 @@ namespace {
 		// !defined(UNISTDX_HAVE_GETGRNAM_R)
 
 	};
-	#if !defined(UNISTDX_HAVE_GETPWUID_R) || \
-	!defined(UNISTDX_HAVE_GETPWNAM_R) || \
-	!defined(UNISTDX_HAVE_GETGRGID_R) || \
-	!defined(UNISTDX_HAVE_GETGRNAM_R)
+
+	#if defined(UNISTDX_ENTITY_MUTEX)
 	template <class Id, class Entity>
 	bool
 	find_entity_nr(By<Id> field, Entity& u, std::string& buf) {
@@ -300,7 +285,6 @@ namespace {
 		}
 		return found;
 	}
-
 	#endif
 
 	#if defined(UNISTDX_HAVE_GETPWUID_R) || \
@@ -316,21 +300,30 @@ namespace {
 		bool found;
 		result_type* res;
 		buf.resize(get_max_size(traits_type::conf_name()));
-		int ret, i = 0;
+		int ret;
 		do {
+			// N.B. this function returns errno value
+			// but does not set errno itself
 			ret = traits_type::get(field, u, buf, &res);
 			if (!res) {
 				if (ret == 0) {
 					found = false;
-				} else if (errno == ERANGE) {
+				} else if (ret == ERANGE) {
 					buf.resize(buf.size()*2);
 				} else {
-					UNISTDX_THROW_BAD_CALL();
+					// LCOV_EXCL_START
+					throw sys::bad_call(
+						std::errc(ret),
+						__FILE__,
+						__LINE__,
+						__func__
+					);
+					// LCOV_EXCL_STOP
 				}
 			} else {
 				found = true;
 			}
-		} while (ret == -1);
+		} while (ret != 0);
 		return found;
 	}
 

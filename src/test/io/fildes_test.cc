@@ -27,3 +27,36 @@ TEST(fildes, remap) {
 	EXPECT_NO_THROW(f.remap());
 	EXPECT_NO_THROW(f.remap(1000));
 }
+
+TEST(fildes, basic) {
+	sys::fildes a, b;
+	EXPECT_FALSE(a);
+	EXPECT_FALSE(b);
+	EXPECT_EQ(a, b);
+	EXPECT_EQ(a, b.fd());
+	EXPECT_EQ(a.fd(), b);
+	EXPECT_NO_THROW(b.open(UNISTDX_TMPFILE, sys::open_flag::create, 0644));
+	EXPECT_TRUE(b);
+	EXPECT_NE(a, b);
+	EXPECT_NE(a.fd(), b);
+	EXPECT_NE(a, b.fd());
+}
+
+TEST(fildes, traits) {
+	typedef sys::streambuf_traits<sys::fildes> traits_type;
+	sys::fildes a;
+	char buf[1024] = {0};
+	EXPECT_THROW(traits_type::read(a, buf, 1024), sys::bad_call);
+	EXPECT_THROW(traits_type::write(a, buf, 1024), sys::bad_call);
+}
+
+TEST(fd_type, traits) {
+	typedef sys::streambuf_traits<sys::fd_type> traits_type;
+	sys::fildes a;
+	char buf[1024] = {0};
+	EXPECT_THROW(traits_type::read(a.fd(), buf, 1024), sys::bad_call);
+	EXPECT_THROW(traits_type::write(a.fd(), buf, 1024), sys::bad_call);
+	a.open("/dev/null");
+	EXPECT_TRUE(a);
+	EXPECT_NO_THROW(traits_type::read(a.fd(), buf, 1024));
+}

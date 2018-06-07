@@ -1,6 +1,8 @@
 #ifndef UNISTDX_FS_ODIRTREE
 #define UNISTDX_FS_ODIRTREE
 
+#include <cassert>
+
 #include <unistdx/fs/idirtree>
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/odirectory>
@@ -37,7 +39,12 @@ namespace sys {
 		copy_recursively(const path& src, const path& dst):
 		_src(src),
 		_dest(dst)
-		{}
+		{
+			// LCOV_EXCL_START
+			assert(!this->_src.empty());
+			assert(!this->_dest.empty());
+			// LCOV_EXCL_STOP
+		}
 
 		/// Copy file name of directory \p rhs without changing it.
 		inline sys::path
@@ -46,7 +53,7 @@ namespace sys {
 		}
 
 		/**
-		Copy file name of directory \p rhs by changing it to be
+		Transform file name of directory \p rhs by changing it to be
 		relative to souce directory.
 		*/
 		inline sys::path

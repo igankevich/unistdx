@@ -102,11 +102,22 @@ TEST(GetFileType, PathEntry) {
 	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(*result));
 }
 
-TEST(idirtree, insert) {
+typedef std::tuple<std::string> idirtree_test_param;
+
+struct idirtree_test: public ::testing::TestWithParam<idirtree_test_param> {};
+
+std::vector<idirtree_test_param> all_params {
+	{"dirtree-copy-in"},
+	{"dirtree-copy-in/"},
+	{"dirtree-copy-in//"},
+};
+
+TEST_P(idirtree_test, insert) {
+	sys::path src(std::get<0>(GetParam()));
 	std::vector<std::string> files1 {"a", "b", "c"};
 	std::vector<std::string> files2 {"d", "e", "f"};
-	test::tmpdir dir1("dirtree-copy-in", files1.begin(), files1.end());
-	test::tmpdir dir2("dirtree-copy-in/next", files2.begin(), files2.end());
+	test::tmpdir dir1(src, files1.begin(), files1.end());
+	test::tmpdir dir2(sys::path(src, "next"), files2.begin(), files2.end());
 	test::tmpdir dir3("dirtree-copy-out");
 	std::set<sys::path> expected;
 	expected.emplace("a");
@@ -144,3 +155,10 @@ TEST(idirtree, insert) {
 	}
 	EXPECT_EQ(expected, actual);
 }
+
+INSTANTIATE_TEST_CASE_P(
+	_,
+	idirtree_test,
+	::testing::ValuesIn(all_params)
+);
+

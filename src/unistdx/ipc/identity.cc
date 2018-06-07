@@ -16,7 +16,9 @@ sys::this_process::set_identity(uid_type uid, gid_type gid) {
 			int ret = ::setgid(old_gid);
 			if (ret == -1) {
 				/// TODO should we just terminate here?
+				// LCOV_EXCL_START
 				std::throw_with_nested(bad_call(__FILE__, __LINE__, __func__));
+				// LCOV_EXCL_STOP
 			}
 		}
 		throw;

@@ -22,6 +22,7 @@ TEST(Socket, GetCredentials) {
 	sys::endpoint client_end;
 	sys::socket client;
 	sock.accept(client, client_end);
+	EXPECT_NO_THROW(client.peer_name());
 	sys::user_credentials creds = client.credentials();
 	EXPECT_EQ(child.id(), creds.pid);
 	EXPECT_EQ(sys::this_process::user(), creds.uid);

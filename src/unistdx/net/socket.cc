@@ -103,7 +103,7 @@ sys::socket::shutdown(shutdown_how how) {
 	if (*this) {
 		int ret = ::shutdown(this->_fd, how);
 		if (ret == -1 && errno != ENOTCONN && errno != ENOTSUP) {
-			UNISTDX_THROW_BAD_CALL();
+			UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
 		}
 	}
 }
@@ -134,6 +134,7 @@ sys::socket::set_user_timeout(const duration& d) {
 
 #endif
 
+// LCOV_EXCL_START
 int
 sys::socket::error() const noexcept {
 	int ret = 0;
@@ -177,6 +178,7 @@ sys::socket::error() const noexcept {
 	}
 	return ret;
 }
+// LCOV_EXCL_STOP
 
 std::ostream&
 sys::operator<<(std::ostream& out, const socket& rhs) {

@@ -11,10 +11,6 @@
 #include <unistdx/bits/sharedmem>
 #include <unistdx/base/check>
 
-#ifndef NDEBUG
-#include <unistdx/base/log_message>
-#endif
-
 namespace sys {
 
 	/**
@@ -198,24 +194,7 @@ namespace sys {
 		/// Terminates on system error.
 		inline
 		~shared_mem() {
-			try {
-				this->close();
-			#ifndef NDEBUG
-			} catch (const bad_call& err) {
-				log_message(
-					"sys",
-					"failed to close shm _: _",
-					this->_shm,
-					err.what()
-				);
-				std::terminate();
-			#endif
-			} catch (...) {
-				#ifndef NDEBUG
-				log_message("sys", "failed to close shm _", this->_shm);
-				#endif
-				std::terminate();
-			}
+			this->close();
 		}
 
 		shared_mem&

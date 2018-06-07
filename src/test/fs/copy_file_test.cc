@@ -6,7 +6,7 @@
 #include <unistdx/test/temporary_file>
 #include <unistdx/test/tmpdir>
 
-std::vector<size_t> all_sizes{0, 1, 2/*, 111, 4096, 4097, 10000*/};
+std::vector<size_t> all_sizes{0, 1, 2, 111, 4096, 4097, 10000};
 
 class copy_file_test: public ::testing::TestWithParam<size_t> {};
 

@@ -29,7 +29,7 @@ namespace sys {
 		and have close-on-exec flag set.
 		*/
 		inline
-		pipe(): _fds {} {
+		pipe(): _fds {} { // LCOV_EXCL_LINE
 			this->open();
 		}
 

@@ -70,6 +70,7 @@ TEST(netlink, get_address) {
 	sys::ifaddr_message_container cont;
 	cont.read(sock);
 	for (sys::ifaddr_message_header& hdr : cont) {
+		EXPECT_FALSE(hdr.delete_address());
 		if (hdr.new_address()) {
 			sys::ifaddr_message* m = hdr.message();
 			sys::ipv4_addr address;

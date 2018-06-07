@@ -26,7 +26,7 @@ sys::thread_concurrency() noexcept {
 		concurrency = std::thread::hardware_concurrency();
 	}
 	if (concurrency < 1) {
-		concurrency = 1;
+		concurrency = 1; // LCOV_EXCL_LINE
 	}
 	return static_cast<unsigned>(concurrency);
 	#endif

@@ -56,6 +56,10 @@ namespace test {
 		assert_good(dir, false);
 		dir.open(tdir);
 		assert_good(dir, true);
+		dir.open(tdir);
+		assert_good(dir, true);
+		dir.close();
+		assert_good(dir, false);
 		dir.close();
 		assert_good(dir, false);
 	}
