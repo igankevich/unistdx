@@ -1,6 +1,11 @@
-backtrace_stub = shared_library(
-	'backtrace_stub',
-	sources: 'backtrace_stub.cc'
+backtrace_symbols_stub = shared_library(
+	'backtrace_symbols_stub',
+	sources: 'backtrace_symbols_stub.cc'
+)
+
+backtrace_symbols_stub_2 = shared_library(
+	'backtrace_symbols_stub_2',
+	sources: 'backtrace_symbols_stub_2.cc'
 )
 
 setgid_stub = shared_library(

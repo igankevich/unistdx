@@ -31,7 +31,15 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 			backtrace_test,
 			args: [type],
 			env: [
-				'LD_PRELOAD=' + backtrace_stub.full_path()
+				'LD_PRELOAD=' + backtrace_symbols_stub.full_path()
+			]
+		)
+		test(
+			'util/backtrace-stub-2-' + type,
+			backtrace_test,
+			args: [type],
+			env: [
+				'LD_PRELOAD=' + backtrace_symbols_stub_2.full_path()
 			]
 		)
 	endforeach
