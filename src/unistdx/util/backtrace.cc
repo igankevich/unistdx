@@ -44,6 +44,9 @@ sys::backtrace(int fd) noexcept {
 		write_fd(fd, "Backtrace:\n");
 		for (int i=0; i<nptrs; ++i) {
 			const char* name = symbols[i];
+			if (!name) {
+				name = "<null>";
+			}
 			int status = 0;
 			char* buf = nullptr;
 			try {

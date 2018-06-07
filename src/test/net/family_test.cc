@@ -27,4 +27,9 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST(family, print) {
 	test::stream_insert_equals("inet", sys::family_type::inet);
+	test::stream_insert_equals("unknown", sys::family_type(1000));
+}
+
+TEST(family, bstream_insert_extract_fails) {
+	test::bstream_insert_extract_fails(sys::family_type(1000));
 }

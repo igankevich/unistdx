@@ -36,7 +36,8 @@ backtrace_symbols(void *const *, int n) {
 	pbuf = buf;
 	for (int i=0; i<n; ++i) {
 		Bytes bytes;
-		bytes.ptr = ptrs[i];
+		// inject null pointer
+		bytes.ptr = (i==1) ? nullptr : ptrs[i];
 		std::copy_n(bytes.chars, sizeof(bytes.chars), pbuf);
 		pbuf += sizeof(bytes.chars);
 	}

@@ -1,5 +1,5 @@
-#include <gtest/gtest.h>
 #include <unistdx/net/ipv4_addr>
+#include <unistdx/test/operator>
 
 TEST(IPv4Addr, Calculus) {
 	using sys::ipv4_addr;
@@ -11,3 +11,18 @@ TEST(IPv4Addr, Calculus) {
 	EXPECT_EQ(ipv4_addr(255,0,0,0).to_prefix(), sys::prefix_type(8));
 }
 
+typedef decltype(std::right) manipulator;
+
+void
+test_print(const char* expected, sys::ipv4_addr addr, manipulator manip, int width) {
+	std::stringstream str;
+	str << std::setw(width) << manip << addr;
+	std::string result = str.str();
+	EXPECT_EQ(width, result.size());
+	EXPECT_EQ(expected, str.str());
+}
+
+TEST(ipv4_addr, print_padding) {
+	test_print(" 127.0.0.1", sys::ipv4_addr{127,0,0,1}, std::right, 10);
+	test_print("127.0.0.1 ", sys::ipv4_addr{127,0,0,1}, std::left, 10);
+}
