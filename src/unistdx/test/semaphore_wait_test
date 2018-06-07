@@ -44,16 +44,48 @@ struct SemaphoreWaitTest: public ::testing::Test {
 		std::mutex mtx;
 		std::unique_lock<std::mutex> lock(mtx);
 		typedef std::chrono::system_clock clock_type;
+		typedef std::chrono::steady_clock clock_type_2;
 		//std::clog << "wait1" << std::endl;
 		EXPECT_EQ(
 			sem.wait_until(lock, clock_type::now()),
 			std::cv_status::timeout
 		);
+		EXPECT_EQ(
+			sem.wait_until(lock, clock_type_2::now()),
+			std::cv_status::timeout
+		);
+		EXPECT_EQ(
+			sem.wait_for(lock, clock_type::duration::zero()),
+			std::cv_status::timeout
+		);
+		EXPECT_EQ(
+			sem.wait_for(lock, clock_type_2::duration::zero()),
+			std::cv_status::timeout
+		);
+		auto f = [](){ return false; };
+		auto t = [](){ return true; };
+		// wait until with predicate
+		EXPECT_FALSE(sem.wait_until(lock, clock_type::now(), f));
+		EXPECT_TRUE(sem.wait_until(lock, clock_type::now(), t));
+		EXPECT_FALSE(sem.wait_until(lock, clock_type_2::now(), f));
+		EXPECT_TRUE(sem.wait_until(lock, clock_type_2::now(), t));
+		// wait for with predicate
+		EXPECT_FALSE(sem.wait_for(lock, clock_type::duration::zero(), f));
+		EXPECT_TRUE(sem.wait_for(lock, clock_type::duration::zero(), t));
+		EXPECT_FALSE(sem.wait_for(lock, clock_type_2::duration::zero(), f));
+		EXPECT_TRUE(sem.wait_for(lock, clock_type_2::duration::zero(), t));
 		//std::clog << "wait2" << std::endl;
 		EXPECT_EQ(
 			sem.wait_until(
 				lock,
 				clock_type::time_point(clock_type::duration::zero())
+			),
+			std::cv_status::timeout
+		);
+		EXPECT_EQ(
+			sem.wait_until(
+				lock,
+				clock_type_2::time_point(clock_type_2::duration::zero())
 			),
 			std::cv_status::timeout
 		);

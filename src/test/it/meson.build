@@ -1,4 +1,5 @@
 foreach conf : [
+	['cstring_iterator', [unistdx,gtest]],
 	['field_iterator', [unistdx,gtest]],
 ]
 	test_name = join_paths('it', conf[0])
