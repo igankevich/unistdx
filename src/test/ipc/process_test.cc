@@ -9,7 +9,7 @@
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
 
-TEST(Process, Fork) {
+TEST(process, basic) {
 	sys::pid_type pid = sys::this_process::id();
 	sys::process child {
 		[pid] () {
@@ -26,17 +26,67 @@ TEST(Process, Fork) {
 	EXPECT_EQ(0, status.exit_code());
 }
 
-TEST(Process, ForkExec) {
+typedef std::tuple<sys::process_flag,std::string,bool>
+	process_exec_params;
+
+struct process_exec_test:
+	public ::testing::TestWithParam<process_exec_params> {};
+
+std::vector<process_exec_params> all_params{
+	{sys::process_flag::fork, "non-existent-file", false},
+	{sys::process_flag::wait_for_exec, "non-existent-file", false},
+	{sys::process_flag::fork, "ls", true},
+	{sys::process_flag::wait_for_exec, "ls", true},
+};
+
+TEST_P(process_exec_test, return_int) {
+	auto param = GetParam();
+	sys::process_flag flags = std::get<0>(param);
+	std::string cmd = std::get<1>(param);
+	bool success = std::get<2>(param);
 	sys::process child {
-		[] () {
+		[&] () {
 			sys::argstream args;
-			args.append("ls");
-			return sys::this_process::execute_command(args.argv());
-		}
+			args.append(cmd);
+			sys::this_process::execute_command(args.argv());
+			return 0;
+		},
+		flags
 	};
 	sys::proc_info status = child.wait();
-	EXPECT_EQ(0, status.exit_code());
+	if (success) {
+		EXPECT_EQ(0, status.exit_code());
+	} else {
+		EXPECT_NE(0, status.exit_code());
+	}
 }
+
+TEST_P(process_exec_test, return_void) {
+	auto param = GetParam();
+	sys::process_flag flags = std::get<0>(param);
+	std::string cmd = std::get<1>(param);
+	bool success = std::get<2>(param);
+	sys::process child {
+		[&] () {
+			sys::argstream args;
+			args.append(cmd);
+			sys::this_process::execute_command(args.argv());
+		},
+		flags
+	};
+	sys::proc_info status = child.wait();
+	if (success) {
+		EXPECT_EQ(0, status.exit_code());
+	} else {
+		EXPECT_NE(0, status.exit_code());
+	}
+}
+
+INSTANTIATE_TEST_CASE_P(
+	_,
+	process_exec_test,
+	::testing::ValuesIn(all_params)
+);
 
 TEST(ArgStream, All) {
 	const std::string arg0 = "Hello!!!";

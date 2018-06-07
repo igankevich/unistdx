@@ -14,6 +14,7 @@ install_headers(
 	'octet',
 	'open_flag',
 	'poll',
+	'process',
 	'safe_calls',
 	'sharedmem',
 	'socket',

@@ -26,11 +26,9 @@ namespace sys {
 		\see argstream
 		\see \man{execve,2}
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute(char* const argv[], char* const envp[]) {
-			int ret;
-			UNISTDX_CHECK(ret = ::execve(argv[0], argv, envp));
-			return ret;
+			UNISTDX_CHECK(::execve(argv[0], argv, envp));
 		}
 
 		/**
@@ -38,9 +36,9 @@ namespace sys {
 		\ingroup ipc
 		\details \copydetails execute(char* const[], char* const[])
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute(const argstream& args, const argstream& env) {
-			return execute(args.argv(), env.argv());
+			execute(args.argv(), env.argv());
 		}
 
 		/**
@@ -50,11 +48,9 @@ namespace sys {
 		\details \copydetails execute(char* const[], char* const[])
 		\see \man{execv,2}
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute(char* const argv[]) {
-			int ret;
-			UNISTDX_CHECK(ret = ::execv(argv[0], argv));
-			return ret;
+			UNISTDX_CHECK(::execv(argv[0], argv));
 		}
 
 		/**
@@ -63,9 +59,9 @@ namespace sys {
 		\ingroup ipc
 		\details \copydetails execute(char* const[])
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute(const argstream& args) {
-			return execute(args.argv());
+			execute(args.argv());
 		}
 
 		/**
@@ -83,11 +79,9 @@ namespace sys {
 		\see argstream
 		\see \man{execvpe,2}
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute_command(char* const argv[], char* const envp[]) {
-			int ret;
-			UNISTDX_CHECK(ret = ::execvpe(argv[0], argv, envp));
-			return ret;
+			UNISTDX_CHECK(::execvpe(argv[0], argv, envp));
 		}
 
 		/**
@@ -96,11 +90,9 @@ namespace sys {
 		\details \copydetails execute_command(char* const[], char* const[])
 		\see \man{execvp,2}
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute_command(char* const argv[]) {
-			int ret;
-			UNISTDX_CHECK(ret = ::execvp(argv[0], argv));
-			return ret;
+			UNISTDX_CHECK(::execvp(argv[0], argv));
 		}
 
 		/**
@@ -108,9 +100,9 @@ namespace sys {
 		\ingroup ipc
 		\details \copydetails execute_command(char* const[])
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute_command(const argstream& args) {
-			return execute_command(args.argv());
+			execute_command(args.argv());
 		}
 
 		/**
@@ -118,9 +110,9 @@ namespace sys {
 		\ingroup ipc
 		\details \copydetails execute_command(char* const[], char* const[])
 		*/
-		inline int
+		[[noreturn]] inline void
 		execute_command(const argstream& args, const argstream& env) {
-			return execute_command(args.argv(), env.argv());
+			execute_command(args.argv(), env.argv());
 		}
 
 	}

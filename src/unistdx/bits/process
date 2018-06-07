@@ -1,0 +1,77 @@
+#ifndef UNISTDX_BITS_PROCESS
+#define UNISTDX_BITS_PROCESS
+
+namespace sys {
+
+	namespace bits {
+
+		template <class Result>
+		struct call_traits;
+
+		template <>
+		struct call_traits<int> {
+
+			template <class Function>
+			inline static int
+			call(Function f) {
+				int ret;
+				try {
+					ret = f();
+				} catch (...) {
+					ret = 1;
+				}
+				return ret;
+			}
+
+			template <class F>
+			static int
+			child_main(void* arg) {
+				F* func = reinterpret_cast<F*>(arg);
+				int ret;
+				try {
+					ret = (*func)();
+				} catch (...) {
+					ret = 1;
+				}
+				std::exit(ret);
+			}
+
+		};
+
+		// LCOV_EXCL_START
+		template <>
+		struct call_traits<void> {
+
+			template <class Function>
+			inline static int
+			call(Function f) {
+				int ret = 0;
+				try {
+					f();
+				} catch (...) {
+					ret = 1;
+				}
+				return ret;
+			}
+
+			template <class F>
+			static int
+			child_main(void* arg) {
+				F* func = reinterpret_cast<F*>(arg);
+				int ret = 0;
+				try {
+					(*func)();
+				} catch (...) {
+					ret = 1;
+				}
+				std::exit(ret);
+			}
+
+		};
+		// LCOV_EXCL_STOP
+
+	}
+
+}
+
+#endif // vim:filetype=cpp

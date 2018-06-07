@@ -90,7 +90,8 @@ namespace test {
 					args.append("rm");
 					args.append("-rf");
 					args.append(this->_dirname);
-					return sys::this_process::execute_command(args);
+					sys::this_process::execute_command(args);
+					return 0;
 				}
 			};
 			sys::proc_info status = child.wait();
@@ -105,7 +106,8 @@ namespace test {
 					sys::argstream args;
 					args.append("find");
 					args.append(this->_dirname);
-					return sys::this_process::execute_command(args);
+					sys::this_process::execute_command(args);
+					return 0;
 				}
 			};
 			sys::proc_info status = child.wait();
