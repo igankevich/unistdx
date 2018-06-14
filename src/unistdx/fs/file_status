@@ -74,7 +74,7 @@ namespace sys {
 			const char* filename,
 			file_status_flag flags = file_status_flag(0)
 		):
-		file_status(AT_FDCWD, filename)
+		file_status(AT_FDCWD, filename, flags)
 		{}
 
 		/**
@@ -235,7 +235,7 @@ namespace sys {
 		*/
 		inline file_status&
 		update(const char* filename, file_status_flag flags = file_status_flag(0)) {
-			return this->update(AT_FDCWD, filename);
+			return this->update(AT_FDCWD, filename, flags);
 		}
 
 		/// Get time of last access.
