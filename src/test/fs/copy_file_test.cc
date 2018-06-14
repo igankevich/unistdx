@@ -1,5 +1,5 @@
 #include <unistdx/fs/copy_file>
-#include <unistdx/fs/file_stat>
+#include <unistdx/fs/file_status>
 #include <unistdx/io/fildes>
 
 #include <unistdx/test/random_string>

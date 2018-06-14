@@ -1,7 +1,7 @@
 foreach conf : [
 	['file_mode', [unistdx,gtest]],
 	['file_mutex', [unistdx,gtest]],
-	['file_stat', [unistdx,gtest]],
+	['file_status', [unistdx,gtest]],
 	['file_type', [unistdx,gtest]],
 	['idirectory', [unistdx,gtest]],
 	['idirtree', [unistdx,gtest]],

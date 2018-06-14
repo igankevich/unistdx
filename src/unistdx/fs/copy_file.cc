@@ -1,7 +1,7 @@
 #include "copy_file"
 
 #include <unistdx/config>
-#include <unistdx/fs/file_stat>
+#include <unistdx/fs/file_status>
 #include <unistdx/io/fildes>
 
 #if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
@@ -99,7 +99,7 @@ sys::copy_file(const path& src, const path& dest) {
 		open_flag::close_on_exec,
 		0644
 	);
-	file_stat st(src);
+	file_status st(src);
 	const offset_type size = st.size();
 	#if defined(UNISTDX_HAVE_COPY_FILE_RANGE)
 	do_copy_file_range(in, out, size);

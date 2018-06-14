@@ -1,6 +1,9 @@
 #ifndef UNISTDX_FS_FILE_STAT
 #define UNISTDX_FS_FILE_STAT
 
+#include <fcntl.h>
+#include <sys/stat.h>
+
 #include <chrono>
 
 #include <unistdx/base/check>
@@ -19,6 +22,8 @@ namespace sys {
 		}
 	}
 
+	typedef int fd_type;
+
 	/// Alias to \c stat system type.
 	typedef struct ::stat stat_type;
 
@@ -31,6 +36,12 @@ namespace sys {
 	/// Alias to \c dev_t system type.
 	typedef ::dev_t device_type;
 
+	/// File status flags.
+	enum class file_status_flag: int {
+		/// Do not follow symlinks. Allow getting status of danglink symbolic links.
+		no_follow = AT_SYMLINK_NOFOLLOW
+	};
+
 	/**
 	\brief
 	File status class that wraps \c stat system type.
@@ -38,7 +49,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup wrapper fs
 	*/
-	class file_stat: public stat_type {
+	class file_status: public stat_type {
 
 	public:
 		/// Clock type used in the methods of this class.
@@ -53,15 +64,31 @@ namespace sys {
 		typedef ::nlink_t nlink_type;
 
 		inline
-		file_stat() noexcept:
+		file_status() noexcept:
 		stat_type{}
 		{}
 
 		/// Construct file status for file \p filename.
 		inline explicit
-		file_stat(const char* filename):
+		file_status(
+			const char* filename,
+			file_status_flag flags = file_status_flag(0)
+		):
+		file_status(AT_FDCWD, filename)
+		{}
+
+		/**
+		Construct file status for file \p filename located in directory
+		specified by file descriptor \p dir.
+		*/
+		inline
+		file_status(
+			fd_type dir,
+			const char* filename,
+			file_status_flag flags = file_status_flag(0)
+		):
 		stat_type{}
-		{ this->update(filename); }
+		{ this->update(dir, filename); }
 
 		/// Get file type.
 		inline file_type
@@ -180,18 +207,35 @@ namespace sys {
 		}
 
 		/**
-		\brief Get file status for file \p filename.
+		\brief
+	   	Get file status for file \p filename located in directory
+		specified by file descriptor \p dir.
 		\returns reference to this object
 		\throws bad_call
 		\see \man{stat,2}
 		\see std::errc
 		\details
-		Throws exception, if the file does not exist.
+		\arg Throws exception, if the file does not exist.
+		\arg Use \link file_status_flag::no_follow\endlink to not throw exception
+		on dangling symbolic links.
 		*/
-		inline file_stat&
-		update(const char* filename) {
-			UNISTDX_CHECK(::stat(filename, this));
+		inline file_status&
+		update(
+			fd_type dir,
+			const char* filename,
+			file_status_flag flags = file_status_flag(0)
+		) {
+			UNISTDX_CHECK(::fstatat(dir, filename, this, int(flags)));
 			return *this;
+		}
+
+		/**
+		\brief Get file status for file \p filename.
+		\details \copydetails update(fd_type,const char*,file_status_flag)
+		*/
+		inline file_status&
+		update(const char* filename, file_status_flag flags = file_status_flag(0)) {
+			return this->update(AT_FDCWD, filename);
 		}
 
 		/// Get time of last access.
@@ -213,13 +257,13 @@ namespace sys {
 		}
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const file_stat& rhs);
+		operator<<(std::ostream& out, const file_status& rhs);
 
 	};
 
 	/// Print file status for debugging (the format is similar to \man{ls,1}).
 	std::ostream&
-	operator<<(std::ostream& out, const file_stat& rhs);
+	operator<<(std::ostream& out, const file_status& rhs);
 
 }
 

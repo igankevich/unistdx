@@ -144,7 +144,7 @@ namespace sys {
 	struct ignore_hidden_dirs {
 
 	private:
-		file_stat _stat;
+		file_status _stat;
 		file_type _type = file_type(DT_UNKNOWN);
 
 	public:
@@ -162,13 +162,13 @@ namespace sys {
 		}
 
 		/// Get file status.
-		inline const file_stat&
+		inline const file_status&
 		status() const noexcept {
 			return this->_stat;
 		}
 
 		/// Get file status.
-		inline file_stat&
+		inline file_status&
 		status() noexcept {
 			return this->_stat;
 		}
@@ -186,10 +186,10 @@ namespace sys {
 		}
 
 		/// Get or compute file status.
-		inline const file_stat&
+		inline const file_status&
 		status(const path& p) {
 			if (!this->has_status()) {
-				this->_stat.update(p);
+				this->_stat.update(p, file_status_flag::no_follow);
 			}
 			return this->_stat;
 		}
@@ -201,7 +201,7 @@ namespace sys {
 			this->_type = entry.type();
 			return entry.has_type()
 				? entry.type()
-				: this->_stat.update(path(dirname, entry.name())).type();
+				: this->_stat.update(path(dirname, entry.name()), file_status_flag::no_follow).type();
 		}
 
 		inline file_type

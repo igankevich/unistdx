@@ -1,26 +1,26 @@
-#include <unistdx/fs/file_stat>
+#include <unistdx/fs/file_status>
 
 #include <unistdx/test/operator>
 #include <unistdx/test/exception>
 
-TEST(file_stat, errors) {
+TEST(file_status, errors) {
 	UNISTDX_EXPECT_ERROR(
 		std::errc::no_such_file_or_directory,
-		sys::file_stat("non-existent-file")
+		sys::file_status("non-existent-file")
 	);
-	sys::file_stat st;
+	sys::file_status st;
 	UNISTDX_EXPECT_ERROR(
 		std::errc::no_such_file_or_directory,
 		st.update("non-existent-file")
 	);
 }
 
-TEST(file_stat, print) {
-	test::stream_insert_starts_with("d", sys::file_stat("src"));
+TEST(file_status, print) {
+	test::stream_insert_starts_with("d", sys::file_status("src"));
 }
 
-TEST(file_stat, members) {
-	sys::file_stat st("src");
+TEST(file_status, members) {
+	sys::file_status st("src");
 	EXPECT_TRUE(st.is_directory());
 	EXPECT_FALSE(st.is_regular());
 	EXPECT_FALSE(st.is_block_device());

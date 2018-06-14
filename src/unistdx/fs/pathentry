@@ -93,14 +93,14 @@ namespace sys {
 	\brief Reliably get file type of a directory entry.
 	\param rhs directory entry
 	\details
-	Falls back to \link file_stat\endlink if directory entry itself
+	Falls back to \link file_status\endlink if directory entry itself
 	does not have valid file type.
 	*/
 	inline file_type
 	get_file_type(const pathentry& rhs) {
 		return rhs.has_type()
 		       ? rhs.type()
-			   : file_stat(rhs.getpath()).type();
+			   : file_status(rhs.getpath()).type();
 	}
 
 }

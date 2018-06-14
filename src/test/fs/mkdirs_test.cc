@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <unistdx/fs/canonical_path>
-#include <unistdx/fs/file_stat>
+#include <unistdx/fs/file_status>
 #include <unistdx/fs/mkdirs>
 #include <unistdx/test/temporary_file>
 
@@ -12,7 +12,7 @@ TEST(MakeDirectories, Full) {
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "a", "b")));
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "x")));
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(sys::canonical_path(root), "y")));
-	EXPECT_TRUE(sys::file_stat(sys::path(root, "1", "2", "3")).exists());
+	EXPECT_TRUE(sys::file_status(sys::path(root, "1", "2", "3")).exists());
 }
 
 TEST(mkdirs, file_in_path) {

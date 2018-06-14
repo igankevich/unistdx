@@ -7,7 +7,7 @@
 #include <ostream>
 
 #include <unistdx/fs/path>
-#include <unistdx/fs/file_stat>
+#include <unistdx/fs/file_status>
 
 namespace sys {
 
@@ -126,14 +126,14 @@ namespace sys {
 	\param dirname directory where \p entry is located
 	\param entry directory entry
 	\details
-	Falls back to \link file_stat\endlink if directory entry itself
+	Falls back to \link file_status\endlink if directory entry itself
 	does not have valid file type.
 	*/
 	inline file_type
 	get_file_type(const path& dirname, const direntry& entry) {
 		return entry.has_type()
 		       ? entry.type()
-			   : file_stat(path(dirname, entry.name())).type();
+			   : file_status(path(dirname, entry.name())).type();
 	}
 
 }
