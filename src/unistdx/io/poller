@@ -346,8 +346,7 @@ namespace sys {
 
 		void
 		xdel(fd_type fd) {
-			UNISTDX_CHECK_IF_NOT(
-				ENOENT,
+			UNISTDX_CHECK(
 				::epoll_ctl(this->epoll_fd(), EPOLL_CTL_DEL, fd, nullptr)
 			);
 		}
@@ -360,15 +359,13 @@ namespace sys {
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
 			sys::log_message("poller", "wait");
 			#endif
-			UNISTDX_CHECK_IF_NOT(
-				EINTR,
-				nfds = ::epoll_wait(
-					this->_epollfd.fd(),
-					this->_events.data(),
-					this->_events.size(),
-					timeout_millis
-				      )
+			nfds = ::epoll_wait(
+				this->_epollfd.fd(),
+				this->_events.data(),
+				this->_events.size(),
+				timeout_millis
 			);
+			UNISTDX_CHECK(nfds);
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
 			sys::log_message("poller", "wake up nfds=_", nfds);
 			#endif

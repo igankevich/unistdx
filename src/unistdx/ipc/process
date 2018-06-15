@@ -322,10 +322,7 @@ namespace sys {
 		wait(wait_flags flags = wait_flags::exited) {
 			sys::siginfo_type info;
 			if (this->_pid > 0) {
-				UNISTDX_CHECK_IF_NOT(
-					EINTR,
-					::waitid(P_PID, this->_pid, &info, static_cast<int>(flags))
-				);
+				UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
 				this->_pid = 0;
 			}
 			return sys::proc_info(info);

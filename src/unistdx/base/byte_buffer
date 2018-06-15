@@ -60,6 +60,9 @@ namespace sys {
 		\throws bad_call
 		\see \man{mmap,2}
 		\see \man{madvise,2}
+		\details
+		If \p size is nought, unusable buffer is created
+		and no memory is allocated.
 		*/
 		explicit
 		byte_buffer(size_type size);

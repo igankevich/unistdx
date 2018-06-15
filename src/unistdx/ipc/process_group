@@ -108,10 +108,7 @@ namespace sys {
 			while (!this->_procs.empty()) {
 				{
 					unlock_guard<Lock> g(lock);
-					UNISTDX_CHECK_IF_NOT(
-						EINTR,
-						::waitid(P_PGID, this->_gid, &info, static_cast<int>(flags))
-					);
+					UNISTDX_CHECK(::waitid(P_PGID, this->_gid, &info, int(flags)));
 				}
 				status = sys::proc_info(info);
 				result = std::find_if(

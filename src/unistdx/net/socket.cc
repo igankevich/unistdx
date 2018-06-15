@@ -65,10 +65,7 @@ sys::socket::connect(const endpoint& e) {
 	#ifndef NDEBUG
 	log_message("sys", "connect to _", e);
 	#endif
-	UNISTDX_CHECK_IF_NOT(
-		EINPROGRESS,
-		::connect(this->_fd, e.sockaddr(), e.sockaddrlen())
-	);
+	UNISTDX_CHECK(::connect(this->_fd, e.sockaddr(), e.sockaddrlen()));
 }
 
 void
