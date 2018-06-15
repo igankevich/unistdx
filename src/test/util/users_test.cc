@@ -55,7 +55,6 @@ TEST(Group, Enumerate) {
 
 TEST(User, FindBy) {
 	try {
-		UNISTDX_THROW_BAD_CALL();
 		sys::user u1, u2, u3;
 		bool success;
 		success = sys::find_user(sys::this_process::user(), u1);
