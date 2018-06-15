@@ -15,7 +15,7 @@ install_headers(
 	'process_semaphore',
 	'process_status',
 	'semaphore',
-	'sharedmem',
+	'shared_memory_segment',
 	'shmembuf',
 	'signal',
 	'thread_semaphore',

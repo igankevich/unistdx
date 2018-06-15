@@ -1,4 +1,4 @@
-#include "ipv6_addr"
+#include "ipv6_address"
 
 #include <istream>
 #include <ostream>
@@ -8,10 +8,10 @@
 #include <unistdx/bits/addr_parse>
 
 std::ostream&
-sys::operator<<(std::ostream& out, const ipv6_addr& rhs) {
+sys::operator<<(std::ostream& out, const ipv6_address& rhs) {
 	std::ostream::sentry s(out);
 	if (s) {
-		typedef ipv6_addr::hex_type hex_type;
+		typedef ipv6_address::hex_type hex_type;
 		typedef std::ostream::char_type char_type;
 		ios_guard g(out);
 		out.setf(std::ios::hex, std::ios::basefield);
@@ -25,12 +25,12 @@ sys::operator<<(std::ostream& out, const ipv6_addr& rhs) {
 }
 
 std::istream&
-sys::operator>>(std::istream& in, ipv6_addr& rhs) {
+sys::operator>>(std::istream& in, ipv6_address& rhs) {
 	std::istream::sentry s(in);
 	if (!s) {
 		return in;
 	}
-	typedef ipv6_addr::hex_type hex_type;
+	typedef ipv6_address::hex_type hex_type;
 	typedef bits::Num<u16, u32> Hextet;
 	ios_guard g(in);
 	in.setf(std::ios::hex, std::ios::basefield);

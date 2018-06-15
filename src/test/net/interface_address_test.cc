@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include <unistdx/net/ifaddr>
+#include <unistdx/net/interface_address>
 #include <sstream>
 #include <random>
 #include <cmath>
@@ -17,15 +17,15 @@ genrandom() {
 }
 
 template <class Addr>
-sys::ifaddr<Addr>
+sys::interface_address<Addr>
 random_ifaddr() {
 	typedef typename Addr::rep_type rep;
-	return sys::ifaddr<Addr>(Addr(genrandom<rep>()), genrandom<sys::prefix_type>());
+	return sys::interface_address<Addr>(Addr(genrandom<rep>()), genrandom<sys::prefix_type>());
 }
 
 TEST(Ifaddr, LocalhostIPv6) {
-	typedef sys::ifaddr<sys::ipv6_addr> ifaddr_type;
-	typedef sys::ipaddr_traits<sys::ipv6_addr> traits_type;
+	typedef sys::interface_address<sys::ipv6_address> ifaddr_type;
+	typedef sys::ipaddr_traits<sys::ipv6_address> traits_type;
 	ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
 	std::stringstream str;
 	str << ifa;
@@ -35,10 +35,10 @@ TEST(Ifaddr, LocalhostIPv6) {
 template <class Addr>
 struct IfaddrTest: public ::testing::Test {};
 
-TYPED_TEST_CASE(IfaddrTest, MAKE_TYPES(sys::ipv4_addr, sys::ipv6_addr));
+TYPED_TEST_CASE(IfaddrTest, MAKE_TYPES(sys::ipv4_address, sys::ipv6_address));
 
 TYPED_TEST(IfaddrTest, InputOutputOperatorsLocalHost) {
-	typedef sys::ifaddr<TypeParam> ifaddr_type;
+	typedef sys::interface_address<TypeParam> ifaddr_type;
 	typedef sys::ipaddr_traits<TypeParam> traits_type;
 	ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
 	test::io_operators(ifa);
@@ -52,7 +52,7 @@ TYPED_TEST(IfaddrTest, InputOutputOperatorsRandom) {
 
 TYPED_TEST(IfaddrTest, Loopback) {
 	typedef typename TypeParam::rep_type rep;
-	typedef sys::ifaddr<TypeParam> ifaddr_type;
+	typedef sys::interface_address<TypeParam> ifaddr_type;
 	typedef sys::ipaddr_traits<TypeParam> traits_type;
 	EXPECT_TRUE(
 		ifaddr_type(
@@ -69,8 +69,8 @@ TYPED_TEST(IfaddrTest, Loopback) {
 }
 
 TEST(Ifaddr, ContainsIpV4) {
-	typedef sys::ifaddr<sys::ipv4_addr> ifaddr_type;
-	typedef sys::ipaddr_traits<sys::ipv4_addr> traits_type;
+	typedef sys::interface_address<sys::ipv4_address> ifaddr_type;
+	typedef sys::ipaddr_traits<sys::ipv4_address> traits_type;
 	ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
 	EXPECT_TRUE(ifa.contains({127,0,0,1}));
 	EXPECT_TRUE(ifa.contains({127,0,0,2}));
@@ -81,8 +81,8 @@ TEST(Ifaddr, ContainsIpV4) {
 }
 
 TEST(Ifaddr, CountIpv4) {
-	typedef sys::ifaddr<sys::ipv4_addr> ifaddr_type;
-	typedef sys::ipaddr_traits<sys::ipv4_addr> traits_type;
+	typedef sys::interface_address<sys::ipv4_address> ifaddr_type;
+	typedef sys::ipaddr_traits<sys::ipv4_address> traits_type;
 	ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
 	EXPECT_EQ(std::pow(2, 24)-2, ifa.count());
 }

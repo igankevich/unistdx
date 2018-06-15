@@ -5,7 +5,7 @@ foreach conf : [
 	['process_group', [unistdx,gtest]],
 	['process_status', [unistdx,gtest]],
 	['semaphore', [threads,unistdx,gtest]],
-	['sharedmem', [threads,unistdx,gtest]],
+	['shared_memory_segment', [threads,unistdx,gtest]],
 	['signal', [unistdx,gtest]],
 ]
 	test_name = join_paths('ipc', conf[0])

@@ -15,7 +15,7 @@ namespace {
 	typedef sys::bits::Const_char<']'> Right_br;
 
 	inline void
-	init_addr(sys::sockinet4_type& addr4, sys::ipv4_addr a, sys::port_type p) {
+	init_addr(sys::sockinet4_type& addr4, sys::ipv4_address a, sys::port_type p) {
 		using namespace sys;
 		addr4.sin_family = static_cast<sa_family_type>(family_type::inet);
 		addr4.sin_addr = a;
@@ -25,7 +25,7 @@ namespace {
 	inline void
 	init_addr(
 		sys::sockinet6_type& addr6,
-		const sys::ipv6_addr& a,
+		const sys::ipv6_address& a,
 		sys::port_type p
 	) {
 		using namespace sys;
@@ -80,7 +80,7 @@ sys::operator>>(std::istream& in, socket_address& rhs) {
 	using bits::Colon;
 	std::istream::sentry s(in);
 	if (s) {
-		ipv4_addr host;
+		ipv4_address host;
 		port_type port = 0;
 		ios_guard g(in);
 		in.unsetf(std::ios_base::skipws);
@@ -90,7 +90,7 @@ sys::operator>>(std::istream& in, socket_address& rhs) {
 		} else {
 			in.clear();
 			in.seekg(oldg);
-			ipv6_addr host6;
+			ipv6_address host6;
 			if (in >> Left_br() >> host6 >> Right_br() >> Colon() >>
 			    port) {
 				init_addr(rhs._addr6, host6, port);
@@ -118,12 +118,12 @@ sys::operator>>(bstream& in, socket_address& rhs) {
 	rhs._addr6.sin6_family = static_cast<sa_family_type>(fam);
 	bytes<port_type> port;
 	if (rhs.family() == family_type::inet6) {
-		ipv6_addr addr;
+		ipv6_address addr;
 		in >> addr >> port;
 		rhs._addr6.sin6_addr = addr;
 		rhs._addr6.sin6_port = port;
 	} else {
-		ipv4_addr addr;
+		ipv4_address addr;
 		in >> addr >> port;
 		rhs._addr4.sin_addr = addr;
 		rhs._addr4.sin_port = port;
@@ -133,14 +133,14 @@ sys::operator>>(bstream& in, socket_address& rhs) {
 
 void
 sys::socket_address::addr(const char* host, port_type p) {
-	ipv4_addr a4;
+	ipv4_address a4;
 	std::stringstream tmp(host);
 	if (tmp >> a4) {
 		init_addr(this->_addr4, a4, p);
 	} else {
 		tmp.clear();
 		tmp.seekg(0);
-		ipv6_addr a6;
+		ipv6_address a6;
 		if (tmp >> a6) {
 			init_addr(this->_addr6, a6, p);
 		}

@@ -30,10 +30,10 @@ TEST(NetlinkPoller, First) {
 				}
 				if (hdr.new_address() || hdr.delete_address()) {
 					sys::ifaddr_message* m = hdr.message();
-					sys::ipv4_addr address;
+					sys::ipv4_address address;
 					for (auto& attr : m->attributes(cont.length())) {
 						if (attr.type() == sys::ifaddr_attribute::address) {
-							address = *attr.data<sys::ipv4_addr>();
+							address = *attr.data<sys::ipv4_address>();
 						}
 					}
 					std::clog << action << ' ' << address << std::endl;
@@ -73,11 +73,11 @@ TEST(netlink, get_address) {
 		EXPECT_FALSE(hdr.delete_address());
 		if (hdr.new_address()) {
 			sys::ifaddr_message* m = hdr.message();
-			sys::ipv4_addr address;
+			sys::ipv4_address address;
 			std::string name;
 			for (auto& attr : m->attributes(cont.length())) {
 				if (attr.type() == sys::ifaddr_attribute::address) {
-					address = *attr.data<sys::ipv4_addr>();
+					address = *attr.data<sys::ipv4_address>();
 				} else if (attr.type() == sys::ifaddr_attribute::interface_name) {
 					name = attr.data<char>();
 				}

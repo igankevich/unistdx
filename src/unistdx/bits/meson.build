@@ -7,7 +7,7 @@ install_headers(
 	'byte_swap_chooser',
 	'entity',
 	'for_each_file_descriptor',
-	'ifaddrs',
+	'interface_addresses',
 	'macros',
 	'make_object',
 	'no_copy_and_move',
@@ -16,7 +16,7 @@ install_headers(
 	'poll',
 	'process',
 	'safe_calls',
-	'sharedmem',
+	'shared_memory_segment',
 	'socket',
 	'uint128_parse',
 	subdir: join_paths(meson.project_name(), 'bits')

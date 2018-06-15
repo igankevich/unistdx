@@ -3,7 +3,7 @@
 
 #include <tuple>
 
-#include <unistdx/fs/direntry>
+#include <unistdx/fs/directory_entry>
 
 namespace sys {
 
@@ -12,11 +12,12 @@ namespace sys {
 	\date 2018-05-25
 	\author Ivan Gankevich
 	\ingroup wrapper fs
+	\deprecated Use directory_entry instead
 	\details
 	This class stores a path to a directory where entry is located,
 	which makes it convenient for recursive directory traversals.
 	*/
-	class pathentry: public direntry {
+	class pathentry: public directory_entry {
 
 	protected:
 		/// Path to a directory containing the entry.
@@ -36,8 +37,8 @@ namespace sys {
 
 		/// Construct path entry with \p dirname and \p ent.
 		inline
-		pathentry(const path& dirname, const direntry& ent):
-		direntry(ent),
+		pathentry(const path& dirname, const directory_entry& ent):
+		directory_entry(ent),
 		_dirname(dirname) {}
 
 		/// Directory path.

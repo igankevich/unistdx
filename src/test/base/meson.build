@@ -1,7 +1,7 @@
 foreach conf : [
 	['bad_call', [unistdx,gtest]],
 	['byte_buffer', [unistdx,gtest]],
-	['cmdline', [unistdx,gtest]],
+	['command_line', [unistdx,gtest]],
 	['delete_each', [unistdx,gtest]],
 	['log_message', [unistdx,gtest]],
 	['sha1', [unistdx,gtest]],

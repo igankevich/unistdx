@@ -15,8 +15,8 @@
 #include <unistdx/net/bytes>
 #include <unistdx/net/family>
 #include <unistdx/net/ipaddr_traits>
-#include <unistdx/net/ipv4_addr>
-#include <unistdx/net/ipv6_addr>
+#include <unistdx/net/ipv4_address>
+#include <unistdx/net/ipv6_address>
 
 #if defined(UNISTDX_HAVE_NETLINK)
 #include <linux/netlink.h>
@@ -42,7 +42,7 @@ namespace sys {
 
 		/**
 		Construct internal representation of socket_address
-		as constant expression. For both ipv4_addr and ipv6_addr
+		as constant expression. For both ipv4_address and ipv6_address
 		the return type is sockinet6_type.
 		*/
 		template<class Addr>
@@ -51,7 +51,7 @@ namespace sys {
 
 		template<>
 		inline constexpr sockinet6_type
-		new_sockinet<ipv6_addr>(family_type f, port_type p, ipv6_addr h) {
+		new_sockinet<ipv6_address>(family_type f, port_type p, ipv6_address h) {
 			return sockinet6_type {
 				#if defined(__MACH__)
 					   0,
@@ -66,7 +66,7 @@ namespace sys {
 
 		template<>
 		inline constexpr sockinet6_type
-		new_sockinet<ipv4_addr>(family_type f, port_type p, ipv4_addr h) {
+		new_sockinet<ipv4_address>(family_type f, port_type p, ipv4_address h) {
 			return sockinet6_type {
 				#if defined(__MACH__)
 					   0,
@@ -129,12 +129,12 @@ namespace sys {
 
 		/// Construct socket_address with IPv4 address \p h and port \p p.
 		inline constexpr
-		socket_address(const ipv4_addr h, const port_type p) noexcept:
+		socket_address(const ipv4_address h, const port_type p) noexcept:
 		_addr6(bits::new_sockinet(family_type::inet, p, h)) {}
 
 		/// Construct socket_address with IPv6 address \p h and port \p p.
 		inline constexpr
-		socket_address(const ipv6_addr &h, const port_type p) noexcept:
+		socket_address(const ipv6_address &h, const port_type p) noexcept:
 		_addr6(bits::new_sockinet(family_type::inet6, p, h)) {}
 
 		/// Construct socket_address from \c sockaddr_in system type.
@@ -171,15 +171,15 @@ namespace sys {
 		socket_address(const socket_address &rhs, const port_type newport) noexcept:
 		_addr6(
 			rhs.family() == family_type::inet ?
-			bits::new_sockinet<ipv4_addr>(
+			bits::new_sockinet<ipv4_address>(
 				family_type::inet,
 				newport,
-				ipv4_addr(rhs._addr6.sin6_flowinfo)
+				ipv4_address(rhs._addr6.sin6_flowinfo)
 			) :
-			bits::new_sockinet<ipv6_addr>(
+			bits::new_sockinet<ipv6_address>(
 				family_type::inet6,
 				newport,
-				ipv6_addr(rhs._addr6.sin6_addr)
+				ipv6_address(rhs._addr6.sin6_addr)
 			)
 		) {}
 
@@ -260,9 +260,9 @@ namespace sys {
 		}
 
 		/// Get IPv4 address.
-		inline constexpr ipv4_addr
+		inline constexpr ipv4_address
 		addr4() const noexcept {
-			return ipv4_addr(this->_addr4.sin_addr);
+			return ipv4_address(this->_addr4.sin_addr);
 		}
 
 		/// Get IPv4 port.
@@ -272,9 +272,9 @@ namespace sys {
 		}
 
 		/// Get IPv6 address.
-		inline constexpr ipv6_addr
+		inline constexpr ipv6_address
 		addr6() const {
-			return ipv6_addr(this->_addr6.sin6_addr);
+			return ipv6_address(this->_addr6.sin6_addr);
 		}
 
 		/// Get IPv6 port.
@@ -313,7 +313,7 @@ namespace sys {
 
 		void addr(const char* host, port_type p);
 
-		friend ipv4_addr;
+		friend ipv4_address;
 
 	};
 
@@ -335,27 +335,27 @@ namespace sys {
 
 	static_assert(sizeof(port_type) == 2, "bad port_type size");
 
-	ipv4_addr::ipv4_addr(const sa_type& rhs) noexcept:
+	ipv4_address::ipv4_address(const sa_type& rhs) noexcept:
 	inaddr(sys::socket_address(rhs)._addr4.sin_addr)
 	{}
 
-	constexpr ipv4_addr
-	ipaddr_traits<ipv4_addr>::address(const socket_address& rhs) noexcept {
+	constexpr ipv4_address
+	ipaddr_traits<ipv4_address>::address(const socket_address& rhs) noexcept {
 		return rhs.addr4();
 	}
 
 	constexpr port_type
-	ipaddr_traits<ipv4_addr>::port(const socket_address& rhs) noexcept {
+	ipaddr_traits<ipv4_address>::port(const socket_address& rhs) noexcept {
 		return to_host_format(rhs.port4());
 	}
 
-	constexpr ipv6_addr
-	ipaddr_traits<ipv6_addr>::address(const socket_address& rhs) noexcept {
+	constexpr ipv6_address
+	ipaddr_traits<ipv6_address>::address(const socket_address& rhs) noexcept {
 		return rhs.addr6();
 	}
 
 	constexpr port_type
-	ipaddr_traits<ipv6_addr>::port(const socket_address& rhs) noexcept {
+	ipaddr_traits<ipv6_address>::port(const socket_address& rhs) noexcept {
 		return to_host_format(rhs.port6());
 	}
 
@@ -375,13 +375,13 @@ namespace std {
 		/**
 		\brief Computes hash by XOR-ing hash of the address with port number.
 		\details
-		Depending on the address family, uses hash of either ipv4_addr or ipv6_addr.
+		Depending on the address family, uses hash of either ipv4_address or ipv6_address.
 		*/
 		inline result_type
 		operator()(const argument_type& rhs) const noexcept {
 			const size_t a = rhs.family() == sys::family_type::inet
-			                 ? std::hash<sys::ipv4_addr>()(rhs.addr4())
-							 : std::hash<sys::ipv6_addr>()(rhs.addr6());
+			                 ? std::hash<sys::ipv4_address>()(rhs.addr4())
+							 : std::hash<sys::ipv6_address>()(rhs.addr6());
 			return rhs.port() ^ a;
 		}
 

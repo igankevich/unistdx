@@ -12,7 +12,7 @@ install_headers(
 	'canonical_path',
 	'copy_file',
 	'directory',
-	'direntry',
+	'directory_entry',
 	'dirstream',
 	'file_mode',
 	'file_mutex',

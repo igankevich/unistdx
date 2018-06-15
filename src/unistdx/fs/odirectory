@@ -14,7 +14,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup stream fs
 	\tparam Trans transformation function type
-	\see direntry
+	\see directory_entry
 	\see pathentry
 	\see copy_file
 	\details
@@ -86,7 +86,7 @@ namespace sys {
 
 		/// Copy directory entry \p rhs to output directory of the stream.
 		inline basic_odirectory&
-		operator<<(const direntry& rhs) {
+		operator<<(const directory_entry& rhs) {
 			copy_file(
 				path(rhs.name()),
 				path(this->_dirpath, this->_trans(rhs))

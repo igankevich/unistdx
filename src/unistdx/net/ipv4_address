@@ -32,7 +32,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup net
 	*/
-	union ipv4_addr {
+	union ipv4_address {
 
 		/// Octet type.
 		typedef u8 oct_type;
@@ -40,48 +40,48 @@ namespace sys {
 		typedef addr4_type rep_type;
 
 		inline constexpr
-		ipv4_addr() noexcept:
+		ipv4_address() noexcept:
 		addr(0) {}
 
 		/// Construct IPv4 address from integer type.
 		inline constexpr explicit
-		ipv4_addr(addr4_type rhs) noexcept:
+		ipv4_address(addr4_type rhs) noexcept:
 		addr(rhs) {}
 
 		/// Copy-constructor.
 		inline constexpr
-		ipv4_addr(const ipv4_addr& rhs) noexcept:
+		ipv4_address(const ipv4_address& rhs) noexcept:
 		addr(rhs.addr) {}
 
 		/// Construct IPv4 address from \c in_addr system type.
 		inline constexpr explicit
-		ipv4_addr(const inet4_type& rhs) noexcept:
+		ipv4_address(const inet4_type& rhs) noexcept:
 		addr(rhs.s_addr) {}
 
 		/// Construct IPv4 address manually specifying each octet.
 		inline constexpr
-		ipv4_addr(oct_type o1, oct_type o2, oct_type o3, oct_type o4):
+		ipv4_address(oct_type o1, oct_type o2, oct_type o3, oct_type o4):
 			addr(from_octets(o1, o2, o3, o4)) {}
 
 		/// Construct IPv4 address from \c sockaddr system type.
 		inline
-		ipv4_addr(const sa_type &rhs) noexcept;
+		ipv4_address(const sa_type &rhs) noexcept;
 
 		friend std::ostream&
-		operator<<(std::ostream& out, ipv4_addr rhs);
+		operator<<(std::ostream& out, ipv4_address rhs);
 
 		friend std::istream&
-		operator>>(std::istream& in, ipv4_addr& rhs);
+		operator>>(std::istream& in, ipv4_address& rhs);
 
 		/// Put address in binary form.
 		inline friend bstream&
-		operator<<(bstream& out, const ipv4_addr& rhs) {
+		operator<<(bstream& out, const ipv4_address& rhs) {
 			return out << rhs._bytes;
 		}
 
 		/// Get address in binary form.
 		inline friend bstream&
-		operator>>(bstream& in, ipv4_addr& rhs) {
+		operator>>(bstream& in, ipv4_address& rhs) {
 			return in >> rhs._bytes;
 		}
 
@@ -99,19 +99,19 @@ namespace sys {
 
 		/// Compare address integer representations.
 		inline constexpr bool
-		operator<(const ipv4_addr& rhs) const noexcept {
+		operator<(const ipv4_address& rhs) const noexcept {
 			return this->addr < rhs.addr;
 		}
 
 		/// \copydoc operator<
 		inline constexpr bool
-		operator==(ipv4_addr rhs) const noexcept {
+		operator==(ipv4_address rhs) const noexcept {
 			return this->addr == rhs.addr;
 		}
 
 		/// \copydoc operator<
 		inline constexpr bool
-		operator!=(ipv4_addr rhs) const noexcept {
+		operator!=(ipv4_address rhs) const noexcept {
 			return this->addr != rhs.addr;
 		}
 
@@ -140,7 +140,7 @@ namespace sys {
 		}
 
 		/// Create network mask from network prefix.
-		inline static ipv4_addr
+		inline static ipv4_address
 	    from_prefix(prefix_type prefix) noexcept;
 
 	private:
@@ -156,7 +156,7 @@ namespace sys {
 
 		/// Compute address position in the subnetwork specified by \p netmask.
 		inline constexpr addr4_type
-		position(ipv4_addr netmask) const noexcept {
+		position(ipv4_address netmask) const noexcept {
 			return position_helper(
 				to_host_format(rep()),
 				to_host_format(netmask.rep())
@@ -178,27 +178,27 @@ namespace sys {
 		inet4_type inaddr;
 		bytes<addr4_type> _bytes;
 
-		static_assert(sizeof(addr) == sizeof(inaddr), "bad ipv4_addr size");
-		static_assert(sizeof(addr) == sizeof(_bytes), "bad ipv4_addr size");
+		static_assert(sizeof(addr) == sizeof(inaddr), "bad ipv4_address size");
+		static_assert(sizeof(addr) == sizeof(_bytes), "bad ipv4_address size");
 	};
 
 	/// Print textual representation of the address.
 	std::ostream&
-	operator<<(std::ostream& out, ipv4_addr rhs);
+	operator<<(std::ostream& out, ipv4_address rhs);
 
 	/// Parse textual representation of the address.
 	std::istream&
-	operator>>(std::istream& in, ipv4_addr& rhs);
+	operator>>(std::istream& in, ipv4_address& rhs);
 
 	/**
 	\brief
-	Specialisation of \link ipaddr_traits\endlink for \link ipv4_addr\endlink.
+	Specialisation of \link ipaddr_traits\endlink for \link ipv4_address\endlink.
 	*/
 	template<>
-	struct ipaddr_traits<ipv4_addr> {
+	struct ipaddr_traits<ipv4_address> {
 
 		/// Octet type.
-		typedef ipv4_addr::oct_type oct_type;
+		typedef ipv4_address::oct_type oct_type;
 
 		/// First octet of loopback address.
 		static constexpr const oct_type loopback_first_octet = 127;
@@ -206,25 +206,25 @@ namespace sys {
 		static constexpr const sa_family_type family = AF_INET;
 
 		/// Localhost address.
-		inline static constexpr ipv4_addr
+		inline static constexpr ipv4_address
 		localhost() noexcept {
-			return ipv4_addr {127,0,0,1};
+			return ipv4_address {127,0,0,1};
 		}
 
 		/// Loopback network mask.
-		inline static constexpr ipv4_addr
+		inline static constexpr ipv4_address
 		loopback_mask() noexcept {
-			return ipv4_addr {255,0,0,0};
+			return ipv4_address {255,0,0,0};
 		}
 
 		/// Wide area network mask.
-		inline static constexpr ipv4_addr
+		inline static constexpr ipv4_address
 		widearea_mask() noexcept {
-			return ipv4_addr {255,255,255,255};
+			return ipv4_address {255,255,255,255};
 		}
 
 		/// Get IPv4 address from socket_address.
-		inline static constexpr ipv4_addr
+		inline static constexpr ipv4_address
 		address(const socket_address& rhs) noexcept;
 
 		/// Get IPv4 port from socket_address.
@@ -233,31 +233,31 @@ namespace sys {
 
 	};
 
-	ipv4_addr
-	ipv4_addr::from_prefix(prefix_type prefix) noexcept {
+	ipv4_address
+	ipv4_address::from_prefix(prefix_type prefix) noexcept {
 		constexpr const size_t nbits = sizeof(addr4_type) *
 		                               std::numeric_limits<unsigned char>::digits;
 		return nbits == prefix
-		       ? ipaddr_traits<ipv4_addr>::widearea_mask()
-			   : ipv4_addr((addr4_type(1) << prefix) - addr4_type(1));
+		       ? ipaddr_traits<ipv4_address>::widearea_mask()
+			   : ipv4_address((addr4_type(1) << prefix) - addr4_type(1));
 	}
 
 }
 
 namespace std {
 
-	/// Specialisation of \link std::hash\endlink for \link sys::ipv4_addr\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::ipv4_address\endlink.
 	template<>
-	struct hash<sys::ipv4_addr>: public std::hash<sys::ipv4_addr::rep_type> {
+	struct hash<sys::ipv4_address>: public std::hash<sys::ipv4_address::rep_type> {
 
 	private:
-		typedef std::hash<sys::ipv4_addr::rep_type> base_type;
+		typedef std::hash<sys::ipv4_address::rep_type> base_type;
 
 	public:
 		/// Hash function return value type.
 		typedef size_t result_type;
 		/// Hash function argument type.
-		typedef sys::ipv4_addr argument_type;
+		typedef sys::ipv4_address argument_type;
 
 		/// Return hash of 8-byte integer that represents the address.
 		inline result_type

@@ -3,12 +3,12 @@ foreach conf : [
 	['bit_count', [unistdx,gtest]],
 	['byte_swap', [unistdx,gtest]],
 	['bytes', [unistdx,gtest]],
-	['socket_address', [unistdx,gtest]],
 	['family', [unistdx,gtest]],
-	['ifaddr', [unistdx,gtest]],
-	['ipv4_addr', [unistdx,gtest]],
+	['interface_address', [unistdx,gtest]],
+	['ipv4_address', [unistdx,gtest]],
 	['netlink_poller', [threads,unistdx,gtest]],
 	['socket', [threads,unistdx,gtest]],
+	['socket_address', [unistdx,gtest]],
 ]
 	test_name = join_paths('net', conf[0])
 	executable_name = conf[0] + '_test'

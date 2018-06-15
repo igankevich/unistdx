@@ -16,7 +16,7 @@ namespace sys {
 	directory entries to include in the stream.
 	\tparam DirPred directory predicate type, that determines which
 	directories to recurse into.
-	\see direntry
+	\see directory_entry
 	\see pathentry
 	\details
 	An input stream from which directories entries are read recursively.
@@ -89,9 +89,9 @@ namespace sys {
 			this->_dirpred = rhs;
 		}
 
-		/// Get next directory entry as \link direntry\endlink.
+		/// Get next directory entry as \link directory_entry\endlink.
 		inline basic_idirtree&
-		operator>>(direntry& rhs) {
+		operator>>(directory_entry& rhs) {
 			this->read_direntry(rhs);
 			return *this;
 		}
@@ -138,7 +138,7 @@ namespace sys {
 	\arg Default directory predicate for \link idirtree\endlink.
 	\arg Caches file status, which is accessed with \link status\endlink method.
 	\arg File status is updated only if file system does not return file type in
-	\link direntry\endlink.
+	\link directory_entry\endlink.
 	\ingroup fs
 	*/
 	struct ignore_hidden_dirs {
@@ -151,7 +151,7 @@ namespace sys {
 
 		/// Returns true, if directory entry is not hidden.
 		inline bool
-		operator()(const path& prefix, const direntry& rhs) {
+		operator()(const path& prefix, const directory_entry& rhs) {
 			return !rhs.is_hidden() && this->type(prefix, rhs) == file_type::directory;
 		}
 
@@ -197,7 +197,7 @@ namespace sys {
 	private:
 
 		inline file_type
-		type(const path& dirname, const direntry& entry) {
+		type(const path& dirname, const directory_entry& entry) {
 			this->_type = entry.type();
 			return entry.has_type()
 				? entry.type()

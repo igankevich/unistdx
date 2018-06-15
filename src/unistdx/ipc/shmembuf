@@ -4,7 +4,7 @@
 #include <unistdx/base/log_message>
 #include <unistdx/base/packetbuf>
 #include <unistdx/ipc/process_semaphore>
-#include <unistdx/ipc/sharedmem>
+#include <unistdx/ipc/shared_memory_segment>
 
 namespace sys {
 
@@ -35,7 +35,7 @@ namespace sys {
 
 	public:
 		/// Shared memory container type.
-		typedef typename ::sys::shared_mem<char_type> shared_mem_type;
+		typedef typename ::sys::shared_memory_segment<char_type> shared_mem_type;
 		/// Size type.
 		typedef typename shared_mem_type::size_type size_type;
 		/// Semaphore type. An alias to \link process_semaphore\endlink.
@@ -51,7 +51,7 @@ namespace sys {
 		};
 
 	private:
-		sys::shared_mem<char_type> _sharedmem;
+		sys::shared_memory_segment<char_type> _sharedmem;
 		shmem_header* _sharedpart = nullptr;
 
 	public:

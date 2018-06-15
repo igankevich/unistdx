@@ -18,7 +18,7 @@ namespace sys {
 	\ingroup net
 	*/
 	template<class Addr>
-	class ifaddr {
+	class interface_address {
 
 	public:
 		/// Address type.
@@ -41,7 +41,7 @@ namespace sys {
 		network mask \p netmask.
 		*/
 		inline constexpr
-		ifaddr(const addr_type& addr, const addr_type& netmask) noexcept:
+		interface_address(const addr_type& addr, const addr_type& netmask) noexcept:
 		_address(addr), _netmask(netmask)
 		{}
 
@@ -50,24 +50,24 @@ namespace sys {
 		network prefix \p prefix.
 		*/
 		inline constexpr
-		ifaddr(const addr_type& addr, const prefix_type prefix) noexcept:
+		interface_address(const addr_type& addr, const prefix_type prefix) noexcept:
 		_address(addr), _netmask(addr_type::from_prefix(prefix))
 		{}
 
 		inline constexpr
-		ifaddr() noexcept = default;
+		interface_address() noexcept = default;
 
 		/// Copy-constructor.
 		inline constexpr
-		ifaddr(const ifaddr&) noexcept = default;
+		interface_address(const interface_address&) noexcept = default;
 
 		/// Move-constructor.
 		inline constexpr
-		ifaddr(ifaddr&&) noexcept = default;
+		interface_address(interface_address&&) noexcept = default;
 
 		/// Assignment.
-		inline ifaddr&
-		operator=(const ifaddr&) noexcept = default;
+		inline interface_address&
+		operator=(const interface_address&) noexcept = default;
 
 		/// Get address.
 		inline constexpr const addr_type&
@@ -179,34 +179,34 @@ namespace sys {
 
 		/// Compares addresses and network masks.
 		inline constexpr bool
-		operator==(const ifaddr& rhs) const noexcept {
+		operator==(const interface_address& rhs) const noexcept {
 			return this->_address == rhs._address &&
 			       this->_netmask == rhs._netmask;
 		}
 
 		/// Compares addresses and network masks.
 		inline constexpr bool
-		operator!=(const ifaddr& rhs) const noexcept {
+		operator!=(const interface_address& rhs) const noexcept {
 			return !this->operator==(rhs);
 		}
 
 		/// Compares addresses and network masks.
 		inline constexpr bool
-		operator<(const ifaddr& rhs) const noexcept {
+		operator<(const interface_address& rhs) const noexcept {
 			return std::tie(this->_address, this->_netmask) <
 			       std::tie(rhs._address, rhs._netmask);
 		}
 
 		/// Put address and network prefix.
 		inline friend std::ostream&
-		operator<<(std::ostream& out, const ifaddr& rhs) {
+		operator<<(std::ostream& out, const interface_address& rhs) {
 			typedef sys::bits::Const_char<'/'> Slash;
 			return out << rhs._address << Slash() << rhs._netmask.to_prefix();
 		}
 
 		/// Get address and network prefix.
 		inline friend std::istream&
-		operator>>(std::istream& in, ifaddr& rhs) {
+		operator>>(std::istream& in, interface_address& rhs) {
 			typedef sys::bits::Const_char<'/'> Slash;
 			sys::prefix_type prefix = 0;
 			in >> rhs._address >> Slash() >> prefix;
@@ -216,13 +216,13 @@ namespace sys {
 
 		/// Put interface address in binary form.
 		inline friend bstream&
-		operator<<(bstream& out, const ifaddr& rhs) {
+		operator<<(bstream& out, const interface_address& rhs) {
 			return out << rhs._address << rhs._netmask;
 		}
 
 		/// Get interface address in binary form.
 		inline friend bstream&
-		operator>>(bstream& in, ifaddr& rhs) {
+		operator>>(bstream& in, interface_address& rhs) {
 			return in >> rhs._address >> rhs._netmask;
 		}
 
@@ -252,14 +252,14 @@ namespace sys {
 
 namespace std {
 
-	/// Specialisation of \link std::hash\endlink for \link sys::ifaddr\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::interface_address\endlink.
 	template<class Addr>
-	struct hash<sys::ifaddr<Addr> >: public std::hash<Addr> {
+	struct hash<sys::interface_address<Addr> >: public std::hash<Addr> {
 
 		/// Hash function return value type.
 		typedef size_t result_type;
 		/// Hash function argument type.
-		typedef sys::ifaddr<Addr> argument_type;
+		typedef sys::interface_address<Addr> argument_type;
 
 		/// Compute hash by XOR-ing hashes of the address and netmask.
 		inline result_type

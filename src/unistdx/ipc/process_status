@@ -1,5 +1,5 @@
-#ifndef UNISTDX_IPC_PROC_INFO
-#define UNISTDX_IPC_PROC_INFO
+#ifndef UNISTDX_IPC_PROCESS_STATUS
+#define UNISTDX_IPC_PROCESS_STATUS
 
 #include <sys/wait.h>
 
@@ -129,19 +129,19 @@ namespace sys {
 		/// Get process exit code.
 		inline constexpr code_type
 		exit_code() const noexcept {
-			return _code;
+			return this->_code;
 		}
 
 		/// Get process termination signal.
 		inline constexpr signal
 		term_signal() const noexcept {
-			return signal(_code);
+			return signal(this->_code);
 		}
 
 		/// Get process stop signal.
 		inline constexpr signal
 		stop_signal() const noexcept {
-			return signal(_code);
+			return signal(this->_code);
 		}
 
 		/// Get process ID.

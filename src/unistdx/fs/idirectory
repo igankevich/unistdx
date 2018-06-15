@@ -3,7 +3,7 @@
 
 #include <cassert>
 
-#include <unistdx/fs/direntry>
+#include <unistdx/fs/directory_entry>
 #include <unistdx/fs/dirstream>
 #include <unistdx/fs/pathentry>
 #include <unistdx/it/basic_istream_iterator>
@@ -21,7 +21,7 @@ namespace sys {
 	\ingroup stream fs
 	\tparam FilePred file predicate type, that determines which
 	directory entries to include in the stream.
-	\see direntry
+	\see directory_entry
 	\see pathentry
 	\details
 	An input stream from which directory entries are read non-recursively.
@@ -119,9 +119,9 @@ namespace sys {
 			return this->_dirpath;
 		}
 
-		/// Get next directory entry as \link direntry\endlink.
+		/// Get next directory entry as \link directory_entry\endlink.
 		inline basic_idirectory&
-		operator>>(direntry& rhs) {
+		operator>>(directory_entry& rhs) {
 			assert(this->is_open()); // LCOV_EXCL_LINE
 			this->read_direntry(rhs);
 			return *this;
@@ -147,10 +147,10 @@ namespace sys {
 
 	private:
 
-		inline direntry*
+		inline directory_entry*
 		read_direntry() noexcept {
 			assert(this->is_open()); // LCOV_EXCL_LINE
-			return static_cast<direntry*>(::readdir(this->_dir));
+			return static_cast<directory_entry*>(::readdir(this->_dir));
 		}
 
 		template<class Entry>
@@ -160,7 +160,7 @@ namespace sys {
 			if (good()) {
 				bool success = false;
 				while (!success && !this->eof()) {
-					const direntry* result = this->read_direntry();
+					const directory_entry* result = this->read_direntry();
 					if (!result) {
 						this->setstate(eofbit);
 					} else {
@@ -174,12 +174,12 @@ namespace sys {
 		}
 
 		inline void
-		read_direntry(direntry& rhs) {
+		read_direntry(directory_entry& rhs) {
 			assert(this->is_open()); // LCOV_EXCL_LINE
 			if (this->good()) {
 				bool success = false;
 				while (!success && !this->eof()) {
-					const direntry* result = this->read_direntry();
+					const directory_entry* result = this->read_direntry();
 					if (!result) {
 						this->setstate(eofbit);
 					} else {

@@ -1,9 +1,9 @@
 #ifndef UNISTDX_NET_IFADDRS
 #define UNISTDX_NET_IFADDRS
 
-#include <unistdx/bits/ifaddrs>
-#include <unistdx/net/ifaddrs_iterator>
-#include <unistdx/net/ifaddr>
+#include <unistdx/bits/interface_addresses>
+#include <unistdx/net/interface_address>
+#include <unistdx/net/interface_address_iterator>
 
 namespace sys {
 
@@ -11,18 +11,19 @@ namespace sys {
 	\brief Interface addresses container.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\ingroup wrapper
+	\ingroup wrapper container
 	\see \man{getifaddrs,3}
+	\deprecated Use netlink wrappers instead
 	\details
 	Wraps \c ifaddrs system type.
 	*/
-	class ifaddrs {
+	class interface_addresses {
 
 	public:
 		/// Alias to \c ifaddrs system type.
 		typedef ifaddrs_type value_type;
 		/// Iterator type.
-		typedef ifaddrs_iterator iterator;
+		typedef interface_address_iterator iterator;
 		/// Size type.
 		typedef std::size_t size_type;
 
@@ -37,7 +38,7 @@ namespace sys {
 		\see \man{getifaddrs,3}
 		*/
 		inline
-		ifaddrs() {
+		interface_addresses() {
 			UNISTDX_CHECK(::getifaddrs(&this->_addrs));
 		}
 
@@ -46,7 +47,7 @@ namespace sys {
 		\see \man{freeifaddrs,3}
 		*/
 		inline
-		~ifaddrs() noexcept {
+		~interface_addresses() noexcept {
 			if (this->_addrs) {
 				::freeifaddrs(this->_addrs);
 			}
@@ -88,20 +89,20 @@ namespace sys {
 	\brief Copy all addresses of the specified type to \p result.
 	\date 2018-05-23
 	\author Ivan Gankevich
-	\deprecated
+	\deprecated Use netlink wrappers instead
 	*/
 	template<class Addr, class Result>
 	inline void
 	enumerate_ifaddrs(Result result) {
 		typedef typename sys::ipaddr_traits<Addr> traits_type;
-		sys::ifaddrs addrs;
+		sys::interface_addresses addrs;
 		std::for_each(
 			addrs.begin(), addrs.end(),
 			[&result] (const sys::ifaddrs_type& rhs) {
 				if (rhs.ifa_addr && rhs.ifa_addr->sa_family == traits_type::family) {
 					const Addr addr(*rhs.ifa_addr);
 					const Addr netmask(*rhs.ifa_netmask);
-					*result = ifaddr<Addr>(addr, netmask);
+					*result = interface_address<Addr>(addr, netmask);
 					++result;
 				}
 			}

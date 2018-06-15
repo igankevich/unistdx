@@ -22,7 +22,7 @@ namespace test {
 		std::for_each(
 			Iterator(dir),
 			Iterator(),
-			[&files_actual] (const sys::direntry& ent) {
+			[&files_actual] (const sys::directory_entry& ent) {
 				files_actual.emplace(ent.name());
 			}
 		);

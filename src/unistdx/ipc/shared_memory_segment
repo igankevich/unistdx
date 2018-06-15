@@ -8,7 +8,7 @@
 #include <cstring>
 
 #include <unistdx/base/make_object>
-#include <unistdx/bits/sharedmem>
+#include <unistdx/bits/shared_memory_segment>
 #include <unistdx/base/check>
 
 namespace sys {
@@ -29,7 +29,7 @@ namespace sys {
 	\date 2018-05-21
 	\author Ivan Gankevich
 	*/
-	class sharedmem_stat: public ::shmid_ds {
+	class shared_memory_segment_status: public ::shmid_ds {
 
 	public:
 		/// Clock type used in this class.
@@ -50,7 +50,7 @@ namespace sys {
 		\see \man{shmctl,2}
 		*/
 		inline explicit
-		sharedmem_stat(shm_type id) {
+		shared_memory_segment_status(shm_type id) {
 			this->getstat(id);
 		}
 
@@ -136,7 +136,7 @@ namespace sys {
 	\arg The container does not provide syncrhonisation.
 	*/
 	template <class T>
-	class shared_mem {
+	class shared_memory_segment {
 
 	private:
 		typedef ::key_t key_type;
@@ -162,7 +162,7 @@ namespace sys {
 		\see \man{shmat,2}
 		*/
 		inline
-		shared_mem(mode_type mode, size_type guaranteed_size) {
+		shared_memory_segment(mode_type mode, size_type guaranteed_size) {
 			this->open_as_owner(mode|ipc::create, guaranteed_size);
 		}
 
@@ -171,13 +171,13 @@ namespace sys {
 		\see \man{shmat,2}
 		*/
 		inline explicit
-		shared_mem(shm_type shm) {
+		shared_memory_segment(shm_type shm) {
 			this->open_as_user(shm);
 		}
 
 		/// Move-constructor.
 		inline
-		shared_mem(shared_mem&& rhs):
+		shared_memory_segment(shared_memory_segment&& rhs):
 		_shm(rhs._shm),
 		_addr(rhs._addr),
 		_size(rhs._size),
@@ -187,29 +187,29 @@ namespace sys {
 		}
 
 		inline
-		shared_mem() = default;
+		shared_memory_segment() = default;
 
-		shared_mem(const shared_mem&) = delete;
+		shared_memory_segment(const shared_memory_segment&) = delete;
 
 		/// Terminates on system error.
 		inline
-		~shared_mem() {
+		~shared_memory_segment() {
 			this->close();
 		}
 
-		shared_mem&
-		operator=(const shared_mem&) = delete;
+		shared_memory_segment&
+		operator=(const shared_memory_segment&) = delete;
 
 		/// Move-assigment.
-		inline shared_mem&
-		operator=(shared_mem&& rhs) noexcept {
+		inline shared_memory_segment&
+		operator=(shared_memory_segment&& rhs) noexcept {
 			this->swap(rhs);
 			return *this;
 		}
 
 		/// Swap with \p rhs.
 		inline void
-		swap(shared_mem& rhs) {
+		swap(shared_memory_segment& rhs) {
 			std::swap(this->_shm, rhs._shm);
 			std::swap(this->_addr, rhs._addr);
 			std::swap(this->_size, rhs._size);
@@ -299,7 +299,7 @@ namespace sys {
 		\return true if segments have the same size and the same elements
 		*/
 		inline bool
-		operator==(const shared_mem& rhs) const noexcept {
+		operator==(const shared_memory_segment& rhs) const noexcept {
 			return this->_size == rhs._size
 			       && std::equal(this->begin(), this->end(), rhs.begin());
 		}
@@ -309,7 +309,7 @@ namespace sys {
 		\return false if segments have the same size and the same elements
 		*/
 		inline bool
-		operator!=(const shared_mem& rhs) const noexcept {
+		operator!=(const shared_memory_segment& rhs) const noexcept {
 			return !operator==(rhs);
 		}
 
@@ -392,12 +392,12 @@ namespace sys {
 
 		inline size_type
 		getsize() const {
-			sharedmem_stat stat(this->_shm);
+			shared_memory_segment_status stat(this->_shm);
 			return stat.segment_size() / sizeof(value_type);
 		}
 
 		inline friend std::ostream&
-		operator<<(std::ostream& out, const shared_mem& rhs) {
+		operator<<(std::ostream& out, const shared_memory_segment& rhs) {
 			return out << make_object(
 				"addr",
 				rhs.ptr(),
@@ -417,10 +417,10 @@ namespace sys {
 
 	};
 
-	/// Overload of \link std::swap\endlink for \link shared_mem\endlink.
+	/// Overload of \link std::swap\endlink for \link shared_memory_segment\endlink.
 	template <class T>
 	inline void
-	swap(shared_mem<T>& lhs, shared_mem<T>& rhs) {
+	swap(shared_memory_segment<T>& lhs, shared_memory_segment<T>& rhs) {
 		lhs.swap(rhs);
 	}
 

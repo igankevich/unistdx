@@ -26,19 +26,19 @@ namespace sys {
 	\details
 	A wrapper around \c dirent system type.
 	*/
-	class direntry: public dirent_type {
+	class directory_entry: public dirent_type {
 
 	public:
 
-		direntry() = default;
+		directory_entry() = default;
 
 		/// Copy-constructor.
-		direntry(const direntry&) = default;
+		directory_entry(const directory_entry&) = default;
 
 		/// Move-constructor.
-		direntry(direntry&&) = default;
+		directory_entry(directory_entry&&) = default;
 
-		~direntry() = default;
+		~directory_entry() = default;
 
 		/// Get entry file name.
 		inline const char*
@@ -93,31 +93,31 @@ namespace sys {
 
 		/// Compare entry file names.
 		inline bool
-		operator==(const direntry& rhs) const noexcept {
+		operator==(const directory_entry& rhs) const noexcept {
 			return std::strcmp(this->name(), rhs.name()) == 0;
 		}
 
 		/// Compare entry file names.
 		inline bool
-		operator!=(const direntry& rhs) const noexcept {
+		operator!=(const directory_entry& rhs) const noexcept {
 			return std::strcmp(this->name(), rhs.name()) != 0;
 		}
 
 		/// Compare entry file names.
 		inline bool
-		operator<(const direntry& rhs) const noexcept {
+		operator<(const directory_entry& rhs) const noexcept {
 			return std::strcmp(this->name(), rhs.name()) < 0;
 		}
 
 		/// Print entry file name.
 		inline friend std::ostream&
-		operator<<(std::ostream& out, const direntry& rhs) {
+		operator<<(std::ostream& out, const directory_entry& rhs) {
 			return out << rhs.name();
 		}
 
 		/// Copy-assignment.
-		direntry&
-		operator=(const direntry& rhs) = default;
+		directory_entry&
+		operator=(const directory_entry& rhs) = default;
 
 	};
 
@@ -130,7 +130,7 @@ namespace sys {
 	does not have valid file type.
 	*/
 	inline file_type
-	get_file_type(const path& dirname, const direntry& entry) {
+	get_file_type(const path& dirname, const directory_entry& entry) {
 		return entry.has_type()
 		       ? entry.type()
 			   : file_status(path(dirname, entry.name())).type();

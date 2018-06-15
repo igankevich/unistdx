@@ -1,7 +1,7 @@
 #ifndef UNISTDX_NET_IFADDRS_ITERATOR
 #define UNISTDX_NET_IFADDRS_ITERATOR
 
-#include <unistdx/bits/ifaddrs>
+#include <unistdx/bits/interface_addresses>
 
 namespace sys {
 
@@ -14,8 +14,9 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup iter net
 	\see \man{getifaddrs,3}
+	\deprecated Use netlink wrappers instead
 	*/
-	class ifaddrs_iterator:
+	class interface_address_iterator:
 		public std::iterator<std::input_iterator_tag, ifaddrs_type> {
 
 	private:
@@ -43,32 +44,32 @@ namespace sys {
 		\c ifaddrs system type.
 		*/
 		inline explicit constexpr
-		ifaddrs_iterator(pointer rhs) noexcept:
+		interface_address_iterator(pointer rhs) noexcept:
 		_ifa(rhs) {}
 
 		inline constexpr
-		ifaddrs_iterator() noexcept = default;
+		interface_address_iterator() noexcept = default;
 
 		inline
-		~ifaddrs_iterator() = default;
+		~interface_address_iterator() = default;
 
 		/// Copy-constructor.
 		inline constexpr
-		ifaddrs_iterator(const ifaddrs_iterator&) noexcept = default;
+		interface_address_iterator(const interface_address_iterator&) noexcept = default;
 
 		/// Assignment.
-		inline ifaddrs_iterator&
-		operator=(const ifaddrs_iterator&) noexcept = default;
+		inline interface_address_iterator&
+		operator=(const interface_address_iterator&) noexcept = default;
 
 		/// Compare \c ifaddrs pointers.
 		inline constexpr bool
-		operator==(const ifaddrs_iterator& rhs) const noexcept {
+		operator==(const interface_address_iterator& rhs) const noexcept {
 			return this->_ifa == rhs._ifa;
 		}
 
 		/// Compare \c ifaddrs pointers.
 		inline constexpr bool
-		operator!=(const ifaddrs_iterator& rhs) const noexcept {
+		operator!=(const interface_address_iterator& rhs) const noexcept {
 			return !this->operator==(rhs);
 		}
 
@@ -97,15 +98,15 @@ namespace sys {
 		}
 
 		/// Increment.
-		inline ifaddrs_iterator&
+		inline interface_address_iterator&
 		operator++() noexcept {
 			this->next(); return *this;
 		}
 
 		/// Post-increment.
-		inline ifaddrs_iterator
+		inline interface_address_iterator
 		operator++(int) noexcept {
-			ifaddrs_iterator tmp(*this); this->next(); return tmp;
+			interface_address_iterator tmp(*this); this->next(); return tmp;
 		}
 
 	private:

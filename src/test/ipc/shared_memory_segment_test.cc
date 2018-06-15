@@ -1,5 +1,5 @@
 #include <unistdx/base/make_object>
-#include <unistdx/ipc/sharedmem>
+#include <unistdx/ipc/shared_memory_segment>
 #include <unistdx/ipc/shmembuf>
 #include <unistdx/ipc/process>
 #include <unistdx/util/system>
@@ -20,10 +20,10 @@ TYPED_TEST_CASE(SharedMemTest, MAKE_TYPES(char, unsigned char));
 
 TYPED_TEST(SharedMemTest, SharedMem) {
 	typedef TypeParam T;
-	typedef typename sys::shared_mem<T>::size_type size_type;
+	typedef typename sys::shared_memory_segment<T>::size_type size_type;
 	const size_type SHMEM_SIZE = 512;
-	sys::shared_mem<T> mem1(0666, SHMEM_SIZE);
-	sys::shared_mem<T> mem2(mem1.id());
+	sys::shared_memory_segment<T> mem1(0666, SHMEM_SIZE);
+	sys::shared_memory_segment<T> mem2(mem1.id());
 	// check some invariants
 	EXPECT_GE(mem1.size(), SHMEM_SIZE);
 	EXPECT_GE(mem2.size(), SHMEM_SIZE);
@@ -59,7 +59,7 @@ TYPED_TEST(SharedMemTest, SharedMem) {
 
 TYPED_TEST(SharedMemTest, SharedMemBuf) {
 	typedef TypeParam T;
-	typedef typename sys::shared_mem<T> shmem;
+	typedef typename sys::shared_memory_segment<T> shmem;
 	typedef typename sys::basic_shmembuf<T> shmembuf;
 	typedef std::lock_guard<shmembuf> shmembuf_guard;
 	shmembuf buf1(shmem(0600, sys::page_size()*4));
@@ -107,7 +107,7 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
 
 TEST(shmembuf, errors) {
 	sys::size_type page_size =  sys::page_size();
-	sys::shmembuf buf(sys::shared_mem<char>(0600, page_size));
+	sys::shmembuf buf(sys::shared_memory_segment<char>(0600, page_size));
 	std::vector<char> tmp(page_size*2);
 	UNISTDX_EXPECT_ERROR(
 		std::errc::not_enough_memory,

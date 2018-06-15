@@ -49,7 +49,7 @@ struct EndpointTest: public ::testing::Test {
 	engine_type generator;
 };
 
-TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_addr, sys::ipv6_addr));
+TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_address, sys::ipv6_address));
 
 TYPED_TEST(EndpointTest, WriteReadSingle) {
 	sys::socket_address addr1 = this->random_addr();
@@ -243,12 +243,12 @@ TEST(Endpoint, OperatorCopy) {
 }
 
 TEST(Endpoint, Literals) {
-	using sys::ipv4_addr;
-	using sys::ipv6_addr;
-	constexpr ipv4_addr any4;
-	constexpr ipv6_addr any6;
-	constexpr sys::socket_address endpU(sys::socket_address(ipv6_addr(), 1234), 100);
-	constexpr sys::socket_address endpV(ipv6_addr(), 100);
+	using sys::ipv4_address;
+	using sys::ipv6_address;
+	constexpr ipv4_address any4;
+	constexpr ipv6_address any6;
+	constexpr sys::socket_address endpU(sys::socket_address(ipv6_address(), 1234), 100);
+	constexpr sys::socket_address endpV(ipv6_address(), 100);
 	EXPECT_EQ(endpU, endpV);
 }
 

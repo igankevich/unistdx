@@ -49,7 +49,7 @@ TEST(idirtree, Iterator) {
 	std::copy(files_h.begin(), files_h.end(), std::back_inserter(all_files));
 	all_files.emplace_back("d");
 	all_files.emplace_back("h");
-	typedef sys::idirtree_iterator<sys::direntry> iterator;
+	typedef sys::idirtree_iterator<sys::directory_entry> iterator;
 	test::test_file_count<sys::idirtree,iterator>(tdir, all_files);
 	test::test_file_list<sys::idirtree,iterator>(tdir, all_files);
 }
@@ -71,12 +71,12 @@ TEST(GetFileType, DirEntry) {
 	std::ofstream(tmp.path()) << "hello world";
 	sys::path cwd(".");
 	sys::idirectory dir(cwd);
-	sys::idirectory_iterator<sys::direntry> end;
+	sys::idirectory_iterator<sys::directory_entry> end;
 	auto result =
 		std::find_if(
-			sys::idirectory_iterator<sys::direntry>(dir),
+			sys::idirectory_iterator<sys::directory_entry>(dir),
 			end,
-			[&] (const sys::direntry& rhs) {
+			[&] (const sys::directory_entry& rhs) {
 			    return rhs.name() == tmp.path();
 			}
 		);
