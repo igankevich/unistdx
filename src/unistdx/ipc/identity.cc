@@ -5,7 +5,6 @@
 void
 sys::this_process::set_identity(uid_type uid, gid_type gid) {
 	bool group_changed = false;
-	uid_type old_uid = user();
 	gid_type old_gid = group();
 	try {
 		UNISTDX_CHECK(::setgid(gid));
