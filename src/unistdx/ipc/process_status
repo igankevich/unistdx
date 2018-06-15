@@ -3,10 +3,12 @@
 
 #include <sys/wait.h>
 
-#include <unistdx/ipc/basic_status>
 #include <unistdx/ipc/signal>
 
 namespace sys {
+
+	/// Process exit code type.
+	typedef int code_type;
 
 	/**
 	\brief Alias for signinfo_t;
@@ -26,15 +28,14 @@ namespace sys {
 
 	/**
 	\brief
-	A \link basic_status\endlink object that tells how the process
+	A \link process_status\endlink object that tells how the process
 	was terminated.
 	\date 2018-05-21
 	\author Ivan Gankevich
 	\ingroup ipc wrapper
 	\details Wraps \link siginfo_type\endlink.
 	*/
-	template<>
-	struct basic_status<siginfo_type> {
+	struct process_status {
 
 	public:
 		/// \brief Reasons for process status change.
@@ -65,17 +66,17 @@ namespace sys {
 
 		/// Construct process info from signal info.
 		inline explicit constexpr
-		basic_status(const siginfo_type& rhs) noexcept:
+		process_status(const siginfo_type& rhs) noexcept:
 		_reason(static_cast<reason>(rhs.si_code)),
 		_code(rhs.si_status),
 		_pid(rhs.si_pid) {}
 
 		inline constexpr
-		basic_status() noexcept = default;
+		process_status() noexcept = default;
 
 		/// Copy-constructor.
 		inline constexpr
-		basic_status(const basic_status&) noexcept = default;
+		process_status(const process_status&) noexcept = default;
 
 		/// Get process status code.
 		inline constexpr reason
@@ -150,20 +151,20 @@ namespace sys {
 		}
 
 		/// Get process status string.
-		inline constexpr const char*
+		inline const char*
 		status_string() const noexcept {
-			return ::sys::status_string<siginfo_type>(*this);
+			switch (this->_reason) {
+				case reason::exited: return "exited";
+				case reason::killed: return "killed";
+				case reason::core_dumped: return "core_dumped";
+				case reason::stopped: return "stopped";
+				case reason::continued: return "continued";
+				case reason::trapped: return "trapped";
+				default: return "unknown";
+			}
 		}
 
 	};
-
-	/**
-	\brief Alias for basic_status<siginfo_type>.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc
-	*/
-	typedef basic_status<siginfo_type> process_status;
 
 	/**
 	\brief Output PID, exit status, exit code/termination signal.
