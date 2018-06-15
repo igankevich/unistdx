@@ -41,7 +41,7 @@ namespace sys {
 	namespace bits {
 
 		/**
-		Construct internal representation of endpoint
+		Construct internal representation of socket_address
 		as constant expression. For both ipv4_addr and ipv6_addr
 		the return type is sockinet6_type.
 		*/
@@ -93,7 +93,7 @@ namespace sys {
 	\arg This is variant class, type of which is encoded in address
 	family.
 	*/
-	union endpoint {
+	union socket_address {
 
 	private:
 		sockinet6_type _addr6 = {};
@@ -107,15 +107,15 @@ namespace sys {
 	public:
 
 		inline constexpr
-		endpoint() noexcept {}
+		socket_address() noexcept {}
 
 		/// Copy-constructor.
 		inline constexpr
-		endpoint(const endpoint &rhs) noexcept:
+		socket_address(const socket_address &rhs) noexcept:
 		_addr6(rhs._addr6) {}
 
 		/**
-		\brief Construct endpoint with host and port.
+		\brief Construct socket_address with host and port.
 		\date 2018-05-23
 		\author Ivan Gankevich
 		\details
@@ -123,52 +123,52 @@ namespace sys {
 		\arg Parameter \p host is text representation of an IP-address.
 		*/
 		inline
-		endpoint(const char* host, const port_type port) {
+		socket_address(const char* host, const port_type port) {
 			this->addr(host, port);
 		}
 
-		/// Construct endpoint with IPv4 address \p h and port \p p.
+		/// Construct socket_address with IPv4 address \p h and port \p p.
 		inline constexpr
-		endpoint(const ipv4_addr h, const port_type p) noexcept:
+		socket_address(const ipv4_addr h, const port_type p) noexcept:
 		_addr6(bits::new_sockinet(family_type::inet, p, h)) {}
 
-		/// Construct endpoint with IPv6 address \p h and port \p p.
+		/// Construct socket_address with IPv6 address \p h and port \p p.
 		inline constexpr
-		endpoint(const ipv6_addr &h, const port_type p) noexcept:
+		socket_address(const ipv6_addr &h, const port_type p) noexcept:
 		_addr6(bits::new_sockinet(family_type::inet6, p, h)) {}
 
-		/// Construct endpoint from \c sockaddr_in system type.
+		/// Construct socket_address from \c sockaddr_in system type.
 		inline constexpr
-		endpoint(const sockinet4_type &rhs) noexcept:
+		socket_address(const sockinet4_type &rhs) noexcept:
 		_addr4(rhs) {}
 
-		/// Construct endpoint from \c sockaddr_in6 system type.
+		/// Construct socket_address from \c sockaddr_in6 system type.
 		inline constexpr
-		endpoint(const sockinet6_type &rhs) noexcept:
+		socket_address(const sockinet6_type &rhs) noexcept:
 		_addr6(rhs) {}
 
-		/// Construct endpoint from \c sockaddr system type.
+		/// Construct socket_address from \c sockaddr system type.
 		inline constexpr
-		endpoint(const sa_type& rhs) noexcept:
+		socket_address(const sa_type& rhs) noexcept:
 		_sockaddr(rhs) {}
 
-		/// Construct endpoint from unix socket path.
+		/// Construct socket_address from unix socket path.
 		explicit
-		endpoint(const char* unix_socket_path) noexcept;
+		socket_address(const char* unix_socket_path) noexcept;
 
 		#if defined(UNISTDX_HAVE_NETLINK)
-		/// Construct endpoint by specifying netlink groups.
+		/// Construct socket_address by specifying netlink groups.
 		inline explicit
-		endpoint(int groups) {
+		socket_address(int groups) {
 			this->_naddr.nl_family = AF_NETLINK;
 			this->_naddr.nl_pid = ::getpid();
 			this->_naddr.nl_groups = groups;
 		}
 		#endif
 
-		/// Construct endpoint from another one and a new port.
+		/// Construct socket_address from another one and a new port.
 		inline constexpr
-		endpoint(const endpoint &rhs, const port_type newport) noexcept:
+		socket_address(const socket_address &rhs, const port_type newport) noexcept:
 		_addr6(
 			rhs.family() == family_type::inet ?
 			bits::new_sockinet<ipv4_addr>(
@@ -183,27 +183,27 @@ namespace sys {
 			)
 		) {}
 
-		/// Compare endpoints taking into account particular address family.
+		/// Compare socket addresses taking into account particular address family.
 		bool
-		operator<(const endpoint& rhs) const noexcept;
+		operator<(const socket_address& rhs) const noexcept;
 
 		/// \copydoc operator<
 		bool
-		operator==(const endpoint& rhs) const noexcept;
+		operator==(const socket_address& rhs) const noexcept;
 
 		/// \copydoc operator<
 		inline bool
-		operator>=(const endpoint& rhs) const noexcept {
+		operator>=(const socket_address& rhs) const noexcept {
 			return !this->operator<(rhs);
 		}
 
 		/// \copydoc operator<
 		inline bool
-		operator!=(const endpoint& rhs) const noexcept {
+		operator!=(const socket_address& rhs) const noexcept {
 			return !this->operator==(rhs);
 		}
 
-		/// Returns true, if endpoint has valid address and family.
+		/// Returns true, if socket_address has valid address and family.
 		inline constexpr explicit
 		operator bool() const noexcept {
 			return sa_family() != 0 && (family() == family_type::inet
@@ -211,25 +211,25 @@ namespace sys {
 										: static_cast<bool>(addr6()));
 		}
 
-		/// Returns true, if endpoint has either invalid address or invalid family.
+		/// Returns true, if socket_address has either invalid address or invalid family.
 		inline constexpr bool
 		operator!() const noexcept {
 			return !this->operator bool();
 		}
 
 		friend std::ostream&
-		operator<<(std::ostream& out, const endpoint& rhs);
+		operator<<(std::ostream& out, const socket_address& rhs);
 
 		friend std::istream&
-		operator>>(std::istream& in, endpoint& rhs);
+		operator>>(std::istream& in, socket_address& rhs);
 
 		friend bstream&
-		operator<<(bstream& out, const endpoint& rhs);
+		operator<<(bstream& out, const socket_address& rhs);
 
 		friend bstream&
-		operator>>(bstream& in, endpoint& rhs);
+		operator>>(bstream& in, socket_address& rhs);
 
-		/// Get endpoint port.
+		/// Get socket_address port.
 		inline constexpr port_type
 		port() const noexcept {
 			return to_host_format<port_type>(
@@ -239,19 +239,19 @@ namespace sys {
 			);
 		}
 
-		/// Get endpoint address family.
+		/// Get socket_address address family.
 		inline constexpr family_type
 		family() const noexcept {
 			return static_cast<family_type>(this->_addr6.sin6_family);
 		}
 
-		/// Get endpoint address family.
+		/// Get socket_address address family.
 		inline constexpr sa_family_type
 		sa_family() const noexcept {
 			return this->_addr6.sin6_family;
 		}
 
-		/// Reset endpoint value to nought.
+		/// Reset socket_address value to nought.
 		inline void
 		reset() noexcept {
 			this->_addr4.sin_family = 0;
@@ -302,7 +302,7 @@ namespace sys {
 		socklen_type
 		sockaddrlen() const noexcept;
 
-		friend struct std::hash<sys::endpoint>;
+		friend struct std::hash<sys::socket_address>;
 
 	private:
 
@@ -317,45 +317,45 @@ namespace sys {
 
 	};
 
-	/// Print textual representation of the endpoint.
+	/// Print textual representation of the socket_address.
 	std::ostream&
-	operator<<(std::ostream& out, const endpoint& rhs);
+	operator<<(std::ostream& out, const socket_address& rhs);
 
-	/// Parse textual representation of the endpoint.
+	/// Parse textual representation of the socket_address.
 	std::istream&
-	operator>>(std::istream& in, endpoint& rhs);
+	operator>>(std::istream& in, socket_address& rhs);
 
-	/// Put endpoint in binary form.
+	/// Put socket_address in binary form.
 	bstream&
-	operator<<(bstream& out, const endpoint& rhs);
+	operator<<(bstream& out, const socket_address& rhs);
 
-	/// Get endpoint in binary form.
+	/// Get socket_address in binary form.
 	bstream&
-	operator>>(bstream& in, endpoint& rhs);
+	operator>>(bstream& in, socket_address& rhs);
 
 	static_assert(sizeof(port_type) == 2, "bad port_type size");
 
 	ipv4_addr::ipv4_addr(const sa_type& rhs) noexcept:
-	inaddr(sys::endpoint(rhs)._addr4.sin_addr)
+	inaddr(sys::socket_address(rhs)._addr4.sin_addr)
 	{}
 
 	constexpr ipv4_addr
-	ipaddr_traits<ipv4_addr>::address(const endpoint& rhs) noexcept {
+	ipaddr_traits<ipv4_addr>::address(const socket_address& rhs) noexcept {
 		return rhs.addr4();
 	}
 
 	constexpr port_type
-	ipaddr_traits<ipv4_addr>::port(const endpoint& rhs) noexcept {
+	ipaddr_traits<ipv4_addr>::port(const socket_address& rhs) noexcept {
 		return to_host_format(rhs.port4());
 	}
 
 	constexpr ipv6_addr
-	ipaddr_traits<ipv6_addr>::address(const endpoint& rhs) noexcept {
+	ipaddr_traits<ipv6_addr>::address(const socket_address& rhs) noexcept {
 		return rhs.addr6();
 	}
 
 	constexpr port_type
-	ipaddr_traits<ipv6_addr>::port(const endpoint& rhs) noexcept {
+	ipaddr_traits<ipv6_addr>::port(const socket_address& rhs) noexcept {
 		return to_host_format(rhs.port6());
 	}
 
@@ -363,14 +363,14 @@ namespace sys {
 
 namespace std {
 
-	/// Specialisation of \link std::hash\endlink for \link sys::endpoint\endlink.
+	/// Specialisation of \link std::hash\endlink for \link sys::socket_address\endlink.
 	template<>
-	struct hash<sys::endpoint> {
+	struct hash<sys::socket_address> {
 
 		/// Hash function return value type.
 		typedef size_t result_type;
 		/// Hash function argument type.
-		typedef sys::endpoint argument_type;
+		typedef sys::socket_address argument_type;
 
 		/**
 		\brief Computes hash by XOR-ing hash of the address with port number.

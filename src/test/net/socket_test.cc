@@ -1,13 +1,13 @@
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
-#include <unistdx/net/endpoint>
+#include <unistdx/net/socket_address>
 #include <unistdx/net/socket>
 
 #include <unistdx/test/operator>
 
 TEST(Socket, GetCredentials) {
 	const char* path = "\0test_socket";
-	sys::endpoint e(path);
+	sys::socket_address e(path);
 	sys::socket sock;
 	sock.bind(e);
 	sock.setopt(sys::socket::pass_credentials);
@@ -19,7 +19,7 @@ TEST(Socket, GetCredentials) {
 		return 0;
 	});
 	usleep(100000);
-	sys::endpoint client_end;
+	sys::socket_address client_end;
 	sys::socket client;
 	sock.accept(client, client_end);
 	EXPECT_NO_THROW(client.peer_name());
@@ -27,13 +27,13 @@ TEST(Socket, GetCredentials) {
 	EXPECT_EQ(child.id(), creds.pid);
 	EXPECT_EQ(sys::this_process::user(), creds.uid);
 	EXPECT_EQ(sys::this_process::group(), creds.gid);
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 
 TEST(Socket, SendFDs) {
 	const char* path = "\0testsendfds";
-	sys::endpoint e(path);
+	sys::socket_address e(path);
 	sys::socket sock(e);
 	EXPECT_NE("", test::stream_insert(sock));
 	sys::process child([&] () {
@@ -51,7 +51,7 @@ TEST(Socket, SendFDs) {
 		return ret;
 	});
 	usleep(100000);
-	sys::endpoint client_end;
+	sys::socket_address client_end;
 	sys::socket client;
 	sock.accept(client, client_end);
 	sys::fd_type fds[3] = {0, 0, 0};
@@ -61,7 +61,7 @@ TEST(Socket, SendFDs) {
 	EXPECT_GT(fds[0], 2);
 	EXPECT_GT(fds[1], 2);
 	EXPECT_GT(fds[2], 2);
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 
@@ -74,5 +74,9 @@ TEST(socket, user_timeout) {
 #endif
 
 TEST(socket, bind_connect) {
-	EXPECT_NO_THROW(sys::socket({{127,0,0,1}, 0}, {{127,0,0,1},0}));
+	try {
+		sys::socket sock({{127,0,0,1}, 0}, {{127,0,0,1},0});
+	} catch (const sys::bad_call& err) {
+		EXPECT_EQ(std::errc::operation_in_progress, err.errc());
+	}
 }

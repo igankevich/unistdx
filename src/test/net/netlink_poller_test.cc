@@ -5,7 +5,7 @@
 #include <unistdx/test/operator>
 
 TEST(NetlinkPoller, First) {
-	sys::endpoint endp(RTMGRP_IPV4_IFADDR);
+	sys::socket_address endp(RTMGRP_IPV4_IFADDR);
 	sys::socket sock(
 		sys::family_type::netlink,
 		sys::socket_type::raw,

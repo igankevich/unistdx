@@ -101,7 +101,7 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
 		shmembuf_guard lock(buf1);
 		buf1.sputn(input.data(), input.size());
 	}
-	sys::proc_info status = consumer.wait();
+	sys::process_status status = consumer.wait();
 	EXPECT_TRUE(status.exited() && status.exit_code() == EXIT_SUCCESS);
 }
 

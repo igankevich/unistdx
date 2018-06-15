@@ -1,5 +1,5 @@
 libunistdx_src += files([
-	'endpoint.cc',
+	'socket_address.cc',
 	'family.cc',
 	'ipv4_addr.cc',
 	'ipv6_addr.cc',
@@ -13,7 +13,7 @@ install_headers(
 	'byte_order',
 	'byte_swap',
 	'bytes',
-	'endpoint',
+	'socket_address',
 	'family',
 	'ifaddr',
 	'ifaddrs',

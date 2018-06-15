@@ -27,12 +27,12 @@ namespace {
 
 }
 
-sys::socket::socket(const endpoint& bind_addr) {
+sys::socket::socket(const socket_address& bind_addr) {
 	this->bind(bind_addr);
 	this->listen();
 }
 
-sys::socket::socket(const endpoint& bind_addr, const endpoint& conn_addr) {
+sys::socket::socket(const socket_address& bind_addr, const socket_address& conn_addr) {
 	this->bind(bind_addr);
 	this->connect(conn_addr);
 }
@@ -42,7 +42,7 @@ sys::fildes(safe_socket(int (family), int(type)|default_flags, 0))
 {}
 
 void
-sys::socket::bind(const endpoint& e) {
+sys::socket::bind(const socket_address& e) {
 	this->create_socket_if_necessary(e);
 	this->setopt(reuse_addr);
 	#ifndef NDEBUG
@@ -60,7 +60,7 @@ sys::socket::listen() {
 }
 
 void
-sys::socket::connect(const endpoint& e) {
+sys::socket::connect(const socket_address& e) {
 	this->create_socket_if_necessary(e);
 	#ifndef NDEBUG
 	log_message("sys", "connect to _", e);
@@ -69,9 +69,9 @@ sys::socket::connect(const endpoint& e) {
 }
 
 void
-sys::socket::accept(socket& sock, endpoint& addr) {
+sys::socket::accept(socket& sock, socket_address& addr) {
 	using namespace bits;
-	socklen_type len = sizeof(endpoint);
+	socklen_type len = sizeof(socket_address);
 	sock.close();
 	#if defined(UNISTDX_HAVE_ACCEPT4) && \
 	defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
@@ -184,7 +184,7 @@ sys::operator<<(std::ostream& out, const socket& rhs) {
 }
 
 void
-sys::socket::create_socket_if_necessary(const endpoint& e) {
+sys::socket::create_socket_if_necessary(const socket_address& e) {
 	if (!*this) {
 		#if defined(UNISTDX_HAVE_NETLINK)
 		int type = e.family() == family_type::netlink ? SOCK_RAW : SOCK_STREAM;

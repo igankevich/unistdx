@@ -5,13 +5,13 @@
 
 #include <unistdx/test/operator>
 
-TEST(proc_info, exit) {
+TEST(process_status, exit) {
 	sys::process child {
 		[] () {
 			return 0;
 		}
 	};
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	EXPECT_TRUE(status.exited());
 	EXPECT_FALSE(status.killed());
 	EXPECT_FALSE(status.stopped());
@@ -23,13 +23,13 @@ TEST(proc_info, exit) {
 	test::stream_insert_contains("status=exited,exit_code=0", status);
 }
 
-TEST(proc_info, abort) {
+TEST(process_status, abort) {
 	sys::process child {
 		[] () [[noreturn]] -> int {
 			std::abort();
 		}
 	};
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	EXPECT_FALSE(status.exited());
 	EXPECT_FALSE(status.stopped());
 	EXPECT_TRUE(status.killed() || status.core_dumped());
@@ -44,11 +44,11 @@ void
 test_print(const char* str, int si_code) {
 	sys::siginfo_type s{};
 	s.si_code = si_code;
-	sys::proc_info status(s);
+	sys::process_status status(s);
 	test::stream_insert_contains(str, status);
 }
 
-TEST(proc_info, print) {
+TEST(process_status, print) {
 	test_print("status=stopped", CLD_STOPPED);
 	test_print("status=continued", CLD_CONTINUED);
 	test_print("status=trapped", CLD_TRAPPED);

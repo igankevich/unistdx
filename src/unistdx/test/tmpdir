@@ -94,7 +94,7 @@ namespace test {
 					return 0;
 				}
 			};
-			sys::proc_info status = child.wait();
+			sys::process_status status = child.wait();
 			ASSERT_TRUE(status.exited());
 			ASSERT_EQ(0, status.exit_code());
 		}
@@ -110,7 +110,7 @@ namespace test {
 					return 0;
 				}
 			};
-			sys::proc_info status = child.wait();
+			sys::process_status status = child.wait();
 			ASSERT_TRUE(status.exited());
 			ASSERT_EQ(0, status.exit_code());
 		}

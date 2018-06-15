@@ -6,7 +6,7 @@
 #include <unistdx/base/check>
 #include <unistdx/bits/addr_parse>
 #include <unistdx/net/bstream>
-#include <unistdx/net/endpoint>
+#include <unistdx/net/socket_address>
 #include <unistdx/net/subnet_iterator>
 
 namespace sys {

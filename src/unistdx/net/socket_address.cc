@@ -1,4 +1,4 @@
-#include "endpoint"
+#include "socket_address"
 
 #include <cstring>
 #include <istream>
@@ -48,7 +48,7 @@ namespace {
 }
 
 std::ostream&
-sys::operator<<(std::ostream& out, const endpoint& rhs) {
+sys::operator<<(std::ostream& out, const socket_address& rhs) {
 	using bits::Colon;
 	std::ostream::sentry s(out);
 	if (s) {
@@ -76,7 +76,7 @@ sys::operator<<(std::ostream& out, const endpoint& rhs) {
 }
 
 std::istream&
-sys::operator>>(std::istream& in, endpoint& rhs) {
+sys::operator>>(std::istream& in, socket_address& rhs) {
 	using bits::Colon;
 	std::istream::sentry s(in);
 	if (s) {
@@ -101,7 +101,7 @@ sys::operator>>(std::istream& in, endpoint& rhs) {
 }
 
 sys::bstream&
-sys::operator<<(bstream& out, const endpoint& rhs) {
+sys::operator<<(bstream& out, const socket_address& rhs) {
 	out << rhs.family();
 	if (rhs.family() == family_type::inet6) {
 		out << rhs.addr6() << make_bytes(rhs.port6());
@@ -112,7 +112,7 @@ sys::operator<<(bstream& out, const endpoint& rhs) {
 }
 
 sys::bstream&
-sys::operator>>(bstream& in, endpoint& rhs) {
+sys::operator>>(bstream& in, socket_address& rhs) {
 	family_type fam;
 	in >> fam;
 	rhs._addr6.sin6_family = static_cast<sa_family_type>(fam);
@@ -132,7 +132,7 @@ sys::operator>>(bstream& in, endpoint& rhs) {
 }
 
 void
-sys::endpoint::addr(const char* host, port_type p) {
+sys::socket_address::addr(const char* host, port_type p) {
 	ipv4_addr a4;
 	std::stringstream tmp(host);
 	if (tmp >> a4) {
@@ -147,7 +147,7 @@ sys::endpoint::addr(const char* host, port_type p) {
 	}
 }
 
-sys::endpoint::endpoint(const char* unix_socket_path) noexcept:
+sys::socket_address::socket_address(const char* unix_socket_path) noexcept:
 _sockaddr{AF_UNIX, 0} {
 	constexpr const int offset = sizeof(sa_family_t);
 	constexpr const int max_size = decltype(this->_bytes)::size() - offset - 1;
@@ -164,7 +164,7 @@ _sockaddr{AF_UNIX, 0} {
 }
 
 sys::socklen_type
-sys::endpoint::sockaddrlen() const noexcept {
+sys::socket_address::sockaddrlen() const noexcept {
 	switch (this->family()) {
 	case family_type::inet: return sizeof(sockinet4_type);
 	case family_type::inet6: return sizeof(sockinet6_type);
@@ -179,7 +179,7 @@ sys::endpoint::sockaddrlen() const noexcept {
 }
 
 bool
-sys::endpoint::operator<(const endpoint& rhs) const noexcept {
+sys::socket_address::operator<(const socket_address& rhs) const noexcept {
 	typedef std::char_traits<char> traits_type;
 	if (this->family() == rhs.family()) {
 		switch (this->family()) {
@@ -219,7 +219,7 @@ sys::endpoint::operator<(const endpoint& rhs) const noexcept {
 }
 
 bool
-sys::endpoint::operator==(const endpoint& rhs) const noexcept {
+sys::socket_address::operator==(const socket_address& rhs) const noexcept {
 	typedef std::char_traits<char> traits_type;
 	if (this->family() != rhs.family() && this->sa_family() &&
 	    rhs.sa_family()) {

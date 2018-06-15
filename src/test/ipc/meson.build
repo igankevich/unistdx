@@ -1,9 +1,9 @@
 foreach conf : [
 	['execute', [unistdx,gtest]],
 	['identity', [unistdx,gtest]],
-	['proc_status', [unistdx,gtest]],
 	['process', [unistdx,gtest]],
 	['process_group', [unistdx,gtest]],
+	['process_status', [unistdx,gtest]],
 	['semaphore', [threads,unistdx,gtest]],
 	['sharedmem', [threads,unistdx,gtest]],
 	['signal', [unistdx,gtest]],

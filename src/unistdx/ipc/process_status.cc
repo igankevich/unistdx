@@ -1,9 +1,9 @@
-#include "proc_info"
+#include "process_status"
 
 #include <ostream>
 
 std::ostream&
-sys::operator<<(std::ostream& out, const proc_info& rhs) {
+sys::operator<<(std::ostream& out, const process_status& rhs) {
 	out << "pid=" << rhs.pid() << ',';
 	out << "status=" << rhs.status_string() << ',';
 	if (rhs.exited()) {

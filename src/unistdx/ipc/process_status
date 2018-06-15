@@ -163,7 +163,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup ipc
 	*/
-	typedef basic_status<siginfo_type> proc_info;
+	typedef basic_status<siginfo_type> process_status;
 
 	/**
 	\brief Output PID, exit status, exit code/termination signal.
@@ -171,7 +171,7 @@ namespace sys {
 	\author Ivan Gankevich
 	*/
 	std::ostream&
-	operator<<(std::ostream& out, const proc_info& rhs);
+	operator<<(std::ostream& out, const process_status& rhs);
 
 }
 

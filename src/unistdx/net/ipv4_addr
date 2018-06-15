@@ -24,7 +24,7 @@ namespace sys {
 	/// Network prefix type.
 	typedef unsigned int prefix_type;
 
-	union endpoint;
+	union socket_address;
 
 	/**
 	\brief IPv4 address class.
@@ -223,13 +223,13 @@ namespace sys {
 			return ipv4_addr {255,255,255,255};
 		}
 
-		/// Get IPv4 address from endpoint.
+		/// Get IPv4 address from socket_address.
 		inline static constexpr ipv4_addr
-		address(const endpoint& rhs) noexcept;
+		address(const socket_address& rhs) noexcept;
 
-		/// Get IPv4 port from endpoint.
+		/// Get IPv4 port from socket_address.
 		inline static constexpr port_type
-		port(const endpoint& rhs) noexcept;
+		port(const socket_address& rhs) noexcept;
 
 	};
 

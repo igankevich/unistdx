@@ -22,7 +22,7 @@ TEST(process, basic) {
 			return ret;
 		}
 	};
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 
@@ -53,7 +53,7 @@ TEST_P(process_exec_test, return_int) {
 		},
 		flags
 	};
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	if (success) {
 		EXPECT_EQ(0, status.exit_code());
 	} else {
@@ -74,7 +74,7 @@ TEST_P(process_exec_test, return_void) {
 		},
 		flags
 	};
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	if (success) {
 		EXPECT_EQ(0, status.exit_code());
 	} else {
@@ -150,7 +150,7 @@ TEST(Process, LogMessage) {
 		sys::log_message("parent", "message a=_, b=_, c=_", i, i, i);
 	}
 	thr.join();
-	sys::proc_info status = child.wait();
+	sys::process_status status = child.wait();
 	EXPECT_EQ(0, status.exit_code());
 }
 */

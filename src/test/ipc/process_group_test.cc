@@ -16,7 +16,7 @@ TEST(process_group, wait_async) {
 	std::mutex mtx;
 	g.wait(
 		mtx,
-		[] (const sys::process& proc, sys::proc_info status) {
+		[] (const sys::process& proc, sys::process_status status) {
 			EXPECT_TRUE(status.exited());
 			EXPECT_FALSE(status.killed());
 			EXPECT_FALSE(status.stopped());

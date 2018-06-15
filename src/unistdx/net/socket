@@ -9,7 +9,7 @@
 #include <unistdx/bits/socket>
 #include <unistdx/config>
 #include <unistdx/io/fildes>
-#include <unistdx/net/endpoint>
+#include <unistdx/net/socket_address>
 
 namespace sys {
 
@@ -115,7 +115,7 @@ namespace sys {
 		\see \man{socket,2}
 		*/
 		explicit
-		socket(const endpoint& bind_addr);
+		socket(const socket_address& bind_addr);
 
 		/**
 		\brief
@@ -124,7 +124,7 @@ namespace sys {
 		\throws bad_call
 		\see \man{socket,2}
 		*/
-		socket(const endpoint& bind_addr, const endpoint& conn_addr);
+		socket(const socket_address& bind_addr, const socket_address& conn_addr);
 
 		/**
 		\brief
@@ -158,7 +158,7 @@ namespace sys {
 		\see \man{bind,2}
 		*/
 		void
-		bind(const endpoint& e);
+		bind(const socket_address& e);
 
 		/**
 		\brief Connect to socket address \p e.
@@ -168,7 +168,7 @@ namespace sys {
 		\see std::errc
 		*/
 		void
-		connect(const endpoint& e);
+		connect(const socket_address& e);
 
 		/**
 		\brief Listen on previously binded socket address.
@@ -188,7 +188,7 @@ namespace sys {
 		\param[out] addr sockt address of the client
 		*/
 		void
-		accept(socket& sock, endpoint& addr);
+		accept(socket& sock, socket_address& addr);
 
 		/**
 		\brief Shutdown communication on the socket, but do not close it.
@@ -234,10 +234,10 @@ namespace sys {
 		\details
 		The same as \link name\endlink, but does not throw.
 		*/
-		inline endpoint
+		inline socket_address
 		bind_addr() const noexcept {
-			endpoint addr;
-			socklen_type len = sizeof(endpoint);
+			socket_address addr;
+			socklen_type len = sizeof(socket_address);
 			::getsockname(this->_fd, addr.sockaddr(), &len);
 			return addr;
 		}
@@ -247,10 +247,10 @@ namespace sys {
 		\throws bad_call
 		\see \man{getsockname,2}
 		*/
-		inline endpoint
+		inline socket_address
 		name() const {
-			endpoint addr;
-			socklen_type len = sizeof(endpoint);
+			socket_address addr;
+			socklen_type len = sizeof(socket_address);
 			UNISTDX_CHECK(::getsockname(this->_fd, addr.sockaddr(), &len));
 			return addr;
 		}
@@ -260,10 +260,10 @@ namespace sys {
 		\throws bad_call
 		\see \man{getpeername,2}
 		*/
-		inline endpoint
+		inline socket_address
 		peer_name() const {
-			endpoint addr;
-			socklen_type len = sizeof(endpoint);
+			socket_address addr;
+			socklen_type len = sizeof(socket_address);
 			UNISTDX_CHECK(::getpeername(this->_fd, addr.sockaddr(), &len));
 			return addr;
 		}
@@ -374,7 +374,7 @@ namespace sys {
 
 	private:
 		void
-		create_socket_if_necessary(const endpoint& e);
+		create_socket_if_necessary(const socket_address& e);
 
 		int
 		error() const noexcept;

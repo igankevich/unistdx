@@ -3,7 +3,7 @@ foreach conf : [
 	['bit_count', [unistdx,gtest]],
 	['byte_swap', [unistdx,gtest]],
 	['bytes', [unistdx,gtest]],
-	['endpoint', [unistdx,gtest]],
+	['socket_address', [unistdx,gtest]],
 	['family', [unistdx,gtest]],
 	['ifaddr', [unistdx,gtest]],
 	['ipv4_addr', [unistdx,gtest]],

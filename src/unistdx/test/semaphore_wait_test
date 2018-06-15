@@ -153,7 +153,7 @@ struct SemaphoreWaitTest: public ::testing::Test {
 		});
 		using namespace std::this_thread;
 		sem.notify_one();
-		sys::proc_info status = child.wait();
+		sys::process_status status = child.wait();
 		EXPECT_TRUE(status.exited());
 		EXPECT_EQ(EXIT_SUCCESS, status.exit_code());
 	}

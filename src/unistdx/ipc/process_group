@@ -103,14 +103,14 @@ namespace sys {
 		void
 		wait(Lock& lock, F callback, wait_flags flags=wait_flags::exited) {
 			sys::siginfo_type info;
-			sys::proc_info status;
+			sys::process_status status;
 			const_iterator result;
 			while (!this->_procs.empty()) {
 				{
 					unlock_guard<Lock> g(lock);
 					UNISTDX_CHECK(::waitid(P_PGID, this->_gid, &info, int(flags)));
 				}
-				status = sys::proc_info(info);
+				status = sys::process_status(info);
 				result = std::find_if(
 					this->_procs.begin(), this->_procs.end(),
 					[&status] (const process& p) {
