@@ -297,7 +297,8 @@ namespace {
 		using namespace sys;
 		typedef Entity_traits<Entity> traits_type;
 		typedef typename traits_type::result_type result_type;
-		bool found;
+		enum status_type {undefined, found, not_found};
+		status_type status = undefined;
 		result_type* res;
 		buf.resize(get_max_size(traits_type::conf_name()));
 		int ret;
@@ -306,8 +307,8 @@ namespace {
 			// but does not set errno itself
 			ret = traits_type::get(field, u, buf, &res);
 			if (!res) {
-				if (ret == 0) {
-					found = false;
+				if (ret == 0 || ret == ENOENT) {
+					status = not_found;
 				} else if (ret == ERANGE) {
 					buf.resize(buf.size()*2);
 				} else {
@@ -321,10 +322,10 @@ namespace {
 					// LCOV_EXCL_STOP
 				}
 			} else {
-				found = true;
+				status = found;
 			}
-		} while (ret != 0);
-		return found;
+		} while (status == undefined);
+		return status == found;
 	}
 
 	#endif
