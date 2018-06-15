@@ -50,6 +50,16 @@ if rpm_build.found()
 			'_sourcedir ' + meson.build_root()
 		]
 	)
+	run_target(
+		'rpm-build-srpm',
+		command: [
+			rpm_build,
+			'-bs',
+			join_paths(meson.current_build_dir(), meson.project_name() + '.spec'),
+			'--define',
+			'_sourcedir ' + meson.build_root()
+		]
+	)
 endif
 # }}}
 # RPM target {{{

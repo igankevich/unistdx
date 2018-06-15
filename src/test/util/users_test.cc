@@ -7,7 +7,6 @@
 #include <unistdx/util/groupstream>
 #include <unistdx/util/user>
 #include <unistdx/util/userstream>
-#include <unistdx/util/backtrace>
 
 #include <unistdx/test/operator>
 
@@ -54,30 +53,25 @@ TEST(Group, Enumerate) {
 }
 
 TEST(User, FindBy) {
-	try {
-		sys::user u1, u2, u3;
-		bool success;
-		success = sys::find_user(sys::this_process::user(), u1);
-		EXPECT_TRUE(success);
-		EXPECT_EQ(sys::this_process::user(), u1.id());
-		EXPECT_EQ(sys::this_process::group(), u1.group_id());
-		EXPECT_STREQ(std::getenv("HOME"), u1.home());
-		EXPECT_STREQ(std::getenv("SHELL"), u1.shell());
-		success = sys::find_user(u1.name(), u2);
-		EXPECT_TRUE(success);
-		EXPECT_EQ(u1, u2);
-		EXPECT_STREQ(u1.password(), u2.password());
-		EXPECT_STREQ(u1.real_name(), u2.real_name());
-		sys::user copy(std::move(u2));
-		EXPECT_EQ(u1, copy);
-		test::stream_insert_starts_with(u1.name(), u1);
-		success = sys::find_user("a", u3);
-		EXPECT_FALSE(success);
-	} catch (const sys::bad_call& err) {
-		std::cerr << err << std::endl;
-		sys::backtrace(STDERR_FILENO);
-		FAIL();
-	}
+	errno = 0;
+	sys::user u1, u2, u3;
+	bool success;
+	success = sys::find_user(sys::this_process::user(), u1);
+	EXPECT_TRUE(success);
+	EXPECT_EQ(sys::this_process::user(), u1.id());
+	EXPECT_EQ(sys::this_process::group(), u1.group_id());
+	EXPECT_STREQ(std::getenv("HOME"), u1.home());
+	EXPECT_STREQ(std::getenv("SHELL"), u1.shell());
+	success = sys::find_user(u1.name(), u2);
+	EXPECT_TRUE(success);
+	EXPECT_EQ(u1, u2);
+	EXPECT_STREQ(u1.password(), u2.password());
+	EXPECT_STREQ(u1.real_name(), u2.real_name());
+	sys::user copy(std::move(u2));
+	EXPECT_EQ(u1, copy);
+	test::stream_insert_starts_with(u1.name(), u1);
+	success = sys::find_user("a", u3);
+	EXPECT_FALSE(success);
 }
 
 TEST(Group, FindBy) {
