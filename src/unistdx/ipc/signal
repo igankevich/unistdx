@@ -192,7 +192,7 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup ipc comm wrapper
 	*/
-	class sigset_type: public ::sigset_t {
+	class signal_set: public ::sigset_t {
 	public:
 
 		/**
@@ -201,7 +201,7 @@ namespace sys {
 		\see \man{sigemptyset,3}
 		*/
 		inline
-		sigset_type() {
+		signal_set() {
 			UNISTDX_CHECK(::sigemptyset(this));
 		}
 
@@ -211,8 +211,8 @@ namespace sys {
 		\see \man{sigaddset,3}
 		*/
 		inline explicit
-		sigset_type(signal_type s):
-		sigset_type() {
+		signal_set(signal_type s):
+		signal_set() {
 			UNISTDX_CHECK(::sigaddset(this, s));
 		}
 
@@ -235,6 +235,36 @@ namespace sys {
 
 	};
 
+	namespace this_process {
+
+		/**
+		\brief Block \p signals for the current process.
+		\date 2018-06-15
+		\author Ivan Gankevich
+		\ingroup ipc
+		\throws bad_call
+		\see \man{sigprocmask,2}
+		*/
+		inline void
+		block_signals(const signal_set& signals) {
+			UNISTDX_CHECK(::sigprocmask(SIG_BLOCK, &signals, nullptr));
+		}
+
+		/**
+		\brief Unblock \p signals for the current process.
+		\date 2018-06-15
+		\author Ivan Gankevich
+		\ingroup ipc
+		\throws bad_call
+		\see \man{sigprocmask,2}
+		*/
+		inline void
+		unblock_signals(const signal_set& signals) {
+			UNISTDX_CHECK(::sigprocmask(SIG_UNBLOCK, &signals, nullptr));
+		}
+
+	}
+
 	/**
 	\brief Blocks/unblocks specified signals upon creation/destruction.
 	\date 2018-05-21
@@ -244,7 +274,7 @@ namespace sys {
 	class signal_guard {
 
 	private:
-		sigset_type _signals;
+		signal_set _signals;
 
 	public:
 
@@ -254,7 +284,7 @@ namespace sys {
 		\see \man{sigprocmask,2}
 		*/
 		inline explicit
-		signal_guard(sigset_type s):
+		signal_guard(signal_set s):
 		_signals(s) {
 			this->lock();
 		}
@@ -272,28 +302,21 @@ namespace sys {
 		/**
 		\brief Block all specified signals.
 		\throws bad_call
-		\see \man{sigprocmask,2}
+		\see \link this_process::block_signals\endlink
 		*/
 		inline void
 		lock() {
-			this->change_mask(SIG_BLOCK);
+			this_process::block_signals(this->_signals);
 		}
 
 		/**
 		\brief Unblock all specified signals.
 		\throws bad_call
-		\see \man{sigprocmask,2}
+		\see \link this_process::unblock_signals\endlink
 		*/
 		inline void
 		unlock() {
-			this->change_mask(SIG_UNBLOCK);
-		}
-
-	private:
-
-		inline void
-		change_mask(int how) {
-			UNISTDX_CHECK(::sigprocmask(how, &this->_signals, 0));
+			this_process::unblock_signals(this->_signals);
 		}
 
 	};
