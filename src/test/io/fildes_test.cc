@@ -36,7 +36,7 @@ TEST(fildes, basic) {
 	EXPECT_EQ(a, b.fd());
 	EXPECT_EQ(a.fd(), b);
 	EXPECT_NO_THROW(b.open(UNISTDX_TMPFILE, sys::open_flag::create, 0644));
-	EXPECT_TRUE(b);
+	EXPECT_TRUE(static_cast<bool>(b));
 	EXPECT_NE(a, b);
 	EXPECT_NE(a.fd(), b);
 	EXPECT_NE(a, b.fd());
@@ -57,6 +57,6 @@ TEST(fd_type, traits) {
 	EXPECT_THROW(traits_type::read(a.fd(), buf, 1024), sys::bad_call);
 	EXPECT_THROW(traits_type::write(a.fd(), buf, 1024), sys::bad_call);
 	a.open("/dev/null");
-	EXPECT_TRUE(a);
+	EXPECT_TRUE(static_cast<bool>(a));
 	EXPECT_NO_THROW(traits_type::read(a.fd(), buf, 1024));
 }

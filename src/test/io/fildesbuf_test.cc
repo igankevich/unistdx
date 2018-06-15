@@ -101,7 +101,6 @@ TYPED_TEST(BufferTest, FildesBuf) {
 TYPED_TEST(BufferTest, PacketStream) {
 
 	typedef typename TypeParam::char_type char_type;
-	typedef typename TypeParam::traits_type traits_type;
 	typedef typename TypeParam::fd_type fd_type;
 	typedef TypeParam fildesbuf_type;
 	typedef typename fildesbuf_type::ipacket_guard ipacket_guard;
