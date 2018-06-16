@@ -88,7 +88,7 @@ namespace sys {
 			file_status_flag flags = file_status_flag(0)
 		):
 		stat_type{}
-		{ this->update(dir, filename); }
+		{ this->update(dir, filename, flags); }
 
 		/// Get file type.
 		inline file_type
