@@ -12,6 +12,7 @@ TEST(MakeDirectories, Full) {
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "a", "b")));
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "x")));
 	EXPECT_NO_THROW(sys::mkdirs(sys::path(sys::canonical_path(root), "y")));
+	EXPECT_NO_THROW(sys::mkdirs(sys::path("")));
 	EXPECT_TRUE(sys::file_status(sys::path(root, "1", "2", "3")).exists());
 }
 
