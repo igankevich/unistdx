@@ -24,4 +24,10 @@ TEST(mkdirs, file_in_path) {
 	} catch (const sys::bad_call& err) {
 		EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err;
 	}
+	try {
+		sys::mkdirs(sys::path(root));
+		FAIL();
+	} catch (const sys::bad_call& err) {
+		EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err;
+	}
 }
