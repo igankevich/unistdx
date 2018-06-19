@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include <unistdx/base/check>
+#include <unistdx/bits/macros>
 #include <unistdx/ipc/argstream>
 
 namespace sys {
@@ -29,6 +30,7 @@ namespace sys {
 		[[noreturn]] inline void
 		execute(char* const argv[], char* const envp[]) {
 			UNISTDX_CHECK(::execve(argv[0], argv, envp));
+			UNISTDX_UNREACHABLE();
 		}
 
 		/**
@@ -51,6 +53,7 @@ namespace sys {
 		[[noreturn]] inline void
 		execute(char* const argv[]) {
 			UNISTDX_CHECK(::execv(argv[0], argv));
+			UNISTDX_UNREACHABLE();
 		}
 
 		/**
@@ -82,6 +85,7 @@ namespace sys {
 		[[noreturn]] inline void
 		execute_command(char* const argv[], char* const envp[]) {
 			UNISTDX_CHECK(::execvpe(argv[0], argv, envp));
+			UNISTDX_UNREACHABLE();
 		}
 
 		/**
@@ -93,6 +97,7 @@ namespace sys {
 		[[noreturn]] inline void
 		execute_command(char* const argv[]) {
 			UNISTDX_CHECK(::execvp(argv[0], argv));
+			UNISTDX_UNREACHABLE();
 		}
 
 		/**

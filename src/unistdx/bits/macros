@@ -1,6 +1,8 @@
 #ifndef UNISTDX_BITS_MACROS
 #define UNISTDX_BITS_MACROS
 
+#include <unistdx/config>
+
 #if defined(__GNUC__)
 #define UNISTDX_PURE [[gnu::pure]]
 #define UNISTDX_INLINE [[gnu::always_inline]] inline
@@ -14,6 +16,11 @@
 #define UNISTDX_MEMBER_NON_NULL_1 [[gnu::nonnull(2)]]
 #define UNISTDX_MEMBER_NON_NULL_1_2 [[gnu::nonnull(2,3)]]
 #define UNISTDX_MEMBER_NON_NULL_1_3 [[gnu::nonnull(2,4)]]
+#define UNISTDX_PRAGMA(x) _Pragma(#x)
+#define UNISTDX_WARNING_IGNORE_PUSH(x) \
+	UNISTDX_PRAGMA(GCC diagnostic push) \
+	UNISTDX_PRAGMA(GCC diagnostic ignored x)
+#define UNISTDX_WARNING_POP UNISTDX_PRAGMA(GCC diagnostic pop)
 #else
 #define UNISTDX_PURE
 #define UNISTDX_INLINE inline
@@ -27,6 +34,15 @@
 #define UNISTDX_MEMBER_NON_NULL_1
 #define UNISTDX_MEMBER_NON_NULL_1_2
 #define UNISTDX_MEMBER_NON_NULL_1_3
+#define UNISTDX_PRAGMA(x)
+#define UNISTDX_WARNING_IGNORE_PUSH(x)
+#define UNISTDX_WARNING_POP
+#endif
+
+#if defined(UNISTDX_HAVE_BUILTIN_UNREACHABLE)
+#define UNISTDX_UNREACHABLE() __builtin_unreachable()
+#else
+#define UNISTDX_UNREACHABLE()
 #endif
 
 #endif // vim:filetype=cpp

@@ -14,15 +14,20 @@ endif
 # compile-time configuration {{{
 config = configuration_data()
 cpp = meson.get_compiler('cpp')
-builtin = 'int main() { @0@(0); }'
-foreach suffix : ['', 'l', 'll']
-	if cpp.compiles(builtin.format('__builtin_popcount' + suffix))
-		config.set('UNISTDX_HAVE_BUILTIN_POPCOUNT' + suffix.to_upper(), true)
-	endif
-endforeach
-foreach suffix : ['16', '32', '64']
-	if cpp.compiles(builtin.format('__builtin_bswap' + suffix))
-		config.set('UNISTDX_HAVE_BUILTIN_SWAP' + suffix, true)
+foreach pair : [
+	['bswap16', '0'],
+	['bswap32', '0'],
+	['bswap64', '0'],
+	['popcount', '0'],
+	['popcountl', '0'],
+	['popcountll', '0'],
+	['unreachable', ''],
+]
+	func = pair[0]
+	args = pair[1]
+	builtin = 'int main() { @0@(@1@); }'
+	if cpp.compiles(builtin.format('__builtin_' + func, args))
+		config.set('UNISTDX_HAVE_BUILTIN_' + func.to_upper(), true)
 	endif
 endforeach
 if host_machine.endian() == 'little'

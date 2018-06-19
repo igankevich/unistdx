@@ -183,6 +183,7 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST(base64, invalid_argument) {
+	UNISTDX_WARNING_IGNORE_PUSH("-Wnonnull")
 	EXPECT_THROW(sys::base64_decode("", 1, nullptr), std::invalid_argument);
 	EXPECT_THROW(sys::base64_decode("", 2, nullptr), std::invalid_argument);
 	EXPECT_THROW(sys::base64_decode("", 3, nullptr), std::invalid_argument);
@@ -190,8 +191,13 @@ TEST(base64, invalid_argument) {
 	EXPECT_THROW(sys::base64_decode("", 6, nullptr), std::invalid_argument);
 	EXPECT_THROW(sys::base64_decode("", 7, nullptr), std::invalid_argument);
 	EXPECT_NO_THROW(
-		sys::base64_decode((const char*)nullptr, size_t(0), (char*)nullptr)
+		sys::base64_decode(
+			static_cast<const char*>(nullptr),
+			size_t(0),
+			static_cast<char*>(nullptr)
+		)
 	);
+	UNISTDX_WARNING_POP
 }
 
 /*
