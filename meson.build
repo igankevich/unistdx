@@ -84,6 +84,7 @@ foreach pair : [
 	['sys/shm.h', 'SHM_HUGETLB'],
 	['sys/shm.h', 'SHM_HUGE_1GB'],
 	['sys/shm.h', 'SHM_HUGE_2MB'],
+	['sys/shm.h', 'SHM_HUGE_SHIFT'],
 	['sys/shm.h', 'SHM_NORESERVE'],
 	['sys/socket.h', 'SCM_CREDENTIALS'],
 	['sys/socket.h', 'SCM_RIGHTS'],
@@ -102,11 +103,11 @@ foreach pair : [
 endforeach
 foreach pair : [
 	['cxxabi.h', 'cxxabi'],
+	['ifaddrs.h', 'ifaddrs'],
 	['linux/netlink.h', 'netlink'],
 	['semaphore.h', 'posix_semaphores'],
 	['sys/epoll.h', 'epoll'],
 	['sys/sem.h', 'sysv_semaphores'],
-	['ifaddrs.h', 'ifaddrs'],
 ]
 	header = pair[0]
 	name = pair[1]

@@ -16,7 +16,6 @@ install_headers(
 	'poll',
 	'process',
 	'safe_calls',
-	'shared_memory_segment',
 	'socket',
 	'uint128_parse',
 	subdir: join_paths(meson.project_name(), 'bits')

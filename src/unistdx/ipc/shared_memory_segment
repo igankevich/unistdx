@@ -1,15 +1,16 @@
 #ifndef UNISTDX_IPC_SHAREDMEM
 #define UNISTDX_IPC_SHAREDMEM
 
+#include <sys/shm.h>
 #include <unistd.h>
 
 #include <algorithm>
 #include <chrono>
 #include <cstring>
 
-#include <unistdx/base/make_object>
-#include <unistdx/bits/shared_memory_segment>
 #include <unistdx/base/check>
+#include <unistdx/base/make_object>
+#include <unistdx/config>
 
 namespace sys {
 
@@ -118,10 +119,18 @@ namespace sys {
 	namespace shm {
 
 		enum shm_flags_type {
-			huge_pages = UNISTDX_SHM_HUGETLB,
-			huge_2mb = UNISTDX_SHM_HUGE_2MB,
-			huge_1gb = UNISTDX_SHM_HUGE_1GB,
-			no_reserve = UNISTDX_SHM_NORESERVE
+			#if defined(UNISTDX_HAVE_SHM_HUGETLB)
+			huge_pages = SHM_HUGETLB
+			#endif
+			#if defined(UNISTDX_HAVE_SHM_HUGE_2MB)
+			, huge_2mb = SHM_HUGE_2MB
+			#endif
+			#if defined(UNISTDX_HAVE_SHM_HUGE_1GB)
+			, huge_1gb = SHM_HUGE_1GB
+			#endif
+			#if defined(UNISTDX_HAVE_SHM_NORESERVE)
+			, no_reserve = SHM_NORESERVE
+			#endif
 		};
 
 	}
