@@ -35,129 +35,93 @@ if host_machine.endian() == 'little'
 elif host_machine.endian() == 'big'
 	config.set('UNISTDX_BIG_ENDIAN', true)
 else
-	message('unknown endiannes')
+	error('unknown endiannes')
 endif
-if cpp.has_type('long double')
-	config.set('UNISTDX_HAVE_LONG_DOUBLE', true)
-endif
-if cpp.has_type('long long')
-	config.set('UNISTDX_HAVE_LONG_LONG', true)
-endif
-if cpp.has_type('__int128')
-	config.set('UNISTDX_HAVE_INT128', true)
-endif
-if cpp.has_header('ifaddrs.h')
-	config.set('UNISTDX_HAVE_IFADDRS', true)
-endif
-if cpp.has_header_symbol('sys/ioctl.h', 'FIONREAD')
-	config.set('UNISTDX_HAVE_FIONREAD', true)
-endif
-if cpp.has_header_symbol('dirent.h', 'DTTOIF')
-	config.set('UNISTDX_HAVE_DTTOIF', true)
-endif
+foreach pair : [
+	['__int128', 'int128'],
+	['long double'],
+	['long long'],
+]
+	type = pair[0]
+	name = type.underscorify()
+	if pair.length() > 1
+		name = pair[1]
+	endif
+	if cpp.has_type(type)
+		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
+	endif
+endforeach
+foreach pair : [
+	['dirent.h', 'DTTOIF'],
+	['execinfo.h', 'backtrace'],
+	['fcntl.h', 'F_SETNOSIGPIPE'],
+	['fcntl.h', 'O_CLOEXEC'],
+	['fcntl.h', 'O_DIRECT'],
+	['fcntl.h', 'O_DIRECTORY'],
+	['fcntl.h', 'O_LARGEFILE'],
+	['fcntl.h', 'O_NOATIME'],
+	['fcntl.h', 'O_NOFOLLOW'],
+	['fcntl.h', 'O_PATH'],
+	['fcntl.h', 'O_RSYNC'],
+	['fcntl.h', 'O_TMPFILE'],
+	['grp.h', 'getgrgid_r'],
+	['grp.h', 'getgrnam_r'],
+	['netinet/tcp.h', 'TCP_USER_TIMEOUT'],
+	['poll.h', 'POLLRDHUP'],
+	['pwd.h', 'getpwnam_r'],
+	['pwd.h', 'getpwuid_r'],
+	['sched.h', 'clone'],
+	['semaphore.h', 'sem_timedwait'],
+	['signal.h', 'SIGPOLL'],
+	['signal.h', 'SIGPWR'],
+	['signal.h', 'SIGSTKFLT'],
+	['signal.h', 'SIGWINCH'],
+	['sys/ioctl.h', 'FIONREAD'],
+	['sys/mman.h', 'mmap'],
+	['sys/prctl.h', 'prctl'],
+	['sys/sem.h', 'semtimedop'],
+	['sys/sendfile.h', 'sendfile'],
+	['sys/shm.h', 'SHM_HUGETLB'],
+	['sys/shm.h', 'SHM_HUGE_1GB'],
+	['sys/shm.h', 'SHM_HUGE_2MB'],
+	['sys/shm.h', 'SHM_NORESERVE'],
+	['sys/socket.h', 'SCM_CREDENTIALS'],
+	['sys/socket.h', 'SCM_RIGHTS'],
+	['sys/socket.h', 'SOCK_CLOEXEC'],
+	['sys/socket.h', 'SOCK_NONBLOCK'],
+	['sys/socket.h', 'SO_PEERCRED'],
+	['sys/socket.h', 'accept4'],
+	['unistd.h', 'copy_file_range'],
+	['unistd.h', 'pipe2'],
+]
+	header = pair[0]
+	symbol = pair[1]
+	if cpp.has_header_symbol(header, symbol)
+		config.set('UNISTDX_HAVE_' + symbol.to_upper(), true)
+	endif
+endforeach
+foreach pair : [
+	['cxxabi.h', 'cxxabi'],
+	['linux/netlink.h', 'netlink'],
+	['semaphore.h', 'posix_semaphores'],
+	['sys/epoll.h', 'epoll'],
+	['sys/sem.h', 'sysv_semaphores'],
+	['ifaddrs.h', 'ifaddrs'],
+]
+	header = pair[0]
+	name = pair[1]
+	if cpp.has_header(header)
+		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
+	endif
+endforeach
 if cpp.has_member('passwd', 'pw_gecos', prefix: '#include <pwd.h>')
 	config.set('UNISTDX_HAVE_GECOS', true)
 endif
-if cpp.has_header_symbol('poll.h', 'POLLRDHUP')
-	config.set('UNISTDX_HAVE_POLLRDHUP', true)
-endif
-foreach name : [
-		'SOCK_NONBLOCK',
-		'SOCK_CLOEXEC',
-		'SCM_CREDENTIALS',
-		'SCM_RIGHTS',
-		'SO_PEERCRED',
-		'accept4'
-	]
-	if cpp.has_header_symbol('sys/socket.h', name)
-		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
-	endif
-endforeach
-if cpp.has_header_symbol('netinet/tcp.h', 'TCP_USER_TIMEOUT')
-	config.set('UNISTDX_HAVE_TCP_USER_TIMEOUT', true)
-endif
-if cpp.has_header_symbol('fcntl.h', 'F_SETNOSIGPIPE')
-	config.set('UNISTDX_HAVE_SETNOSIGPIPE', true)
-endif
-if cpp.has_header('linux/netlink.h')
-	config.set('UNISTDX_HAVE_NETLINK', true)
-endif
-foreach name : [
-		'O_CLOEXEC',
-		'O_DIRECT',
-		'O_DIRECTORY',
-		'O_LARGEFILE',
-		'O_NOATIME',
-		'O_NOFOLLOW',
-		'O_PATH',
-		'O_RSYNC',
-		'O_TMPFILE',
-	]
-	if cpp.has_header_symbol('fcntl.h', name)
-		config.set('UNISTDX_HAVE_' + name, true)
-	endif
-endforeach
-foreach name : ['SHM_HUGETLB', 'SHM_HUGE_2MB', 'SHM_HUGE_1GB', 'SHM_NORESERVE']
-	if cpp.has_header_symbol('sys/shm.h', name)
-		config.set('UNISTDX_HAVE_' + name, true)
-	endif
-endforeach
-foreach name : ['SIGPOLL', 'SIGSTKFLT', 'SIGPWR', 'SIGWINCH']
-	if cpp.has_header_symbol('signal.h', name)
-		config.set('UNISTDX_HAVE_' + name, true)
-	endif
-endforeach
-if cpp.has_header('semaphore.h')
-	config.set('UNISTDX_HAVE_POSIX_SEMAPHORES', true)
-endif
-if cpp.has_header('sys/sem.h')
-	config.set('UNISTDX_HAVE_SYSV_SEMAPHORES', true)
-endif
-if cpp.has_header_symbol('sys/sem.h', 'semtimedop')
-	config.set('UNISTDX_HAVE_SEMTIMEDOP', true)
-endif
-if cpp.has_header_symbol('semaphore.h', 'sem_timedwait')
-	config.set('UNISTDX_HAVE_SEM_TIMEDWAIT', true)
-endif
-if cpp.has_header('execinfo.h')
-	config.set('UNISTDX_HAVE_BACKTRACE', true)
+if config.has('UNISTDX_HAVE_BACKTRACE')
 	if cpp.get_id() == 'gcc' or cpp.has_argument('-rdynamic')
 		add_global_link_arguments('-rdynamic', language: 'cpp')
 	endif
-	if cpp.has_header('cxxabi.h')
-		config.set('UNISTDX_HAVE_CXXABI', true)
-	endif
 endif
-foreach name : ['getpwnam_r' , 'getpwuid_r']
-	if cpp.has_header_symbol('pwd.h', name)
-		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
-	endif
-endforeach
-foreach name : ['getgrnam_r', 'getgrgid_r']
-	if cpp.has_header_symbol('grp.h', name)
-		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
-	endif
-endforeach
-if cpp.has_header_symbol('sys/mman.h', 'mmap')
-	config.set('UNISTDX_HAVE_MMAP', true)
-endif
-if cpp.has_header_symbol('sys/epoll.h', 'epoll_create')
-	config.set('UNISTDX_HAVE_EPOLL', true)
-endif
-if cpp.has_header_symbol('sys/sendfile.h', 'sendfile')
-	config.set('UNISTDX_HAVE_SENDFILE', true)
-endif
-if cpp.has_header_symbol('sched.h', 'clone')
-	config.set('UNISTDX_HAVE_CLONE', true)
-endif
-if cpp.has_header_symbol('sys/prctl.h', 'prctl')
-	config.set('UNISTDX_HAVE_PRCTL', true)
-endif
-foreach name : ['pipe2', 'copy_file_range']
-	if cpp.has_header_symbol('unistd.h', name)
-		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
-	endif
-endforeach
 config.set('UNISTDX_VERSION', meson.project_version())
 unistdx_version = meson.project_version().split('.')
 config.set('UNISTDX_MAJOR', unistdx_version[0])

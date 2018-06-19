@@ -10,7 +10,7 @@ namespace {
 	inline void
 	safe_pipe(sys::fd_type fds[2]) {
 		using namespace sys;
-		#if defined(UNISTDX_HAVE_SETNOSIGPIPE) || \
+		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE) || \
 			!defined(UNISTDX_HAVE_PIPE2)
 		bits::global_lock_type lock(bits::fork_mutex);
 		#endif
@@ -21,7 +21,7 @@ namespace {
 		bits::set_mandatory_flags(fds[0]);
 		bits::set_mandatory_flags(fds[1]);
 		#endif
-		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
+		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
 		UNISTDX_CHECK(::fcntl(fds[1], F_SETNOSIGPIPE, 1));
 		#endif
 	}

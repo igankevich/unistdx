@@ -39,7 +39,7 @@ namespace sys {
 			fd_close_on_exec = FD_CLOEXEC
 		};
 
-		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
+		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
 		/// File descriptor pipe flags.
 		enum pipe_flag: flag_type {
 			no_sigpipe = F_SETNOSIGPIPE
@@ -183,7 +183,7 @@ namespace sys {
 			this->set_flag(F_SETFL, this->get_flags(F_GETFL) & ~rhs);
 		}
 
-		#if defined(UNISTDX_HAVE_SETNOSIGPIPE)
+		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
 		/**
 		\brief Set file descriptor pipe flags.
 		\throws bad_call
