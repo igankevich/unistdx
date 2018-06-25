@@ -60,8 +60,12 @@ TEST(User, FindBy) {
 	EXPECT_TRUE(success);
 	EXPECT_EQ(sys::this_process::user(), u1.id());
 	EXPECT_EQ(sys::this_process::group(), u1.group_id());
-	EXPECT_STREQ(std::getenv("HOME"), u1.home());
-	EXPECT_STREQ(std::getenv("SHELL"), u1.shell());
+	if (const char* home = std::getenv("HOME")) {
+		EXPECT_STREQ(home, u1.home());
+	}
+	if (const char* shell = std::getenv("SHELL")) {
+		EXPECT_STREQ(shell, u1.shell());
+	}
 	success = sys::find_user(u1.name(), u2);
 	EXPECT_TRUE(success);
 	EXPECT_EQ(u1, u2);
