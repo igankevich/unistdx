@@ -83,8 +83,6 @@ if gcovr.found()
 			'--exclude=/usr/include/.*',
 			'--gcov-exclude=.*test.*',
 			'--gcov-exclude=/usr/include/.*',
-			'--exclude-directories=.*test.*',
-			'--exclude-directories=/usr/include',
 			'--print-summary',
 			'--output',
 			join_paths(meson.build_root(), 'gcovr', 'index.html')

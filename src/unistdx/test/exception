@@ -1,15 +1,15 @@
 #ifndef UNISTDX_TEST_EXCEPTION
 #define UNISTDX_TEST_EXCEPTION
 
-#include <system_error>
+#include <unistdx/base/bad_call>
 
 #include <gtest/gtest.h>
 
 #define UNISTDX_EXPECT_ERROR(errcond, src) \
 	try { \
 		src; \
-	} catch (const ::std::system_error& err) { \
-		EXPECT_EQ(errcond, std::errc(err.code().value())); \
+	} catch (const ::sys::bad_call& err) { \
+		EXPECT_EQ(errcond, err.errc()); \
 	}
 
 #endif // vim:filetype=cpp

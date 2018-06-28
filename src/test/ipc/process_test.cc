@@ -114,16 +114,10 @@ TEST(SetIdentity, Exceptions) {
 	sys::gid_type other_gid = group() + 1;
 	sys::uid_type old_uid = user();
 	sys::gid_type old_gid = group();
-	EXPECT_THROW(
-		set_identity(other_uid, other_gid),
-		std::system_error
-	);
+	EXPECT_THROW(set_identity(other_uid, other_gid), sys::bad_call);
 	EXPECT_EQ(old_uid, user());
 	EXPECT_EQ(old_gid, group());
-	EXPECT_THROW(
-		set_identity(1000, other_gid),
-		std::system_error
-	);
+	EXPECT_THROW(set_identity(1000, other_gid), sys::bad_call);
 	EXPECT_EQ(old_uid, user());
 	EXPECT_EQ(old_gid, group());
 	EXPECT_NO_THROW(set_identity(user(), group()));
