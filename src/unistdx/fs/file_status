@@ -9,6 +9,7 @@
 #include <unistdx/base/check>
 #include <unistdx/fs/file_mode>
 #include <unistdx/fs/file_type>
+#include <unistdx/fs/path_flag>
 
 namespace sys {
 
@@ -35,12 +36,6 @@ namespace sys {
 
 	/// Alias to \c dev_t system type.
 	typedef ::dev_t device_type;
-
-	/// File status flags.
-	enum class file_status_flag: int {
-		/// Do not follow symlinks. Allow getting status of danglink symbolic links.
-		no_follow = AT_SYMLINK_NOFOLLOW
-	};
 
 	/**
 	\brief
@@ -72,7 +67,7 @@ namespace sys {
 		inline explicit
 		file_status(
 			const char* filename,
-			file_status_flag flags = file_status_flag(0)
+			path_flag flags = path_flag(0)
 		):
 		file_status(AT_FDCWD, filename, flags)
 		{}
@@ -85,7 +80,7 @@ namespace sys {
 		file_status(
 			fd_type dir,
 			const char* filename,
-			file_status_flag flags = file_status_flag(0)
+			path_flag flags = path_flag(0)
 		):
 		stat_type{}
 		{ this->update(dir, filename, flags); }
@@ -216,14 +211,14 @@ namespace sys {
 		\see std::errc
 		\details
 		\arg Throws exception, if the file does not exist.
-		\arg Use \link file_status_flag::no_follow\endlink to not throw exception
+		\arg Use \link path_flag::no_follow\endlink to not throw exception
 		on dangling symbolic links.
 		*/
 		inline file_status&
 		update(
 			fd_type dir,
 			const char* filename,
-			file_status_flag flags = file_status_flag(0)
+			path_flag flags = path_flag(0)
 		) {
 			UNISTDX_CHECK(::fstatat(dir, filename, this, int(flags)));
 			return *this;
@@ -231,10 +226,10 @@ namespace sys {
 
 		/**
 		\brief Get file status for file \p filename.
-		\details \copydetails update(fd_type,const char*,file_status_flag)
+		\details \copydetails update(fd_type,const char*,path_flag)
 		*/
 		inline file_status&
-		update(const char* filename, file_status_flag flags = file_status_flag(0)) {
+		update(const char* filename, path_flag flags = path_flag(0)) {
 			return this->update(AT_FDCWD, filename, flags);
 		}
 

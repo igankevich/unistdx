@@ -2,9 +2,11 @@
 #define UNISTDX_FS_IDIRECTORY
 
 #include <cassert>
+#include <unistd.h>
 
 #include <unistdx/fs/directory_entry>
 #include <unistdx/fs/dirstream>
+#include <unistdx/fs/path_flag>
 #include <unistdx/fs/pathentry>
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/it/iterator_pair>
@@ -13,6 +15,9 @@ namespace sys {
 
 	/// Alias to \c DIR system type.
 	typedef DIR dir_type;
+
+	typedef ::uid_t uid_type;
+	typedef ::gid_t gid_type;
 
 	/**
 	\brief Directory entry input stream.
@@ -143,6 +148,39 @@ namespace sys {
 				basic_istream_iterator<basic_idirectory,Entry>(*this),
 				basic_istream_iterator<basic_idirectory,Entry>()
 			);
+		}
+
+		/**
+		\brief Set \p filename owner.
+		\date 2018-07-03
+		\author Ivan Gankevich
+		\see \man{fchownat,2}
+		*/
+		inline void
+		owner(
+			const char* filename,
+			uid_type uid,
+			gid_type gid,
+			path_flag flags = path_flag(0)
+		) {
+			UNISTDX_CHECK(::fchownat(
+				::dirfd(this->_dir),
+				filename,
+				uid,
+				gid,
+				flags
+			));
+		}
+
+		/**
+		\brief Set directory owner.
+		\date 2018-07-03
+		\author Ivan Gankevich
+		\see \man{fchownat,2}
+		*/
+		inline void
+		owner(uid_type uid, gid_type gid, path_flag flags = path_flag(0)) {
+			this->owner("", uid, gid, path_flag(int(flags)|int(path_flag::empty)));
 		}
 
 	private:

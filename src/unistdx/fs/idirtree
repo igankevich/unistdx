@@ -189,7 +189,7 @@ namespace sys {
 		inline const file_status&
 		status(const path& p) {
 			if (!this->has_status()) {
-				this->_stat.update(p, file_status_flag::no_follow);
+				this->_stat.update(p, path_flag::no_follow);
 			}
 			return this->_stat;
 		}
@@ -201,7 +201,7 @@ namespace sys {
 			this->_type = entry.type();
 			return entry.has_type()
 				? entry.type()
-				: this->_stat.update(path(dirname, entry.name()), file_status_flag::no_follow).type();
+				: this->_stat.update(path(dirname, entry.name()), path_flag::no_follow).type();
 		}
 
 		inline file_type

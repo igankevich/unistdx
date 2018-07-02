@@ -24,6 +24,7 @@ install_headers(
 	'odirectory',
 	'odirtree',
 	'path',
+	'path_flag',
 	'pathentry',
 	subdir: join_paths(meson.project_name(), 'fs')
 )

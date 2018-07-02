@@ -28,7 +28,7 @@ sys::mkdirs(sys::path dir, file_mode m, path::size_type offset) {
 		if (errno != EEXIST) {
 			UNISTDX_THROW_BAD_CALL();
 		}
-		file_status st(dir, file_status_flag::no_follow);
+		file_status st(dir, path_flag::no_follow);
 		if (!st.is_directory()) {
 			throw bad_call(std::errc::not_a_directory, __FILE__, __LINE__, __func__);
 		}

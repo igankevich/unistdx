@@ -1,0 +1,25 @@
+#ifndef UNISTDX_FS_PATH_FLAG
+#define UNISTDX_FS_PATH_FLAG
+
+#include <fcntl.h>
+#include <sys/stat.h>
+
+namespace sys {
+
+	/// Path flags.
+	enum class path_flag: int {
+		/// Do not follow symlinks. Allows getting status of dangling symbolic links.
+		no_follow = AT_SYMLINK_NOFOLLOW
+		#if defined(AT_NO_AUTOMOUNT)
+		,
+		/// Do not automatically mount directories
+		no_automount = AT_NO_AUTOMOUNT
+		#endif
+		,
+		/// Allow empty relative file path.
+		empty = AT_EMPTY_PATH
+	};
+
+}
+
+#endif // vim:filetype=cpp
