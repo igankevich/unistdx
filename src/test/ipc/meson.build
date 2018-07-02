@@ -1,6 +1,6 @@
 foreach conf : [
 	['execute', [unistdx,gtest]],
-	['identity', [unistdx,gtest]],
+	['identity', [unistdx,gtest], [[], [setgid_stub]]],
 	['process', [unistdx,gtest]],
 	['process_group', [unistdx,gtest]],
 	['process_status', [unistdx,gtest]],
@@ -11,24 +11,22 @@ foreach conf : [
 	test_name = join_paths('ipc', conf[0])
 	executable_name = conf[0] + '_test'
 	source_name = executable_name + '.cc'
-	test(
-		test_name,
-		executable(
-			executable_name,
-			sources: source_name,
-			include_directories: srcdir,
-			dependencies: conf[1]
+	stubs_list = conf.length() <= 2 ? [[]] : conf[2]
+	foreach libs : stubs_list
+		suffix = ''
+		foreach l : libs
+			tmp = l.full_path().split('lib')
+			suffix += '--' + tmp[tmp.length()-1].split('.so')[0]
+		endforeach
+		test(
+			test_name + suffix,
+			executable(
+				executable_name + suffix,
+				sources: source_name,
+				include_directories: srcdir,
+				dependencies: conf[1],
+				link_with: libs
+			)
 		)
-	)
+	endforeach
 endforeach
-
-test(
-	'ipc/identity-stub',
-	executable(
-		'identity_stub_test',
-		sources: 'identity_stub_test.cc',
-		include_directories: srcdir,
-		dependencies: [unistdx,gtest]
-	),
-	env: ['LD_PRELOAD=' + setgid_stub.full_path()]
-)
