@@ -38,7 +38,7 @@ sys::socket::socket(const socket_address& bind_addr, const socket_address& conn_
 }
 
 sys::socket::socket(family_type family, socket_type type, protocol_type proto):
-sys::fildes(safe_socket(int (family), int(type)|default_flags, 0))
+sys::fildes(safe_socket(int (family), int(type)|default_flags, proto))
 {}
 
 void

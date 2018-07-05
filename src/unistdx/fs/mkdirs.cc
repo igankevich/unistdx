@@ -12,7 +12,7 @@ sys::mkdirs(sys::path dir, file_mode m, path::size_type offset) {
 	if (n == 0) {
 		return;
 	}
-	for (sys::path::size_type i=1; i<n-1; ++i) {
+	for (sys::path::size_type i=offset; i<n-1; ++i) {
 		const char ch = dir[i];
 		if (ch == '/') {
 			dir[i] = '\0';

@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <streambuf>
 
+#include <unistdx/bits/macros>
 #include <unistdx/bits/no_copy_and_move>
 
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_PACKETBUF)
@@ -341,7 +342,7 @@ namespace sys {
 		*/
 		virtual bool
 		xgetheader( // LCOV_EXCL_LINE
-			std::streamsize& header_size,
+			UNISTDX_UNUSED std::streamsize& header_size,
 			std::streamsize& payload_size
 		) {
 			// LCOV_EXCL_START

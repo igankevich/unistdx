@@ -10,6 +10,7 @@
 #define UNISTDX_CONST [[gnu::const]] UNISTDX_INLINE constexpr
 #define UNISTDX_FLATTEN [[gnu::flatten]]
 #define UNISTDX_DEPRECATED [[gnu::deprecated]]
+#define UNISTDX_UNUSED [[gnu::unused]]
 #define UNISTDX_NON_NULL_1_3_FLATTEN [[gnu::nonnull(1,3),gnu::flatten]]
 #define UNISTDX_NON_NULL_1 [[gnu::nonnull(1)]]
 #define UNISTDX_NON_NULL_1_2 [[gnu::nonnull(1,2)]]
@@ -28,6 +29,7 @@
 #define UNISTDX_CONST inline constexpr
 #define UNISTDX_FLATTEN
 #define UNISTDX_DEPRECATED
+#define UNISTDX_UNUSED
 #define UNISTDX_NON_NULL_1_3_FLATTEN
 #define UNISTDX_NON_NULL_1
 #define UNISTDX_NON_NULL_1_2

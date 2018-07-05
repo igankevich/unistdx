@@ -22,7 +22,7 @@ namespace sys {
 	before \p offset characters from the beginning of \p dir exist.
 	*/
 	void
-	mkdirs(path dir, file_mode m=0755, path::size_type offset=0);
+	mkdirs(path dir, file_mode m=0755, path::size_type offset=1);
 
 	/**
 	\brief
