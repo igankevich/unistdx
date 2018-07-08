@@ -9,6 +9,9 @@
 
 namespace {
 
+	constexpr const int default_flags =
+		UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
+
 	inline int
 	safe_socket(int domain, int type, int protocol) {
 		using namespace sys::bits;
@@ -96,9 +99,9 @@ sys::socket::accept(socket& sock, socket_address& addr) {
 }
 
 void
-sys::socket::shutdown(shutdown_how how) {
+sys::socket::shutdown(shutdown_flag how) {
 	if (*this) {
-		int ret = ::shutdown(this->_fd, how);
+		int ret = ::shutdown(this->_fd, int(how));
 		if (ret == -1 && errno != ENOTCONN && errno != ENOTSUP) {
 			UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
 		}
@@ -107,7 +110,7 @@ sys::socket::shutdown(shutdown_how how) {
 
 void
 sys::socket::close() {
-	this->shutdown(shut_read_write);
+	this->shutdown(shutdown_flag::read_write);
 	this->sys::fildes::close();
 }
 

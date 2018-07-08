@@ -4,83 +4,29 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+#include <unistdx/base/flag>
+
 namespace sys {
 
 	/// Path flags.
-	class path_flag {
-
-	public:
-		typedef int flag_type;
-
-		enum path_flag_enum: flag_type {
-			/**
-			Do not follow symlinks.
-			Allows getting status of dangling symbolic links.
-			*/
-			no_follow = AT_SYMLINK_NOFOLLOW
-			#if defined(AT_NO_AUTOMOUNT)
-			,
-			/// Do not automatically mount directories
-			no_automount = AT_NO_AUTOMOUNT
-			#endif
-			,
-			/// Allow empty relative file path.
-			empty = AT_EMPTY_PATH
-		};
-
-	private:
-		flag_type _flag = 0;
-
-	public:
-
-		path_flag() = default;
-
-		/// Copy-constructor.
-		path_flag(const path_flag&) = default;
-
-		/// Construct open flag from raw flag.
-		inline
-		path_flag(flag_type rhs) noexcept:
-		_flag(rhs)
-		{}
-
-		/// Automatically cast to raw flag.
-		inline
-		operator flag_type() const noexcept {
-			return this->_flag;
-		}
-
+	enum class path_flag: int {
+		/**
+		Do not follow symlinks.
+		Allows getting status of dangling symbolic links.
+		*/
+		no_follow = AT_SYMLINK_NOFOLLOW
+		#if defined(AT_NO_AUTOMOUNT)
+		,
+		/// Do not automatically mount directories
+		no_automount = AT_NO_AUTOMOUNT
+		#endif
+		,
+		/// Allow empty relative file path.
+		empty = AT_EMPTY_PATH
 	};
 
-	#define MAKE_UNARY(op) \
-	inline path_flag \
-	operator op(path_flag rhs) noexcept { \
-		return op path_flag::flag_type(rhs); \
-	}
-
-	#define MAKE_BINARY(op, return_type) \
-	inline return_type \
-	operator op(path_flag lhs, path_flag rhs) noexcept { \
-		return path_flag::flag_type(lhs) op path_flag::flag_type(rhs); \
-	} \
-	inline return_type \
-	operator op(path_flag::flag_type lhs, path_flag rhs) noexcept { \
-		return lhs op path_flag::flag_type(rhs); \
-	} \
-	inline return_type \
-	operator op(path_flag lhs, path_flag::flag_type rhs) noexcept { \
-		return path_flag::flag_type(lhs) op rhs; \
-	}
-
-	/// \{
-	MAKE_UNARY(~)
-	MAKE_BINARY(|, path_flag)
-	MAKE_BINARY(&, path_flag)
-	MAKE_BINARY(^, path_flag)
-	/// \}
-
-	#undef MAKE_UNARY
-	#undef MAKE_BINARY
+	template <>
+	struct is_flag<path_flag>: public std::true_type {};
 
 }
 

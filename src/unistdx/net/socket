@@ -42,6 +42,17 @@ namespace sys {
 		raw = SOCK_RAW
 	};
 
+	/// Socket shutdown options.
+	enum class shutdown_flag: int {
+		read = SHUT_RD,
+		write = SHUT_WR,
+		read_write = SHUT_RDWR
+	};
+
+	template <>
+	struct is_flag<shutdown_flag>: public std::true_type {};
+
+
 	/**
 	\brief Socket wrapper.
 	\date 2018-05-24
@@ -50,6 +61,8 @@ namespace sys {
 	\details
 	\arg Socket is a file descriptor which is used for communication.
 	\arg Usually, sockets are used for network communication.
+	\arg The socket is non-blocking and automatically closed on child
+	process execution.
 	*/
 	class socket: public fildes {
 
@@ -77,20 +90,6 @@ namespace sys {
 			*/
 			pass_credentials = SO_PASSCRED,
 		};
-
-		/// Socket shutdown options.
-		enum shutdown_how {
-			shut_read = SHUT_RD,
-			shut_write = SHUT_WR,
-			shut_read_write = SHUT_RDWR
-		};
-
-		/**
-		Default socket flags. The socket is non-blocking and automatically
-		closed on child process execution.
-		*/
-		static const flag_type default_flags =
-			UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC;
 
 		socket() = default;
 
@@ -198,7 +197,7 @@ namespace sys {
 		\see std::errc
 		*/
 		void
-		shutdown(shutdown_how how);
+		shutdown(shutdown_flag how);
 
 		/**
 		\brief Shutdown and close the socket.

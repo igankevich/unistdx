@@ -3,12 +3,13 @@
 
 #include <iosfwd>
 
+#include <unistdx/base/flag>
 #include <unistdx/config>
 #include <unistdx/io/poller>
+#include <unistdx/it/iterator_pair>
 #include <unistdx/net/netlink_attribute_iterator>
 #include <unistdx/net/netlink_message_iterator>
 #include <unistdx/net/socket>
-#include <unistdx/it/iterator_pair>
 
 #if !defined(UNISTDX_HAVE_NETLINK)
 #error netlink.h is required to use netlink
@@ -54,12 +55,8 @@ namespace sys {
 		dump = NLM_F_DUMP
 	};
 
-	/// \{
-	inline netlink_message_flags
-	operator|(netlink_message_flags lhs, netlink_message_flags rhs) {
-		return netlink_message_flags(static_cast<u16>(lhs) | static_cast<u16>(rhs));
-	}
-	/// \}
+	template <>
+	struct is_flag<netlink_message_flags>: public std::true_type {};
 
 	/// \brief Netlink message types.
 	/// \ingroup net

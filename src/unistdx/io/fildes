@@ -24,6 +24,24 @@ namespace sys {
 	typedef ::mode_t mode_type;
 	typedef int fd_type;
 
+	/// File descriptor flags.
+	enum class fd_flag: int {
+		fd_close_on_exec = FD_CLOEXEC
+	};
+
+	template <>
+	struct is_flag<fd_flag>: public std::true_type {};
+
+	#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
+	/// File descriptor pipe flags.
+	enum class pipe_flag: int {
+		no_sigpipe = F_SETNOSIGPIPE
+	};
+
+	template <>
+	struct is_flag<pipe_flag>: public std::true_type {};
+	#endif
+
 	/**
 	\brief File descriptor wrapper.
 	\date 2018-05-22
@@ -32,23 +50,13 @@ namespace sys {
 	*/
 	class fildes {
 
+	private:
+		typedef int flag_type;
+
 	public:
 
-		/// File descriptor flags.
-		enum fd_flag: flag_type {
-			fd_close_on_exec = FD_CLOEXEC
-		};
-
-		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
-		/// File descriptor pipe flags.
-		enum pipe_flag: flag_type {
-			no_sigpipe = F_SETNOSIGPIPE
-		};
-		#endif
-
 		/// Invalid file descriptor constant.
-		static const fd_type
-		bad = -1;
+		static const fd_type bad = -1;
 
 	protected:
 		/// File descriptor number
@@ -77,7 +85,7 @@ namespace sys {
 		open flags \p flags and mode \p mode.
 		*/
 		inline
-		fildes(const char* filename, open_flag flags=0, mode_type mode=0) {
+		fildes(const char* filename, open_flag flags=open_flag(), mode_type mode=0) {
 			this->open(filename, flags, mode);
 		}
 
@@ -150,7 +158,7 @@ namespace sys {
 		*/
 		inline open_flag
 		flags() const {
-			return this->get_flags(F_GETFL);
+			return open_flag(this->get_flags(F_GETFL));
 		}
 
 		/**
@@ -158,9 +166,9 @@ namespace sys {
 		\throws bad_call
 		\see \man{fcntl,2}
 		*/
-		inline flag_type
+		inline fd_flag
 		fd_flags() const {
-			return this->get_flags(F_GETFD);
+			return fd_flag(this->get_flags(F_GETFD));
 		}
 
 		/**
@@ -170,7 +178,7 @@ namespace sys {
 		*/
 		inline void
 		setf(open_flag rhs) {
-			this->set_flag(F_SETFL, this->get_flags(F_GETFL) | rhs);
+			this->set_flag(F_SETFL, flag_type(this->flags() | rhs));
 		}
 
 		/**
@@ -180,7 +188,7 @@ namespace sys {
 		*/
 		inline void
 		unsetf(open_flag rhs) {
-			this->set_flag(F_SETFL, this->get_flags(F_GETFL) & ~rhs);
+			this->set_flag(F_SETFL, flag_type(this->flags() & ~rhs));
 		}
 
 		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
@@ -191,7 +199,7 @@ namespace sys {
 		*/
 		inline void
 		setf(pipe_flag rhs) {
-			this->set_flag(rhs, 1);
+			this->set_flag(int(rhs), 1);
 		}
 
 		/**
@@ -201,7 +209,7 @@ namespace sys {
 		*/
 		inline void
 		unsetf(pipe_flag rhs) {
-			this->set_flag(rhs, 0);
+			this->set_flag(int(rhs), 0);
 		}
 		#endif
 
@@ -212,7 +220,17 @@ namespace sys {
 		*/
 		inline void
 		setf(fd_flag rhs) {
-			this->set_flag(F_SETFD, rhs);
+			this->set_flag(F_SETFD, flag_type(rhs));
+		}
+
+		/**
+		\brief Unset file descriptor flags.
+		\throws bad_call
+		\see \man{fcntl,2}
+		*/
+		inline void
+		unsetf(fd_flag rhs) {
+			this->set_flag(F_SETFD, flag_type(this->fd_flags() & ~rhs));
 		}
 
 		/// Compare file descriptors.
@@ -289,9 +307,13 @@ namespace sys {
 		\throws bad_call
 		*/
 		inline void
-		open(const char* filename, open_flag flags=0, mode_type mode=0) {
+		open(const char* filename, open_flag flags=open_flag(), mode_type mode=0) {
 			this->close();
-			this->_fd = ::open(filename, flags|open_flag::close_on_exec, mode);
+			this->_fd = ::open(
+				filename,
+				static_cast<flag_type>(flags|open_flag::close_on_exec),
+				mode
+			);
 			UNISTDX_CHECK(this->_fd);
 		}
 

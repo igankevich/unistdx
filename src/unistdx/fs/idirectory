@@ -168,7 +168,7 @@ namespace sys {
 				filename,
 				uid,
 				gid,
-				flags
+				int(flags)
 			));
 		}
 
@@ -180,7 +180,7 @@ namespace sys {
 		*/
 		inline void
 		owner(uid_type uid, gid_type gid, path_flag flags = path_flag(0)) {
-			this->owner("", uid, gid, path_flag(int(flags)|int(path_flag::empty)));
+			this->owner("", uid, gid, flags|path_flag::empty);
 		}
 
 	private:

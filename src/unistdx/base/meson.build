@@ -15,6 +15,7 @@ install_headers(
 	'check',
 	'command_line',
 	'delete_each',
+	'flag',
 	'ios_guard',
 	'log_message',
 	'make_object',

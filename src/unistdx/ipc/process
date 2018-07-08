@@ -12,6 +12,7 @@
 #endif
 
 #include <unistdx/base/check>
+#include <unistdx/base/flag>
 #include <unistdx/bits/process>
 #include <unistdx/bits/safe_calls>
 #include <unistdx/ipc/process_status>
@@ -150,6 +151,9 @@ namespace sys {
 		non_blocking = WNOHANG
 	};
 
+	template <>
+	struct is_flag<wait_flags>: public std::true_type {};
+
 	/**
 	\brief
 	Flags used by \man{clone,2} system call.
@@ -163,6 +167,9 @@ namespace sys {
 		, new_process_namespace = CLONE_NEWPID
 		#endif
 	};
+
+	template <>
+	struct is_flag<process_flag>: public std::true_type {};
 
 	/**
 	\brief
