@@ -103,6 +103,24 @@ namespace sys {
 			return *this;
 		}
 
+		/// Go to the next directory.
+		inline void
+		next_directory() {
+			this->_dirs.pop();
+			if (this->_dirs.empty()) {
+				this->setstate(eofbit);
+			} else {
+				this->clear();
+				this->base_type::open(this->_dirs.front());
+			}
+		}
+
+		/// Return the number of directories in the stack.
+		inline size_t
+		num_directories() const noexcept {
+			return this->_dirs.size();
+		}
+
 	private:
 
 		template<class Entry>
@@ -117,13 +135,7 @@ namespace sys {
 						this->_dirs.emplace(cur, rhs.name());
 					}
 				} else {
-					this->_dirs.pop();
-					if (this->_dirs.empty()) {
-						this->setstate(eofbit);
-					} else {
-						this->clear();
-						this->base_type::open(this->_dirs.front());
-					}
+					this->next_directory();
 				}
 			}
 		}
