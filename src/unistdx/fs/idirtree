@@ -121,6 +121,16 @@ namespace sys {
 			return this->_dirs.size();
 		}
 
+		/// Get all directory tree entries as a container.
+		template <class Entry>
+		inline iterator_pair<basic_istream_iterator<basic_idirtree,Entry>>
+		entries() noexcept {
+			return make_view(
+				basic_istream_iterator<basic_idirtree,Entry>(*this),
+				basic_istream_iterator<basic_idirtree,Entry>()
+			);
+		}
+
 	private:
 
 		template<class Entry>
