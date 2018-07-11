@@ -1,7 +1,7 @@
 project(
 	'unistdx',
 	'cpp',
-	version: '0.4.5',
+	version: '0.4.6',
 	meson_version: '>=0.31',
 	default_options: ['cpp_std=c++11'],
 	license: ['Public domain']
@@ -125,7 +125,7 @@ if config.has('UNISTDX_HAVE_BACKTRACE')
 endif
 unistdx_version = get_option('buildtype').contains('debug') ? '0.0.0' : meson.project_version()
 config.set('UNISTDX_VERSION', unistdx_version)
-v = meson.project_version().split('.')
+v = unistdx_version.split('.')
 config.set('UNISTDX_MAJOR', v[0])
 config.set('UNISTDX_MINOR', v[1])
 config.set('UNISTDX_PATCHLEVEL', v[2])

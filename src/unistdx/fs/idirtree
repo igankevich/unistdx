@@ -106,12 +106,14 @@ namespace sys {
 		/// Go to the next directory.
 		inline void
 		next_directory() {
-			this->_dirs.pop();
 			if (this->_dirs.empty()) {
-				this->setstate(eofbit);
 			} else {
-				this->clear();
-				this->base_type::open(this->_dirs.front());
+				this->_dirs.pop();
+				if (this->_dirs.empty()) {
+					this->setstate(eofbit);
+				} else {
+					this->base_type::open(this->_dirs.front());
+				}
 			}
 		}
 
@@ -136,6 +138,9 @@ namespace sys {
 		template<class Entry>
 		inline void
 		read_direntry(Entry& rhs) {
+			if (!this->is_open()) {
+				this->next_directory();
+			}
 			bool success = false;
 			while (!success && !this->eof()) {
 				if (this->base_type::operator>>(rhs)) {
@@ -145,6 +150,7 @@ namespace sys {
 						this->_dirs.emplace(cur, rhs.name());
 					}
 				} else {
+					this->clear();
 					this->next_directory();
 				}
 			}
