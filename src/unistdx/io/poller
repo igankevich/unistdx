@@ -369,8 +369,8 @@ namespace sys {
 			#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
 			sys::log_message("poller", "wake up nfds=_", nfds);
 			#endif
+			this->_nevents = nfds;
 			if (nfds > 0) {
-				this->_nevents = std::max(nfds, 0);
 				// TODO this is inefficient
 				this->consume_pipe();
 			}
