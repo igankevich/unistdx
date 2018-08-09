@@ -156,6 +156,13 @@ namespace sys {
 			return result != this->_headers.end() && result->second == value;
 		}
 
+		inline bool
+		has_header_containing(const std::string& key, const std::string& value) {
+			auto result = this->_headers.find(key);
+			return result != this->_headers.end() &&
+				result->second.find(value) != std::string::npos;
+		}
+
 		inline void
 		ensure_header(const std::string& key) {
 			if (!this->has_header(key)) {
@@ -167,6 +174,13 @@ namespace sys {
 		ensure_header(const std::string& key, const std::string& value) {
 			if (!this->has_header(key, value)) {
 				throw 22;
+			}
+		}
+
+		inline void
+		ensure_header_contains(const std::string& key, const std::string& value) {
+			if (!this->has_header_containing(key, value)) {
+				throw 33;
 			}
 		}
 

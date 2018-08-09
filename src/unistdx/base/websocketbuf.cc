@@ -76,14 +76,18 @@ namespace {
 	}
 
 	void
-	websocket_accept_header(const std::string& web_socket_key, char* result) {
+	websocket_accept_header(const std::string& encoded_key, char* result) {
 		using namespace sys;
-		bytes<char[20]> hash;
+		bytes<u32[5]> hash;
 		sha1 sha;
-		sha.put(web_socket_key.data(), web_socket_key.size());
+		sha.put(encoded_key.data(), encoded_key.size());
 		sha.put(websocket_guid.data(), websocket_guid.size());
 		sha.compute();
-		sha.digest(hash.begin());
+		sha.digest(hash.value());
+		u32* v = hash.value();
+		for (int i=0; i<5; ++i) {
+			v[i] = to_network_format(v[i]);
+		}
 		base64_encode(hash.begin(), hash.end(), result);
 	}
 
@@ -192,6 +196,10 @@ sys::basic_websocketbuf<Ch,Tr>::on_payload() {
 		(this->_role == role_type::client &&
 		 this->_cstate == client_state::end)
 	);
+	// ignore all frame types except binary
+	if (this->_iframe.opcode() != opcode_type::binary_frame) {
+		this->skip_packet();
+	}
 	this->_iframe.mask_payload(this->ipayload_begin(), this->ipayload_end());
 }
 
@@ -424,7 +432,7 @@ sys::basic_websocketbuf<Ch,Tr>::validate_http_headers() {
 		}
 		this->ensure_header("sec-websocket-protocol", "binary");
 		this->ensure_header("upgrade", "websocket");
-		this->ensure_header("connection", "Upgrade");
+		this->ensure_header_contains("connection", "Upgrade");
 		if (this->_role == role_type::server) {
 			this->ensure_header("sec-websocket-key");
 			this->ensure_header("sec-websocket-version");
