@@ -1,4 +1,7 @@
 srcdir = include_directories('.')
 
 subdir('unistdx')
-subdir('test')
+
+if with_tests
+	subdir('test')
+endif

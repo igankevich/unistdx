@@ -11,6 +11,8 @@ if not get_option('buildtype').contains('debug')
 	add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
 
+with_tests = get_option('with_tests')
+
 # compile-time configuration {{{
 config = configuration_data()
 cpp = meson.get_compiler('cpp')
@@ -132,7 +134,9 @@ config.set('UNISTDX_PATCHLEVEL', v[2])
 # }}}
 
 threads = dependency('threads')
-gtest = dependency('gtest', main: true)
+if with_tests
+	gtest = dependency('gtest', main: true)
+endif
 
 subdir('src')
 subdir('doc')
