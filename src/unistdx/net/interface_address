@@ -1,8 +1,6 @@
 #ifndef UNISTDX_NET_IFADDR
 #define UNISTDX_NET_IFADDR
 
-#include <tuple>
-
 #include <unistdx/base/check>
 #include <unistdx/bits/addr_parse>
 #include <unistdx/net/bstream>

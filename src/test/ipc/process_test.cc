@@ -26,8 +26,11 @@ TEST(process, basic) {
 	EXPECT_EQ(0, status.exit_code());
 }
 
-typedef std::tuple<sys::process_flag,std::string,bool>
-	process_exec_params;
+struct process_exec_params {
+	sys::process_flag flags;
+	std::string cmd;
+	bool success;
+};
 
 struct process_exec_test:
 	public ::testing::TestWithParam<process_exec_params> {};
@@ -41,9 +44,9 @@ std::vector<process_exec_params> all_params{
 
 TEST_P(process_exec_test, return_int) {
 	auto param = GetParam();
-	sys::process_flag flags = std::get<0>(param);
-	std::string cmd = std::get<1>(param);
-	bool success = std::get<2>(param);
+	sys::process_flag flags = param.flags;
+	std::string cmd = param.cmd;
+	bool success = param.success;
 	sys::process child {
 		[&] () {
 			sys::argstream args;
@@ -63,9 +66,9 @@ TEST_P(process_exec_test, return_int) {
 
 TEST_P(process_exec_test, return_void) {
 	auto param = GetParam();
-	sys::process_flag flags = std::get<0>(param);
-	std::string cmd = std::get<1>(param);
-	bool success = std::get<2>(param);
+	sys::process_flag flags = param.flags;
+	std::string cmd = param.cmd;
+	bool success = param.success;
 	sys::process child {
 		[&] () {
 			sys::argstream args;

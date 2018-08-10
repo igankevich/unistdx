@@ -7,7 +7,6 @@
 
 #include <functional>
 #include <iosfwd>
-#include <tuple>
 
 #include <unistdx/config>
 #include <unistdx/net/bit_count>

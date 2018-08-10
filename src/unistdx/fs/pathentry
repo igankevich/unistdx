@@ -1,8 +1,6 @@
 #ifndef UNISTDX_FS_PATHENTRY
 #define UNISTDX_FS_PATHENTRY
 
-#include <tuple>
-
 #include <unistdx/fs/directory_entry>
 
 namespace sys {
