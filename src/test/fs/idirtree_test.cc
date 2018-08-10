@@ -102,7 +102,9 @@ TEST(GetFileType, PathEntry) {
 	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(*result));
 }
 
-typedef std::tuple<std::string> idirtree_test_param;
+struct idirtree_test_param {
+	std::string src;
+};
 
 struct idirtree_test: public ::testing::TestWithParam<idirtree_test_param> {};
 
@@ -113,7 +115,7 @@ std::vector<idirtree_test_param> all_params {
 };
 
 TEST_P(idirtree_test, insert) {
-	sys::path src(std::get<0>(GetParam()));
+	sys::path src(GetParam().src);
 	std::vector<std::string> files1 {"a", "b", "c"};
 	std::vector<std::string> files2 {"d", "e", "f"};
 	test::tmpdir dir1(src, files1.begin(), files1.end());
