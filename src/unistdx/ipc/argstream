@@ -155,6 +155,15 @@ namespace sys {
 		std::ostream(nullptr)
 		{ this->init(&_argbuf); }
 
+		template <class ... Args>
+		inline
+		argstream(const Args& ... args):
+		std::ostream(nullptr)
+		{
+			this->init(&_argbuf);
+			this->append(args...);
+		}
+
 		/// Move-constructor
 		inline
 		argstream(argstream&& rhs):
@@ -180,19 +189,11 @@ namespace sys {
 			return this->_argbuf.argc();
 		}
 
-		/// Insert \p rhs to the stream and delimit the current argument.
-		template<class T>
-		inline void
-		append(const T& rhs) {
-			*this << rhs << '\0';
-		}
-
 		/// Insert all function arguments as command line arguments.
-		template<class T, class ... Args>
+		template<class ... Args>
 		inline void
-		append(const T& first, const Args& ... args) {
-			append(first);
-			append(args...);
+		append(const Args& ... args) {
+			this->do_append(args...);
 		}
 
 		/// Print all command line arguments.
@@ -204,6 +205,18 @@ namespace sys {
 				intersperse_iterator<const char*,char>(out, ' ')
 			);
 			return out;
+		}
+
+	private:
+
+		inline void
+		do_append() {}
+
+		template<class Head, class ... Tail>
+		inline void
+		do_append(const Head& head, const Tail& ... tail) {
+			*this << head << '\0';
+			this->do_append(tail...);
 		}
 
 	};
