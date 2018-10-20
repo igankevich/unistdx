@@ -85,6 +85,14 @@ namespace sys {
 		stat_type{}
 		{ this->update(dir, filename, flags); }
 
+		/**
+		Construct file status for file descriptor \p fd.
+		*/
+		inline explicit
+		file_status(fd_type fd):
+		stat_type{}
+		{ this->update(fd); }
+
 		/// Get file type.
 		inline file_type
 		type() const noexcept {
@@ -231,6 +239,18 @@ namespace sys {
 		inline file_status&
 		update(const char* filename, path_flag flags = path_flag(0)) {
 			return this->update(AT_FDCWD, filename, flags);
+		}
+
+		/**
+		\brief Get file status for file descriptor \p fd.
+		\returns reference to this object
+		\throws bad_call
+		\see \man{stat,2}
+		*/
+		inline file_status&
+		update(fd_type fd) {
+			UNISTDX_CHECK(::fstat(fd, this));
+			return *this;
 		}
 
 		/// Get time of last access.

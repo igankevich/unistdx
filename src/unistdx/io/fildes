@@ -13,6 +13,7 @@
 
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
+#include <unistdx/fs/file_status>
 #include <unistdx/io/open_flag>
 
 #ifndef NDEBUG
@@ -315,6 +316,12 @@ namespace sys {
 				mode
 			);
 			UNISTDX_CHECK(this->_fd);
+		}
+
+		/// Get file status for this file descriptor.
+		inline file_status
+		status() const {
+			return file_status{this->_fd};
 		}
 
 	private:
