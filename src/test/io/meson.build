@@ -8,6 +8,7 @@ foreach conf : [
 	['poll_event', [unistdx,gtest], []],
 	['poller', [unistdx,gtest], []],
 	['two_way_pipe', [unistdx,gtest], []],
+	['memory_mapping', [unistdx,gtest], []],
 ]
 	test_name = join_paths('io', conf[0])
 	executable_name = conf[0] + '_test'
@@ -23,3 +24,14 @@ foreach conf : [
 		)
 	)
 endforeach
+
+benchmark(
+	'base/memory_mapping',
+	executable(
+		'memory-mapping-benchmark',
+		sources: 'memory_mapping_benchmark.cc',
+		include_directories: srcdir,
+		dependencies: [unistdx]
+	)
+)
+

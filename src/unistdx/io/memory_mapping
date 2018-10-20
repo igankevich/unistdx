@@ -1,0 +1,218 @@
+#ifndef UNISTDX_IO_MEMORY_MAPPING
+#define UNISTDX_IO_MEMORY_MAPPING
+
+#include <unistdx/base/flag>
+#include <unistdx/bits/mman>
+#include <unistdx/fs/file_status>
+#include <unistdx/io/fildes>
+
+namespace sys {
+
+	enum class page_flag: int {
+		none = PROT_NONE,
+		read = PROT_READ,
+		write = PROT_WRITE,
+		execute = PROT_EXEC,
+	};
+
+	template <>
+	struct is_flag<page_flag>: public std::true_type {};
+
+	enum class map_flag: int {
+		shared = MAP_SHARED,
+		priv = MAP_PRIVATE,
+		fixed = MAP_FIXED
+		#if defined(UNISTDX_HAVE_MAP_ANONYMOUS)
+		, anonymous = MAP_ANONYMOUS
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_32BIT)
+		, bit32 = MAP_32BIT
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_GROWSDOWN)
+		, grows_down = MAP_GROWSDOWN
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_HUGETLB)
+		, huge_page = MAP_HUGETLB
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_HUGE_2MB)
+		, huge_page_2mb = MAP_HUGE_2MB
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_HUGE_1GB)
+		, huge_page_1gb = MAP_HUGE_1GB
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_LOCKED)
+		, locked = MAP_LOCKED
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_NONBLOCK)
+		, non_blocking = MAP_NONBLOCK
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_NORESERVE)
+		, no_reserve = MAP_NORESERVE
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_POPULATE)
+		, populate = MAP_POPULATE
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_STACK)
+		, stack = MAP_STACK
+		#endif
+		#if defined(UNISTDX_HAVE_MAP_UNINITIALIZED)
+		, uninitilalised = MAP_UNINITIALIZED
+		#endif
+	};
+
+	template <>
+	struct is_flag<map_flag>: public std::true_type {};
+
+	template <class T>
+	class memory_mapping {
+
+	public:
+		/// Alias to \c T.
+		typedef T value_type;
+		/// Pointer to \c T.
+		typedef value_type* iterator;
+		/// Constant pointer to \c T.
+		typedef const value_type* const_iterator;
+		/// Alias to \link std::size_t\endlink.
+		typedef std::size_t size_type;
+
+	private:
+		T* _data = nullptr;
+		size_type _size = 0;
+
+	public:
+
+		inline
+		memory_mapping(
+			fd_type fd,
+			offset_type offset,
+			size_type count,
+			page_flag page_flags = page_flag::read | page_flag::write,
+			map_flag map_flags = map_flag::priv
+		): _size{count} {
+			void* ptr = ::mmap(
+				nullptr,
+				count*sizeof(T),
+				static_cast<int>(page_flags),
+				static_cast<int>(map_flags),
+				fd,
+				offset*sizeof(T)
+			);
+			UNISTDX_CHECK2(ptr, MAP_FAILED);
+			this->_data = static_cast<T*>(ptr);
+		}
+
+		inline explicit
+		memory_mapping(
+			const char* filename,
+			offset_type offset,
+			size_type count,
+			page_flag page_flags = page_flag::read | page_flag::write,
+			map_flag map_flags = map_flag::priv
+		): memory_mapping{
+			fildes{filename}.fd(),
+			offset,
+			count,
+			page_flags,
+			map_flags
+		} {}
+
+		inline explicit
+		memory_mapping(
+			fd_type fd,
+			page_flag page_flags = page_flag::read | page_flag::write,
+			map_flag map_flags = map_flag::priv
+		): memory_mapping{
+			fd,
+			0,
+			static_cast<size_type>(file_status{fd}.size()),
+			page_flags,
+			map_flags
+		}
+		{}
+
+		inline explicit
+		memory_mapping(
+			const char* filename,
+			page_flag page_flags = page_flag::read | page_flag::write,
+			map_flag map_flags = map_flag::priv
+		): memory_mapping{
+			fildes{filename}.fd(),
+			0,
+			static_cast<size_type>(file_status{filename}.size()),
+			page_flags,
+			map_flags
+		} {}
+
+		inline explicit
+		memory_mapping(
+			size_type count,
+			page_flag page_flags = page_flag::read | page_flag::write,
+			map_flag map_flags = map_flag::anonymous | map_flag::priv
+		): memory_mapping{-1,0,count,page_flags,map_flags} {}
+
+		inline
+		~memory_mapping() {
+			if (this->_data) {
+				int ret = ::munmap(this->_data, this->_size*sizeof(T));
+				if (ret == -1) {
+					std::terminate();
+				}
+			}
+		}
+
+		/// Get iterator to the beginning of the container.
+		inline iterator
+		begin() noexcept {
+			return this->_data;
+		}
+
+		/// Get iterator to the beginning of the container.
+		inline const_iterator
+		begin() const noexcept {
+			return this->_data;
+		}
+
+		/// Get iterator to the end of the container.
+		inline iterator
+		end() noexcept {
+			return this->_data + this->_size;
+		}
+
+		/// Get iterator to the end of the container.
+		inline const_iterator
+		end() const noexcept {
+			return this->_data + this->_size;
+		}
+
+		/// Get the number of elements in the container.
+		inline size_type
+		size() const noexcept {
+			return this->_size;
+		}
+
+		/// Check if the container is empty.
+		inline bool
+		empty() const noexcept {
+			return this->_size == 0;
+		}
+
+		/// Swap with \p rhs.
+		inline void
+		swap(memory_mapping& rhs) noexcept {
+			std::swap(this->_data, rhs._data);
+			std::swap(this->_size, rhs._size);
+		}
+
+	};
+
+	/// Overload of \link std::swap\endlink for \link byte_buffer\endlink.
+	template <class T>
+	inline void
+	swap(memory_mapping<T>& lhs, memory_mapping<T>& rhs) noexcept {
+		lhs.swap(rhs);
+	}
+
+}
+
+#endif // vim:filetype=cpp

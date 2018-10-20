@@ -1,0 +1,29 @@
+#ifndef UNISTDX_FD_TYPE
+#define UNISTDX_FD_TYPE
+
+namespace sys {
+
+	struct fd_type {
+
+		int fd = -1;
+
+		inline constexpr
+		fd_type() {}
+
+		inline constexpr
+		fd_type(int fd): fd{fd} {}
+
+		inline constexpr
+		operator int() const noexcept {
+			return this->fd;
+		}
+
+	};
+	/// Alias to system file descriptor type (int).
+//	typedef int fd_type;
+
+	static_assert(sizeof(fd_type) == sizeof(int), "bad fd_type");
+
+}
+
+#endif // vim:filetype=cpp

@@ -5,10 +5,9 @@
 
 #include <unistdx/base/check>
 #include <unistdx/fs/path>
+#include <unistdx/io/fd_type>
 
 namespace sys {
-
-	typedef int fd_type;
 
 	/**
 	\brief Returns true, if file descriptor \p f refers to a terminal.

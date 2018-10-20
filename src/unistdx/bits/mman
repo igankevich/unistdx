@@ -1,0 +1,12 @@
+#ifndef UNISTDX_BITS_MMAN
+#define UNISTDX_BITS_MMAN
+
+#include <unistdx/config>
+
+#if !defined(UNISTDX_HAVE_MMAP)
+#error mmap is needed to implement byte_buffer
+#else
+#include <sys/mman.h>
+#endif
+
+#endif // vim:filetype=cpp

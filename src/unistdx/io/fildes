@@ -14,6 +14,7 @@
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/fs/file_status>
+#include <unistdx/io/fd_type>
 #include <unistdx/io/open_flag>
 
 #ifndef NDEBUG
@@ -23,7 +24,6 @@
 namespace sys {
 
 	typedef ::mode_t mode_type;
-	typedef int fd_type;
 
 	/// File descriptor flags.
 	enum class fd_flag: int {
@@ -57,7 +57,7 @@ namespace sys {
 	public:
 
 		/// Invalid file descriptor constant.
-		static const fd_type bad = -1;
+		static constexpr const fd_type bad = -1;
 
 	protected:
 		/// File descriptor number

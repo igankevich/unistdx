@@ -10,6 +10,7 @@
 #include <unistdx/fs/file_mode>
 #include <unistdx/fs/file_type>
 #include <unistdx/fs/path_flag>
+#include <unistdx/io/fd_type>
 
 namespace sys {
 
@@ -22,8 +23,6 @@ namespace sys {
 			return T(seconds(ts.tv_sec) + nanoseconds(ts.tv_nsec));
 		}
 	}
-
-	typedef int fd_type;
 
 	/// Alias to \c stat system type.
 	typedef struct ::stat stat_type;

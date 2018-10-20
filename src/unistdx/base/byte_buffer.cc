@@ -3,13 +3,7 @@
 #include <cassert>
 
 #include <unistdx/base/check>
-#include <unistdx/config>
-
-#if !defined(UNISTDX_HAVE_MMAP)
-#error mmap is needed to implement byte_buffer
-#else
-#include <sys/mman.h>
-#endif
+#include <unistdx/bits/mman>
 
 namespace {
 

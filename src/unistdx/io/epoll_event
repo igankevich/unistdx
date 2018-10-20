@@ -13,13 +13,12 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+#include <unistdx/io/fd_type>
+
 namespace sys {
 
 	/// File descriptor event base class.
 	typedef struct ::epoll_event poll_event_base;
-
-	/// Alias to system file descriptor type (int).
-	typedef int fd_type;
 
 	/// \brief Input/output events.
 	/// \ingroup io

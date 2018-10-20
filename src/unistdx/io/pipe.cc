@@ -15,7 +15,7 @@ namespace {
 		bits::global_lock_type lock(bits::fork_mutex);
 		#endif
 		#if defined(UNISTDX_HAVE_PIPE2)
-		UNISTDX_CHECK(::pipe2(fds, O_CLOEXEC | O_NONBLOCK));
+		UNISTDX_CHECK(::pipe2(reinterpret_cast<int*>(fds), O_CLOEXEC | O_NONBLOCK));
 		#else
 		UNISTDX_CHECK(::pipe(fds));
 		bits::set_mandatory_flags(fds[0]);
