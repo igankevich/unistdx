@@ -150,11 +150,13 @@ namespace sys {
 
 	public:
 
+		/// Construct empty argument stream.
 		inline
 		argstream():
 		std::ostream(nullptr)
 		{ this->init(&_argbuf); }
 
+		/// Construct argument stream from a list of arguments.
 		template <class ... Args>
 		inline
 		argstream(const Args& ... args):

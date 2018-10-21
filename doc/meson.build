@@ -28,6 +28,7 @@ doxyfile.set('EXAMPLE_PATH', examples)
 doxyfile.set('LAYOUT_FILE', join_paths(csd, 'layout.xml'))
 doxyfile.set('OUTPUT_DIRECTORY', meson.build_root())
 doxyfile.set('TAGFILES', std_tag_xml + '=' + std_tag_url)
+doxyfile.set('PREDEFINED', ' '.join(all_defines))
 excluded_files = [
 	'meson.build',
 	join_paths(meson.source_root(), 'src', 'unistdx', 'bits'),

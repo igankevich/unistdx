@@ -10,7 +10,6 @@ namespace {
 	void
 	init_pages(void* addr, size_t n) {
 		// LCOV_EXCL_START
-		UNISTDX_CHECK(::madvise(addr, n, MADV_SEQUENTIAL));
 		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTFORK));
 		UNISTDX_CHECK(::madvise(addr, n, MADV_DONTDUMP));
 		// LCOV_EXCL_STOP

@@ -1,7 +1,7 @@
 project(
 	'unistdx',
 	'cpp',
-	version: '0.4.12',
+	version: '0.4.13',
 	meson_version: '>=0.46',
 	default_options: ['cpp_std=c++11'],
 	license: ['Public domain']
@@ -14,6 +14,7 @@ endif
 with_tests = get_option('with_tests')
 
 # compile-time configuration {{{
+all_defines = []
 config = configuration_data()
 cpp = meson.get_compiler('cpp')
 foreach pair : [
@@ -28,14 +29,17 @@ foreach pair : [
 	func = pair[0]
 	args = pair[1]
 	builtin = 'int main() { @0@(@1@); }'
+	all_defines += 'UNISTDX_HAVE_BUILTIN_' + func.to_upper()
 	if cpp.compiles(builtin.format('__builtin_' + func, args))
-		config.set('UNISTDX_HAVE_BUILTIN_' + func.to_upper(), true)
+		config.set(all_defines[-1], true)
 	endif
 endforeach
 if host_machine.endian() == 'little'
-	config.set('UNISTDX_LITTLE_ENDIAN', true)
+	all_defines += 'UNISTDX_LITTLE_ENDIAN'
+	config.set(all_defines[-1], true)
 elif host_machine.endian() == 'big'
-	config.set('UNISTDX_BIG_ENDIAN', true)
+	all_defines += 'UNISTDX_BIG_ENDIAN'
+	config.set(all_defines[-1], true)
 else
 	error('unknown endiannes')
 endif
@@ -49,8 +53,9 @@ foreach pair : [
 	if pair.length() > 1
 		name = pair[1]
 	endif
+	all_defines += 'UNISTDX_HAVE_' + name.to_upper()
 	if cpp.has_type(type)
-		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
+		config.set(all_defines[-1], true)
 	endif
 endforeach
 foreach pair : [
@@ -79,6 +84,20 @@ foreach pair : [
 	['signal.h', 'SIGSTKFLT'],
 	['signal.h', 'SIGWINCH'],
 	['sys/ioctl.h', 'FIONREAD'],
+	['sys/mman.h', 'MADV_DODUMP'],
+	['sys/mman.h', 'MADV_DOFORK'],
+	['sys/mman.h', 'MADV_DONTDUMP'],
+	['sys/mman.h', 'MADV_DONTFORK'],
+	['sys/mman.h', 'MADV_FREE'],
+	['sys/mman.h', 'MADV_HUGEPAGE'],
+	['sys/mman.h', 'MADV_HWPOISON'],
+	['sys/mman.h', 'MADV_KEEPONFORK'],
+	['sys/mman.h', 'MADV_MERGEABLE'],
+	['sys/mman.h', 'MADV_NOHUGEPAGE'],
+	['sys/mman.h', 'MADV_REMOVE'],
+	['sys/mman.h', 'MADV_SOFT_OFFLINE'],
+	['sys/mman.h', 'MADV_UNMERGEABLE'],
+	['sys/mman.h', 'MADV_WIPEONFORK'],
 	['sys/mman.h', 'MAP_32BIT'],
 	['sys/mman.h', 'MAP_ANONYMOUS'],
 	['sys/mman.h', 'MAP_GROWSDOWN'],
@@ -111,8 +130,9 @@ foreach pair : [
 ]
 	header = pair[0]
 	symbol = pair[1]
+	all_defines += 'UNISTDX_HAVE_' + symbol.to_upper()
 	if cpp.has_header_symbol(header, symbol)
-		config.set('UNISTDX_HAVE_' + symbol.to_upper(), true)
+		config.set(all_defines[-1], true)
 	endif
 endforeach
 foreach pair : [
@@ -125,10 +145,12 @@ foreach pair : [
 ]
 	header = pair[0]
 	name = pair[1]
+	all_defines += 'UNISTDX_HAVE_' + name.to_upper()
 	if cpp.has_header(header)
-		config.set('UNISTDX_HAVE_' + name.to_upper(), true)
+		config.set(all_defines[-1], true)
 	endif
 endforeach
+all_defines += 'UNISTDX_HAVE_GECOS'
 if cpp.has_member('passwd', 'pw_gecos', prefix: '#include <pwd.h>')
 	config.set('UNISTDX_HAVE_GECOS', true)
 endif

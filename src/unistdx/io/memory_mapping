@@ -12,6 +12,7 @@
 
 namespace sys {
 
+	/// Memory page access control flags.
 	enum class page_flag: int {
 		none = PROT_NONE,
 		read = PROT_READ,
@@ -22,6 +23,7 @@ namespace sys {
 	template <>
 	struct is_flag<page_flag>: public std::true_type {};
 
+	/// Memory mapping flags.
 	enum class map_flag: int {
 		shared = MAP_SHARED,
 		priv = MAP_PRIVATE,
@@ -67,6 +69,73 @@ namespace sys {
 	template <>
 	struct is_flag<map_flag>: public std::true_type {};
 
+	/// Memory mapping synchronisation flags.
+	enum class sync_flag {
+		blocking = MS_SYNC,
+		non_blocking = MS_ASYNC,
+		invalidate = MS_INVALIDATE
+	};
+
+	template <>
+	struct is_flag<sync_flag>: public std::true_type {};
+
+	/// Memory mapping advices.
+	enum class advise_type {
+		normal = MADV_NORMAL,
+		random = MADV_RANDOM,
+		sequential = MADV_SEQUENTIAL,
+		will_need = MADV_WILLNEED,
+		do_not_need = MADV_DONTNEED
+		#if defined(UNISTDX_HAVE_MADV_REMOVE)
+		, nullify = MADV_REMOVE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_DONTFORK)
+		, inaccessible_on_fork = MADV_DONTFORK
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_DOFORK)
+		, accessible_on_fork = MADV_DOFORK
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_HWPOISON)
+		, poison = MADV_HWPOISON
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_MERGEABLE)
+		, mergeable = MADV_MERGEABLE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_UNMERGEABLE)
+		, unmergeable = MADV_UNMERGEABLE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_SOFT_OFFLINE)
+		, soft_offline = MADV_SOFT_OFFLINE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_HUGEPAGE)
+		, huge_page = MADV_HUGEPAGE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_NOHUGEPAGE)
+		, no_huge_page = MADV_NOHUGEPAGE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_DONTDUMP)
+		, do_not_dump = MADV_DONTDUMP
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_DODUMP)
+		, dump = MADV_DODUMP
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_FREE)
+		, free = MADV_FREE
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_WIPEONFORK)
+		, wipe_on_fork = MADV_WIPEONFORK
+		#endif
+		#if defined(UNISTDX_HAVE_MADV_KEEPONFORK)
+		, keep_on_fork = MADV_KEEPONFORK
+		#endif
+	};
+
+	/**
+	\brief Memory mapping for files.
+	\date 2018-10-21
+	\author Ivan Gankevich
+	\ingroup io
+	*/
 	template <class T>
 	class memory_mapping {
 
@@ -79,7 +148,9 @@ namespace sys {
 		typedef const value_type* const_iterator;
 		/// Alias to \link std::size_t\endlink.
 		typedef std::size_t size_type;
+		/// Reverse iterator.
 		typedef std::reverse_iterator<iterator> reverse_iterator;
+		/// Constant reverse iterator.
 		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 	private:
@@ -88,6 +159,17 @@ namespace sys {
 
 	public:
 
+		/**
+		\brief Construct memory mapping for file descriptor \p fd.
+		\date 2018-10-21
+		\author Ivan Gankevich
+		\param[in] fd file descriptor
+		\param[in] offset offset (in the number of elements)
+		                  within the file from which the mapping starts
+		\param[in] count the number of elements to map from the file
+		\param[in] page_flags access permissions for memory pages being mapped
+		\param[in] map_flags mapping options
+		*/
 		inline
 		memory_mapping(
 			fd_type fd,
@@ -108,6 +190,17 @@ namespace sys {
 			this->_data = static_cast<T*>(ptr);
 		}
 
+		/**
+		\brief Construct memory mapping for file \p filename.
+		\date 2018-10-21
+		\author Ivan Gankevich
+		\param[in] filename the name of the file being mapped
+		\param[in] offset offset (in the number of elements)
+		                  within the file from which the mapping starts
+		\param[in] count the number of elements to map from the file
+		\param[in] page_flags access permissions for memory pages being mapped
+		\param[in] map_flags mapping options
+		*/
 		inline explicit
 		memory_mapping(
 			const char* filename,
@@ -123,6 +216,14 @@ namespace sys {
 			map_flags
 		} {}
 
+		/**
+		\brief Construct memory mapping for file descriptor \p fd.
+		\date 2018-10-21
+		\author Ivan Gankevich
+		\param[in] fd file descriptor
+		\param[in] page_flags access permissions for memory pages being mapped
+		\param[in] map_flags mapping options
+		*/
 		inline explicit
 		memory_mapping(
 			fd_type fd,
@@ -137,6 +238,14 @@ namespace sys {
 		}
 		{}
 
+		/**
+		\brief Construct memory mapping for the whole file \p filename.
+		\date 2018-10-21
+		\author Ivan Gankevich
+		\param[in] filename the name of the file being mapped
+		\param[in] page_flags access permissions for memory pages being mapped
+		\param[in] map_flags mapping options
+		*/
 		inline explicit
 		memory_mapping(
 			const char* filename,
@@ -150,6 +259,14 @@ namespace sys {
 			map_flags
 		} {}
 
+		/**
+		\brief Construct anonymous memory mapping (not backed by any file).
+		\date 2018-10-21
+		\author Ivan Gankevich
+		\param[in] count the number of elements in the mapping
+		\param[in] page_flags access permissions for memory pages being mapped
+		\param[in] map_flags mapping options
+		*/
 		inline explicit
 		memory_mapping(
 			size_type count,
@@ -157,12 +274,14 @@ namespace sys {
 			map_flag map_flags = map_flag::anonymous | map_flag::priv
 		): memory_mapping{fd_type{-1},0,count,page_flags,map_flags} {}
 
+		/// Move-constuctor.
 		inline
 		memory_mapping(memory_mapping&& rhs):
 		_data{rhs._data}, _size{rhs._size} {
 			rhs._data = nullptr;
 		}
 
+		/// Move-assignment.
 		inline memory_mapping&
 		operator=(memory_mapping&& rhs) {
 			this->swap(rhs);
@@ -172,6 +291,7 @@ namespace sys {
 		memory_mapping(const memory_mapping&) = delete;
 		memory_mapping& operator=(const memory_mapping&) = delete;
 
+		/// Destructor.
 		inline
 		~memory_mapping() {
 			if (this->_data) {
@@ -181,6 +301,81 @@ namespace sys {
 				}
 			}
 		}
+
+		/**
+		\brief
+		Flush dirty pages to disk.
+		\throws bad_call
+		\see \man{msync,2}
+		*/
+		inline void
+		sync(sync_flag flags = sync_flag::blocking) {
+			UNISTDX_CHECK(::msync(
+				this->_data,
+				this->_size,
+				static_cast<int>(flags)
+			));
+		}
+
+		/**
+		\brief
+		Lock memory pages to prevent swapping.
+		\throws bad_call
+		\see \man{mlock,2}
+		*/
+		inline void
+		lock() {
+			UNISTDX_CHECK(::mlock(this->_data, this->_size));
+		}
+
+		/**
+		\brief
+		Unlock memory pages to allow swapping.
+		\throws bad_call
+		\see \man{mlock,2}
+		*/
+		inline void
+		unlock() {
+			UNISTDX_CHECK(::munlock(this->_data, this->_size));
+		}
+
+		/**
+		\brief
+		Set memory mapping options and perform actions.
+		\throws bad_call
+		\see \man{madvise,2}
+		*/
+		inline void
+		advise(advise_type adv) {
+			UNISTDX_CHECK(::madvise(this->_data, this->_size, adv));
+		}
+
+		#if defined(UNISTDX_HAVE_MADV_FREE)
+		/**
+		\brief
+		Mark memory mapping as free. Kernel may free it any time, unless
+		the programme writes to it.
+		\throws bad_call
+		\see \man{madvise,2}
+		*/
+		inline void
+		mark_free() {
+			this->advise(advise_type::free);
+		}
+		#endif
+
+		#if defined(UNISTDX_HAVE_MADV_REMOVE)
+		/**
+		\brief
+		Fill memory mapping with noughts.
+		\throws bad_call
+		\see \man{madvise,2}
+		*/
+		inline void
+		nullify() {
+			this->advise(advise_type::nullify);
+		}
+		#endif
 
 		/// Get iterator to the beginning of the container.
 		inline iterator
@@ -302,11 +497,13 @@ namespace sys {
 			return this->_data[i];
 		}
 
+		/// Maximum mapping size supported by the library.
 		inline size_type
 		max_size() noexcept {
 			return std::numeric_limits<size_type>::max() / sizeof(value_type);
 		}
 
+		/// Maximum mapping size supported by the library.
 		inline size_type
 		max_size() const noexcept {
 			return std::numeric_limits<size_type>::max() / sizeof(value_type);

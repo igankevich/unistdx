@@ -3,24 +3,32 @@
 
 namespace sys {
 
+	/**
+	\brief Wrapper for system file descriptor type (int).
+	\date 2018-10-21
+	\author Ivan Gankevich
+	\ingroup wrapper
+	*/
 	struct fd_type {
 
+		/// File descriptor.
 		int fd = -1;
 
+		/// Construct file descriptor with value -1.
 		inline constexpr
 		fd_type() {}
 
+		/// Construct file descriptor with value \p fd.
 		inline constexpr
 		fd_type(int fd): fd{fd} {}
 
+		/// Implicitly cast to integer.
 		inline constexpr
 		operator int() const noexcept {
 			return this->fd;
 		}
 
 	};
-	/// Alias to system file descriptor type (int).
-//	typedef int fd_type;
 
 	static_assert(sizeof(fd_type) == sizeof(int), "bad fd_type");
 
