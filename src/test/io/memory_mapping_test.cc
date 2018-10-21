@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <fstream>
+#include <iostream>
+#include <vector>
 
 #include <unistdx/test/random_string>
 #include <unistdx/test/temporary_file>

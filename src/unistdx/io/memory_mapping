@@ -1,6 +1,10 @@
 #ifndef UNISTDX_IO_MEMORY_MAPPING
 #define UNISTDX_IO_MEMORY_MAPPING
 
+#include <algorithm>
+#include <iterator>
+#include <limits>
+
 #include <unistdx/base/flag>
 #include <unistdx/bits/mman>
 #include <unistdx/fs/file_status>
@@ -75,6 +79,8 @@ namespace sys {
 		typedef const value_type* const_iterator;
 		/// Alias to \link std::size_t\endlink.
 		typedef std::size_t size_type;
+		typedef std::reverse_iterator<iterator> reverse_iterator;
+		typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
 
 	private:
 		T* _data = nullptr;
@@ -149,7 +155,22 @@ namespace sys {
 			size_type count,
 			page_flag page_flags = page_flag::read | page_flag::write,
 			map_flag map_flags = map_flag::anonymous | map_flag::priv
-		): memory_mapping{-1,0,count,page_flags,map_flags} {}
+		): memory_mapping{fd_type{-1},0,count,page_flags,map_flags} {}
+
+		inline
+		memory_mapping(memory_mapping&& rhs):
+		_data{rhs._data}, _size{rhs._size} {
+			rhs._data = nullptr;
+		}
+
+		inline memory_mapping&
+		operator=(memory_mapping&& rhs) {
+			this->swap(rhs);
+			return *this;
+		}
+
+		memory_mapping(const memory_mapping&) = delete;
+		memory_mapping& operator=(const memory_mapping&) = delete;
 
 		inline
 		~memory_mapping() {
@@ -173,6 +194,24 @@ namespace sys {
 			return this->_data;
 		}
 
+		/// Get iterator to the beginning of the container.
+		inline const_iterator
+		cbegin() const noexcept {
+			return this->begin();
+		}
+
+		/// Get iterator to the beginning of the container.
+		inline const_iterator
+		rbegin() const noexcept {
+			return reverse_iterator(this->end());
+		}
+
+		/// Get iterator to the beginning of the container.
+		inline const_iterator
+		crbegin() const noexcept {
+			return const_reverse_iterator(this->cend());
+		}
+
 		/// Get iterator to the end of the container.
 		inline iterator
 		end() noexcept {
@@ -185,6 +224,24 @@ namespace sys {
 			return this->_data + this->_size;
 		}
 
+		/// Get iterator to the end of the container.
+		inline const_iterator
+		cend() const noexcept {
+			return this->end();
+		}
+
+		/// Get reversed iterator to the end of the container.
+		inline const_iterator
+		rend() const noexcept {
+			return reverse_iterator(this->begin());
+		}
+
+		/// Get reversed iterator to the end of the container.
+		inline const_iterator
+		crend() const noexcept {
+			return const_reverse_iterator(this->cbegin());
+		}
+
 		/// Get the number of elements in the container.
 		inline size_type
 		size() const noexcept {
@@ -195,6 +252,64 @@ namespace sys {
 		inline bool
 		empty() const noexcept {
 			return this->_size == 0;
+		}
+
+		/// Get first element.
+		inline value_type&
+		front() noexcept {
+			return *this->begin();
+		}
+
+		/// Get first element.
+		inline const value_type&
+		front() const noexcept {
+			return *this->begin();
+		}
+
+		/// Get last element.
+		inline value_type&
+		back() noexcept {
+			return *(this->end()-1);
+		}
+
+		/// Get last element.
+		inline const value_type&
+		back() const noexcept {
+			return *(this->end()-1);
+		}
+
+		/// Get pointer to the first element.
+		inline value_type*
+		data() noexcept {
+			return this->_data;
+		}
+
+		/// Get pointer to the first element.
+		inline const value_type*
+		data() const noexcept {
+			return this->_data;
+		}
+
+		/// Get reference to the specified element.
+		inline value_type&
+		operator[](size_type i) noexcept {
+			return this->_data[i];
+		}
+
+		/// Get reference to the specified element.
+		inline const value_type&
+		operator[](size_type i) const noexcept {
+			return this->_data[i];
+		}
+
+		inline size_type
+		max_size() noexcept {
+			return std::numeric_limits<size_type>::max() / sizeof(value_type);
+		}
+
+		inline size_type
+		max_size() const noexcept {
+			return std::numeric_limits<size_type>::max() / sizeof(value_type);
 		}
 
 		/// Swap with \p rhs.
@@ -212,6 +327,50 @@ namespace sys {
 	swap(memory_mapping<T>& lhs, memory_mapping<T>& rhs) noexcept {
 		lhs.swap(rhs);
 	}
+
+	/// \{
+	template <class T>
+	inline bool
+	operator==(const memory_mapping<T>& lhs, const memory_mapping<T>& rhs) {
+		return lhs.size() == rhs.size()
+			&& std::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+
+	template <class T>
+	inline bool
+	operator!=(const memory_mapping<T>& lhs, const memory_mapping<T>& rhs) {
+		return !(lhs == rhs);
+	}
+
+	template <class T>
+	inline bool
+	operator<(const memory_mapping<T>& lhs, const memory_mapping<T>& rhs) {
+		return std::lexicographical_compare(
+			lhs.begin(),
+			lhs.end(),
+			rhs.begin(),
+			rhs.end()
+		);
+	}
+
+	template <class T>
+	inline bool
+	operator<=(const memory_mapping<T>& lhs, const memory_mapping<T>& rhs) {
+		return lhs < rhs || lhs == rhs;
+	}
+
+	template <class T>
+	inline bool
+	operator>(const memory_mapping<T>& lhs, const memory_mapping<T>& rhs) {
+		return !(lhs <= rhs);
+	}
+
+	template <class T>
+	inline bool
+	operator>=(const memory_mapping<T>& lhs, const memory_mapping<T>& rhs) {
+		return !(lhs < rhs);
+	}
+	/// \}
 
 }
 
