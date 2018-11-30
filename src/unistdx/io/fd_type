@@ -1,6 +1,10 @@
 #ifndef UNISTDX_FD_TYPE
 #define UNISTDX_FD_TYPE
 
+#include <functional>
+#include <istream>
+#include <ostream>
+
 namespace sys {
 
 	/**
@@ -31,6 +35,37 @@ namespace sys {
 	};
 
 	static_assert(sizeof(fd_type) == sizeof(int), "bad fd_type");
+
+	inline std::ostream&
+	operator<<(std::ostream& out, const fd_type& rhs) {
+		return out << rhs.fd;
+	}
+
+	inline std::istream&
+	operator>>(std::istream& in, fd_type& rhs) {
+		return in >> rhs.fd;
+	}
+
+}
+
+namespace std {
+
+	/// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
+	template<>
+	struct hash<::sys::fd_type>: public hash<int> {
+
+		/// Hash function return value type.
+		typedef size_t result_type;
+		/// Hash function argument type.
+		typedef ::sys::fd_type argument_type;
+
+		/// Compute hash as hash for int.
+		inline result_type
+		operator()(const argument_type& rhs) const noexcept {
+			return this->hash<int>::operator()(rhs);
+		}
+
+	};
 
 }
 

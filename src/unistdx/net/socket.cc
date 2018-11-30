@@ -68,7 +68,10 @@ sys::socket::connect(const socket_address& e) {
 	#ifndef NDEBUG
 	log_message("sys", "connect to _", e);
 	#endif
-	UNISTDX_CHECK(::connect(this->_fd, e.sockaddr(), e.sockaddrlen()));
+	int ret = ::connect(this->_fd, e.sockaddr(), e.sockaddrlen());
+	if (ret == -1 && errno != EINPROGRESS) {
+		throw bad_call(__FILE__, __LINE__, __func__);
+	}
 }
 
 void
