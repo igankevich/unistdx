@@ -408,7 +408,7 @@ namespace sys {
 		inline static bool
 		is_blocking(const T& rhs) {
 			try {
-				return rhs.flags().is_blocking();
+				return rhs.flags() & open_flag::non_blocking != open_flag::non_blocking;
 			} catch (sys::bad_call& err) {
 				return false;
 			}

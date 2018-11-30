@@ -8,6 +8,7 @@ libunistdx_src += files([
 
 install_headers(
 	'epoll_event',
+	'fd_type',
 	'fdstream',
 	'fildes',
 	'fildes_pair',
