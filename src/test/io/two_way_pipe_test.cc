@@ -51,16 +51,6 @@ TEST(two_way_pipe, child_close_in_child) {
 			} catch (...) {
 				++ret;
 			}
-			try {
-				p.remap_in_child();
-			} catch (...) {
-				++ret;
-			}
-			try {
-				p.remap_in_child(1000, 1001);
-			} catch (...) {
-				++ret;
-			}
 			return ret;
 		}
 	};

@@ -93,10 +93,15 @@ namespace sys {
 
 		socket() = default;
 
-		socket(const socket&) = delete;
+		inline
+		socket(const socket& rhs):
+		fildes(rhs) {}
 
-		socket&
-		operator=(const socket&) = delete;
+		inline socket&
+		operator=(const socket& rhs) {
+			this->fildes::operator=(rhs);
+			return *this;
+		}
 
 		/// Move-constructor.
 		inline explicit

@@ -22,10 +22,11 @@ TEST(ForEachFileDescriptor, Pipe) {
 	EXPECT_EQ(expected, actual);
 }
 
-TEST(fildes, remap) {
+TEST(fildes, duplicate) {
 	sys::fildes f(UNISTDX_TMPFILE, sys::open_flag::create, 0644);
-	EXPECT_NO_THROW(f.remap());
-	EXPECT_NO_THROW(f.remap(1000));
+	sys::fildes tmp1(f);
+	sys::fildes tmp2(1000);
+	tmp2 = f;
 }
 
 TEST(fildes, basic) {

@@ -66,8 +66,29 @@ namespace sys {
 	public:
 
 		inline fildes() = default;
-		fildes(const fildes&) = delete;
-		fildes& operator=(const fildes&) = delete;
+
+		/**
+		\brief
+		Change file descriptor number to an arbitrrary one
+		by duplicating it with \man{dup,2} system call.
+		\throws bad_call
+		\see \man{dup,2}
+		*/
+		inline
+		fildes(const fildes& rhs):
+		_fd(::dup(rhs._fd)) {
+			UNISTDX_CHECK(this->_fd);
+		}
+
+		/**
+		\brief
+		Change file descriptor number of \p rhs to \c this->fd()
+		by duplicating it with \man{dup2,2} system call.
+		\throws bad_call
+		\see \man{dup2,2}
+		*/
+		fildes&
+		operator=(const fildes& rhs);
 
 		/// Construct file descriptor by wrapping \p rhs.
 		inline explicit
@@ -269,26 +290,6 @@ namespace sys {
 		swap(fildes& rhs) noexcept {
 			std::swap(this->_fd, rhs._fd);
 		}
-
-		/**
-		\brief
-		Change file descriptor number to an arbitrrary one
-		by duplicating it with \man{dup,2} system call.
-		\throws bad_call
-		\see \man{dup,2}
-		*/
-		void
-		remap();
-
-		/**
-		\brief
-		Change file descriptor number to \p new_fd
-		by duplicating it with \man{dup2,2} system call.
-		\throws bad_call
-		\see \man{dup2,2}
-		*/
-		void
-		remap(fd_type new_fd);
 
 		/**
 		\brief

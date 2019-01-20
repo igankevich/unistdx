@@ -18,12 +18,14 @@ compute_sha1() {
 }
 
 int main() {
-	typedef std::chrono::high_resolution_clock clock_type;
-	for (int i=0; i<100; ++i) {
+	using namespace std::chrono;
+	typedef high_resolution_clock clock_type;
+	for (int i=0; i<1000; ++i) {
 		auto t0 = clock_type::now();
 		compute_sha1();
 		auto t1 = clock_type::now();
-		sys::log_message("bnch", "t=_", (t1-t0).count());
+//		sys::log_message("bnch", "t=_", (t1-t0).count());
+		std::clog << duration_cast<microseconds>(t1-t0).count() << '\n';
 	}
 	return 0;
 }

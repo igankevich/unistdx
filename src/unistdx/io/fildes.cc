@@ -2,17 +2,13 @@
 
 #include <unistdx/base/make_object>
 
-void
-sys::fildes::remap() {
-	fd_type ret_fd;
-	UNISTDX_CHECK(ret_fd = ::dup(this->_fd));
-	this->_fd = ret_fd;
+sys::fildes&
+sys::fildes::operator=(const fildes& rhs) {
+	if (*this) {
+		this->_fd = ::dup2(rhs._fd, this->_fd);
+	} else {
+		this->_fd = ::dup(rhs._fd);
+	}
+	UNISTDX_CHECK(this->_fd);
+	return *this;
 }
-
-void
-sys::fildes::remap(fd_type new_fd) {
-	fd_type ret_fd;
-	UNISTDX_CHECK(ret_fd = ::dup2(this->_fd, new_fd));
-	this->_fd = ret_fd;
-}
-

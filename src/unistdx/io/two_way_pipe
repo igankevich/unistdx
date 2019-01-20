@@ -146,14 +146,6 @@ namespace sys {
 		void
 		close_unused();
 
-		/// Remap file descriptors numbers in child process.
-		void
-		remap_in_child();
-
-		/// Remap file descriptors numbers in child process to \p in and \p out.
-		void
-		remap_in_child(fd_type in, fd_type out);
-
 		/// Validate files descriptors in the calling process.
 		void
 		validate();

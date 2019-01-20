@@ -39,18 +39,6 @@ sys::two_way_pipe::close_in_parent() {
 }
 
 void
-sys::two_way_pipe::remap_in_child() {
-	this->child_in().remap();
-	this->child_out().remap();
-}
-
-void
-sys::two_way_pipe::remap_in_child(fd_type in, fd_type out) {
-	this->child_in().remap(in);
-	this->child_out().remap(out);
-}
-
-void
 sys::two_way_pipe::close_unused() {
 	this->is_owner() ? this->close_in_parent() : this->close_in_child();
 }
