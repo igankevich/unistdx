@@ -121,6 +121,35 @@ namespace sys {
 	std::ostream&
 	operator<<(std::ostream& out, const pipe& rhs);
 
+	class splice {
+
+	private:
+		unsigned int _flags = 0
+		#if defined(UNISTDX_HAVE_SPLICE_F_NONBLOCK)
+			| SPLICE_F_NONBLOCK
+		#endif
+		#if defined(UNISTDX_HAVE_SPLICE_F_MOVE)
+			| SPLICE_F_MOVE
+		#endif
+		;
+
+	public:
+
+		ssize_t
+		operator()(fildes& in, fildes& out, size_t n);
+
+		inline ssize_t
+		operator()(fildes& in, pipe& out, size_t n) {
+			return this->operator()(in, out.out(), n);
+		}
+
+		inline ssize_t
+		operator()(pipe& in, fildes& out, size_t n) {
+			return this->operator()(in.in(), out, n);
+		}
+
+	};
+
 }
 
 #endif // vim:filetype=cpp

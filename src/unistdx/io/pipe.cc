@@ -44,3 +44,14 @@ std::ostream&
 sys::operator<<(std::ostream& out, const pipe& rhs) {
 	return out << make_object("in", rhs.out(), "out", rhs.in());
 }
+
+ssize_t
+sys::splice::operator()(fildes& in, fildes& out, size_t n) {
+	ssize_t ret;
+	#if defined(UNISTDX_HAVE_SPLICE)
+	ret = ::splice(in.fd(), nullptr, out.fd(), nullptr, n, this->_flags);
+	#endif
+	UNISTDX_CHECK_IO(ret);
+	return ret;
+}
+

@@ -180,7 +180,7 @@ namespace sys {
 		*/
 		inline open_flag
 		flags() const {
-			return open_flag(this->get_flags(F_GETFL));
+			return open_flag(this->manipulate(F_GETFL));
 		}
 
 		/**
@@ -190,7 +190,7 @@ namespace sys {
 		*/
 		inline fd_flag
 		fd_flags() const {
-			return fd_flag(this->get_flags(F_GETFD));
+			return fd_flag(this->manipulate(F_GETFD));
 		}
 
 		/**
@@ -200,7 +200,7 @@ namespace sys {
 		*/
 		inline void
 		setf(open_flag rhs) {
-			this->set_flag(F_SETFL, flag_type(this->flags() | rhs));
+			this->manipulate(F_SETFL, flag_type(this->flags() | rhs));
 		}
 
 		/**
@@ -210,7 +210,7 @@ namespace sys {
 		*/
 		inline void
 		unsetf(open_flag rhs) {
-			this->set_flag(F_SETFL, flag_type(this->flags() & ~rhs));
+			this->manipulate(F_SETFL, flag_type(this->flags() & ~rhs));
 		}
 
 		#if defined(UNISTDX_HAVE_F_SETNOSIGPIPE)
@@ -221,7 +221,7 @@ namespace sys {
 		*/
 		inline void
 		setf(pipe_flag rhs) {
-			this->set_flag(int(rhs), 1);
+			this->manipulate(int(rhs), 1);
 		}
 
 		/**
@@ -231,7 +231,7 @@ namespace sys {
 		*/
 		inline void
 		unsetf(pipe_flag rhs) {
-			this->set_flag(int(rhs), 0);
+			this->manipulate(int(rhs), 0);
 		}
 		#endif
 
@@ -242,7 +242,7 @@ namespace sys {
 		*/
 		inline void
 		setf(fd_flag rhs) {
-			this->set_flag(F_SETFD, flag_type(rhs));
+			this->manipulate(F_SETFD, flag_type(rhs));
 		}
 
 		/**
@@ -252,8 +252,32 @@ namespace sys {
 		*/
 		inline void
 		unsetf(fd_flag rhs) {
-			this->set_flag(F_SETFD, flag_type(this->fd_flags() & ~rhs));
+			this->manipulate(F_SETFD, flag_type(this->fd_flags() & ~rhs));
 		}
+
+		#if defined(UNISTDX_HAVE_F_GETPIPE_SZ)
+		/**
+		\brief Get pipe buffer size.
+		\throws bad_call
+		\see \man{fcntl,2}
+		*/
+		inline int
+		pipe_buffer_size() const {
+			return this->manipulate(F_GETPIPE_SZ);
+		}
+		#endif
+
+		#if defined(UNISTDX_HAVE_F_SETPIPE_SZ)
+		/**
+		\brief Get pipe buffer size.
+		\throws bad_call
+		\see \man{fcntl,2}
+		*/
+		inline int
+		pipe_buffer_size(int new_size) {
+			return this->manipulate(F_SETPIPE_SZ, new_size);
+		}
+		#endif
 
 		/// Compare file descriptors.
 		inline bool
@@ -299,7 +323,7 @@ namespace sys {
 		*/
 		inline void
 		validate() {
-			this->get_flags(F_GETFD);
+			this->manipulate(F_GETFD);
 		}
 
 		/**
@@ -327,16 +351,18 @@ namespace sys {
 
 	private:
 
-		inline flag_type
-		get_flags(int which) const {
+		inline int
+		manipulate(int which) const {
 			int ret;
 			UNISTDX_CHECK(ret = ::fcntl(this->_fd, which));
 			return ret;
 		}
 
-		inline void
-		set_flag(int which, flag_type val) {
-			UNISTDX_CHECK(::fcntl(this->_fd, which, val));
+		inline int
+		manipulate(int which, int val) {
+			int ret;
+			UNISTDX_CHECK(ret = ::fcntl(this->_fd, which, val));
+			return ret;
 		}
 
 	};
