@@ -200,9 +200,8 @@ namespace sys {
 		template<class Lock, class Pred>
 		inline void
 		wait(Lock& lock, Pred pred) {
-			int ret = -1;
-			while (ret <= 0 && !pred()) {
-				ret = this->poll_wait(lock, no_timeout);
+			while (!pred()) {
+				this->poll_wait(lock, no_timeout);
 			}
 		}
 
