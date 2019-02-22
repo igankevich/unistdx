@@ -1,0 +1,209 @@
+#ifndef UNISTDX_NET_ETHERNET_ADDRESS
+#define UNISTDX_NET_ETHERNET_ADDRESS
+
+#include <algorithm>
+#include <iosfwd>
+
+#include <unistdx/base/types>
+#include <unistdx/net/bstream>
+
+namespace sys {
+
+	class ethernet_address {
+
+	public:
+		/// Octet type.
+		typedef u8 value_type;
+		/// Pointer to octet.
+		typedef value_type* pointer;
+		/// Constant pointer to octet.
+		typedef const value_type* const_pointer;
+		/// Reference to octet.
+		typedef value_type& reference;
+		/// Constant reference to octet.
+		typedef const value_type& const_reference;
+		/// Iterator.
+		typedef pointer iterator;
+		/// Constant iterator.
+		typedef const_pointer const_iterator;
+		/// Alias to \link std::size_t\endlink.
+		typedef size_t size_type;
+
+		static_assert(sizeof(value_type) == 1, "bad octet size");
+
+	private:
+		union {
+			value_type _octets[6] {};
+			char _bytes[6];
+		};
+
+	public:
+
+		/// \{
+		ethernet_address() = default;
+		~ethernet_address() = default;
+		ethernet_address(const ethernet_address&) = default;
+		ethernet_address& operator=(const ethernet_address&) = default;
+		ethernet_address(ethernet_address&&) = default;
+		ethernet_address& operator=(ethernet_address&&) = default;
+		/// \}
+
+		/// Construct Ethernet address from octets.
+		inline
+		ethernet_address(
+			value_type o1,
+			value_type o2,
+			value_type o3,
+			value_type o4,
+			value_type o5,
+			value_type o6
+		): _octets{o1,o2,o3,o4,o5,o6} {}
+
+		/// Get pointer to the first octet.
+		inline pointer
+		data() noexcept {
+			return this->_octets;
+		}
+
+		/// Get pointer to the first octet.
+		inline const_pointer
+		data() const noexcept {
+			return this->_octets;
+		}
+
+		/// Get iterator to the beginning of octet array.
+		inline iterator
+		begin() noexcept {
+			return this->data();
+		}
+
+		/// Get iterator to the beginning of octet array.
+		inline const_iterator
+		begin() const noexcept {
+			return this->data();
+		}
+
+		/// Get the number of octets.
+		inline constexpr static size_type
+		size() noexcept {
+			return sizeof(_octets);
+		}
+
+		/// Get iterator to the end of octet array.
+		inline iterator
+		end() noexcept {
+			return this->data() + this->size();
+		}
+
+		/// Get iterator to the end of octet array.
+		inline const_iterator
+		end() const noexcept {
+			return this->data() + this->size();
+		}
+
+		/// Get first octet.
+		inline reference
+		front() noexcept {
+			return *this->_octets;
+		}
+
+		/// Get first octet.
+		inline value_type
+		front() const noexcept {
+			return *this->_octets;
+		}
+
+		/// Get last octet.
+		inline reference
+		back() noexcept {
+			return *(this->end()-1);
+		}
+
+		/// Get last octet.
+		inline value_type
+		back() const noexcept {
+			return *(this->end()-1);
+		}
+
+		/// Get reference to the specified octet.
+		inline reference
+		operator[](size_type i) noexcept {
+			return this->_octets[i];
+		}
+
+		/// Get specified octet.
+		inline value_type
+		operator[](size_type i) const noexcept {
+			return this->_octets[i];
+		}
+
+		friend std::ostream&
+		operator<<(std::ostream& out, const ethernet_address& rhs);
+
+		friend std::istream&
+		operator>>(std::istream& in, ethernet_address& rhs);
+
+		/// Put address in binary form.
+		inline friend bstream&
+		operator<<(bstream& out, const ethernet_address& rhs) {
+			return out.write(rhs._bytes, rhs.size());
+		}
+
+		/// Get address in binary form.
+		inline friend bstream&
+		operator>>(bstream& in, ethernet_address& rhs) {
+			return in.read(rhs._bytes, rhs.size());
+		}
+
+	};
+
+	static_assert(sizeof(ethernet_address)*8 == 48, "bad size");
+
+	/// Print textual representation of the address.
+	std::ostream&
+	operator<<(std::ostream& out, const ethernet_address& rhs);
+
+	/// Parse textual representation of the address.
+	std::istream&
+	operator>>(std::istream& in, ethernet_address& rhs);
+
+	/// \{
+	inline bool
+	operator==(const ethernet_address& lhs, const ethernet_address& rhs) {
+		return std::equal(lhs.begin(), lhs.end(), rhs.begin());
+	}
+
+	inline bool
+	operator!=(const ethernet_address& lhs, const ethernet_address& rhs) {
+		return !operator==(lhs, rhs);
+	}
+
+	inline bool
+	operator<(const ethernet_address& lhs, const ethernet_address& rhs) {
+		return std::lexicographical_compare(
+			lhs.begin(),
+			lhs.end(),
+			rhs.begin(),
+			rhs.end()
+		);
+	}
+
+	inline bool
+	operator<=(const ethernet_address& lhs, const ethernet_address& rhs) {
+		return lhs < rhs || lhs == rhs;
+	}
+
+	inline bool
+	operator>(const ethernet_address& lhs, const ethernet_address& rhs) {
+		return !(lhs <= rhs);
+	}
+
+	inline bool
+	operator>=(const ethernet_address& lhs, const ethernet_address& rhs) {
+		return !(lhs < rhs);
+	}
+	/// \}
+
+}
+
+#endif // vim:filetype=cpp

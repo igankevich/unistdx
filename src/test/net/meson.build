@@ -3,6 +3,7 @@ foreach conf : [
 	['bit_count', [unistdx,gtest]],
 	['byte_swap', [unistdx,gtest]],
 	['bytes', [unistdx,gtest]],
+	['ethernet_address', [unistdx,gtest]],
 	['family', [unistdx,gtest]],
 	['interface_address', [unistdx,gtest]],
 	['ipv4_address', [unistdx,gtest]],

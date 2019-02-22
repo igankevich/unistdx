@@ -33,7 +33,7 @@ namespace sys {
 			n(0) {}
 
 			inline constexpr
-			Num(Rep x):
+			Num(Base x):
 			n(x) {}
 
 			inline friend std::ostream&
@@ -43,25 +43,28 @@ namespace sys {
 
 			inline friend std::istream&
 			operator>>(std::istream& in, Num& rhs) {
-				in >> rhs.n;
-				if (rhs.n > std::numeric_limits<Base>::max()) {
+				Rep rep;
+				in >> rep;
+				if (rep > std::numeric_limits<Base>::max()) {
 					in.setstate(std::ios::failbit);
+				} else {
+					rhs.n = static_cast<Base>(rep);
 				}
 				return in;
 			}
 
 			inline constexpr
-			operator Rep() const {
+			operator Base() const {
 				return n;
 			}
 
-			inline constexpr Rep
+			inline constexpr Base
 			rep() const {
 				return n;
 			}
 
 		private:
-			Rep n;
+			Base n;
 		};
 
 		typedef Const_char<':'> Colon;
