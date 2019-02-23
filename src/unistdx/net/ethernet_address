@@ -60,8 +60,8 @@ namespace sys {
 		): _octets{o1,o2,o3,o4,o5,o6} {}
 
 		/// Construct Ethernet address from octet array.
-		inline
-		ethernet_address(value_type o[6]):
+		inline explicit
+		ethernet_address(const value_type o[6]):
 		_octets{o[0],o[1],o[2],o[3],o[4],o[5]} {}
 
 		/// Get pointer to the first octet.
