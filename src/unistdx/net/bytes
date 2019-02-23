@@ -31,12 +31,13 @@ namespace sys {
 		typedef Ch value_type;
 		/// Iterator type.
 		typedef value_type* iterator;
+		/// Constant iterator.
+		typedef const value_type* const_iterator;
 		/// Size type.
 		typedef std::size_t size_type;
 
 	private:
 		typedef bits::Integral<sizeof(object_type)> integral_type;
-		typedef const value_type* const_iterator;
 
 	private:
 		object_type _val;
@@ -128,6 +129,18 @@ namespace sys {
 			return !this->operator==(rhs);
 		}
 
+		/// Get pointer to the first byte.
+		inline iterator
+		data() noexcept {
+			return this->_bytes;
+		}
+
+		/// Get pointer to the first byte.
+		inline const_iterator
+		data() const noexcept {
+			return this->_bytes;
+		}
+
 		/// Get iterator to the beginning of the byte sequence.
 		inline iterator
 		begin() noexcept {
@@ -180,6 +193,12 @@ namespace sys {
 		inline static constexpr size_type
 		size() noexcept {
 			return sizeof(object_type);
+		}
+
+		/// Fill with noughts.
+		inline void
+		clear() {
+			std::fill_n(this->data(), this->size(), value_type{});
 		}
 
 		static_assert(

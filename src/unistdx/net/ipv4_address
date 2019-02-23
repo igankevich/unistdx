@@ -32,36 +32,61 @@ namespace sys {
 	\author Ivan Gankevich
 	\ingroup net
 	*/
-	union ipv4_address {
+	class ipv4_address {
 
+	public:
 		/// Octet type.
-		typedef u8 oct_type;
+		typedef u8 value_type;
 		/// Unsigned 4-byte integer type.
 		typedef addr4_type rep_type;
+		/// Pointer to octet.
+		typedef value_type* pointer;
+		/// Constant pointer to octet.
+		typedef const value_type* const_pointer;
+		/// Reference to octet.
+		typedef value_type& reference;
+		/// Constant reference to octet.
+		typedef const value_type& const_reference;
+		/// Iterator.
+		typedef pointer iterator;
+		/// Constant iterator.
+		typedef const_pointer const_iterator;
+		/// Alias to \link std::size_t\endlink.
+		typedef size_t size_type;
+
+	private:
+		union {
+			addr4_type _integer;
+			inet4_type _address;
+			value_type _octets[4];
+			char _bytes[4];
+		};
+
+	public:
 
 		inline constexpr
 		ipv4_address() noexcept:
-		addr(0) {}
+		_integer{0} {}
 
 		/// Construct IPv4 address from integer type.
 		inline constexpr explicit
 		ipv4_address(addr4_type rhs) noexcept:
-		addr(rhs) {}
+		_integer{rhs} {}
 
 		/// Copy-constructor.
 		inline constexpr
 		ipv4_address(const ipv4_address& rhs) noexcept:
-		addr(rhs.addr) {}
+		_integer{rhs._integer} {}
 
 		/// Construct IPv4 address from \c in_addr system type.
 		inline constexpr explicit
 		ipv4_address(const inet4_type& rhs) noexcept:
-		addr(rhs.s_addr) {}
+		_integer{rhs.s_addr} {}
 
 		/// Construct IPv4 address manually specifying each octet.
 		inline constexpr
-		ipv4_address(oct_type o1, oct_type o2, oct_type o3, oct_type o4):
-			addr(from_octets(o1, o2, o3, o4)) {}
+		ipv4_address(value_type o1, value_type o2, value_type o3, value_type o4):
+		_octets{o1,o2,o3,o4} {}
 
 		/// Construct IPv4 address from \c sockaddr system type.
 		inline
@@ -76,67 +101,144 @@ namespace sys {
 		/// Put address in binary form.
 		inline friend bstream&
 		operator<<(bstream& out, const ipv4_address& rhs) {
-			return out << rhs._bytes;
+			return out.write(rhs._bytes, rhs.size());
 		}
 
 		/// Get address in binary form.
 		inline friend bstream&
 		operator>>(bstream& in, ipv4_address& rhs) {
-			return in >> rhs._bytes;
+			return in.read(rhs._bytes, rhs.size());
 		}
 
 		/// Get integer representation of the address.
 		inline constexpr addr4_type
 		rep() const {
-			return this->addr;
+			return this->_integer;
 		}
 
 		/// Automatically cast to \c in_addr system type.
 		inline constexpr
 		operator const inet4_type&() const noexcept {
-			return this->inaddr;
+			return this->_address;
 		}
 
 		/// Compare address integer representations.
 		inline constexpr bool
 		operator<(const ipv4_address& rhs) const noexcept {
-			return this->addr < rhs.addr;
+			return this->_integer < rhs._integer;
 		}
 
 		/// \copydoc operator<
 		inline constexpr bool
 		operator==(ipv4_address rhs) const noexcept {
-			return this->addr == rhs.addr;
+			return this->_integer == rhs._integer;
 		}
 
 		/// \copydoc operator<
 		inline constexpr bool
 		operator!=(ipv4_address rhs) const noexcept {
-			return this->addr != rhs.addr;
+			return this->_integer != rhs._integer;
 		}
 
 		/// Returns true if integer representations is non-nought.
 		inline constexpr explicit
 		operator bool() const noexcept {
-			return this->addr != 0;
+			return this->_integer != 0;
 		}
 
 		/// Returns true if integer representations is nought.
 		inline constexpr bool
 		operator!() const noexcept {
-			return this->addr == 0;
+			return this->_integer == 0;
 		}
 
-		/// Get address octet by index.
-		inline constexpr oct_type
-		operator[](size_t i) const noexcept {
-			return this->_bytes[i];
+		/// Get reference to the specified octet.
+		inline reference
+		operator[](size_type i) noexcept {
+			return this->_octets[i];
+		}
+
+		/// Get specified octet.
+		inline constexpr value_type
+		operator[](size_type i) const noexcept {
+			return this->_octets[i];
+		}
+
+		/// Get pointer to the first octet.
+		inline pointer
+		data() noexcept {
+			return this->_octets;
+		}
+
+		/// Get pointer to the first octet.
+		inline const_pointer
+		data() const noexcept {
+			return this->_octets;
+		}
+
+		/// Get iterator to the beginning of octet array.
+		inline iterator
+		begin() noexcept {
+			return this->data();
+		}
+
+		/// Get iterator to the beginning of octet array.
+		inline const_iterator
+		begin() const noexcept {
+			return this->data();
+		}
+
+		/// Get the number of octets.
+		inline constexpr static size_type
+		size() noexcept {
+			return sizeof(_octets);
+		}
+
+		/// Get iterator to the end of octet array.
+		inline iterator
+		end() noexcept {
+			return this->data() + this->size();
+		}
+
+		/// Get iterator to the end of octet array.
+		inline const_iterator
+		end() const noexcept {
+			return this->data() + this->size();
+		}
+
+		/// Get first octet.
+		inline reference
+		front() noexcept {
+			return this->_octets[0];
+		}
+
+		/// Get first octet.
+		inline value_type
+		front() const noexcept {
+			return this->_octets[0];
+		}
+
+		/// Get last octet.
+		inline reference
+		back() noexcept {
+			return this->_octets[3];
+		}
+
+		/// Get last octet.
+		inline value_type
+		back() const noexcept {
+			return this->_octets[3];
+		}
+
+		inline void
+		clear() {
+			this->_integer = UINT32_C(0);
 		}
 
 		/// Return network prefix assuming that this address is network mask.
 		inline prefix_type
 		to_prefix() const noexcept {
-			return bit_count(addr);
+			return bit_count(_integer);
 		}
 
 		/// Create network mask from network prefix.
@@ -163,23 +265,9 @@ namespace sys {
 			);
 		}
 
-	private:
+		static_assert(sizeof(_integer) == sizeof(_address), "bad ipv4_address size");
+		static_assert(sizeof(_integer) == sizeof(_octets), "bad ipv4_address size");
 
-		inline constexpr static addr4_type
-		from_octets(oct_type o1, oct_type o2, oct_type o3, oct_type o4) {
-			return (
-				((o1 << 0)  & UINT32_C(0xff)) |
-				((o2 << 8)  & UINT32_C(0xff00)) |
-				((o3 << 16) & UINT32_C(0xff0000)) |
-				((o4 << 24) & UINT32_C(0xff000000)));
-		}
-
-		addr4_type addr;
-		inet4_type inaddr;
-		bytes<addr4_type> _bytes;
-
-		static_assert(sizeof(addr) == sizeof(inaddr), "bad ipv4_address size");
-		static_assert(sizeof(addr) == sizeof(_bytes), "bad ipv4_address size");
 	};
 
 	/// Print textual representation of the address.
@@ -198,10 +286,10 @@ namespace sys {
 	struct ipaddr_traits<ipv4_address> {
 
 		/// Octet type.
-		typedef ipv4_address::oct_type oct_type;
+		typedef ipv4_address::value_type value_type;
 
 		/// First octet of loopback address.
-		static constexpr const oct_type loopback_first_octet = 127;
+		static constexpr const value_type loopback_first_octet = 127;
 		/// IP-address family.
 		static constexpr const sa_family_type family = AF_INET;
 

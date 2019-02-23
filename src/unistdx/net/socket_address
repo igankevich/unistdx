@@ -335,7 +335,7 @@ namespace sys {
 	static_assert(sizeof(port_type) == 2, "bad port_type size");
 
 	ipv4_address::ipv4_address(const sa_type& rhs) noexcept:
-	inaddr(sys::socket_address(rhs)._addr4.sin_addr)
+	_address(sys::socket_address(rhs)._addr4.sin_addr)
 	{}
 
 	constexpr ipv4_address

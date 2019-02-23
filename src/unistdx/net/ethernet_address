@@ -109,13 +109,13 @@ namespace sys {
 		/// Get first octet.
 		inline reference
 		front() noexcept {
-			return *this->_octets;
+			return *this->begin();
 		}
 
 		/// Get first octet.
 		inline value_type
 		front() const noexcept {
-			return *this->_octets;
+			return *this->begin();
 		}
 
 		/// Get last octet.

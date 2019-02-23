@@ -9,7 +9,7 @@
 namespace {
 
 	inline int
-	num_digits(sys::ipv4_address::oct_type rhs) noexcept {
+	num_digits(sys::ipv4_address::value_type rhs) noexcept {
 		return rhs >= 100 ? 3 :
 		       rhs >= 10  ? 2 :
 		       1;
@@ -32,6 +32,8 @@ namespace {
 		}
 	}
 
+	typedef sys::bits::Number<sys::u8, sys::u16> Octet;
+
 }
 
 std::ostream&
@@ -40,14 +42,14 @@ sys::operator<<(std::ostream& out, ipv4_address rhs) {
 	const std::streamsize padding = out.width(0) - width(rhs);
 	const bool pad_left = (out.flags() & std::ios_base::adjustfield) !=
 	                      std::ios_base::left;
-	if (padding > 0 and pad_left) {
+	if (padding > 0 && pad_left) {
 		pad_stream(out, padding);
 	}
-	out << ((rhs.addr >> 0)  & UINT32_C(0xff)) << Dot()
-	    << ((rhs.addr >> 8)  & UINT32_C(0xff)) << Dot()
-	    << ((rhs.addr >> 16) & UINT32_C(0xff)) << Dot()
-	    << ((rhs.addr >> 24) & UINT32_C(0xff));
-	if (padding > 0 and not pad_left) {
+	out << Octet{rhs._octets[0]} << Dot{};
+	out << Octet{rhs._octets[1]} << Dot{};
+	out << Octet{rhs._octets[2]} << Dot{};
+	out << Octet{rhs._octets[3]};
+	if (padding > 0 && !pad_left) {
 		pad_stream(out, padding);
 	}
 	return out;
@@ -55,12 +57,13 @@ sys::operator<<(std::ostream& out, ipv4_address rhs) {
 
 std::istream&
 sys::operator>>(std::istream& in, ipv4_address& rhs) {
-	typedef bits::Num<u8, u32> Octet;
 	using bits::Dot;
-	Octet o1, o2, o3, o4;
-	in >> o1 >> Dot() >> o2 >> Dot() >> o3 >> Dot() >> o4;
-	if (!in.fail()) {
-		rhs.addr = ipv4_address::from_octets(o1, o2, o3, o4);
+	in >> Octet{rhs._octets[0]} >> Dot{};
+	in >> Octet{rhs._octets[1]} >> Dot{};
+	in >> Octet{rhs._octets[2]} >> Dot{};
+	in >> Octet{rhs._octets[3]};
+	if (in.fail()) {
+		rhs.clear();
 	}
 	return in;
 }

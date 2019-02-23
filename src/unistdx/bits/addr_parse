@@ -67,6 +67,33 @@ namespace sys {
 			Base n;
 		};
 
+		template<class Base, class Rep>
+		struct Number {
+
+			Base& _number;
+
+			inline explicit
+			Number(Base& x): _number(x) {}
+
+			inline friend std::ostream&
+			operator<<(std::ostream& out, const Number& rhs) {
+				return out << static_cast<Rep>(rhs._number);
+			}
+
+			inline friend std::istream&
+			operator>>(std::istream& in, const Number& rhs) {
+				Rep rep;
+				in >> rep;
+				if (rep > std::numeric_limits<Base>::max()) {
+					in.setstate(std::ios::failbit);
+				} else {
+					rhs._number = static_cast<Base>(rep);
+				}
+				return in;
+			}
+
+		};
+
 		typedef Const_char<':'> Colon;
 		typedef Const_char<'.'> Dot;
 
