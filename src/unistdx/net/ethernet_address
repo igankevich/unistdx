@@ -48,7 +48,7 @@ namespace sys {
 		ethernet_address& operator=(ethernet_address&&) = default;
 		/// \}
 
-		/// Construct Ethernet address from octets.
+		/// Construct Ethernet address from individual octets.
 		inline
 		ethernet_address(
 			value_type o1,
@@ -58,6 +58,11 @@ namespace sys {
 			value_type o5,
 			value_type o6
 		): _octets{o1,o2,o3,o4,o5,o6} {}
+
+		/// Construct Ethernet address from octet array.
+		inline
+		ethernet_address(value_type o[6]):
+		_octets{o[0],o[1],o[2],o[3],o[4],o[5]} {}
 
 		/// Get pointer to the first octet.
 		inline pointer
@@ -123,6 +128,11 @@ namespace sys {
 		inline value_type
 		back() const noexcept {
 			return *(this->end()-1);
+		}
+
+		inline void
+		clear() {
+			std::fill_n(this->data(), this->size(), value_type{0});
 		}
 
 		/// Get reference to the specified octet.
@@ -203,6 +213,37 @@ namespace sys {
 		return !(lhs < rhs);
 	}
 	/// \}
+
+}
+
+namespace std {
+
+	/// Specialisation of \link std::hash\endlink for \link sys::ethernet_address\endlink.
+	template<>
+	struct hash<sys::ethernet_address>:
+		public hash<sys::ethernet_address::value_type> {
+
+	private:
+		typedef hash<sys::ethernet_address::value_type> base_type;
+		typedef ::sys::ethernet_address::size_type size_type;
+
+	public:
+		/// Hash function return value type.
+		using typename base_type::result_type;
+		/// Hash function argument type.
+		typedef ::sys::ethernet_address argument_type;
+
+		/// Compute hash by XOR-ing hashes of each octet.
+		inline result_type
+		operator()(const argument_type& rhs) const noexcept {
+			result_type result = this->base_type::operator()(rhs.front());
+			for (size_type i=1; i<rhs.size(); ++i) {
+				result ^= this->base_type::operator()(rhs[i] << i);
+			}
+			return result;
+		}
+
+	};
 
 }
 
