@@ -181,7 +181,7 @@ namespace sys {
 		template<class Lock>
 		inline void
 		wait(Lock& lock) {
-			this->wait(lock, [] () { return false; });
+			this->poll_wait(lock, no_timeout);
 		}
 
 		/**
