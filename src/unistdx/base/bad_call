@@ -25,7 +25,7 @@ namespace sys {
 	public:
 
 		/// Construct the error with precise location where it was thrown.
-		UNISTDX_NON_NULL_ALL inline
+		inline
 		bad_call(
 			std::errc errcond,
 			const char* file,
@@ -36,7 +36,7 @@ namespace sys {
 		_file(file), _line(line), _function(function) {}
 
 		/// Construct the error with precise location where it was thrown.
-		UNISTDX_NON_NULL_ALL inline
+		inline
 		bad_call(
 			const char* file,
 			const int line,

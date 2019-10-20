@@ -14,7 +14,12 @@ TEST(IPv4Addr, Calculus) {
 typedef decltype(std::right) manipulator;
 
 void
-test_print(const char* expected, sys::ipv4_address addr, manipulator manip, int width) {
+test_print(
+    const char* expected,
+    sys::ipv4_address addr,
+    manipulator manip,
+    size_t width
+) {
 	std::stringstream str;
 	str << std::setw(width) << manip << addr;
 	std::string result = str.str();

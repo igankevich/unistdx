@@ -6,21 +6,21 @@ TEST(SetIdentity, ExceptionsRunAsRoot) {
 	if (user() != sys::superuser()) {
 		return;
 	}
-	EXPECT_NE(1000, user());
-	EXPECT_NE(1000, group());
+	EXPECT_NE(1000u, user());
+	EXPECT_NE(1000u, group());
 	EXPECT_NO_THROW(set_identity(1000, 1000));
-	EXPECT_EQ(1000, user());
-	EXPECT_EQ(1000, group());
-	EXPECT_EQ(1000, effective_user());
-	EXPECT_EQ(1000, effective_group());
+	EXPECT_EQ(1000u, user());
+	EXPECT_EQ(1000u, group());
+	EXPECT_EQ(1000u, effective_user());
+	EXPECT_EQ(1000u, effective_group());
 }
 
 TEST(identity, basic) {
 	using namespace sys::this_process;
 	EXPECT_EQ(user(), effective_user());
 	EXPECT_EQ(group(), effective_group());
-	EXPECT_EQ(0, sys::supergroup());
-	EXPECT_EQ(0, sys::superuser());
+	EXPECT_EQ(0u, sys::supergroup());
+	EXPECT_EQ(0u, sys::superuser());
 }
 
 TEST(identity, set_unpriviledged) {

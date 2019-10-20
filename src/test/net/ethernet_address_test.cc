@@ -21,7 +21,7 @@ test_print(
 	const char* expected,
 	sys::ethernet_address addr,
 	manipulator manip = std::left,
-	int width=17
+	size_t width=17
 ) {
 	std::stringstream str;
 	str << std::setw(width) << manip << addr;

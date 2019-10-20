@@ -42,7 +42,7 @@ namespace sys {
 		sent to standard error stream when destructor is called.
 		*/
 		template<class ... Args>
-		UNISTDX_MEMBER_NON_NULL_1_2 explicit
+		explicit
 		log_message(const char* name, const char* fmt, const Args& ... tokens):
 		log_message(name, '_', fmt, tokens ...)
 		{}
@@ -57,7 +57,7 @@ namespace sys {
 		sent to standard error stream when destructor is called.
 		*/
 		template<class ... Args>
-		UNISTDX_MEMBER_NON_NULL_1_3 explicit
+		explicit
 		log_message(
 			const char* name,
 			char spec,
@@ -81,7 +81,7 @@ namespace sys {
 		that will be sent to standard error stream when destructor is called.
 		*/
 		template<class ... Args>
-		UNISTDX_MEMBER_NON_NULL_1 explicit
+		explicit
 		log_message(const char* name, char spec='_'):
 		_str(STDERR_FILENO, 256),
 		_spec(spec) {
@@ -105,14 +105,14 @@ namespace sys {
 
 	private:
 
-		UNISTDX_MEMBER_NON_NULL_1 inline void
+		inline void
 		format_msg(const char* s) {
 			assert(s != nullptr); // LCOV_EXCL_LINE
 			this->_str << s;
 		}
 
 		template<class T, class ... Args>
-		UNISTDX_MEMBER_NON_NULL_1 void
+		void
 		format_msg(const char* s, const T& value, const Args& ... args) {
 			assert(s != nullptr); // LCOV_EXCL_LINE
 			const char* olds = s;
@@ -126,7 +126,7 @@ namespace sys {
 			}
 		}
 
-		UNISTDX_MEMBER_NON_NULL_1 inline void
+		inline void
 		write_name(const char* name) {
 			assert(name != nullptr); // LCOV_EXCL_LINE
 			this->_str.width(10);

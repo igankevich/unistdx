@@ -40,7 +40,7 @@ namespace sys {
 	with BASE64 and put result to memory location pointed by
 	\p result.
 	*/
-	UNISTDX_NON_NULL_1_3_FLATTEN void
+	UNISTDX_FLATTEN void
 	base64_encode(const char* first, size_t n, char* result) noexcept;
 
 	/**
@@ -51,7 +51,7 @@ namespace sys {
 	with BASE64 and put result to memory location pointed by
 	\p result.
 	*/
-	UNISTDX_NON_NULL_ALL inline void
+	inline void
 	base64_encode(const char* first, const char* last, char* result) noexcept {
 		base64_encode(first, last-first, result);
 	}
@@ -65,7 +65,7 @@ namespace sys {
 	Decode BASE64 byte sequence pointed by \p first with length \p n
 	and put result to memory location pointed by \p result.
 	*/
-	UNISTDX_NON_NULL_1_3_FLATTEN size_t
+	UNISTDX_FLATTEN size_t
 	base64_decode(const char* first, size_t n, char* result);
 
 	/**
@@ -77,7 +77,7 @@ namespace sys {
 	Decode BASE64 byte sequence between \p first and \p last
 	and put result to memory location pointed by \p result.
 	*/
-	UNISTDX_NON_NULL_ALL inline size_t
+	inline size_t
 	base64_decode(const char* first, const char* last, char* result) {
 		return base64_decode(first, last-first, result);
 	}

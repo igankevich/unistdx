@@ -169,12 +169,10 @@ namespace sys {
 		Put \p n bytes from byte buffer pointed by \p buf
 		to binary stream.
 		*/
-		UNISTDX_MEMBER_NON_NULL_1 inline basic_bstream&
+		inline basic_bstream&
 		write(const char_type* buf, std::streamsize n) {
-			UNISTDX_WARNING_IGNORE_PUSH("-Wnonnull-compare")
 			assert(this->_buf); // LCOV_EXCL_LINE
 			assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
-			UNISTDX_WARNING_POP
 			this->_buf->sputn(buf, n);
 			return *this;
 		}
@@ -183,12 +181,10 @@ namespace sys {
 		Get \p n bytes from binary stream and store them
 		in byte buffer pointed by \p buf.
 		*/
-		UNISTDX_MEMBER_NON_NULL_1 inline basic_bstream&
+		inline basic_bstream&
 		read(char_type* buf, std::streamsize n) {
-			UNISTDX_WARNING_IGNORE_PUSH("-Wnonnull-compare")
 			assert(this->_buf); // LCOV_EXCL_LINE
 			assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
-			UNISTDX_WARNING_POP
 			this->_buf->sgetn(buf, n);
 			return *this;
 		}

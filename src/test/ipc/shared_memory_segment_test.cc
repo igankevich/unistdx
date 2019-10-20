@@ -42,8 +42,8 @@ TYPED_TEST(SharedMemTest, SharedMem) {
 	EXPECT_NE(nullptr, mem1.end());
 	EXPECT_NE(nullptr, mem2.begin());
 	EXPECT_NE(nullptr, mem2.end());
-	EXPECT_EQ(mem1.size(), std::distance(mem1.begin(), mem1.end()));
-	EXPECT_EQ(mem2.size(), std::distance(mem2.begin(), mem2.end()));
+	EXPECT_EQ(mem1.size(), size_t(std::distance(mem1.begin(), mem1.end())));
+	EXPECT_EQ(mem2.size(), size_t(std::distance(mem2.begin(), mem2.end())));
 	std::default_random_engine rng;
 	std::uniform_int_distribution<T> dist('a', 'z');
 	std::generate(mem1.begin(), mem1.end(), std::bind(dist, rng));

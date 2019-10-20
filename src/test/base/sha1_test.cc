@@ -121,7 +121,6 @@ TEST(SHA1, OneMillionOfAs) {
 }
 
 TEST(SHA1, BigInputs) {
-	UNISTDX_WARNING_IGNORE_PUSH("-Warray-bounds")
 	sys::sha1 sha;
 	EXPECT_THROW(
 		sha.put("", std::numeric_limits<size_t>::max()),
@@ -133,7 +132,6 @@ TEST(SHA1, BigInputs) {
 		sha.put("", std::numeric_limits<size_t>::max()/8-1),
 		std::length_error
 	);
-	UNISTDX_WARNING_POP
 }
 
 TEST(SHA1, RepeatingCompute) {

@@ -308,6 +308,6 @@ TEST(socket_address, bad_family) {
 	b.sockaddr()->sa_family = 1111;
 	EXPECT_FALSE(a < b);
 	EXPECT_NE(a, b);
-	EXPECT_EQ(0, a.sockaddrlen());
-	EXPECT_EQ(0, b.sockaddrlen());
+	EXPECT_EQ(0u, a.sockaddrlen());
+	EXPECT_EQ(0u, b.sockaddrlen());
 }

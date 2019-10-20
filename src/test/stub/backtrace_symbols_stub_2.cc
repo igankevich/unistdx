@@ -7,7 +7,7 @@
 #include <vector>
 
 char**
-backtrace_symbols(void *const *, int n) {
+backtrace_symbols(void *const *, int n) throw () {
 	const size_t entry_size = 4;
 	union Bytes {
 		char* ptr;

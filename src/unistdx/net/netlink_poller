@@ -158,7 +158,7 @@ namespace sys {
 
 		/// Returns true, if the message is valid (see \man{netlink,3}).
 		inline bool
-		ok(int len) const noexcept {
+		ok(u32 len) const noexcept {
 			return NLMSG_OK(this, len);
 		}
 

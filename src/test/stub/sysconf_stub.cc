@@ -1,7 +1,7 @@
 #include <unistd.h>
 
 long int
-sysconf(int name) {
+sysconf(int name) noexcept {
 	switch (name) {
 		case _SC_GETPW_R_SIZE_MAX: return 1;
 		case _SC_GETGR_R_SIZE_MAX: return 1;

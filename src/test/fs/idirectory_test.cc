@@ -87,7 +87,7 @@ TEST(directory_entry, members) {
 	EXPECT_TRUE(static_cast<bool>(dir));
 	EXPECT_EQ(ent1.name(), test::stream_insert(ent1));
 	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(dir.getpath(), ent1));
-	EXPECT_NE(0, ent1.inode());
+	EXPECT_NE(0u, ent1.inode());
 	EXPECT_FALSE(ent1.is_parent_dir());
 	EXPECT_FALSE(ent1.is_working_dir());
 	dir >> ent2;

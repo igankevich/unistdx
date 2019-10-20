@@ -1,6 +1,6 @@
 #include <execinfo.h>
 
 char**
-backtrace_symbols(void *const *, int) {
+backtrace_symbols(void *const *, int) noexcept {
 	return nullptr;
 }

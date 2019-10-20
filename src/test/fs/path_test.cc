@@ -8,7 +8,7 @@ TEST(Path, Hash) {
 	for (int i=0; i<10; ++i) {
 		s.emplace("/tmp");
 	}
-	EXPECT_EQ(1, s.size());
+	EXPECT_EQ(1u, s.size());
 }
 
 TEST(Path, Equals) {

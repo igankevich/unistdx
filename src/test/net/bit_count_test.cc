@@ -20,7 +20,7 @@ TEST(bit_count, long_types) {
 }
 
 TEST(bit_count, int_types) {
-	EXPECT_EQ(1, sys::bit_count<unsigned int>(1));
-	EXPECT_EQ(1, sys::bit_count<unsigned int>(2));
-	EXPECT_EQ(2, sys::bit_count<unsigned int>(3));
+	EXPECT_EQ(1u, sys::bit_count<unsigned int>(1));
+	EXPECT_EQ(1u, sys::bit_count<unsigned int>(2));
+	EXPECT_EQ(2u, sys::bit_count<unsigned int>(3));
 }

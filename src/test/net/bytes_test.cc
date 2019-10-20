@@ -7,10 +7,10 @@
 TEST(bytes, members) {
 	const sys::bytes<sys::u32> b(0xff);
 	EXPECT_EQ(sizeof(sys::u32), b.size());
-	EXPECT_EQ(b.end() - b.begin(), b.size());
-	EXPECT_EQ(0xff, b.value());
+	EXPECT_EQ(size_t(b.end() - b.begin()), b.size());
+	EXPECT_EQ(0xffu, b.value());
 	sys::u32 v = b;
-	EXPECT_EQ(0xff, v);
+	EXPECT_EQ(0xffu, v);
 }
 
 TEST(bytes, front_begin) {

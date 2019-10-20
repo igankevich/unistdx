@@ -68,8 +68,8 @@ TEST_P(BigSizeTest, BigSizes) {
 		sz1 = base64_encoded_size(k);
 		sz2 = base64_max_decoded_size(sz1);
 	}, std::length_error);
-	EXPECT_EQ(0, sz1);
-	EXPECT_EQ(0, sz2);
+	EXPECT_EQ(0u, sz1);
+	EXPECT_EQ(0u, sz2);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -183,7 +183,6 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST(base64, invalid_argument) {
-	UNISTDX_WARNING_IGNORE_PUSH("-Wnonnull")
 	EXPECT_THROW(sys::base64_decode("", 1, nullptr), std::invalid_argument);
 	EXPECT_THROW(sys::base64_decode("", 2, nullptr), std::invalid_argument);
 	EXPECT_THROW(sys::base64_decode("", 3, nullptr), std::invalid_argument);
@@ -197,7 +196,6 @@ TEST(base64, invalid_argument) {
 			static_cast<char*>(nullptr)
 		)
 	);
-	UNISTDX_WARNING_POP
 }
 
 /*

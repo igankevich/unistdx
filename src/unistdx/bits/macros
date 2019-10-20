@@ -6,39 +6,19 @@
 #if defined(__GNUC__)
 #define UNISTDX_PURE [[gnu::pure]]
 #define UNISTDX_INLINE [[gnu::always_inline]] inline
-#define UNISTDX_NON_NULL_ALL [[gnu::nonnull]]
 #define UNISTDX_CONST [[gnu::const]] UNISTDX_INLINE constexpr
 #define UNISTDX_FLATTEN [[gnu::flatten]]
 #define UNISTDX_DEPRECATED [[gnu::deprecated]]
 #define UNISTDX_UNUSED [[gnu::unused]]
-#define UNISTDX_NON_NULL_1_3_FLATTEN [[gnu::nonnull(1,3),gnu::flatten]]
-#define UNISTDX_NON_NULL_1 [[gnu::nonnull(1)]]
-#define UNISTDX_NON_NULL_1_2 [[gnu::nonnull(1,2)]]
-#define UNISTDX_MEMBER_NON_NULL_1 [[gnu::nonnull(2)]]
-#define UNISTDX_MEMBER_NON_NULL_1_2 [[gnu::nonnull(2,3)]]
-#define UNISTDX_MEMBER_NON_NULL_1_3 [[gnu::nonnull(2,4)]]
 #define UNISTDX_PRAGMA(x) _Pragma(#x)
-#define UNISTDX_WARNING_IGNORE_PUSH(x) \
-	UNISTDX_PRAGMA(GCC diagnostic push) \
-	UNISTDX_PRAGMA(GCC diagnostic ignored x)
-#define UNISTDX_WARNING_POP UNISTDX_PRAGMA(GCC diagnostic pop)
 #else
 #define UNISTDX_PURE
 #define UNISTDX_INLINE inline
-#define UNISTDX_NON_NULL_ALL
 #define UNISTDX_CONST inline constexpr
 #define UNISTDX_FLATTEN
 #define UNISTDX_DEPRECATED
 #define UNISTDX_UNUSED
-#define UNISTDX_NON_NULL_1_3_FLATTEN
-#define UNISTDX_NON_NULL_1
-#define UNISTDX_NON_NULL_1_2
-#define UNISTDX_MEMBER_NON_NULL_1
-#define UNISTDX_MEMBER_NON_NULL_1_2
-#define UNISTDX_MEMBER_NON_NULL_1_3
 #define UNISTDX_PRAGMA(x)
-#define UNISTDX_WARNING_IGNORE_PUSH(x)
-#define UNISTDX_WARNING_POP
 #endif
 
 #if defined(UNISTDX_HAVE_BUILTIN_UNREACHABLE)
