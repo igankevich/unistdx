@@ -17,7 +17,6 @@ namespace sys {
 	\tparam DirPred directory predicate type, that determines which
 	directories to recurse into.
 	\see directory_entry
-	\see pathentry
 	\details
 	An input stream from which directories entries are read recursively.
 	\arg File and directory predicates may have internal state.
@@ -31,11 +30,15 @@ namespace sys {
 	public:
 		using typename base_type::state;
 		using typename base_type::filepred_type;
+		using typename base_type::value_type;
+		using typename base_type::reference;
+		using typename base_type::const_reference;
+		using typename base_type::pointer;
+		using typename base_type::const_pointer;
 		using base_type::eofbit;
-
-	public:
+        using iterator = basic_istream_iterator<basic_idirtree,value_type>;
 		/// Directory predicate type.
-		typedef DirPred dirpred_type;
+		using dirpred_type = DirPred;
 
 	private:
 		std::queue<sys::path> _dirs;
@@ -96,13 +99,6 @@ namespace sys {
 			return *this;
 		}
 
-		/// Get next directory entry as \link pathentry\endlink.
-		inline basic_idirtree&
-		operator>>(pathentry& rhs) {
-			this->read_direntry(rhs);
-			return *this;
-		}
-
 		/// Go to the next directory.
 		inline void
 		next_directory() {
@@ -123,15 +119,8 @@ namespace sys {
 			return this->_dirs.size();
 		}
 
-		/// Get all directory tree entries as a container.
-		template <class Entry>
-		inline iterator_pair<basic_istream_iterator<basic_idirtree,Entry>>
-		entries() noexcept {
-			return make_view(
-				basic_istream_iterator<basic_idirtree,Entry>(*this),
-				basic_istream_iterator<basic_idirtree,Entry>()
-			);
-		}
+        inline iterator begin() { return iterator(*this); }
+        inline iterator end() { return iterator(); }
 
 	private:
 
@@ -183,12 +172,6 @@ namespace sys {
 			return !rhs.is_hidden() && this->type(prefix, rhs) == file_type::directory;
 		}
 
-		/// Returns true, if directory entry is not hidden.
-		inline bool
-		operator()(const path&, const pathentry& rhs) {
-			return !rhs.is_hidden() && this->type(rhs) == file_type::directory;
-		}
-
 		/// Get file status.
 		inline const file_status&
 		status() const noexcept {
@@ -230,11 +213,6 @@ namespace sys {
 			return entry.has_type()
 				? entry.type()
 				: this->_stat.update(path(dirname, entry.name()), path_flag::no_follow).type();
-		}
-
-		inline file_type
-		type(const pathentry& entry) {
-			return this->type(entry.dirname(), entry);
 		}
 
 	};

@@ -20,37 +20,48 @@ namespace sys {
 	*/
 	class groupstream {
 
+    public:
+        using iterator = basic_istream_iterator<groupstream,group>;
+        using value_type = group;
+        using reference = value_type&;
+        using const_reference = const value_type&;
+        using pointer = value_type*;
+        using const_pointer = const value_type*;
+
 	private:
 		bool _end = false;
 
 	public:
 
-		groupstream();
-
-		~groupstream();
+		inline groupstream() { this->open(); }
+		inline ~groupstream() { this->close(); }
 
 		UNISTDX_NO_COPY_AND_MOVE(groupstream)
 
 		/// Returns true if the end of stream is not reached.
-		inline explicit
-		operator bool() const noexcept {
-			return !this->_end;
-		}
+		inline explicit operator bool() const noexcept { return !this->_end; }
 
 		/// Returns true if the end of stream is reached.
-		inline bool
-		operator!() const noexcept {
-			return !this->operator bool();
-		}
+		inline bool operator!() const noexcept { return !this->operator bool(); }
 
 		/// Read the next group from the stream.
-		groupstream&
-		operator>>(group& rhs);
+		inline groupstream& operator>>(reference rhs) {
+            if (*this) {
+                if (auto g = ::getgrent()) { rhs = *g; }
+                else { this->_end = true; }
+            }
+            return *this;
+        }
+
+        inline iterator begin() { return iterator(*this); }
+        inline iterator end() { return iterator(); }
+        inline void open() { ::setgrent(); }
+        inline void close() { ::endgrent(); }
 
 	};
 
 	/// Iterator for \link groupstream\endlink.
-	typedef basic_istream_iterator<groupstream, group> group_iterator;
+	using group_iterator = groupstream::iterator;
 
 }
 

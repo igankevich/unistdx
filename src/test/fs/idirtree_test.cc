@@ -89,17 +89,17 @@ TEST(GetFileType, PathEntry) {
 	std::ofstream(tmp.path()) << "hello world";
 	sys::path cwd(".");
 	sys::idirtree dir(cwd);
-	sys::idirtree_iterator<sys::pathentry> end;
+	sys::idirtree_iterator<sys::directory_entry> end;
 	auto result =
 		std::find_if(
-			sys::idirtree_iterator<sys::pathentry>(dir),
+			sys::idirtree_iterator<sys::directory_entry>(dir),
 			end,
-			[&] (const sys::pathentry& rhs) {
+			[&] (const sys::directory_entry& rhs) {
 			    return rhs.name() == tmp.path();
 			}
 		);
 	EXPECT_NE(result, end);
-	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(*result));
+	EXPECT_EQ(sys::file_type::regular, sys::get_file_type(dir.current_dir(), *result));
 }
 
 struct idirtree_test_param {
@@ -133,21 +133,24 @@ TEST_P(idirtree_test, insert) {
 		sys::idirtree idir(dir1);
 		sys::odirtree odir(dir3);
 		odir.settransform(sys::copy_recursively{dir1, dir3});
+        odir << idir;
+        /*
 		std::copy(
-			sys::idirtree_iterator<sys::pathentry>(idir),
-			sys::idirtree_iterator<sys::pathentry>(),
-			sys::odirtree_iterator<sys::pathentry>(odir)
+			sys::idirtree_iterator<sys::directory_entry>(idir),
+			sys::idirtree_iterator<sys::directory_entry>(),
+			sys::odirtree_iterator<sys::directory_entry>(odir)
 		);
+        */
 	}
 	std::set<sys::path> actual;
 	{
 		sys::idirtree idir(dir3);
 		std::transform(
-			sys::idirtree_iterator<sys::pathentry>(idir),
-			sys::idirtree_iterator<sys::pathentry>(),
+			sys::idirtree_iterator<sys::directory_entry>(idir),
+			sys::idirtree_iterator<sys::directory_entry>(),
 			std::inserter(actual, actual.begin()),
-			[&] (const sys::pathentry& rhs) {
-				sys::path p = rhs.getpath();
+			[&] (const sys::directory_entry& rhs) {
+				sys::path p(idir.current_dir(), rhs.name());
 				if (p.find(dir3.name()) == 0) {
 					p = p.substr(dir3.name().size()+1);
 				}

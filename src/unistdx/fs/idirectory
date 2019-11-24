@@ -7,7 +7,6 @@
 #include <unistdx/fs/directory_entry>
 #include <unistdx/fs/dirstream>
 #include <unistdx/fs/path_flag>
-#include <unistdx/fs/pathentry>
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/it/iterator_pair>
 
@@ -27,7 +26,6 @@ namespace sys {
 	\tparam FilePred file predicate type, that determines which
 	directory entries to include in the stream.
 	\see directory_entry
-	\see pathentry
 	\details
 	An input stream from which directory entries are read non-recursively.
 	\arg File predicate may have internal state.
@@ -37,7 +35,19 @@ namespace sys {
 
 	public:
 		/// File predicate type.
-		typedef FilePred filepred_type;
+		using filepred_type = FilePred;
+        /// Directory entry type.
+        using value_type = directory_entry;
+        /// Directory entry reference.
+        using reference = value_type&;
+        /// Directory entry constant reference.
+        using const_reference = const value_type&;
+        /// Directory entry pointer.
+        using pointer = value_type*;
+        /// Directory entry constant pointer.
+        using const_pointer = const value_type*;
+        /// Directory entry stream iterator.
+        using iterator = basic_istream_iterator<basic_idirectory,value_type>;
 
 	private:
 		path _dirpath;
@@ -126,29 +136,14 @@ namespace sys {
 
 		/// Get next directory entry as \link directory_entry\endlink.
 		inline basic_idirectory&
-		operator>>(directory_entry& rhs) {
+		operator>>(reference rhs) {
 			assert(this->is_open()); // LCOV_EXCL_LINE
 			this->read_direntry(rhs);
 			return *this;
 		}
 
-		/// Get next directory entry as \link pathentry\endlink.
-		inline basic_idirectory&
-		operator>>(pathentry& rhs) {
-			assert(this->is_open()); // LCOV_EXCL_LINE
-			this->read_direntry(rhs);
-			return *this;
-		}
-
-		/// Get all directories entries as a container.
-		template <class Entry>
-		inline iterator_pair<basic_istream_iterator<basic_idirectory,Entry>>
-		entries() noexcept {
-			return make_view(
-				basic_istream_iterator<basic_idirectory,Entry>(*this),
-				basic_istream_iterator<basic_idirectory,Entry>()
-			);
-		}
+        inline iterator begin() { return iterator(*this); }
+        inline iterator end() { return iterator(); }
 
 		/**
 		\brief Set \p filename owner.
@@ -185,39 +180,19 @@ namespace sys {
 
 	private:
 
-		inline directory_entry*
+		inline pointer
 		read_direntry() noexcept {
 			assert(this->is_open()); // LCOV_EXCL_LINE
-			return static_cast<directory_entry*>(::readdir(this->_dir));
-		}
-
-		template<class Entry>
-		inline void
-		read_direntry(Entry& rhs) {
-			assert(this->is_open()); // LCOV_EXCL_LINE
-			if (good()) {
-				bool success = false;
-				while (!success && !this->eof()) {
-					const directory_entry* result = this->read_direntry();
-					if (!result) {
-						this->setstate(eofbit);
-					} else {
-						if (this->_filepred(this->_dirpath, *result)) {
-							rhs = Entry(this->_dirpath, *result);
-							success = true;
-						}
-					}
-				}
-			}
+			return static_cast<pointer>(::readdir(this->_dir));
 		}
 
 		inline void
-		read_direntry(directory_entry& rhs) {
+		read_direntry(reference rhs) {
 			assert(this->is_open()); // LCOV_EXCL_LINE
 			if (this->good()) {
 				bool success = false;
 				while (!success && !this->eof()) {
-					const directory_entry* result = this->read_direntry();
+					const_pointer result = this->read_direntry();
 					if (!result) {
 						this->setstate(eofbit);
 					} else {

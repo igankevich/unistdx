@@ -15,7 +15,6 @@ namespace sys {
 	\ingroup stream fs
 	\tparam Trans transformation function type
 	\see directory_entry
-	\see pathentry
 	\see copy_file
 	\details
 	An output stream to which directory entries are written.
@@ -94,30 +93,18 @@ namespace sys {
 			return *this;
 		}
 
-		/**
-		\brief Copy directory entry \p rhs to output directory of the stream.
-		\throws bad_call
-		\see \man{mkdir,2}
-		\see copy_file
-		*/
-		inline basic_odirectory&
-		operator<<(const pathentry& rhs) {
-			path p(this->_dirpath, this->_trans(rhs));
-			if (get_file_type(rhs) != sys::file_type::directory) {
-				copy_file(rhs.getpath(), p);
-			} else {
-				this->make_directory(p);
-			}
-			return *this;
-		}
-
 		/// Copy all files in directory \p rhs to output directory of the stream.
 		template<class FilePred>
 		inline basic_odirectory&
 		operator<<(basic_idirectory<FilePred>& rhs) {
-			pathentry ent;
+			directory_entry ent;
 			while (rhs >> ent) {
-				*this << ent;
+                path p(this->_dirpath, this->_trans(ent));
+                if (get_file_type(rhs.getpath(), ent) != sys::file_type::directory) {
+                    copy_file(path(rhs.getpath(), ent.name()), p);
+                } else {
+                    this->make_directory(p);
+                }
 			}
 			return *this;
 		}
@@ -126,9 +113,14 @@ namespace sys {
 		template<class X, class Y>
 		inline basic_odirectory&
 		operator<<(basic_idirtree<X,Y>& rhs) {
-			pathentry ent;
+			directory_entry ent;
 			while (rhs >> ent) {
-				*this << ent;
+                path p(this->_dirpath, this->_trans(rhs.current_dir(), ent));
+                if (get_file_type(rhs.current_dir(), ent) != sys::file_type::directory) {
+                    copy_file(path(rhs.current_dir(), ent.name()), p);
+                } else {
+                    this->make_directory(p);
+                }
 			}
 			return *this;
 		}

@@ -36,7 +36,7 @@ TEST(idirectory, entries) {
 	test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
 	sys::idirectory dir(tdir);
 	std::set<std::string> actual, expected(files.begin(), files.end());
-	for (const auto& entry : dir.entries<sys::directory_entry>()) {
+	for (const auto& entry : dir) {
 		actual.insert(entry.name());
 	}
 	EXPECT_EQ(expected, actual);
@@ -48,11 +48,7 @@ TEST(idirectory, insert) {
 	sys::idirectory dir(tdir);
 	test::tmpdir otdir(UNISTDX_TMPDIR_OUT);
 	sys::odirectory odir(otdir);
-	std::copy(
-		sys::idirectory_iterator<sys::pathentry>(dir),
-		sys::idirectory_iterator<sys::pathentry>(),
-		sys::odirectory_iterator<sys::pathentry>(odir)
-	);
+    odir << dir;
 	std::set<sys::directory_entry> orig;
 	{
 		sys::idirectory idir1(tdir);

@@ -1,10 +1,8 @@
 libunistdx_src += files([
 	'backtrace.cc',
 	'group.cc',
-	'groupstream.cc',
 	'system.cc',
 	'user.cc',
-	'userstream.cc',
 ])
 
 install_headers(
