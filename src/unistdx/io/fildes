@@ -563,7 +563,9 @@ namespace sys {
         inline static std::streamsize
         in_avail(T& rhs) {
             #if defined(UNISTDX_HAVE_IOCTL) && defined(UNISTDX_HAVE_FIONREAD)
-            return rhs.call(fildes::operation::bytes_available);
+            int n = 0;
+            rhs.call(fildes::operation::bytes_available, n);
+            return n;
             #else
             return 0;
             #endif
