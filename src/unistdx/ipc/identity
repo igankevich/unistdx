@@ -8,90 +8,90 @@
 
 namespace sys {
 
-	typedef ::pid_t pid_type;
-	/// Alias for \c uid_t.
-	typedef ::uid_t uid_type;
-	/// Alias for \c gid_t.
-	typedef ::gid_t gid_type;
+    typedef ::pid_t pid_type;
+    /// Alias for \c uid_t.
+    typedef ::uid_t uid_type;
+    /// Alias for \c gid_t.
+    typedef ::gid_t gid_type;
 
-	/// Superuser ID. Always returns 0.
-	inline constexpr uid_type
-	superuser() noexcept { return 0; }
+    /// Superuser ID. Always returns 0.
+    inline constexpr uid_type
+    superuser() noexcept { return 0; }
 
-	/// Superuser group ID. Always returns 0.
-	inline constexpr gid_type
-	supergroup() noexcept { return 0; }
+    /// Superuser group ID. Always returns 0.
+    inline constexpr gid_type
+    supergroup() noexcept { return 0; }
 
-	namespace this_process {
+    namespace this_process {
 
-		/**
-		\brief Get real UID of the current process.
-		\see \man{getuid,2}
-		*/
-		inline uid_type
-		user() noexcept { return ::getuid(); }
+        /**
+        \brief Get real UID of the current process.
+        \see \man{getuid,2}
+        */
+        inline uid_type
+        user() noexcept { return ::getuid(); }
 
-		/**
-		\brief Change process' user.
-		\throws bad_call
-		\see \man{setuid,2}
-		\arg Set both real and effective UID of the current process (if priviledged).
-		\arg Set only effective UID of the current process (if unpriviledged).
-		*/
-		inline void
-		set_user(uid_type rhs) {
-			UNISTDX_CHECK(::setuid(rhs));
-		}
+        /**
+        \brief Change process' user.
+        \throws bad_call
+        \see \man{setuid,2}
+        \arg Set both real and effective UID of the current process (if priviledged).
+        \arg Set only effective UID of the current process (if unpriviledged).
+        */
+        inline void
+        set_user(uid_type rhs) {
+            UNISTDX_CHECK(::setuid(rhs));
+        }
 
-		/**
-		\brief Get effective UID of the current process.
-		\see \man{geteuid,2}
-		*/
-		inline uid_type
-		effective_user() noexcept { return ::geteuid(); }
+        /**
+        \brief Get effective UID of the current process.
+        \see \man{geteuid,2}
+        */
+        inline uid_type
+        effective_user() noexcept { return ::geteuid(); }
 
-		/**
-		\brief Get real GID of the current process.
-		\see \man{getgid,2}
-		*/
-		inline gid_type
-		group() noexcept { return ::getgid(); }
+        /**
+        \brief Get real GID of the current process.
+        \see \man{getgid,2}
+        */
+        inline gid_type
+        group() noexcept { return ::getgid(); }
 
-		/**
-		\brief Change process' group.
-		\throws bad_call
-		\see \man{setgid,2}
-		\arg Set both real and effective GID of the current process (if priviledged).
-		\arg Set only effective GID of the current process (if unpriviledged).
-		*/
-		inline void
-		set_group(gid_type rhs) {
-			UNISTDX_CHECK(::setgid(rhs));
-		}
+        /**
+        \brief Change process' group.
+        \throws bad_call
+        \see \man{setgid,2}
+        \arg Set both real and effective GID of the current process (if priviledged).
+        \arg Set only effective GID of the current process (if unpriviledged).
+        */
+        inline void
+        set_group(gid_type rhs) {
+            UNISTDX_CHECK(::setgid(rhs));
+        }
 
-		/**
-		\brief Get effective GID of the current process.
-		\see \man{getegid,2}
-		*/
-		inline gid_type
-		effective_group() noexcept { return ::getegid(); }
+        /**
+        \brief Get effective GID of the current process.
+        \see \man{getegid,2}
+        */
+        inline gid_type
+        effective_group() noexcept { return ::getegid(); }
 
-		/**
-		\brief Set both UID and GID of the current process.
-		\date 2018-05-21
-		\author Ivan Gankevich
-		\ingroup ipc
-		\throws bad_call
-		\see \man{setuid,2}
-		\see \man{setgid,2}
-		\details
-		\arg Sets GID first.
-		\arg Reverts process UID and GID upon error.
-		*/
-		void
-		set_identity(uid_type uid, gid_type gid);
+        /**
+        \brief Set both UID and GID of the current process.
+        \date 2018-05-21
+        \author Ivan Gankevich
+        \ingroup ipc
+        \throws bad_call
+        \see \man{setuid,2}
+        \see \man{setgid,2}
+        \details
+        \arg Sets GID first.
+        \arg Reverts process UID and GID upon error.
+        */
+        void
+        set_identity(uid_type uid, gid_type gid);
 
-	}
+    }
 
 }
 

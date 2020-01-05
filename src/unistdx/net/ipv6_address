@@ -1,5 +1,5 @@
-#ifndef UNISTDX_NET_IPV6_ADDR
-#define UNISTDX_NET_IPV6_ADDR
+#ifndef UNISTDX_NET_IPV6_ADDRESS
+#define UNISTDX_NET_IPV6_ADDRESS
 
 #include <netinet/in.h>
 
@@ -14,355 +14,355 @@
 
 namespace sys {
 
-	typedef struct ::sockaddr sa_type;
-	/// IPv6 socket address type.
-	typedef struct ::sockaddr_in6 sockinet6_type;
-	/// IPv6 Internet address type.
-	typedef struct ::in6_addr inet6_type;
-	/// IPv6 address representation unsigned integer type.
-	typedef uint128_t addr6_type;
-	typedef ::in_port_t port_type;
-	typedef ::sa_family_t sa_family_type;
-	typedef unsigned int prefix_type;
+    typedef struct ::sockaddr sa_type;
+    /// IPv6 socket address type.
+    typedef struct ::sockaddr_in6 sockinet6_type;
+    /// IPv6 Internet address type.
+    typedef struct ::in6_addr inet6_type;
+    /// IPv6 address representation unsigned integer type.
+    typedef uint128_t addr6_type;
+    typedef ::in_port_t port_type;
+    typedef ::sa_family_t sa_family_type;
+    typedef unsigned int prefix_type;
 
-	union socket_address;
+    union socket_address;
 
-	/**
-	\brief IPv6 address class.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup net
-	*/
-	class ipv6_address {
+    /**
+    \brief IPv6 address class.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup net
+    */
+    class ipv6_address {
 
-	public:
-		/// Hextet type (2-byte unsigned integer).
-		typedef u16 hex_type;
-		/// Octet type (1-byte unsigned integer).
-		typedef u8 value_type;
-		/// Unsigned 16-byte integer type.
-		typedef addr6_type rep_type;
-		/// Pointer to octet.
-		typedef value_type* pointer;
-		/// Constant pointer to octet.
-		typedef const value_type* const_pointer;
-		/// Reference to octet.
-		typedef value_type& reference;
-		/// Constant reference to octet.
-		typedef const value_type& const_reference;
-		/// Iterator.
-		typedef pointer iterator;
-		/// Constant iterator.
-		typedef const_pointer const_iterator;
-		/// Alias to \link std::size_t\endlink.
-		typedef size_t size_type;
+    public:
+        /// Hextet type (2-byte unsigned integer).
+        typedef u16 hex_type;
+        /// Octet type (1-byte unsigned integer).
+        typedef u8 value_type;
+        /// Unsigned 16-byte integer type.
+        typedef addr6_type rep_type;
+        /// Pointer to octet.
+        typedef value_type* pointer;
+        /// Constant pointer to octet.
+        typedef const value_type* const_pointer;
+        /// Reference to octet.
+        typedef value_type& reference;
+        /// Constant reference to octet.
+        typedef const value_type& const_reference;
+        /// Iterator.
+        typedef pointer iterator;
+        /// Constant iterator.
+        typedef const_pointer const_iterator;
+        /// Alias to \link std::size_t\endlink.
+        typedef size_t size_type;
 
-	private:
-		union {
-			addr6_type _integer;
-			inet6_type _address;
-			hex_type _hextets[8];
-			value_type _octets[16];
-			char _bytes[16];
-		};
+    private:
+        union {
+            addr6_type _integer;
+            inet6_type _address;
+            hex_type _hextets[8];
+            value_type _octets[16];
+            char _bytes[16];
+        };
 
-	public:
+    public:
 
-		inline constexpr
-		ipv6_address() noexcept:
-		_address {} {}
+        inline constexpr
+        ipv6_address() noexcept:
+        _address {} {}
 
-		/// Copy-constructor.
-		inline constexpr
-		ipv6_address(const ipv6_address &rhs) noexcept:
-		_address(rhs._address) {}
+        /// Copy-constructor.
+        inline constexpr
+        ipv6_address(const ipv6_address &rhs) noexcept:
+        _address(rhs._address) {}
 
-		/// Construct IPv6 address from integer type.
-		inline constexpr explicit
-		ipv6_address(addr6_type rhs) noexcept:
-		_integer{rhs} {}
+        /// Construct IPv6 address from integer type.
+        inline constexpr explicit
+        ipv6_address(addr6_type rhs) noexcept:
+        _integer{rhs} {}
 
-		/// Construct IPv4 address from \c in6_addr system type.
-		inline constexpr explicit
-		ipv6_address(const inet6_type& rhs) noexcept:
-		_address(rhs) {}
+        /// Construct IPv4 address from \c in6_addr system type.
+        inline constexpr explicit
+        ipv6_address(const inet6_type& rhs) noexcept:
+        _address(rhs) {}
 
-		/// Construct IPv4 address manually specifying each hextet.
-		inline constexpr
-		ipv6_address(
-			hex_type h1,
-			hex_type h2,
-			hex_type h3,
-			hex_type h4,
-			hex_type h5,
-			hex_type h6,
-			hex_type h7,
-			hex_type h8
-		): _hextets{h1, h2, h3, h4, h5, h6, h7, h8} {}
+        /// Construct IPv4 address manually specifying each hextet.
+        inline constexpr
+        ipv6_address(
+            hex_type h1,
+            hex_type h2,
+            hex_type h3,
+            hex_type h4,
+            hex_type h5,
+            hex_type h6,
+            hex_type h7,
+            hex_type h8
+        ): _hextets{h1, h2, h3, h4, h5, h6, h7, h8} {}
 
-		/// Automatically cast to \c in6_addr system type.
-		inline constexpr
-		operator const inet6_type&() const {
-			return this->_address;
-		}
+        /// Automatically cast to \c in6_addr system type.
+        inline constexpr
+        operator const inet6_type&() const {
+            return this->_address;
+        }
 
-		/// Get integer representation of the address.
-		inline constexpr const addr6_type&
-		rep() const noexcept {
-			return this->_integer;
-		}
+        /// Get integer representation of the address.
+        inline constexpr const addr6_type&
+        rep() const noexcept {
+            return this->_integer;
+        }
 
-		/// Get address octet by index.
-		inline constexpr value_type
-		operator[](size_t i) const noexcept {
-			return this->_bytes[i];
-		}
+        /// Get address octet by index.
+        inline constexpr value_type
+        operator[](size_t i) const noexcept {
+            return this->_bytes[i];
+        }
 
-		/// Compare address integer representations.
-		inline constexpr bool
-		operator<(const ipv6_address& rhs) const {
-			return this->_integer < rhs._integer;
-		}
+        /// Compare address integer representations.
+        inline constexpr bool
+        operator<(const ipv6_address& rhs) const {
+            return this->_integer < rhs._integer;
+        }
 
-		/// \copydoc operator<
-		inline constexpr bool
-		operator==(const ipv6_address& rhs) const {
-			return this->_integer == rhs._integer;
-		}
+        /// \copydoc operator<
+        inline constexpr bool
+        operator==(const ipv6_address& rhs) const {
+            return this->_integer == rhs._integer;
+        }
 
-		/// \copydoc operator<
-		inline constexpr bool
-		operator!=(ipv6_address rhs) const noexcept {
-			return this->_integer != rhs._integer;
-		}
+        /// \copydoc operator<
+        inline constexpr bool
+        operator!=(ipv6_address rhs) const noexcept {
+            return this->_integer != rhs._integer;
+        }
 
-		/// Returns true if integer representations is non-nought.
-		inline constexpr explicit
-		operator bool() const {
-			return this->_integer != 0;
-		}
+        /// Returns true if integer representations is non-nought.
+        inline constexpr explicit
+        operator bool() const {
+            return this->_integer != 0;
+        }
 
-		/// Returns true if integer representations is nought.
-		inline constexpr bool
-		operator!() const {
-			return !this->operator bool();
-		}
+        /// Returns true if integer representations is nought.
+        inline constexpr bool
+        operator!() const {
+            return !this->operator bool();
+        }
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const ipv6_address& rhs);
+        friend std::ostream&
+        operator<<(std::ostream& out, const ipv6_address& rhs);
 
-		friend std::istream&
-		operator>>(std::istream& in, ipv6_address& rhs);
+        friend std::istream&
+        operator>>(std::istream& in, ipv6_address& rhs);
 
-		/// Put address in binary form.
-		inline friend bstream&
-		operator<<(bstream& out, const ipv6_address& rhs) {
-			return out.write(rhs._bytes, rhs.size());
-		}
+        /// Put address in binary form.
+        inline friend bstream&
+        operator<<(bstream& out, const ipv6_address& rhs) {
+            return out.write(rhs._bytes, rhs.size());
+        }
 
-		/// Get address in binary form.
-		inline friend bstream&
-		operator>>(bstream& in, ipv6_address& rhs) {
-			return in.read(rhs._bytes, rhs.size());
-		}
+        /// Get address in binary form.
+        inline friend bstream&
+        operator>>(bstream& in, ipv6_address& rhs) {
+            return in.read(rhs._bytes, rhs.size());
+        }
 
-		/// Return network prefix assuming that this address is network mask.
-		inline prefix_type
-		to_prefix() const noexcept {
-			return bit_count(this->_integer);
-		}
+        /// Return network prefix assuming that this address is network mask.
+        inline prefix_type
+        to_prefix() const noexcept {
+            return bit_count(this->_integer);
+        }
 
-		/// Create network mask from network prefix.
-		inline static ipv6_address
-	    from_prefix(prefix_type prefix) noexcept;
+        /// Create network mask from network prefix.
+        inline static ipv6_address
+        from_prefix(prefix_type prefix) noexcept;
 
-		/// Get pointer to the first octet.
-		inline pointer
-		data() noexcept {
-			return this->_octets;
-		}
+        /// Get pointer to the first octet.
+        inline pointer
+        data() noexcept {
+            return this->_octets;
+        }
 
-		/// Get pointer to the first octet.
-		inline const_pointer
-		data() const noexcept {
-			return this->_octets;
-		}
+        /// Get pointer to the first octet.
+        inline const_pointer
+        data() const noexcept {
+            return this->_octets;
+        }
 
-		/// Get iterator to the beginning of octet array.
-		inline iterator
-		begin() noexcept {
-			return this->data();
-		}
+        /// Get iterator to the beginning of octet array.
+        inline iterator
+        begin() noexcept {
+            return this->data();
+        }
 
-		/// Get iterator to the beginning of octet array.
-		inline const_iterator
-		begin() const noexcept {
-			return this->data();
-		}
+        /// Get iterator to the beginning of octet array.
+        inline const_iterator
+        begin() const noexcept {
+            return this->data();
+        }
 
-		/// Get the number of octets.
-		inline constexpr static size_type
-		size() noexcept {
-			return sizeof(_octets);
-		}
+        /// Get the number of octets.
+        inline constexpr static size_type
+        size() noexcept {
+            return sizeof(_octets);
+        }
 
-		/// Get iterator to the end of octet array.
-		inline iterator
-		end() noexcept {
-			return this->data() + this->size();
-		}
+        /// Get iterator to the end of octet array.
+        inline iterator
+        end() noexcept {
+            return this->data() + this->size();
+        }
 
-		/// Get iterator to the end of octet array.
-		inline const_iterator
-		end() const noexcept {
-			return this->data() + this->size();
-		}
+        /// Get iterator to the end of octet array.
+        inline const_iterator
+        end() const noexcept {
+            return this->data() + this->size();
+        }
 
-		/// Get first octet.
-		inline reference
-		front() noexcept {
-			return this->_octets[0];
-		}
+        /// Get first octet.
+        inline reference
+        front() noexcept {
+            return this->_octets[0];
+        }
 
-		/// Get first octet.
-		inline value_type
-		front() const noexcept {
-			return this->_octets[0];
-		}
+        /// Get first octet.
+        inline value_type
+        front() const noexcept {
+            return this->_octets[0];
+        }
 
-		/// Get last octet.
-		inline reference
-		back() noexcept {
-			return this->_octets[3];
-		}
+        /// Get last octet.
+        inline reference
+        back() noexcept {
+            return this->_octets[3];
+        }
 
-		/// Get last octet.
-		inline value_type
-		back() const noexcept {
-			return this->_octets[3];
-		}
+        /// Get last octet.
+        inline value_type
+        back() const noexcept {
+            return this->_octets[3];
+        }
 
-		/// Fill with noughts.
-		void
-		clear();
+        /// Fill with noughts.
+        void
+        clear();
 
-	private:
+    private:
 
-		template<class Q>
-		inline constexpr static
-		Q
-		position_helper(const Q& a, const Q& netmask) noexcept {
-			return a - (a & netmask);
-		}
+        template<class Q>
+        inline constexpr static
+        Q
+        position_helper(const Q& a, const Q& netmask) noexcept {
+            return a - (a & netmask);
+        }
 
-	public:
+    public:
 
-		/// Compute address position in the subnetwork specified by \p netmask.
-		inline constexpr addr6_type
-		position(const ipv6_address& netmask) const noexcept {
-			return position_helper(
-				to_host_format(rep()),
-				to_host_format(netmask.rep())
-			);
-		}
+        /// Compute address position in the subnetwork specified by \p netmask.
+        inline constexpr addr6_type
+        position(const ipv6_address& netmask) const noexcept {
+            return position_helper(
+                to_host_format(rep()),
+                to_host_format(netmask.rep())
+            );
+        }
 
-	private:
+    private:
 
-		static constexpr int
-		num_hextets() {
-			return sizeof(_hextets) / sizeof(hex_type);
-		}
+        static constexpr int
+        num_hextets() {
+            return sizeof(_hextets) / sizeof(hex_type);
+        }
 
-		static_assert(sizeof(_integer) == sizeof(_address), "bad ipv6_address size");
-		static_assert(sizeof(_integer) == sizeof(_hextets), "bad ipv6_address size");
-		static_assert(sizeof(_integer) == sizeof(_bytes), "bad ipv6_address size");
+        static_assert(sizeof(_integer) == sizeof(_address), "bad ipv6_address size");
+        static_assert(sizeof(_integer) == sizeof(_hextets), "bad ipv6_address size");
+        static_assert(sizeof(_integer) == sizeof(_bytes), "bad ipv6_address size");
 
-	};
+    };
 
-	/// Print textual representation of the address.
-	std::ostream&
-	operator<<(std::ostream& out, const ipv6_address& rhs);
+    /// Print textual representation of the address.
+    std::ostream&
+    operator<<(std::ostream& out, const ipv6_address& rhs);
 
-	/// Parse textual representation of the address.
-	std::istream&
-	operator>>(std::istream& in, ipv6_address& rhs);
+    /// Parse textual representation of the address.
+    std::istream&
+    operator>>(std::istream& in, ipv6_address& rhs);
 
-	/**
-	\brief
-	Specialisation of \link ipaddr_traits\endlink for \link ipv6_address\endlink.
-	*/
-	template<>
-	struct ipaddr_traits<ipv6_address> {
+    /**
+    \brief
+    Specialisation of \link ipaddr_traits\endlink for \link ipv6_address\endlink.
+    */
+    template<>
+    struct ipaddr_traits<ipv6_address> {
 
-		/// Octet type.
-		typedef ipv6_address::value_type value_type;
+        /// Octet type.
+        typedef ipv6_address::value_type value_type;
 
-		/// First octet of loopback address.
-		static constexpr const value_type loopback_first_octet = 0;
-		/// IP-address family.
-		static constexpr const sa_family_type family = AF_INET6;
+        /// First octet of loopback address.
+        static constexpr const value_type loopback_first_octet = 0;
+        /// IP-address family.
+        static constexpr const sa_family_type family = AF_INET6;
 
-		/// Localhost address.
-		inline static constexpr ipv6_address
-		localhost() noexcept {
-			return ipv6_address {0,0,0,0,0,0,0,1};
-		}
+        /// Localhost address.
+        inline static constexpr ipv6_address
+        localhost() noexcept {
+            return ipv6_address {0,0,0,0,0,0,0,1};
+        }
 
-		/// Loopback network mask.
-		inline static constexpr ipv6_address
-		loopback_mask() noexcept {
-			return widearea_mask();
-		}
+        /// Loopback network mask.
+        inline static constexpr ipv6_address
+        loopback_mask() noexcept {
+            return widearea_mask();
+        }
 
-		/// Wide area network mask.
-		inline static constexpr ipv6_address
-		widearea_mask() noexcept {
-			return ipv6_address {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
-		}
+        /// Wide area network mask.
+        inline static constexpr ipv6_address
+        widearea_mask() noexcept {
+            return ipv6_address {0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff};
+        }
 
-		/// Get IPv6 address from socket_address.
-		inline static constexpr ipv6_address
-		address(const socket_address& rhs) noexcept;
+        /// Get IPv6 address from socket_address.
+        inline static constexpr ipv6_address
+        address(const socket_address& rhs) noexcept;
 
-		/// Get IPv6 port from socket_address.
-		inline static constexpr port_type
-		port(const socket_address& rhs) noexcept;
+        /// Get IPv6 port from socket_address.
+        inline static constexpr port_type
+        port(const socket_address& rhs) noexcept;
 
-	};
+    };
 
-	ipv6_address
-	ipv6_address::from_prefix(prefix_type prefix) noexcept {
-		constexpr const size_t nbits = sizeof(addr6_type) *
-		                               std::numeric_limits<unsigned char>::digits;
-		return nbits == prefix
-		       ? ipaddr_traits<ipv6_address>::widearea_mask()
-			   : ipv6_address((addr6_type(1) << prefix) - addr6_type(1));
-	}
+    ipv6_address
+    ipv6_address::from_prefix(prefix_type prefix) noexcept {
+        constexpr const size_t nbits = sizeof(addr6_type) *
+                                       std::numeric_limits<unsigned char>::digits;
+        return nbits == prefix
+               ? ipaddr_traits<ipv6_address>::widearea_mask()
+               : ipv6_address((addr6_type(1) << prefix) - addr6_type(1));
+    }
 
 }
 
 namespace std {
 
-	/// Specialisation of \link std::hash\endlink for \link sys::ipv6_address\endlink.
-	template<>
-	struct hash<sys::ipv6_address>: public std::hash<sys::ipv6_address::rep_type> {
+    /// Specialisation of \link std::hash\endlink for \link sys::ipv6_address\endlink.
+    template<>
+    struct hash<sys::ipv6_address>: public std::hash<sys::ipv6_address::rep_type> {
 
-	private:
-		typedef std::hash<sys::ipv6_address::rep_type> base_type;
+    private:
+        typedef std::hash<sys::ipv6_address::rep_type> base_type;
 
-	public:
-		/// Hash function return value type.
-		typedef size_t result_type;
-		/// Hash function argument type.
-		typedef sys::ipv6_address argument_type;
+    public:
+        /// Hash function return value type.
+        typedef size_t result_type;
+        /// Hash function argument type.
+        typedef sys::ipv6_address argument_type;
 
-		/// Return hash of 16-byte integer that represents the address.
-		inline result_type
-		operator()(const argument_type& rhs) const noexcept {
-			return base_type::operator()(rhs.rep());
-		}
+        /// Return hash of 16-byte integer that represents the address.
+        inline result_type
+        operator()(const argument_type& rhs) const noexcept {
+            return base_type::operator()(rhs.rep());
+        }
 
-	};
+    };
 
 }
 

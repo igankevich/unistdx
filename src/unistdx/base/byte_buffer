@@ -8,167 +8,167 @@
 
 namespace sys {
 
-	/**
-	\brief
-	Byte buffer which uses direct memory allocation for maximum performance.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup container
-	\see \man{mmap,2}
-	\see \man{mremap,2}
-	\see \man{madvise,2}
-	\details
-	\arg Uses \man{mmap,2} and system calls to bypass memory allocators.
-	\arg Uses \man{mremap,2} to efficiently resize the buffer without copying.
-	\arg Uses \man{madvise,2} to optimise for sequential access and prevent core dumping.
-	*/
-	class byte_buffer {
+    /**
+    \brief
+    Byte buffer which uses direct memory allocation for maximum performance.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup container
+    \see \man{mmap,2}
+    \see \man{mremap,2}
+    \see \man{madvise,2}
+    \details
+    \arg Uses \man{mmap,2} and system calls to bypass memory allocators.
+    \arg Uses \man{mremap,2} to efficiently resize the buffer without copying.
+    \arg Uses \man{madvise,2} to optimise for sequential access and prevent core dumping.
+    */
+    class byte_buffer {
 
-	public:
-		/// Alias to \c char.
-		typedef char value_type;
-		/// Pointer to \c char.
-		typedef value_type* iterator;
-		/// Constant pointer to \c char.
-		typedef const value_type* const_iterator;
-		/// Alias to \link std::size_t\endlink.
-		typedef std::size_t size_type;
+    public:
+        /// Alias to \c char.
+        typedef char value_type;
+        /// Pointer to \c char.
+        typedef value_type* iterator;
+        /// Constant pointer to \c char.
+        typedef const value_type* const_iterator;
+        /// Alias to \link std::size_t\endlink.
+        typedef std::size_t size_type;
 
-	private:
-		value_type* _data = nullptr;
-		size_type _size = 0;
+    private:
+        value_type* _data = nullptr;
+        size_type _size = 0;
 
-	public:
+    public:
 
-		byte_buffer() = default;
+        byte_buffer() = default;
 
-		byte_buffer(const byte_buffer&) = delete;
+        byte_buffer(const byte_buffer&) = delete;
 
-		byte_buffer&
-		operator=(const byte_buffer&) = delete;
+        byte_buffer&
+        operator=(const byte_buffer&) = delete;
 
-		/// Move-constructor.
-		inline
-		byte_buffer(byte_buffer&& rhs):
-		_data(rhs._data),
-		_size(rhs._size) {
-			rhs._data = nullptr;
-		}
+        /// Move-constructor.
+        inline
+        byte_buffer(byte_buffer&& rhs):
+        _data(rhs._data),
+        _size(rhs._size) {
+            rhs._data = nullptr;
+        }
 
-		/**
-		\brief Construct byte buffer with size \p size.
-		\throws bad_call
-		\see \man{mmap,2}
-		\see \man{madvise,2}
-		\details
-		If \p size is nought, unusable buffer is created
-		and no memory is allocated.
-		*/
-		explicit
-		byte_buffer(size_type size);
+        /**
+        \brief Construct byte buffer with size \p size.
+        \throws bad_call
+        \see \man{mmap,2}
+        \see \man{madvise,2}
+        \details
+        If \p size is nought, unusable buffer is created
+        and no memory is allocated.
+        */
+        explicit
+        byte_buffer(size_type size);
 
-		~byte_buffer();
+        ~byte_buffer();
 
-		/// Get pointer to raw data.
-		inline iterator
-		data() noexcept {
-			return this->_data;
-		}
+        /// Get pointer to raw data.
+        inline iterator
+        data() noexcept {
+            return this->_data;
+        }
 
-		/// Get pointer to raw data.
-		inline const_iterator
-		data() const noexcept {
-			return this->_data;
-		}
+        /// Get pointer to raw data.
+        inline const_iterator
+        data() const noexcept {
+            return this->_data;
+        }
 
-		/// Get iterator to the beginning of the container.
-		inline iterator
-		begin() noexcept {
-			return this->_data;
-		}
+        /// Get iterator to the beginning of the container.
+        inline iterator
+        begin() noexcept {
+            return this->_data;
+        }
 
-		/// Get iterator to the beginning of the container.
-		inline const_iterator
-		begin() const noexcept {
-			return this->_data;
-		}
+        /// Get iterator to the beginning of the container.
+        inline const_iterator
+        begin() const noexcept {
+            return this->_data;
+        }
 
-		/// Get iterator to the end of the container.
-		inline iterator
-		end() noexcept {
-			return this->_data + this->_size;
-		}
+        /// Get iterator to the end of the container.
+        inline iterator
+        end() noexcept {
+            return this->_data + this->_size;
+        }
 
-		/// Get iterator to the end of the container.
-		inline const_iterator
-		end() const noexcept {
-			return this->_data + this->_size;
-		}
+        /// Get iterator to the end of the container.
+        inline const_iterator
+        end() const noexcept {
+            return this->_data + this->_size;
+        }
 
-		/// Get number of bytes in byte buffer.
-		inline size_type
-		size() const noexcept {
-			return this->_size;
-		}
+        /// Get number of bytes in byte buffer.
+        inline size_type
+        size() const noexcept {
+            return this->_size;
+        }
 
-		/// Check if the buffer is valid.
-		inline explicit
-		operator bool() const noexcept {
-			return this->_data;
-		}
+        /// Check if the buffer is valid.
+        inline explicit
+        operator bool() const noexcept {
+            return this->_data;
+        }
 
-		/// Check if the buffer is valid.
-		inline bool
-		operator!() const noexcept {
-			return !this->operator bool();
-		}
+        /// Check if the buffer is valid.
+        inline bool
+        operator!() const noexcept {
+            return !this->operator bool();
+        }
 
-		/**
-		\brief Resize the buffer preserving its contents.
-		\throws bad_call
-		\see \man{mremap,2}
-		\see \man{madvise,2}
-		*/
-		void
-		resize(size_type new_size);
+        /**
+        \brief Resize the buffer preserving its contents.
+        \throws bad_call
+        \see \man{mremap,2}
+        \see \man{madvise,2}
+        */
+        void
+        resize(size_type new_size);
 
-		/**
-		\brief Double the buffer size.
-		\throws std::length_error when maximum size is reached.
-		\throws bad_call when system error occurs
-		\see \man{mremap,2}
-		\see \man{madvise,2}
-		*/
-		inline void
-		grow() {
-			// LCOV_EXCL_START
-			if (this->max_size() / 2 < this->_size) {
-				throw std::length_error("byte_buffer size is too large");
-			}
-			// LCOV_EXCL_STOP
-			this->resize(this->_size*2);
-		}
+        /**
+        \brief Double the buffer size.
+        \throws std::length_error when maximum size is reached.
+        \throws bad_call when system error occurs
+        \see \man{mremap,2}
+        \see \man{madvise,2}
+        */
+        inline void
+        grow() {
+            // LCOV_EXCL_START
+            if (this->max_size() / 2 < this->_size) {
+                throw std::length_error("byte_buffer size is too large");
+            }
+            // LCOV_EXCL_STOP
+            this->resize(this->_size*2);
+        }
 
-		/// Returns maximum size a buffer may occupy (theoretical limit).
-		inline static size_type
-		max_size() noexcept {
-			return std::numeric_limits<size_type>::max();
-		}
+        /// Returns maximum size a buffer may occupy (theoretical limit).
+        inline static size_type
+        max_size() noexcept {
+            return std::numeric_limits<size_type>::max();
+        }
 
-		/// Swap with \p rhs.
-		inline void
-		swap(byte_buffer& rhs) noexcept {
-			std::swap(this->_data, rhs._data);
-			std::swap(this->_size, rhs._size);
-		}
+        /// Swap with \p rhs.
+        inline void
+        swap(byte_buffer& rhs) noexcept {
+            std::swap(this->_data, rhs._data);
+            std::swap(this->_size, rhs._size);
+        }
 
-	};
+    };
 
-	/// Overload of \link std::swap\endlink for \link byte_buffer\endlink.
-	inline void
-	swap(byte_buffer& lhs, byte_buffer& rhs) noexcept {
-		lhs.swap(rhs);
-	}
+    /// Overload of \link std::swap\endlink for \link byte_buffer\endlink.
+    inline void
+    swap(byte_buffer& lhs, byte_buffer& rhs) noexcept {
+        lhs.swap(rhs);
+    }
 
 }
 

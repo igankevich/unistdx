@@ -7,97 +7,97 @@
 
 namespace sys {
 
-	namespace bits {
+    namespace bits {
 
-		template<char C>
-		struct Const_char {
+        template<char C>
+        struct Const_char {
 
-			inline friend std::ostream&
-			operator<<(std::ostream& out, Const_char) {
-				return out << C;
-			}
+            inline friend std::ostream&
+            operator<<(std::ostream& out, Const_char) {
+                return out << C;
+            }
 
-			inline friend std::istream&
-			operator>>(std::istream& in, Const_char) {
-				if (in.get() != C) in.setstate(std::ios::failbit);
-				return in;
-			}
+            inline friend std::istream&
+            operator>>(std::istream& in, Const_char) {
+                if (in.get() != C) in.setstate(std::ios::failbit);
+                return in;
+            }
 
-		};
+        };
 
-		template<class Base, class Rep>
-		struct Num {
+        template<class Base, class Rep>
+        struct Num {
 
-			inline constexpr
-			Num():
-			n(0) {}
+            inline constexpr
+            Num():
+            n(0) {}
 
-			inline constexpr
-			Num(Base x):
-			n(x) {}
+            inline constexpr
+            Num(Base x):
+            n(x) {}
 
-			inline friend std::ostream&
-			operator<<(std::ostream& out, Num rhs) {
-				return out << rhs.n;
-			}
+            inline friend std::ostream&
+            operator<<(std::ostream& out, Num rhs) {
+                return out << rhs.n;
+            }
 
-			inline friend std::istream&
-			operator>>(std::istream& in, Num& rhs) {
-				Rep rep;
-				in >> rep;
-				if (rep > std::numeric_limits<Base>::max()) {
-					in.setstate(std::ios::failbit);
-				} else {
-					rhs.n = static_cast<Base>(rep);
-				}
-				return in;
-			}
+            inline friend std::istream&
+            operator>>(std::istream& in, Num& rhs) {
+                Rep rep;
+                in >> rep;
+                if (rep > std::numeric_limits<Base>::max()) {
+                    in.setstate(std::ios::failbit);
+                } else {
+                    rhs.n = static_cast<Base>(rep);
+                }
+                return in;
+            }
 
-			inline constexpr
-			operator Base() const {
-				return n;
-			}
+            inline constexpr
+            operator Base() const {
+                return n;
+            }
 
-			inline constexpr Base
-			rep() const {
-				return n;
-			}
+            inline constexpr Base
+            rep() const {
+                return n;
+            }
 
-		private:
-			Base n;
-		};
+        private:
+            Base n;
+        };
 
-		template<class Base, class Rep>
-		struct Number {
+        template<class Base, class Rep>
+        struct Number {
 
-			Base& _number;
+            Base& _number;
 
-			inline explicit
-			Number(Base& x): _number(x) {}
+            inline explicit
+            Number(Base& x): _number(x) {}
 
-			inline friend std::ostream&
-			operator<<(std::ostream& out, const Number& rhs) {
-				return out << static_cast<Rep>(rhs._number);
-			}
+            inline friend std::ostream&
+            operator<<(std::ostream& out, const Number& rhs) {
+                return out << static_cast<Rep>(rhs._number);
+            }
 
-			inline friend std::istream&
-			operator>>(std::istream& in, const Number& rhs) {
-				Rep rep;
-				in >> rep;
-				if (rep > std::numeric_limits<Base>::max()) {
-					in.setstate(std::ios::failbit);
-				} else {
-					rhs._number = static_cast<Base>(rep);
-				}
-				return in;
-			}
+            inline friend std::istream&
+            operator>>(std::istream& in, const Number& rhs) {
+                Rep rep;
+                in >> rep;
+                if (rep > std::numeric_limits<Base>::max()) {
+                    in.setstate(std::ios::failbit);
+                } else {
+                    rhs._number = static_cast<Base>(rep);
+                }
+                return in;
+            }
 
-		};
+        };
 
-		typedef Const_char<':'> Colon;
-		typedef Const_char<'.'> Dot;
+        typedef Const_char<':'> Colon;
+        typedef Const_char<'.'> Dot;
 
-	}
+    }
 
 }
 

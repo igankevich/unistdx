@@ -2,6 +2,5 @@
 
 int
 setgid(gid_t) noexcept {
-	return 0;
+    return 0;
 }
-

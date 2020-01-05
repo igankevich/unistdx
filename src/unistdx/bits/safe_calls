@@ -10,20 +10,20 @@
 
 namespace sys {
 
-	namespace bits {
+    namespace bits {
 
-		typedef std::mutex global_mutex_type;
-		typedef std::lock_guard<global_mutex_type> global_lock_type;
+        typedef std::mutex global_mutex_type;
+        typedef std::lock_guard<global_mutex_type> global_lock_type;
 
-		extern global_mutex_type fork_mutex;
+        extern global_mutex_type fork_mutex;
 
-		inline void
-		set_mandatory_flags(int fd) noexcept {
-			::fcntl(fd, F_SETFD, O_CLOEXEC);
-			::fcntl(fd, F_SETFL, O_NONBLOCK);
-		}
+        inline void
+        set_mandatory_flags(int fd) noexcept {
+            ::fcntl(fd, F_SETFD, O_CLOEXEC);
+            ::fcntl(fd, F_SETFL, O_NONBLOCK);
+        }
 
-	}
+    }
 
 }
 

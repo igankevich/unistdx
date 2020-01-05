@@ -1,5 +1,5 @@
-#ifndef UNISTDX_BITS_IFADDRS
-#define UNISTDX_BITS_IFADDRS
+#ifndef UNISTDX_BITS_INTERFACE_ADDRESSES
+#define UNISTDX_BITS_INTERFACE_ADDRESSES
 
 #include <unistdx/config>
 #if !defined(UNISTDX_HAVE_IFADDRS)
@@ -8,4 +8,3 @@
 #include <ifaddrs.h>
 
 #endif // vim:filetype=cpp
-

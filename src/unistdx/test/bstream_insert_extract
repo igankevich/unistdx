@@ -9,27 +9,27 @@
 
 namespace test {
 
-	template <class T>
-	inline void
-	bstream_insert_extract(const T& rhs) {
-		std::stringbuf buf;
-		sys::bstream str(&buf);
-		str << rhs;
-		T copy;
-		str >> copy;
-		EXPECT_EQ(rhs, copy);
-	}
+    template <class T>
+    inline void
+    bstream_insert_extract(const T& rhs) {
+        std::stringbuf buf;
+        sys::bstream str(&buf);
+        str << rhs;
+        T copy;
+        str >> copy;
+        EXPECT_EQ(rhs, copy);
+    }
 
-	template <class T>
-	inline void
-	bstream_insert_extract_fails(const T& rhs) {
-		std::stringbuf buf;
-		sys::bstream str(&buf);
-		str << rhs;
-		T copy;
-		str >> copy;
-		EXPECT_NE(rhs, copy);
-	}
+    template <class T>
+    inline void
+    bstream_insert_extract_fails(const T& rhs) {
+        std::stringbuf buf;
+        sys::bstream str(&buf);
+        str << rhs;
+        T copy;
+        str >> copy;
+        EXPECT_NE(rhs, copy);
+    }
 
 }
 

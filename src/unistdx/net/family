@@ -11,44 +11,44 @@
 
 namespace sys {
 
-	/// Socket address family type.
-	typedef ::sa_family_t sa_family_type;
+    /// Socket address family type.
+    typedef ::sa_family_t sa_family_type;
 
-	/// \brief Socket address families.
-	/// \ingroup net
-	enum struct family_type: sa_family_type {
-		/// Unspecified socket address family.
-		unspecified = AF_UNSPEC,
-		/// IPv4 socket address family.
-		inet = AF_INET,
-		/// IPv4 socket address family.
-		inet6 = AF_INET6,
-		/// UNIX domain socket address family.
-		/// \see \man{unix,7}
-		unix = AF_UNIX
-		#if defined(UNISTDX_HAVE_NETLINK)
-		,
-		/// Netlink socket address family.
-		/// \see \man{netlink,7}
-		netlink = AF_NETLINK
-		#endif
-	};
+    /// \brief Socket address families.
+    /// \ingroup net
+    enum struct family_type: sa_family_type {
+        /// Unspecified socket address family.
+        unspecified = AF_UNSPEC,
+        /// IPv4 socket address family.
+        inet = AF_INET,
+        /// IPv4 socket address family.
+        inet6 = AF_INET6,
+        /// UNIX domain socket address family.
+        /// \see \man{unix,7}
+        unix = AF_UNIX
+        #if defined(UNISTDX_HAVE_NETLINK)
+        ,
+        /// Netlink socket address family.
+        /// \see \man{netlink,7}
+        netlink = AF_NETLINK
+        #endif
+    };
 
-	/// Put socket address family in a portable way.
-	bstream&
-	operator<<(bstream& out, family_type rhs);
+    /// Put socket address family in a portable way.
+    bstream&
+    operator<<(bstream& out, family_type rhs);
 
-	/// Get socket address family in a portable way.
-	bstream&
-	operator>>(bstream& in, family_type& rhs);
+    /// Get socket address family in a portable way.
+    bstream&
+    operator>>(bstream& in, family_type& rhs);
 
-	/// Get family name.
-	const char*
-	to_string(family_type rhs);
+    /// Get family name.
+    const char*
+    to_string(family_type rhs);
 
-	/// Print family name for debugging.
-	std::ostream&
-	operator<<(std::ostream& out, const family_type& rhs);
+    /// Print family name for debugging.
+    std::ostream&
+    operator<<(std::ostream& out, const family_type& rhs);
 
 }
 

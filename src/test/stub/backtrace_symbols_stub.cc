@@ -2,5 +2,5 @@
 
 char**
 backtrace_symbols(void *const *, int) noexcept {
-	return nullptr;
+    return nullptr;
 }

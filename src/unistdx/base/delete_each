@@ -3,18 +3,18 @@
 
 namespace sys {
 
-	/**
-	Delete each object pointed by the elements between
-	iterators \p first and \p last.
-	*/
-	template<class It>
-	void
-	delete_each(It first, It last) {
-		while (first != last) {
-			delete *first;
-			++first;
-		}
-	}
+    /**
+    Delete each object pointed by the elements between
+    iterators \p first and \p last.
+    */
+    template<class It>
+    void
+    delete_each(It first, It last) {
+        while (first != last) {
+            delete *first;
+            ++first;
+        }
+    }
 
 }
 

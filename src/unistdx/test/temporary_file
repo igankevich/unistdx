@@ -1,5 +1,5 @@
-#ifndef UNISTDX_TEST_TMPFILE
-#define UNISTDX_TEST_TMPFILE
+#ifndef UNISTDX_TEST_TEMPORARY_FILE
+#define UNISTDX_TEST_TEMPORARY_FILE
 
 #include <unistd.h>
 
@@ -10,53 +10,53 @@
 
 namespace sys {
 
-	inline void
-	remove(const sys::path& rhs) {
-		UNISTDX_CHECK(::unlink(rhs));
-	}
+    inline void
+    remove(const sys::path& rhs) {
+        UNISTDX_CHECK(::unlink(rhs));
+    }
 
 }
 
 namespace test {
 
-	class temporary_file {
+    class temporary_file {
 
-	private:
-		sys::path _filename;
+    private:
+        sys::path _filename;
 
-	public:
+    public:
 
-		inline explicit
-		temporary_file(const char* filename):
-		temporary_file(sys::path(filename))
-		{}
+        inline explicit
+        temporary_file(const char* filename):
+        temporary_file(sys::path(filename))
+        {}
 
-		inline explicit
-		temporary_file(const sys::path& filename):
-		_filename(filename)
-		{
-			sys::fildes(filename, sys::open_flag::create, 0644);
-		}
+        inline explicit
+        temporary_file(const sys::path& filename):
+        _filename(filename)
+        {
+            sys::fildes(filename, sys::open_flag::create, 0644);
+        }
 
-		inline
-		~temporary_file() {
-			sys::remove(this->_filename);
-		}
+        inline
+        ~temporary_file() {
+            sys::remove(this->_filename);
+        }
 
-		inline const sys::path&
-		path() const noexcept {
-			return this->_filename;
-		}
+        inline const sys::path&
+        path() const noexcept {
+            return this->_filename;
+        }
 
-	};
+    };
 
 }
 
 
 #define UNISTDX_TMPFILE \
-	(::sys::path(std::string(__func__) + "_" + ::test::current_test_name() + "_file"))
+    (::sys::path(std::string(__func__) + "_" + ::test::current_test_name() + "_file"))
 
 #define UNISTDX_TMPFILE_OUT \
-	(::sys::path(std::string(__func__) + "_" + ::test::current_test_name() + "_file_out"))
+    (::sys::path(std::string(__func__) + "_" + ::test::current_test_name() + "_file_out"))
 
 #endif // vim:filetype=cpp

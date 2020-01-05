@@ -7,18 +7,18 @@
 
 namespace sys {
 
-	/**
-	\brief Input stream of system users.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup stream
-	\see user
-	\see user_iterator
-	\details
-	Useful to traverse all system users in conjunction with
-	\link user_iterator\endlink.
-	*/
-	class userstream {
+    /**
+    \brief Input stream of system users.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup stream
+    \see user
+    \see user_iterator
+    \details
+    Useful to traverse all system users in conjunction with
+    \link user_iterator\endlink.
+    */
+    class userstream {
 
     public:
         using iterator = basic_istream_iterator<userstream,user>;
@@ -28,24 +28,24 @@ namespace sys {
         using pointer = value_type*;
         using const_pointer = const value_type*;
 
-	private:
-		bool _end = false;
+    private:
+        bool _end = false;
 
-	public:
+    public:
 
-		inline userstream() { this->open(); }
-		inline ~userstream() { this->close(); }
+        inline userstream() { this->open(); }
+        inline ~userstream() { this->close(); }
 
-		UNISTDX_NO_COPY_AND_MOVE(userstream)
+        UNISTDX_NO_COPY_AND_MOVE(userstream)
 
-		/// Returns true if the end of stream is not reached.
-		inline explicit operator bool() const noexcept { return !this->_end; }
+        /// Returns true if the end of stream is not reached.
+        inline explicit operator bool() const noexcept { return !this->_end; }
 
-		/// Returns true if the end of stream is reached.
-		inline bool operator!() const noexcept { return !this->operator bool(); }
+        /// Returns true if the end of stream is reached.
+        inline bool operator!() const noexcept { return !this->operator bool(); }
 
-		/// Read the next user from the stream.
-		inline userstream& operator>>(reference rhs) {
+        /// Read the next user from the stream.
+        inline userstream& operator>>(reference rhs) {
             if (*this) {
                 if (auto u = ::getpwent()) { rhs = *u; }
                 else { this->_end = true; }
@@ -58,10 +58,10 @@ namespace sys {
         inline void open() { ::setpwent(); }
         inline void close() { ::endpwent(); }
 
-	};
+    };
 
-	/// Iterator for \link userstream\endlink.
-	using user_iterator = userstream::iterator;
+    /// Iterator for \link userstream\endlink.
+    using user_iterator = userstream::iterator;
 
 }
 

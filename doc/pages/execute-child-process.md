@@ -7,7 +7,7 @@ Russian locale.
 
 The above code is equivalent to running
 
-	env LANG=ru_RU.UTF-8 errno 42
+    env LANG=ru_RU.UTF-8 errno 42
 
 command in shell.
 

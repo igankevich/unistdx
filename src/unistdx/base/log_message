@@ -8,133 +8,133 @@
 
 namespace sys {
 
-	/**
-	\brief Write formatted log message.
-	\date 2018-05-22
-	\author Ivan Gankevich
-	\details
-	\arg The message is buffered, so it is safe to use this class
-	in multi-threaded programme.
-	\arg Message arguments are inserted using their output operators.
-	\arg Insertion location is determined by underscore, or \c spec character.
-	\arg Every message is prefixed by abstract name.
-	It can be object name, class name or any other identified that distinguishes
-	message origin.
-	\arg Message names are right-aligned which makes log look like chat, where
-	different subsystems talk to each other.
-	\arg Message is logged in destructor.
-	*/
-	class log_message {
+    /**
+    \brief Write formatted log message.
+    \date 2018-05-22
+    \author Ivan Gankevich
+    \details
+    \arg The message is buffered, so it is safe to use this class
+    in multi-threaded programme.
+    \arg Message arguments are inserted using their output operators.
+    \arg Insertion location is determined by underscore, or \c spec character.
+    \arg Every message is prefixed by abstract name.
+    It can be object name, class name or any other identified that distinguishes
+    message origin.
+    \arg Message names are right-aligned which makes log look like chat, where
+    different subsystems talk to each other.
+    \arg Message is logged in destructor.
+    */
+    class log_message {
 
-	private:
-		osysstream _str;
-		char _spec = '_';
+    private:
+        osysstream _str;
+        char _spec = '_';
 
-	public:
+    public:
 
-		/**
-		\brief Create log message.
-		\date 2018-05-22
-		\author Ivan Gankevich
-		\details
-		Create log message with name \p name, argument marker '_',
-		formatted text \p fmt, and arguments \p tokens, that will be
-		sent to standard error stream when destructor is called.
-		*/
-		template<class ... Args>
-		explicit
-		log_message(const char* name, const char* fmt, const Args& ... tokens):
-		log_message(name, '_', fmt, tokens ...)
-		{}
+        /**
+        \brief Create log message.
+        \date 2018-05-22
+        \author Ivan Gankevich
+        \details
+        Create log message with name \p name, argument marker '_',
+        formatted text \p fmt, and arguments \p tokens, that will be
+        sent to standard error stream when destructor is called.
+        */
+        template<class ... Args>
+        explicit
+        log_message(const char* name, const char* fmt, const Args& ... tokens):
+        log_message(name, '_', fmt, tokens ...)
+        {}
 
-		/**
-		\brief Create log message.
-		\date 2018-05-22
-		\author Ivan Gankevich
-		\details
-		Create log message with name \p name, argument marker \p spec,
-		formatted text \p fmt, and arguments \p tokens, that will be
-		sent to standard error stream when destructor is called.
-		*/
-		template<class ... Args>
-		explicit
-		log_message(
-			const char* name,
-			char spec,
-			const char* fmt,
-			const Args& ... tokens
-		):
-		_str(STDERR_FILENO, 256),
-		_spec(spec) {
-			assert(name != nullptr); // LCOV_EXCL_LINE
-			assert(fmt != nullptr); // LCOV_EXCL_LINE
-			this->write_name(name);
-			this->format_msg(fmt, tokens ...);
-		}
+        /**
+        \brief Create log message.
+        \date 2018-05-22
+        \author Ivan Gankevich
+        \details
+        Create log message with name \p name, argument marker \p spec,
+        formatted text \p fmt, and arguments \p tokens, that will be
+        sent to standard error stream when destructor is called.
+        */
+        template<class ... Args>
+        explicit
+        log_message(
+            const char* name,
+            char spec,
+            const char* fmt,
+            const Args& ... tokens
+        ):
+        _str(STDERR_FILENO, 256),
+        _spec(spec) {
+            assert(name != nullptr); // LCOV_EXCL_LINE
+            assert(fmt != nullptr); // LCOV_EXCL_LINE
+            this->write_name(name);
+            this->format_msg(fmt, tokens ...);
+        }
 
-		/**
-		\brief Create log message.
-		\date 2018-06-05
-		\author Ivan Gankevich
-		\details
-		Create log message with name \p name, argument marker \p spec,
-		that will be sent to standard error stream when destructor is called.
-		*/
-		template<class ... Args>
-		explicit
-		log_message(const char* name, char spec='_'):
-		_str(STDERR_FILENO, 256),
-		_spec(spec) {
-			assert(name != nullptr); // LCOV_EXCL_LINE
-			this->write_name(name);
-		}
+        /**
+        \brief Create log message.
+        \date 2018-06-05
+        \author Ivan Gankevich
+        \details
+        Create log message with name \p name, argument marker \p spec,
+        that will be sent to standard error stream when destructor is called.
+        */
+        template<class ... Args>
+        explicit
+        log_message(const char* name, char spec='_'):
+        _str(STDERR_FILENO, 256),
+        _spec(spec) {
+            assert(name != nullptr); // LCOV_EXCL_LINE
+            this->write_name(name);
+        }
 
-		/// Append newline character and flush the stream.
-		inline
-		~log_message() {
-			char ch = '\n';
-			this->_str.buf().sputn(&ch, 1);
-			this->_str.buf().pubflush();
-		}
+        /// Append newline character and flush the stream.
+        inline
+        ~log_message() {
+            char ch = '\n';
+            this->_str.buf().sputn(&ch, 1);
+            this->_str.buf().pubflush();
+        }
 
-		/// Access log message stream.
-		inline std::ostream&
-		out() noexcept {
-			return this->_str;
-		}
+        /// Access log message stream.
+        inline std::ostream&
+        out() noexcept {
+            return this->_str;
+        }
 
-	private:
+    private:
 
-		inline void
-		format_msg(const char* s) {
-			assert(s != nullptr); // LCOV_EXCL_LINE
-			this->_str << s;
-		}
+        inline void
+        format_msg(const char* s) {
+            assert(s != nullptr); // LCOV_EXCL_LINE
+            this->_str << s;
+        }
 
-		template<class T, class ... Args>
-		void
-		format_msg(const char* s, const T& value, const Args& ... args) {
-			assert(s != nullptr); // LCOV_EXCL_LINE
-			const char* olds = s;
-			while (*s && *s != this->_spec) {
-				++s;
-			}
-			this->_str.rdbuf()->sputn(olds, s - olds);
-			this->_str << value;
-			if (*s) {
-				this->format_msg(++s, args ...);
-			}
-		}
+        template<class T, class ... Args>
+        void
+        format_msg(const char* s, const T& value, const Args& ... args) {
+            assert(s != nullptr); // LCOV_EXCL_LINE
+            const char* olds = s;
+            while (*s && *s != this->_spec) {
+                ++s;
+            }
+            this->_str.rdbuf()->sputn(olds, s - olds);
+            this->_str << value;
+            if (*s) {
+                this->format_msg(++s, args ...);
+            }
+        }
 
-		inline void
-		write_name(const char* name) {
-			assert(name != nullptr); // LCOV_EXCL_LINE
-			this->_str.width(10);
-			this->_str.setf(std::ios::right, std::ios::adjustfield);
-			this->_str << name << ": ";
-		}
+        inline void
+        write_name(const char* name) {
+            assert(name != nullptr); // LCOV_EXCL_LINE
+            this->_str.width(10);
+            this->_str.setf(std::ios::right, std::ios::adjustfield);
+            this->_str << name << ": ";
+        }
 
-	};
+    };
 
 }
 

@@ -13,8 +13,8 @@ $lcov --capture --directory . --output-file $tmp.actual --quiet
 $lcov -a $tmp.initial -a $tmp.actual -o $tmp.total --quiet
 for pattern in /usr/include/\* /usr/local/include/\* \*test\*
 do
-	$lcov --remove $tmp.total "$pattern" --output-file $tmp.new --quiet
-	mv $tmp.new $tmp.total
+    $lcov --remove $tmp.total "$pattern" --output-file $tmp.new --quiet
+    mv $tmp.new $tmp.total
 done
 mv $tmp.total $tmp
 $lcov --summary $tmp

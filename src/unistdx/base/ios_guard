@@ -5,39 +5,39 @@
 
 namespace sys {
 
-	/**
-	\brief I/O stream state guard.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup guard
-	\details
-	Saves/restores \link std::ios_base\endlink flags and fill character upon
-	construction/destruction.
-	*/
-	class ios_guard {
+    /**
+    \brief I/O stream state guard.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup guard
+    \details
+    Saves/restores \link std::ios_base\endlink flags and fill character upon
+    construction/destruction.
+    */
+    class ios_guard {
 
-	private:
-		std::ios& _stream;
-		std::ios_base::fmtflags _oldf;
-		std::ios::char_type _oldfill;
+    private:
+        std::ios& _stream;
+        std::ios_base::fmtflags _oldf;
+        std::ios::char_type _oldfill;
 
-	public:
+    public:
 
-		/// Construct the guard from stream \p s.
-		inline explicit
-		ios_guard(std::ios& s):
-		_stream(s),
-		_oldf(s.flags()),
-		_oldfill(s.fill())
-		{}
+        /// Construct the guard from stream \p s.
+        inline explicit
+        ios_guard(std::ios& s):
+        _stream(s),
+        _oldf(s.flags()),
+        _oldfill(s.fill())
+        {}
 
-		inline
-		~ios_guard() {
-			this->_stream.setf(this->_oldf);
-			this->_stream.fill(this->_oldfill);
-		}
+        inline
+        ~ios_guard() {
+            this->_stream.setf(this->_oldf);
+            this->_stream.fill(this->_oldfill);
+        }
 
-	};
+    };
 
 }
 

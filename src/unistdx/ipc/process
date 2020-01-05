@@ -20,20 +20,20 @@
 
 namespace sys {
 
-	typedef ::pid_t pid_type;
+    typedef ::pid_t pid_type;
 
-	/**
-	\brief
-	Send signal \p s to process \p p.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\throw bad_call
-	\see \man{kill,2}
-	*/
-	inline void
-	send(signal s, pid_type p) {
-		UNISTDX_CHECK(::kill(p, signal_type(s)));
-	}
+    /**
+    \brief
+    Send signal \p s to process \p p.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \throw bad_call
+    \see \man{kill,2}
+    */
+    inline void
+    send(signal s, pid_type p) {
+        UNISTDX_CHECK(::kill(p, signal_type(s)));
+    }
 
     enum class unshare_flag: int {
         #if defined(UNISTDX_HAVE_CLONE_FILES)
@@ -68,102 +68,102 @@ namespace sys {
         #endif
     };
 
-	template <>
-	struct is_flag<unshare_flag>: public std::true_type {};
+    template <>
+    struct is_flag<unshare_flag>: public std::true_type {};
 
-	namespace this_process {
+    namespace this_process {
 
-		/**
-		\brief Get calling process ID.
-		\see \man{getpid,2}
-		*/
-		inline pid_type
-		id() noexcept { return ::getpid(); }
+        /**
+        \brief Get calling process ID.
+        \see \man{getpid,2}
+        */
+        inline pid_type
+        id() noexcept { return ::getpid(); }
 
-		/**
-		\brief Get calling process' parent ID.
-		\see \man{getppid,2}
-		*/
-		inline pid_type
-		parent_id() noexcept { return ::getppid(); }
+        /**
+        \brief Get calling process' parent ID.
+        \see \man{getppid,2}
+        */
+        inline pid_type
+        parent_id() noexcept { return ::getppid(); }
 
-		/**
-		\brief Fork child process preventing race conditions by
-		locking global fork mutex (if needed).
-		\throws bad_call
-		\see \man{fork,2}
-		\details
-		The mutex is not locked on systems supporting close-on-exec and
-		non-blocking file descriptor flags.
-		*/
-		inline pid_type
-		fork() {
-			#if defined(UNISTDX_FORK_MUTEX)
-			bits::global_lock_type lock(bits::fork_mutex);
-			#endif
-			pid_type ret;
-			UNISTDX_CHECK(ret = ::fork());
-			return ret;
-		}
+        /**
+        \brief Fork child process preventing race conditions by
+        locking global fork mutex (if needed).
+        \throws bad_call
+        \see \man{fork,2}
+        \details
+        The mutex is not locked on systems supporting close-on-exec and
+        non-blocking file descriptor flags.
+        */
+        inline pid_type
+        fork() {
+            #if defined(UNISTDX_FORK_MUTEX)
+            bits::global_lock_type lock(bits::fork_mutex);
+            #endif
+            pid_type ret;
+            UNISTDX_CHECK(ret = ::fork());
+            return ret;
+        }
 
-		/**
-		\brief
-		Send signal \p s to the current process.
-		\date 2018-05-21
-		\author Ivan Gankevich
-		\throws bad_call
-		\see \man{kill,2}
-		*/
-		inline void
-		send(signal s) {
-			UNISTDX_CHECK(::kill(::sys::this_process::id(), signal_type(s)));
-		}
+        /**
+        \brief
+        Send signal \p s to the current process.
+        \date 2018-05-21
+        \author Ivan Gankevich
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void
+        send(signal s) {
+            UNISTDX_CHECK(::kill(::sys::this_process::id(), signal_type(s)));
+        }
 
-		/**
-		\brief Set current process' working directory.
-		\date 2018-05-21
-		\author Ivan Gankevich
-		\throws bad_call
-		\see \man{chdir,2}
-		*/
-		inline void
-		workdir(const char* wd) {
-			UNISTDX_CHECK(::chdir(wd));
-		}
+        /**
+        \brief Set current process' working directory.
+        \date 2018-05-21
+        \author Ivan Gankevich
+        \throws bad_call
+        \see \man{chdir,2}
+        */
+        inline void
+        workdir(const char* wd) {
+            UNISTDX_CHECK(::chdir(wd));
+        }
 
-		/**
-		\brief Set calling process group ID.
-		\throws bad_call
-		\see \man{setpgid,2}
-		*/
-		inline void
-		set_group_id(pid_type rhs) {
-			UNISTDX_CHECK(::setpgid(::sys::this_process::id(), rhs));
-		}
+        /**
+        \brief Set calling process group ID.
+        \throws bad_call
+        \see \man{setpgid,2}
+        */
+        inline void
+        set_group_id(pid_type rhs) {
+            UNISTDX_CHECK(::setpgid(::sys::this_process::id(), rhs));
+        }
 
-		#if defined(UNISTDX_HAVE_PRCTL)
-		/**
-		\brief Set calling process name. Useful for debugging multi-threaded programmes.
-		\throws bad_call
-		\see \man{prctl,2}
-		*/
-		inline void
-		set_name(const char* name) {
-			UNISTDX_CHECK(::prctl(PR_SET_NAME, name));
-		}
+        #if defined(UNISTDX_HAVE_PRCTL)
+        /**
+        \brief Set calling process name. Useful for debugging multi-threaded programmes.
+        \throws bad_call
+        \see \man{prctl,2}
+        */
+        inline void
+        set_name(const char* name) {
+            UNISTDX_CHECK(::prctl(PR_SET_NAME, name));
+        }
 
-		/**
-		\brief Get calling process name.
-		\throws bad_call
-		\see \man{prctl,2}
-		*/
-		inline std::string
-		name() {
-			std::string nm(16, '\0');
-			UNISTDX_CHECK(::prctl(PR_GET_NAME, nm.data()));
-			return nm;
-		}
-		#endif
+        /**
+        \brief Get calling process name.
+        \throws bad_call
+        \see \man{prctl,2}
+        */
+        inline std::string
+        name() {
+            std::string nm(16, '\0');
+            UNISTDX_CHECK(::prctl(PR_GET_NAME, nm.data()));
+            return nm;
+        }
+        #endif
 
         #if defined(UNISTDX_HAVE_UNSHARE)
         inline void unshare(unshare_flag flags) {
@@ -171,290 +171,290 @@ namespace sys {
         }
         #endif
 
-	}
+    }
 
-	/**
-	\brief
-	Flags used by \man{waitid,2} system call.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc
-	*/
-	enum class wait_flags: int {
-		/// Process exited by calling \man{exit,2}.
-		exited = WEXITED,
-		/// Process execution was stopped by a signal.
-		stopped = WSTOPPED,
-		/**
-		Process execution was resumed with \link signal::resume\endlink signal.
-		*/
-		resumed = WCONTINUED,
-		/// Return immediately, do not wait for child process to exit.
-		non_blocking = WNOHANG
-	};
+    /**
+    \brief
+    Flags used by \man{waitid,2} system call.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc
+    */
+    enum class wait_flags: int {
+        /// Process exited by calling \man{exit,2}.
+        exited = WEXITED,
+        /// Process execution was stopped by a signal.
+        stopped = WSTOPPED,
+        /**
+        Process execution was resumed with \link signal::resume\endlink signal.
+        */
+        resumed = WCONTINUED,
+        /// Return immediately, do not wait for child process to exit.
+        non_blocking = WNOHANG
+    };
 
-	template <>
-	struct is_flag<wait_flags>: public std::true_type {};
+    template <>
+    struct is_flag<wait_flags>: public std::true_type {};
 
-	/**
-	\brief
-	Flags used by \man{clone,2} system call.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	*/
-	enum class process_flag: int {
-		fork
-		#if defined(UNISTDX_HAVE_CLONE)
-		, wait_for_exec = CLONE_VFORK
-		, new_process_namespace = CLONE_NEWPID
-		#endif
-	};
+    /**
+    \brief
+    Flags used by \man{clone,2} system call.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    */
+    enum class process_flag: int {
+        fork
+        #if defined(UNISTDX_HAVE_CLONE)
+        , wait_for_exec = CLONE_VFORK
+        , new_process_namespace = CLONE_NEWPID
+        #endif
+    };
 
-	template <>
-	struct is_flag<process_flag>: public std::true_type {};
+    template <>
+    struct is_flag<process_flag>: public std::true_type {};
 
-	/**
-	\brief
-	System process with \link std::thread\endlink interface.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc
-	*/
-	class process {
+    /**
+    \brief
+    System process with \link std::thread\endlink interface.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc
+    */
+    class process {
 
-	public:
+    public:
 
-		/**
-		\brief Construct new process by forking a child with \p f as main function.
-		\throws bad_call
-		\see \man{clone,2}
-		\see \man{fork,2}
-		*/
-		template<class F>
-		inline explicit
-		process(F f, process_flag pf=process_flag::fork) {
-			typedef bits::call_traits<decltype(f())> traits_type;
-			if (pf == process_flag::fork) {
-				this->_pid = this_process::fork();
-				if (this->_pid == 0) {
-					std::exit(traits_type::call(f));
-				}
-			#if defined(UNISTDX_HAVE_CLONE)
-			} else {
-				char stack[4096] = {0};
-				UNISTDX_CHECK(this->_pid = ::clone(
-					&traits_type::template child_main<F>,
-					stack + sizeof(stack),
-					static_cast<int>(pf) | SIGCHLD,
-					&f
-				));
-			#endif
-			}
-		}
+        /**
+        \brief Construct new process by forking a child with \p f as main function.
+        \throws bad_call
+        \see \man{clone,2}
+        \see \man{fork,2}
+        */
+        template<class F>
+        inline explicit
+        process(F f, process_flag pf=process_flag::fork) {
+            typedef bits::call_traits<decltype(f())> traits_type;
+            if (pf == process_flag::fork) {
+                this->_pid = this_process::fork();
+                if (this->_pid == 0) {
+                    std::exit(traits_type::call(f));
+                }
+            #if defined(UNISTDX_HAVE_CLONE)
+            } else {
+                char stack[4096] = {0};
+                UNISTDX_CHECK(this->_pid = ::clone(
+                    &traits_type::template child_main<F>,
+                    stack + sizeof(stack),
+                    static_cast<int>(pf) | SIGCHLD,
+                    &f
+                ));
+            #endif
+            }
+        }
 
-		/// Construct process by its ID.
-		inline explicit
-		process(pid_type rhs) noexcept:
-		_pid(rhs)
-		{}
+        /// Construct process by its ID.
+        inline explicit
+        process(pid_type rhs) noexcept:
+        _pid(rhs)
+        {}
 
-		inline process() = default;
-		process(const process&) = delete;
+        inline process() = default;
+        process(const process&) = delete;
 
-		/// Move-constructor.
-		inline
-		process(process&& rhs) noexcept:
-		_pid(rhs._pid)
-		{
-			rhs._pid = 0;
-		}
+        /// Move-constructor.
+        inline
+        process(process&& rhs) noexcept:
+        _pid(rhs._pid)
+        {
+            rhs._pid = 0;
+        }
 
-		/// Terminates the process, if any.
-		inline
-		~process() {
-			if (this->_pid > 0) {
-				this->do_kill(sys::signal::terminate);
-			}
-		}
+        /// Terminates the process, if any.
+        inline
+        ~process() {
+            if (this->_pid > 0) {
+                this->do_kill(sys::signal::terminate);
+            }
+        }
 
-		/// Move-assignment.
-		inline process&
-		operator=(process&& rhs) noexcept {
-			this->swap(rhs);
-			return *this;
-		}
+        /// Move-assignment.
+        inline process&
+        operator=(process&& rhs) noexcept {
+            this->swap(rhs);
+            return *this;
+        }
 
-		/**
-		Gracefully terminate the process by sending \link signal::terminate\endlink
-		signal.
-		\see \man{kill,2}
-		*/
-		inline void
-		terminate() {
-			this->send(sys::signal::terminate);
-		}
+        /**
+        Gracefully terminate the process by sending \link signal::terminate\endlink
+        signal.
+        \see \man{kill,2}
+        */
+        inline void
+        terminate() {
+            this->send(sys::signal::terminate);
+        }
 
-		/**
-		\brief
-		Forcibly terminate the process by sending \link signal::kill\endlink
-		signal.
-		\throws bad_call
-		\see \man{kill,2}
-		*/
-		inline void
-		kill() {
-			this->send(sys::signal::kill);
-		}
+        /**
+        \brief
+        Forcibly terminate the process by sending \link signal::kill\endlink
+        signal.
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void
+        kill() {
+            this->send(sys::signal::kill);
+        }
 
-		/**
-		\brief
-		Interrupt the process by sending \link signal::keyboard_interrupt\endlink
-		signal.
-		\throws bad_call
-		\see \man{kill,2}
-		*/
-		inline void
-		interrupt() {
-			this->send(sys::signal::keyboard_interrupt);
-		}
+        /**
+        \brief
+        Interrupt the process by sending \link signal::keyboard_interrupt\endlink
+        signal.
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void
+        interrupt() {
+            this->send(sys::signal::keyboard_interrupt);
+        }
 
-		/**
-		\brief
-		Interrupt the process by sending \link signal::hang_up\endlink signal.
-		\throws bad_call
-		\see \man{kill,2}
-		*/
-		inline void
-		hang_up() {
-			this->send(sys::signal::hang_up);
-		}
+        /**
+        \brief
+        Interrupt the process by sending \link signal::hang_up\endlink signal.
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void
+        hang_up() {
+            this->send(sys::signal::hang_up);
+        }
 
-		/**
-		\brief
-		Interrupt the process by sending \link signal::stop\endlink signal.
-		\throws bad_call
-		\see \man{kill,2}
-		*/
-		inline void
-		stop() {
-			this->send(sys::signal::stop);
-		}
+        /**
+        \brief
+        Interrupt the process by sending \link signal::stop\endlink signal.
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void
+        stop() {
+            this->send(sys::signal::stop);
+        }
 
-		/**
-		\brief
-		Interrupt the process by sending \link signal::resume\endlink signal.
-		\throws bad_call
-		\see \man{kill,2}
-		*/
-		inline void
-		resume() {
-			this->send(sys::signal::resume);
-		}
+        /**
+        \brief
+        Interrupt the process by sending \link signal::resume\endlink signal.
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void
+        resume() {
+            this->send(sys::signal::resume);
+        }
 
-		/**
-		\brief Send signal \p s to the process.
-		\throws bad_call
-		*/
-		inline void
-		send(sys::signal s) {
-			UNISTDX_CHECK(this->do_kill(s));
-		}
+        /**
+        \brief Send signal \p s to the process.
+        \throws bad_call
+        */
+        inline void
+        send(sys::signal s) {
+            UNISTDX_CHECK(this->do_kill(s));
+        }
 
-		/**
-		\brief Wait until process changes its state or terminates.
-		\throws bad_call if system error occurs, except
-		\c std::errc::interrupted
-		\see std::errc
-		\see \man{waitpid,2}
-		*/
-		inline sys::process_status
-		wait(wait_flags flags = wait_flags::exited) {
-			sys::siginfo_type info;
-			if (this->_pid > 0) {
-				UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
-				this->_pid = 0;
-			}
-			return sys::process_status(info);
-		}
+        /**
+        \brief Wait until process changes its state or terminates.
+        \throws bad_call if system error occurs, except
+        \c std::errc::interrupted
+        \see std::errc
+        \see \man{waitpid,2}
+        */
+        inline sys::process_status
+        wait(wait_flags flags = wait_flags::exited) {
+            sys::siginfo_type info;
+            if (this->_pid > 0) {
+                UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
+                this->_pid = 0;
+            }
+            return sys::process_status(info);
+        }
 
-		/// Check if process is alive by sending nought signal to it.
-		inline explicit
-		operator bool() const noexcept {
-			return this->_pid > 0 && do_kill(sys::signal(0)) != -1;
-		}
+        /// Check if process is alive by sending nought signal to it.
+        inline explicit
+        operator bool() const noexcept {
+            return this->_pid > 0 && do_kill(sys::signal(0)) != -1;
+        }
 
-		/// Check if process is alive by sending nought signal to it.
-		inline bool
-		operator !() const noexcept {
-			return !this->operator bool();
-		}
+        /// Check if process is alive by sending nought signal to it.
+        inline bool
+        operator !() const noexcept {
+            return !this->operator bool();
+        }
 
-		/// Swap with \p rhs.
-		inline void
-		swap(process& rhs) {
-			std::swap(this->_pid, rhs._pid);
-		}
+        /// Swap with \p rhs.
+        inline void
+        swap(process& rhs) {
+            std::swap(this->_pid, rhs._pid);
+        }
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const process& rhs);
+        friend std::ostream&
+        operator<<(std::ostream& out, const process& rhs);
 
-		/// Get process ID.
-		inline pid_type
-		id() const noexcept {
-			return this->_pid;
-		}
+        /// Get process ID.
+        inline pid_type
+        id() const noexcept {
+            return this->_pid;
+        }
 
-		/**
-		\brief Get process group ID.
-		\see \man{getpgid,2}
-		*/
-		inline pid_type
-		group_id() const noexcept {
-			return ::getpgid(this->_pid);
-		}
+        /**
+        \brief Get process group ID.
+        \see \man{getpgid,2}
+        */
+        inline pid_type
+        group_id() const noexcept {
+            return ::getpgid(this->_pid);
+        }
 
-		/**
-		\brief Set process group ID.
-		\throws bad_call
-		\see \man{setpgid,2}
-		*/
-		inline void
-		set_group_id(pid_type rhs) const {
-			UNISTDX_CHECK(::setpgid(this->_pid, rhs));
-		}
+        /**
+        \brief Set process group ID.
+        \throws bad_call
+        \see \man{setpgid,2}
+        */
+        inline void
+        set_group_id(pid_type rhs) const {
+            UNISTDX_CHECK(::setpgid(this->_pid, rhs));
+        }
 
-		/// Always returns true to be compatible with \link std::thread\endlink.
-		inline bool
-		joinable() {
-			return true;
-		}
+        /// Always returns true to be compatible with \link std::thread\endlink.
+        inline bool
+        joinable() {
+            return true;
+        }
 
-		/// \copydoc wait
-		inline void
-		join() {
-			this->wait();
-		}
+        /// \copydoc wait
+        inline void
+        join() {
+            this->wait();
+        }
 
-	private:
+    private:
 
-		inline int
-		do_kill(sys::signal sig) const noexcept {
-		   	return ::kill(_pid, signal_type(sig));
-		}
+        inline int
+        do_kill(sys::signal sig) const noexcept {
+               return ::kill(_pid, signal_type(sig));
+        }
 
-		pid_type _pid = 0;
+        pid_type _pid = 0;
 
-	};
+    };
 
-	/// Overload of \link std::swap\endlink for \link process\endlink.
-	inline void
-	swap(process& lhs, process& rhs) {
-		lhs.swap(rhs);
-	}
+    /// Overload of \link std::swap\endlink for \link process\endlink.
+    inline void
+    swap(process& lhs, process& rhs) {
+        lhs.swap(rhs);
+    }
 
-	/// Output process ID and process group ID.
-	std::ostream&
-	operator<<(std::ostream& out, const process& rhs);
+    /// Output process ID and process group ID.
+    std::ostream&
+    operator<<(std::ostream& out, const process& rhs);
 
 }
 

@@ -10,7 +10,7 @@ with error code and error location.
 \ingroup macros
 */
 #define UNISTDX_THROW_BAD_CALL() \
-	throw ::sys::bad_call(__FILE__, __LINE__, __func__)
+    throw ::sys::bad_call(__FILE__, __LINE__, __func__)
 
 /**
 \brief
@@ -20,9 +20,9 @@ with error code and error location.
 */
 #define UNISTDX_CHECK(func) \
 { \
-	if ((func) == -1) { \
-		throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
-	} \
+    if ((func) == -1) { \
+        throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+    } \
 }
 
 /**
@@ -33,9 +33,9 @@ with error code and error location.
 */
 #define UNISTDX_CHECK2(func, ret) \
 { \
-	if ((func) == (ret)) { \
-		throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
-	} \
+    if ((func) == (ret)) { \
+        throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+    } \
 }
 
 /**
@@ -47,12 +47,12 @@ or \c EINPROGRESS. In that case set \p func to 0.
 */
 #define UNISTDX_CHECK_IO(func) \
 { \
-	if (func == -1) { \
-		if (errno != EAGAIN && errno != EINPROGRESS) { \
-			throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
-		} \
-		func = 0; \
-	} \
+    if (func == -1) { \
+        if (errno != EAGAIN && errno != EINPROGRESS) { \
+            throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+        } \
+        func = 0; \
+    } \
 }
 
 #endif // vim:filetype=cpp

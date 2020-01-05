@@ -6,10 +6,10 @@
 #include <gtest/gtest.h>
 
 #define UNISTDX_EXPECT_ERROR(errcond, src) \
-	try { \
-		src; \
-	} catch (const ::sys::bad_call& err) { \
-		EXPECT_EQ(errcond, err.errc()); \
-	}
+    try { \
+        src; \
+    } catch (const ::sys::bad_call& err) { \
+        EXPECT_EQ(errcond, err.errc()); \
+    }
 
 #endif // vim:filetype=cpp

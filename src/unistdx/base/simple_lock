@@ -5,54 +5,54 @@
 
 namespace sys {
 
-	/**
-	\brief
-	A lock guard with \link lock\endlink and \link unlock\endlink
-	methods.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup guard
-	\tparam Mutex mutex type
-	*/
-	template<class Mutex>
-	class simple_lock {
+    /**
+    \brief
+    A lock guard with \link lock\endlink and \link unlock\endlink
+    methods.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup guard
+    \tparam Mutex mutex type
+    */
+    template<class Mutex>
+    class simple_lock {
 
-	public:
-		/// The type of mutex.
-		typedef Mutex mutex_type;
+    public:
+        /// The type of mutex.
+        typedef Mutex mutex_type;
 
-	private:
-		Mutex& _mtx;
+    private:
+        Mutex& _mtx;
 
-	public:
+    public:
 
-		/// Construct simple lock for mutex \p m and lock the mutex.
-		inline
-		simple_lock(mutex_type& m) noexcept:
-		_mtx(m)
-		{ this->lock(); }
+        /// Construct simple lock for mutex \p m and lock the mutex.
+        inline
+        simple_lock(mutex_type& m) noexcept:
+        _mtx(m)
+        { this->lock(); }
 
-		/// Destroy simple lock and unlock the mutex.
-		inline
-		~simple_lock() noexcept {
-			this->unlock();
-		}
+        /// Destroy simple lock and unlock the mutex.
+        inline
+        ~simple_lock() noexcept {
+            this->unlock();
+        }
 
-		/// Lock the mutex.
-		inline void
-		lock() noexcept {
-			this->_mtx.lock();
-		}
+        /// Lock the mutex.
+        inline void
+        lock() noexcept {
+            this->_mtx.lock();
+        }
 
-		/// Unlock the mutex.
-		inline void
-		unlock() noexcept {
-			this->_mtx.unlock();
-		}
+        /// Unlock the mutex.
+        inline void
+        unlock() noexcept {
+            this->_mtx.unlock();
+        }
 
-		UNISTDX_NO_COPY_AND_MOVE(simple_lock)
+        UNISTDX_NO_COPY_AND_MOVE(simple_lock)
 
-	};
+    };
 
 
 }

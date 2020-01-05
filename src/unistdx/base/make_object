@@ -5,45 +5,45 @@
 
 namespace sys {
 
-	/**
-	Make helper object for printing object fields
-	using format \c field1=value1,field2=value2.
-	*/
-	template<class ... Args>
-	bits::Field<Args...>
-	make_fields(const Args& ... args) {
-		return bits::Field<Args...>(args...);
-	}
+    /**
+    Make helper object for printing object fields
+    using format \c field1=value1,field2=value2.
+    */
+    template<class ... Args>
+    bits::Field<Args...>
+    make_fields(const Args& ... args) {
+        return bits::Field<Args...>(args...);
+    }
 
-	/**
-	Make helper object for printing object fields
-	using format <code>{field1=value1,field2=value2}</code>.
-	*/
-	template<class ... Args>
-	bits::Object<Args...>
-	make_object(const Args& ... args) {
-		return bits::Object<Args...>(args...);
-	}
+    /**
+    Make helper object for printing object fields
+    using format <code>{field1=value1,field2=value2}</code>.
+    */
+    template<class ... Args>
+    bits::Object<Args...>
+    make_object(const Args& ... args) {
+        return bits::Object<Args...>(args...);
+    }
 
-	/**
-	Make helper object for printing object fields
-	using format <code>func(field1=value1,field2=value2)</code>.
-	*/
-	template<class ... Args>
-	bits::Function<Args...>
-	make_func(const char* name, const Args& ... args) {
-		return bits::Function<Args...>(name, args...);
-	}
+    /**
+    Make helper object for printing object fields
+    using format <code>func(field1=value1,field2=value2)</code>.
+    */
+    template<class ... Args>
+    bits::Function<Args...>
+    make_func(const char* name, const Args& ... args) {
+        return bits::Function<Args...>(name, args...);
+    }
 
-	/**
-	Make helper object for printing object fields
-	using format <code>word1 word2 word3</code>.
-	*/
-	template<class ... Args>
-	bits::Sentence<Args...>
-	make_sentence(const Args& ... args) {
-		return bits::Sentence<Args...>(args...);
-	}
+    /**
+    Make helper object for printing object fields
+    using format <code>word1 word2 word3</code>.
+    */
+    template<class ... Args>
+    bits::Sentence<Args...>
+    make_sentence(const Args& ... args) {
+        return bits::Sentence<Args...>(args...);
+    }
 
 }
 

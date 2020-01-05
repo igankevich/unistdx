@@ -5,150 +5,150 @@
 
 namespace sys {
 
-	/**
-	\brief A pipe constructed with \man{pipe,2} system call.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup io wrapper
-	\see \man{pipe2,2}
-	*/
-	union pipe {
+    /**
+    \brief A pipe constructed with \man{pipe,2} system call.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup io wrapper
+    \see \man{pipe2,2}
+    */
+    union pipe {
 
-	private:
-		fildes _fds[2] = {};
-		fd_type _rawfds[2];
+    private:
+        fildes _fds[2] = {};
+        fd_type _rawfds[2];
 
-	public:
+    public:
 
-		/**
-		\brief Construct pipe with \man{pipe,2} system call.
-		\throws bad_call
-		\see \man{pipe2,2}
-		\details
-		Both file descriptors are in non-blocking mode
-		and have close-on-exec flag set.
-		*/
-		inline
-		pipe(): _fds {} { // LCOV_EXCL_LINE
-			this->open();
-		}
+        /**
+        \brief Construct pipe with \man{pipe,2} system call.
+        \throws bad_call
+        \see \man{pipe2,2}
+        \details
+        Both file descriptors are in non-blocking mode
+        and have close-on-exec flag set.
+        */
+        inline
+        pipe(): _fds {} { // LCOV_EXCL_LINE
+            this->open();
+        }
 
-		/// Move-constructor.
-		inline
-		pipe(pipe&& rhs) noexcept:
-		_fds {std::move(rhs._fds[0]), std::move(rhs._fds[1])}
-		{}
+        /// Move-constructor.
+        inline
+        pipe(pipe&& rhs) noexcept:
+        _fds {std::move(rhs._fds[0]), std::move(rhs._fds[1])}
+        {}
 
-		/// Construct pipe with existing file descriptors.
-		inline
-		pipe(fd_type in, fd_type out) noexcept:
-		_fds {sys::fildes(in), sys::fildes(out)}
-		{}
+        /// Construct pipe with existing file descriptors.
+        inline
+        pipe(fd_type in, fd_type out) noexcept:
+        _fds {sys::fildes(in), sys::fildes(out)}
+        {}
 
-		pipe(const pipe&) = delete;
+        pipe(const pipe&) = delete;
 
-		pipe&
-		operator=(const pipe&) = delete;
+        pipe&
+        operator=(const pipe&) = delete;
 
-		/// Move-assignment.
-		inline pipe&
-		operator=(pipe&& rhs) noexcept {
-			this->swap(rhs);
-			return *this;
-		}
+        /// Move-assignment.
+        inline pipe&
+        operator=(pipe&& rhs) noexcept {
+            this->swap(rhs);
+            return *this;
+        }
 
-		inline
-		~pipe() {}
+        inline
+        ~pipe() {}
 
-		/// Input file descriptor.
-		inline fildes&
-		in() noexcept {
-			return this->_fds[0];
-		}
+        /// Input file descriptor.
+        inline fildes&
+        in() noexcept {
+            return this->_fds[0];
+        }
 
-		/// Output file descriptor.
-		inline fildes&
-		out() noexcept {
-			return this->_fds[1];
-		}
+        /// Output file descriptor.
+        inline fildes&
+        out() noexcept {
+            return this->_fds[1];
+        }
 
-		/// Input file descriptor.
-		inline const fildes&
-		in() const noexcept {
-			return this->_fds[0];
-		}
+        /// Input file descriptor.
+        inline const fildes&
+        in() const noexcept {
+            return this->_fds[0];
+        }
 
-		/// Output file descriptor.
-		inline const fildes&
-		out() const noexcept {
-			return this->_fds[1];
-		}
+        /// Output file descriptor.
+        inline const fildes&
+        out() const noexcept {
+            return this->_fds[1];
+        }
 
-		/**
-		\brief Create pipe with \man{pipe,2} system call.
-		\throws bad_call
-		\see \man{pipe2,2}
-		*/
-		void open();
+        /**
+        \brief Create pipe with \man{pipe,2} system call.
+        \throws bad_call
+        \see \man{pipe2,2}
+        */
+        void open();
 
-		/**
-		\brief Close both pipe file descriptors.
-		\throws bad_call
-		\see \man{close,2}
-		*/
-		void close();
+        /**
+        \brief Close both pipe file descriptors.
+        \throws bad_call
+        \see \man{close,2}
+        */
+        void close();
 
-		/// Swap with \p rhs.
-		inline void
-		swap(pipe& rhs) noexcept {
-			sys::swap(this->_fds[0], rhs._fds[0]);
-			sys::swap(this->_fds[1], rhs._fds[1]);
-		}
+        /// Swap with \p rhs.
+        inline void
+        swap(pipe& rhs) noexcept {
+            sys::swap(this->_fds[0], rhs._fds[0]);
+            sys::swap(this->_fds[1], rhs._fds[1]);
+        }
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const pipe& rhs);
+        friend std::ostream&
+        operator<<(std::ostream& out, const pipe& rhs);
 
-		static_assert(sizeof(_fds) == sizeof(_rawfds), "bad sys::fildes size");
-	};
+        static_assert(sizeof(_fds) == sizeof(_rawfds), "bad sys::fildes size");
+    };
 
-	/// Overload of \link std::swap\endlink for \link pipe\endlink.
-	inline void
-	swap(pipe& lhs, pipe& rhs) noexcept {
-		lhs.swap(rhs);
-	}
+    /// Overload of \link std::swap\endlink for \link pipe\endlink.
+    inline void
+    swap(pipe& lhs, pipe& rhs) noexcept {
+        lhs.swap(rhs);
+    }
 
-	/// Print pipe input and output file descriptors for debugging.
-	std::ostream&
-	operator<<(std::ostream& out, const pipe& rhs);
+    /// Print pipe input and output file descriptors for debugging.
+    std::ostream&
+    operator<<(std::ostream& out, const pipe& rhs);
 
-	class splice {
+    class splice {
 
-	private:
-		unsigned int _flags = 0
-		#if defined(UNISTDX_HAVE_SPLICE_F_NONBLOCK)
-			| SPLICE_F_NONBLOCK
-		#endif
-		#if defined(UNISTDX_HAVE_SPLICE_F_MOVE)
-			| SPLICE_F_MOVE
-		#endif
-		;
+    private:
+        unsigned int _flags = 0
+        #if defined(UNISTDX_HAVE_SPLICE_F_NONBLOCK)
+            | SPLICE_F_NONBLOCK
+        #endif
+        #if defined(UNISTDX_HAVE_SPLICE_F_MOVE)
+            | SPLICE_F_MOVE
+        #endif
+        ;
 
-	public:
+    public:
 
-		ssize_t
-		operator()(fildes& in, fildes& out, size_t n);
+        ssize_t
+        operator()(fildes& in, fildes& out, size_t n);
 
-		inline ssize_t
-		operator()(fildes& in, pipe& out, size_t n) {
-			return this->operator()(in, out.out(), n);
-		}
+        inline ssize_t
+        operator()(fildes& in, pipe& out, size_t n) {
+            return this->operator()(in, out.out(), n);
+        }
 
-		inline ssize_t
-		operator()(pipe& in, fildes& out, size_t n) {
-			return this->operator()(in.in(), out, n);
-		}
+        inline ssize_t
+        operator()(pipe& in, fildes& out, size_t n) {
+            return this->operator()(in.in(), out, n);
+        }
 
-	};
+    };
 
 }
 

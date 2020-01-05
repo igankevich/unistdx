@@ -1,5 +1,5 @@
-#ifndef UNISTDX_FD_TYPE
-#define UNISTDX_FD_TYPE
+#ifndef UNISTDX_IO_FD_TYPE
+#define UNISTDX_IO_FD_TYPE
 
 #include <functional>
 #include <istream>
@@ -7,65 +7,65 @@
 
 namespace sys {
 
-	/**
-	\brief Wrapper for system file descriptor type (int).
-	\date 2018-10-21
-	\author Ivan Gankevich
-	\ingroup wrapper
-	*/
-	struct fd_type {
+    /**
+    \brief Wrapper for system file descriptor type (int).
+    \date 2018-10-21
+    \author Ivan Gankevich
+    \ingroup wrapper
+    */
+    struct fd_type {
 
-		/// File descriptor.
-		int fd = -1;
+        /// File descriptor.
+        int fd = -1;
 
-		/// Construct file descriptor with value -1.
-		inline constexpr
-		fd_type() {}
+        /// Construct file descriptor with value -1.
+        inline constexpr
+        fd_type() {}
 
-		/// Construct file descriptor with value \p fd.
-		inline constexpr
-		fd_type(int fd): fd{fd} {}
+        /// Construct file descriptor with value \p fd.
+        inline constexpr
+        fd_type(int fd): fd{fd} {}
 
-		/// Implicitly cast to integer.
-		inline constexpr
-		operator int() const noexcept {
-			return this->fd;
-		}
+        /// Implicitly cast to integer.
+        inline constexpr
+        operator int() const noexcept {
+            return this->fd;
+        }
 
-	};
+    };
 
-	static_assert(sizeof(fd_type) == sizeof(int), "bad fd_type");
+    static_assert(sizeof(fd_type) == sizeof(int), "bad fd_type");
 
-	inline std::ostream&
-	operator<<(std::ostream& out, const fd_type& rhs) {
-		return out << rhs.fd;
-	}
+    inline std::ostream&
+    operator<<(std::ostream& out, const fd_type& rhs) {
+        return out << rhs.fd;
+    }
 
-	inline std::istream&
-	operator>>(std::istream& in, fd_type& rhs) {
-		return in >> rhs.fd;
-	}
+    inline std::istream&
+    operator>>(std::istream& in, fd_type& rhs) {
+        return in >> rhs.fd;
+    }
 
 }
 
 namespace std {
 
-	/// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
-	template<>
-	struct hash<::sys::fd_type>: public hash<int> {
+    /// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
+    template<>
+    struct hash<::sys::fd_type>: public hash<int> {
 
-		/// Hash function return value type.
-		typedef size_t result_type;
-		/// Hash function argument type.
-		typedef ::sys::fd_type argument_type;
+        /// Hash function return value type.
+        typedef size_t result_type;
+        /// Hash function argument type.
+        typedef ::sys::fd_type argument_type;
 
-		/// Compute hash as hash for int.
-		inline result_type
-		operator()(const argument_type& rhs) const noexcept {
-			return this->hash<int>::operator()(rhs);
-		}
+        /// Compute hash as hash for int.
+        inline result_type
+        operator()(const argument_type& rhs) const noexcept {
+            return this->hash<int>::operator()(rhs);
+        }
 
-	};
+    };
 
 }
 

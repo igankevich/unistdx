@@ -3,18 +3,18 @@
 
 namespace sys {
 
-	/**
-	\brief Print calling process function call trace (if supported).
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\see \man{backtrace,3}
-	\details
-	\arg Does not throw exceptions.
-	\arg Handles memory allocation errors, degrading output
-	to mangled function names.
-	*/
-	void
-	backtrace(int fd) noexcept;
+    /**
+    \brief Print calling process function call trace (if supported).
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \see \man{backtrace,3}
+    \details
+    \arg Does not throw exceptions.
+    \arg Handles memory allocation errors, degrading output
+    to mangled function names.
+    */
+    void
+    backtrace(int fd) noexcept;
 
 }
 

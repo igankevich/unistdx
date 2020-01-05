@@ -1,5 +1,5 @@
-#ifndef UNISTDX_NET_IFADDRS
-#define UNISTDX_NET_IFADDRS
+#ifndef UNISTDX_NET_INTERFACE_ADDRESSES
+#define UNISTDX_NET_INTERFACE_ADDRESSES
 
 #include <unistdx/bits/interface_addresses>
 #include <unistdx/net/interface_address>
@@ -7,107 +7,107 @@
 
 namespace sys {
 
-	/**
-	\brief Interface addresses container.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup wrapper container
-	\see \man{getifaddrs,3}
-	\deprecated Use netlink wrappers instead
-	\details
-	Wraps \c ifaddrs system type.
-	*/
-	class interface_addresses {
+    /**
+    \brief Interface addresses container.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup wrapper container
+    \see \man{getifaddrs,3}
+    \deprecated Use netlink wrappers instead
+    \details
+    Wraps \c ifaddrs system type.
+    */
+    class interface_addresses {
 
-	public:
-		/// Alias to \c ifaddrs system type.
-		typedef ifaddrs_type value_type;
-		/// Iterator type.
-		typedef interface_address_iterator iterator;
-		/// Size type.
-		typedef std::size_t size_type;
+    public:
+        /// Alias to \c ifaddrs system type.
+        typedef ifaddrs_type value_type;
+        /// Iterator type.
+        typedef interface_address_iterator iterator;
+        /// Size type.
+        typedef std::size_t size_type;
 
-	private:
-		ifaddrs_type* _addrs = nullptr;
+    private:
+        ifaddrs_type* _addrs = nullptr;
 
-	public:
+    public:
 
-		/**
-		\brief Calls \man{getifaddrs,3}.
-		\throws bad_call
-		\see \man{getifaddrs,3}
-		*/
-		inline
-		interface_addresses() {
-			UNISTDX_CHECK(::getifaddrs(&this->_addrs));
-		}
+        /**
+        \brief Calls \man{getifaddrs,3}.
+        \throws bad_call
+        \see \man{getifaddrs,3}
+        */
+        inline
+        interface_addresses() {
+            UNISTDX_CHECK(::getifaddrs(&this->_addrs));
+        }
 
-		/**
-		\brief Calls \man{freeifaddrs,3}.
-		\see \man{freeifaddrs,3}
-		*/
-		inline
-		~interface_addresses() noexcept {
-			if (this->_addrs) {
-				::freeifaddrs(this->_addrs);
-			}
-		}
+        /**
+        \brief Calls \man{freeifaddrs,3}.
+        \see \man{freeifaddrs,3}
+        */
+        inline
+        ~interface_addresses() noexcept {
+            if (this->_addrs) {
+                ::freeifaddrs(this->_addrs);
+            }
+        }
 
-		/// Get iterator to the first address.
-		inline iterator
-		begin() noexcept {
-			return iterator(this->_addrs);
-		}
+        /// Get iterator to the first address.
+        inline iterator
+        begin() noexcept {
+            return iterator(this->_addrs);
+        }
 
-		/// Get iterator to the first address.
-		inline iterator
-		begin() const noexcept {
-			return iterator(this->_addrs);
-		}
+        /// Get iterator to the first address.
+        inline iterator
+        begin() const noexcept {
+            return iterator(this->_addrs);
+        }
 
-		/// Get iterator to the end of the address sequence.
-		inline static constexpr iterator
-		end() noexcept {
-			return iterator();
-		}
+        /// Get iterator to the end of the address sequence.
+        inline static constexpr iterator
+        end() noexcept {
+            return iterator();
+        }
 
-		/// Returns true, if there are no addresses in the list.
-		inline bool
-		empty() const noexcept {
-			return this->begin() == this->end();
-		}
+        /// Returns true, if there are no addresses in the list.
+        inline bool
+        empty() const noexcept {
+            return this->begin() == this->end();
+        }
 
-		/// Compute the number of addresses in the list.
-		inline size_type
-		size() const noexcept {
-			return std::distance(this->begin(), this->end());
-		}
+        /// Compute the number of addresses in the list.
+        inline size_type
+        size() const noexcept {
+            return std::distance(this->begin(), this->end());
+        }
 
-	};
+    };
 
-	/**
-	\brief Copy all addresses of the specified type to \p result.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\deprecated Use netlink wrappers instead
-	*/
-	template<class Addr, class Result>
-	inline void
-	enumerate_ifaddrs(Result result) {
-		typedef typename sys::ipaddr_traits<Addr> traits_type;
-		sys::interface_addresses addrs;
-		std::for_each(
-			addrs.begin(), addrs.end(),
-			[&result] (const sys::ifaddrs_type& rhs) {
-				if (rhs.ifa_addr && rhs.ifa_addr->sa_family == traits_type::family) {
-					const Addr addr(*rhs.ifa_addr);
-					const Addr netmask(*rhs.ifa_netmask);
-					*result = interface_address<Addr>(addr, netmask);
-					++result;
-				}
-			}
-		);
-	}
+    /**
+    \brief Copy all addresses of the specified type to \p result.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \deprecated Use netlink wrappers instead
+    */
+    template<class Addr, class Result>
+    inline void
+    enumerate_ifaddrs(Result result) {
+        typedef typename sys::ipaddr_traits<Addr> traits_type;
+        sys::interface_addresses addrs;
+        std::for_each(
+            addrs.begin(), addrs.end(),
+            [&result] (const sys::ifaddrs_type& rhs) {
+                if (rhs.ifa_addr && rhs.ifa_addr->sa_family == traits_type::family) {
+                    const Addr addr(*rhs.ifa_addr);
+                    const Addr netmask(*rhs.ifa_netmask);
+                    *result = interface_address<Addr>(addr, netmask);
+                    ++result;
+                }
+            }
+        );
+    }
 
 }
 

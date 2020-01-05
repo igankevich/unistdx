@@ -12,137 +12,137 @@
 
 namespace test {
 
-	inline std::string
-	current_test_name() {
-		std::string name =
-			::testing::UnitTest::GetInstance()->current_test_info()->name();
-		std::transform(
-			name.begin(),
-			name.end(),
-			name.begin(),
-			[] (char ch) {
-				return ch == '/' ? '_' : ch;
-			}
-		);
-		return name;
-	}
+    inline std::string
+    current_test_name() {
+        std::string name =
+            ::testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::transform(
+            name.begin(),
+            name.end(),
+            name.begin(),
+            [] (char ch) {
+                return ch == '/' ? '_' : ch;
+            }
+        );
+        return name;
+    }
 
-	template <class It>
-	inline void
-	generate_files(sys::path subdir, It first, It last) {
-		std::ofstream str;
-		while (first != last) {
-			str.open(sys::path(subdir, *first));
-			str.close();
-			str.clear();
-			++first;
-		}
-	}
+    template <class It>
+    inline void
+    generate_files(sys::path subdir, It first, It last) {
+        std::ofstream str;
+        while (first != last) {
+            str.open(sys::path(subdir, *first));
+            str.close();
+            str.clear();
+            ++first;
+        }
+    }
 
-	class tmpdir {
+    class tmpdir {
 
-		sys::path _dirname;
+        sys::path _dirname;
 
-	public:
+    public:
 
-		inline
-		tmpdir():
-		tmpdir(current_test_name().data()) {}
+        inline
+        tmpdir():
+        tmpdir(current_test_name().data()) {}
 
-		inline explicit
-		tmpdir(const char* dirname):
-		tmpdir(sys::path(dirname)) {}
+        inline explicit
+        tmpdir(const char* dirname):
+        tmpdir(sys::path(dirname)) {}
 
-		inline explicit
-		tmpdir(sys::path dirname):
-		_dirname(dirname) {
-			mkdir();
-		}
+        inline explicit
+        tmpdir(sys::path dirname):
+        _dirname(dirname) {
+            mkdir();
+        }
 
-		template <class It>
-		inline
-		tmpdir(It first, It last):
-		tmpdir(current_test_name(), first, last) {}
+        template <class It>
+        inline
+        tmpdir(It first, It last):
+        tmpdir(current_test_name(), first, last) {}
 
-		template <class It>
-		inline
-		tmpdir(const char* dirname, It first, It last):
-		tmpdir(sys::path(dirname), first, last) {}
+        template <class It>
+        inline
+        tmpdir(const char* dirname, It first, It last):
+        tmpdir(sys::path(dirname), first, last) {}
 
-		template <class It>
-		inline
-		tmpdir(sys::path dirname, It first, It last):
-		_dirname(dirname) {
-			mkdir();
-			generate_files(_dirname, first, last);
-		}
+        template <class It>
+        inline
+        tmpdir(sys::path dirname, It first, It last):
+        _dirname(dirname) {
+            mkdir();
+            generate_files(_dirname, first, last);
+        }
 
-		inline
-		~tmpdir() {
-			this->clear();
-		}
+        inline
+        ~tmpdir() {
+            this->clear();
+        }
 
-		inline void
-		clear() {
-			sys::process child{
-				[this] () {
-					sys::argstream args;
-					args.append("rm");
-					args.append("-rf");
-					args.append(this->_dirname);
-					sys::this_process::execute_command(args);
-					return 0;
-				}
-			};
-			sys::process_status status = child.wait();
-			ASSERT_TRUE(status.exited());
-			ASSERT_EQ(0, status.exit_code());
-		}
+        inline void
+        clear() {
+            sys::process child{
+                [this] () {
+                    sys::argstream args;
+                    args.append("rm");
+                    args.append("-rf");
+                    args.append(this->_dirname);
+                    sys::this_process::execute_command(args);
+                    return 0;
+                }
+            };
+            sys::process_status status = child.wait();
+            ASSERT_TRUE(status.exited());
+            ASSERT_EQ(0, status.exit_code());
+        }
 
-		inline void
-		list() {
-			sys::process child{
-				[this] () {
-					sys::argstream args;
-					args.append("find");
-					args.append(this->_dirname);
-					sys::this_process::execute_command(args);
-					return 0;
-				}
-			};
-			sys::process_status status = child.wait();
-			ASSERT_TRUE(status.exited());
-			ASSERT_EQ(0, status.exit_code());
-		}
+        inline void
+        list() {
+            sys::process child{
+                [this] () {
+                    sys::argstream args;
+                    args.append("find");
+                    args.append(this->_dirname);
+                    sys::this_process::execute_command(args);
+                    return 0;
+                }
+            };
+            sys::process_status status = child.wait();
+            ASSERT_TRUE(status.exited());
+            ASSERT_EQ(0, status.exit_code());
+        }
 
-		inline
-		operator const sys::path&() const noexcept {
-			return _dirname;
-		}
+        inline
+        operator const sys::path&() const noexcept {
+            return _dirname;
+        }
 
-		inline const sys::path&
-		name() const noexcept {
-			return _dirname;
-		}
+        inline const sys::path&
+        name() const noexcept {
+            return _dirname;
+        }
 
-	private:
+    private:
 
-		inline void
-		mkdir() {
-			::mkdir(_dirname, 0755);
-		}
+        inline void
+        mkdir() {
+            ::mkdir(_dirname, 0755);
+        }
 
-	};
+    };
 
-	inline sys::path
-	unique_path(const char* func, const char* suffix) {
-		std::stringstream str;
-		str << func << '_';
-		str << current_test_name() << '_';
-		str << sys::this_process::id() << '_';
-		str << suffix;
-		return sys::path(str.str());
-	}
+    inline sys::path
+    unique_path(const char* func, const char* suffix) {
+        std::stringstream str;
+        str << func << '_';
+        str << current_test_name() << '_';
+        str << sys::this_process::id() << '_';
+        str << suffix;
+        return sys::path(str.str());
+    }
 
 }
 

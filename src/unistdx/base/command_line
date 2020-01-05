@@ -1,5 +1,5 @@
-#ifndef UNISTDX_BASE_CMDLINE
-#define UNISTDX_BASE_CMDLINE
+#ifndef UNISTDX_BASE_COMMAND_LINE
+#define UNISTDX_BASE_COMMAND_LINE
 
 #include <functional>
 #include <sstream>
@@ -8,128 +8,128 @@
 
 namespace sys {
 
-	/**
-	\brief Invalid command line argument error.
-	\ingroup exception
-	*/
-	class bad_argument: public std::exception {
+    /**
+    \brief Invalid command line argument error.
+    \ingroup exception
+    */
+    class bad_argument: public std::exception {
 
-	private:
-		const char* _arg;
+    private:
+        const char* _arg;
 
-	public:
+    public:
 
-		/// Construct error object for command line argument \p arg.
-		inline explicit
-		bad_argument(const char* arg):
-		std::exception(),
-		_arg(arg)
-		{}
+        /// Construct error object for command line argument \p arg.
+        inline explicit
+        bad_argument(const char* arg):
+        std::exception(),
+        _arg(arg)
+        {}
 
-		/// Error message.
-		const char*
-		what() const noexcept override {
-			return "invalid argument";
-		}
+        /// Error message.
+        const char*
+        what() const noexcept override {
+            return "invalid argument";
+        }
 
-		/// Command line argument name.
-		inline const char*
-		argument() const noexcept {
-			return this->_arg;
-		}
+        /// Command line argument name.
+        inline const char*
+        argument() const noexcept {
+            return this->_arg;
+        }
 
-	};
+    };
 
-	/**
-	\brief
-	Command line argument encoded as \c key=value pair.
-	\date 2018-05-22
-	\author Ivan Gankevich
-	*/
-	template <class T>
-	class key_value {
+    /**
+    \brief
+    Command line argument encoded as \c key=value pair.
+    \date 2018-05-22
+    \author Ivan Gankevich
+    */
+    template <class T>
+    class key_value {
 
-	public:
-		/// Alias to \link std::string\endlink.
-		typedef std::string key_type;
+    public:
+        /// Alias to \link std::string\endlink.
+        typedef std::string key_type;
 
-	private:
-		key_type _key;
-		T& _value;
+    private:
+        key_type _key;
+        T& _value;
 
-	public:
+    public:
 
-		/**
-		Construct key-value pair with key \p key and reference to value \p value.
-		*/
-		inline
-		key_value(const key_type& key, T& value):
-		_key(key),
-		_value(value)
-		{}
+        /**
+        Construct key-value pair with key \p key and reference to value \p value.
+        */
+        inline
+        key_value(const key_type& key, T& value):
+        _key(key),
+        _value(value)
+        {}
 
-		/// Parse command line argument as key-value pair.
-		inline bool
-		operator()(int, const std::string& arg) {
-			bool success = false;
-			std::string::size_type eq_pos = arg.find('=');
-			if (eq_pos != std::string::npos) {
-				if (arg.compare(0, eq_pos, this->_key) == 0) {
-					std::stringstream in(arg.substr(eq_pos+1));
-					in >> this->_value;
-					success = !in.fail();
-				}
-			}
-			return success;
-		}
+        /// Parse command line argument as key-value pair.
+        inline bool
+        operator()(int, const std::string& arg) {
+            bool success = false;
+            std::string::size_type eq_pos = arg.find('=');
+            if (eq_pos != std::string::npos) {
+                if (arg.compare(0, eq_pos, this->_key) == 0) {
+                    std::stringstream in(arg.substr(eq_pos+1));
+                    in >> this->_value;
+                    success = !in.fail();
+                }
+            }
+            return success;
+        }
 
-	};
+    };
 
-	/// Helper function to construct key-value pair.
-	template <class T>
-	key_value<T>
-	make_key_value(const std::string& key, T& value) {
-		return key_value<T>(key, value);
-	}
+    /// Helper function to construct key-value pair.
+    template <class T>
+    key_value<T>
+    make_key_value(const std::string& key, T& value) {
+        return key_value<T>(key, value);
+    }
 
-	/**
-	\brief Ignores nought command line argument, which usually
-	equals executable name.
-	\details Fails on all other arguments.
-	*/
-	struct ignore_first_argument {
-		/// \copydoc ignore_first_argument
-		inline bool
-		operator()(int pos, const std::string&) {
-			return pos == 0;
-		}
-	};
+    /**
+    \brief Ignores nought command line argument, which usually
+    equals executable name.
+    \details Fails on all other arguments.
+    */
+    struct ignore_first_argument {
+        /// \copydoc ignore_first_argument
+        inline bool
+        operator()(int pos, const std::string&) {
+            return pos == 0;
+        }
+    };
 
-	/// Function that parses command line argument.
-	typedef std::function<bool (int,const std::string&)>
-	    input_operator_type;
+    /// Function that parses command line argument.
+    typedef std::function<bool (int,const std::string&)>
+        input_operator_type;
 
-	/**
-	Parse command line arguments \p argv using provided \p input_operators.
-	*/
-	void
-	parse_arguments(
-		int argc,
-		const char* argv[],
-		input_operator_type* input_operators
-	);
+    /**
+    Parse command line arguments \p argv using provided \p input_operators.
+    */
+    void
+    parse_arguments(
+        int argc,
+        const char* argv[],
+        input_operator_type* input_operators
+    );
 
-	/**
-	Parse command line arguments \p argv using provided \p input_operators.
-	*/
-	inline void
-	parse_arguments(
-		int argc,
-		char* argv[],
-		input_operator_type* input_operators
-	) {
-		parse_arguments(argc, const_cast<const char**>(argv), input_operators);
-	}
+    /**
+    Parse command line arguments \p argv using provided \p input_operators.
+    */
+    inline void
+    parse_arguments(
+        int argc,
+        char* argv[],
+        input_operator_type* input_operators
+    ) {
+        parse_arguments(argc, const_cast<const char**>(argv), input_operators);
+    }
 
 }
 

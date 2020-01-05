@@ -8,70 +8,70 @@
 
 namespace sys {
 
-	/**
-	\brief
-	Output stream for standard file descriptors
-	that uses \link basic_fildesbuf\endlink as stream buffer.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup stream io
-	\arg The stream is designed to be used with standard file descriptors 0, 1, 2.
-	\arg Underlying file descriptor is not closed or flushed in stream destructor.
-	*/
-	class osysstream:
-		public std::basic_ostream<char,std::char_traits<char> > {
+    /**
+    \brief
+    Output stream for standard file descriptors
+    that uses \link basic_fildesbuf\endlink as stream buffer.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup stream io
+    \arg The stream is designed to be used with standard file descriptors 0, 1, 2.
+    \arg Underlying file descriptor is not closed or flushed in stream destructor.
+    */
+    class osysstream:
+        public std::basic_ostream<char,std::char_traits<char> > {
 
-	private:
-		typedef char Ch;
-		typedef std::char_traits<char> Tr;
-		typedef std::basic_ostream<Ch,Tr> base_type;
+    private:
+        typedef char Ch;
+        typedef std::char_traits<char> Tr;
+        typedef std::basic_ostream<Ch,Tr> base_type;
 
-	public:
-		using typename base_type::char_type;
-		using typename base_type::traits_type;
-		using typename base_type::int_type;
-		using typename base_type::pos_type;
-		using typename base_type::off_type;
+    public:
+        using typename base_type::char_type;
+        using typename base_type::traits_type;
+        using typename base_type::int_type;
+        using typename base_type::pos_type;
+        using typename base_type::off_type;
 
-	private:
-		typedef basic_fildesbuf<Ch,Tr,fd_type> fildesbuf_type;
+    private:
+        typedef basic_fildesbuf<Ch,Tr,fd_type> fildesbuf_type;
 
-	private:
-		fildesbuf_type _buf;
+    private:
+        fildesbuf_type _buf;
 
-	public:
+    public:
 
-		inline
-		osysstream():
-		base_type(nullptr) {
-			this->init(&this->_buf);
-		}
+        inline
+        osysstream():
+        base_type(nullptr) {
+            this->init(&this->_buf);
+        }
 
-		/**
-		Construct output stream with file descriptor \p fd and buffer size \p psize.
-		*/
-		inline explicit
-		osysstream(fd_type fd, size_t psize):
-		base_type(nullptr),
-		_buf(std::move(fd), 0, psize) {
-			this->init(&this->_buf);
-		}
+        /**
+        Construct output stream with file descriptor \p fd and buffer size \p psize.
+        */
+        inline explicit
+        osysstream(fd_type fd, size_t psize):
+        base_type(nullptr),
+        _buf(std::move(fd), 0, psize) {
+            this->init(&this->_buf);
+        }
 
-		~osysstream() = default;
+        ~osysstream() = default;
 
-		/// Get stream buffer.
-		inline fildesbuf_type&
-		buf() noexcept {
-			return this->_buf;
-		}
+        /// Get stream buffer.
+        inline fildesbuf_type&
+        buf() noexcept {
+            return this->_buf;
+        }
 
-		/// Get stream buffer.
-		inline const fildesbuf_type&
-		buf() const noexcept {
-			return this->_buf;
-		}
+        /// Get stream buffer.
+        inline const fildesbuf_type&
+        buf() const noexcept {
+            return this->_buf;
+        }
 
-	};
+    };
 
 }
 

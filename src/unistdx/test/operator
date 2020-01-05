@@ -8,50 +8,50 @@
 
 namespace test {
 
-	template<class T>
-	void
-	io_operators(const T& expected) {
-		T actual;
-		std::stringstream s;
-		EXPECT_TRUE(s.good());
-		s << expected;
-		EXPECT_TRUE(s.good());
-		s >> actual;
-		EXPECT_FALSE(s.fail());
-		EXPECT_EQ(expected, actual);
-	}
+    template<class T>
+    void
+    io_operators(const T& expected) {
+        T actual;
+        std::stringstream s;
+        EXPECT_TRUE(s.good());
+        s << expected;
+        EXPECT_TRUE(s.good());
+        s >> actual;
+        EXPECT_FALSE(s.fail());
+        EXPECT_EQ(expected, actual);
+    }
 
-	template <class T>
-	inline std::string
-	stream_insert(const T& obj) {
-		std::stringstream str;
-		str << obj;
-		return str.str();
-	}
+    template <class T>
+    inline std::string
+    stream_insert(const T& obj) {
+        std::stringstream str;
+        str << obj;
+        return str.str();
+    }
 
-	template <class T>
-	inline void
-	stream_insert_equals(const char* s, const T& obj) {
-		EXPECT_EQ(s, stream_insert<T>(obj));
-	}
+    template <class T>
+    inline void
+    stream_insert_equals(const char* s, const T& obj) {
+        EXPECT_EQ(s, stream_insert<T>(obj));
+    }
 
-	template <class T>
-	inline void
-	stream_insert_contains(const char* s, const T& obj) {
-		std::string str = stream_insert<T>(obj);
-		EXPECT_TRUE(str.find(s) != std::string::npos)
-			<< "string=" << str;
-	}
+    template <class T>
+    inline void
+    stream_insert_contains(const char* s, const T& obj) {
+        std::string str = stream_insert<T>(obj);
+        EXPECT_TRUE(str.find(s) != std::string::npos)
+            << "string=" << str;
+    }
 
-	template <class T>
-	inline void
-	stream_insert_starts_with(const char* s, const T& obj) {
-		typedef std::string::traits_type traits_type;
-		EXPECT_EQ(
-			0,
-			stream_insert<T>(obj).compare(0, traits_type::length(s), s)
-		);
-	}
+    template <class T>
+    inline void
+    stream_insert_starts_with(const char* s, const T& obj) {
+        typedef std::string::traits_type traits_type;
+        EXPECT_EQ(
+            0,
+            stream_insert<T>(obj).compare(0, traits_type::length(s), s)
+        );
+    }
 
 }
 

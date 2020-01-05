@@ -6,49 +6,49 @@
 
 namespace sys {
 
-	/**
-	\brief Returns true if this archiecture uses network byte order (little-endian).
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup net
-	\details Compile-time constant expression.
-	*/
-	inline constexpr bool
-	is_network_byte_order() noexcept {
-		#if defined(UNISTDX_BIG_ENDIAN)
-		return true;
-		#else
-		return false;
-		#endif
-	}
+    /**
+    \brief Returns true if this archiecture uses network byte order (little-endian).
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup net
+    \details Compile-time constant expression.
+    */
+    inline constexpr bool
+    is_network_byte_order() noexcept {
+        #if defined(UNISTDX_BIG_ENDIAN)
+        return true;
+        #else
+        return false;
+        #endif
+    }
 
-	/**
-	\brief
-	Converts binary representation of \p n in native byte order
-	to network byte order if needed.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup net
-	*/
-	template<class T>
-	inline constexpr T
-	to_network_format(T n) noexcept {
-		return is_network_byte_order() ? n : byte_swap<T>(n);
-	}
+    /**
+    \brief
+    Converts binary representation of \p n in native byte order
+    to network byte order if needed.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup net
+    */
+    template<class T>
+    inline constexpr T
+    to_network_format(T n) noexcept {
+        return is_network_byte_order() ? n : byte_swap<T>(n);
+    }
 
-	/**
-	\brief
-	Converts binary representation of \p n in network byte order
-	to native byte order if needed.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup net
-	*/
-	template<class T>
-	inline constexpr T
-	to_host_format(T n) noexcept {
-		return is_network_byte_order() ? n : byte_swap<T>(n);
-	}
+    /**
+    \brief
+    Converts binary representation of \p n in network byte order
+    to native byte order if needed.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup net
+    */
+    template<class T>
+    inline constexpr T
+    to_host_format(T n) noexcept {
+        return is_network_byte_order() ? n : byte_swap<T>(n);
+    }
 
 }
 

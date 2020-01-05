@@ -6,42 +6,42 @@
 
 namespace sys {
 
-	/**
-	\brief
-	Make directories recursively.
-	\date 2018-04-25
-	\author Ivan Gankevich
-	\ingroup fs
-	\throws bad_call
-	\param[in] dir path, components of which are created
-	\param[in] m file mode of directories to be created
-	\param[in] offset character offset in path name to start
-	creating directories from
-	\see \man{mkdir,2}
-	\details Create directories assuming all path components that come
-	before \p offset characters from the beginning of \p dir exist.
-	*/
-	void
-	mkdirs(path dir, file_mode m=0755, path::size_type offset=1);
+    /**
+    \brief
+    Make directories recursively.
+    \date 2018-04-25
+    \author Ivan Gankevich
+    \ingroup fs
+    \throws bad_call
+    \param[in] dir path, components of which are created
+    \param[in] m file mode of directories to be created
+    \param[in] offset character offset in path name to start
+    creating directories from
+    \see \man{mkdir,2}
+    \details Create directories assuming all path components that come
+    before \p offset characters from the beginning of \p dir exist.
+    */
+    void
+    mkdirs(path dir, file_mode m=0755, path::size_type offset=1);
 
-	/**
-	\brief
-	Make directories recursively.
-	\date 2018-04-25
-	\author Ivan Gankevich
-	\ingroup fs
-	\throws bad_call
-	\param[in] root path, relative to which directories are created
-	\param[in] relative_path path, components of which are created
-	\param[in] m file mode of directories to be created
-	\see \man{mkdir,2}
-	\details Create directories relative to \p root assuming that
-	the root exists.
-	*/
-	inline void
-	mkdirs(const path& root, const path& relative_path, file_mode m=0755) {
-		::sys::mkdirs(path(root, relative_path), m, root.size());
-	}
+    /**
+    \brief
+    Make directories recursively.
+    \date 2018-04-25
+    \author Ivan Gankevich
+    \ingroup fs
+    \throws bad_call
+    \param[in] root path, relative to which directories are created
+    \param[in] relative_path path, components of which are created
+    \param[in] m file mode of directories to be created
+    \see \man{mkdir,2}
+    \details Create directories relative to \p root assuming that
+    the root exists.
+    */
+    inline void
+    mkdirs(const path& root, const path& relative_path, file_mode m=0755) {
+        ::sys::mkdirs(path(root, relative_path), m, root.size());
+    }
 
 }
 

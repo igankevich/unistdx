@@ -20,471 +20,471 @@
 
 namespace sys {
 
-	namespace bits {
-
-		template <class T, class Message>
-		inline T*
-		routing_attributes_ptr(Message* m) noexcept {
-			return reinterpret_cast<T*>(
-				reinterpret_cast<char*>(m) + NLMSG_ALIGN(sizeof(Message))
-			);
-		}
-
-		template <class T, class Message>
-		inline const T*
-		routing_attributes_ptr(const Message* m) noexcept {
-			return reinterpret_cast<const T*>(
-				reinterpret_cast<const char*>(m) + NLMSG_ALIGN(sizeof(Message))
-			);
-		}
-
-	}
-
-	/// \brief Netlink message flags.
-	/// \ingroup net
-	enum class netlink_message_flags: u16 {
-		request = NLM_F_REQUEST,
-		multipart = NLM_F_MULTI,
-		acknowledge = NLM_F_ACK,
-		echo = NLM_F_ECHO,
-		dump_inconsistent = NLM_F_DUMP_INTR,
-		dump_filtered = NLM_F_DUMP_FILTERED,
-		root = NLM_F_ROOT,
-		all_matching = NLM_F_MATCH,
-		atomic = NLM_F_ATOMIC,
-		dump = NLM_F_DUMP
-	};
-
-	template <>
-	struct is_flag<netlink_message_flags>: public std::true_type {};
-
-	/// \brief Netlink message types.
-	/// \ingroup net
-	enum class netlink_message_type: u16 {
-		/// Message is to be ignored.
-		noop = NLMSG_NOOP,
-		/// Message is an error and its payload is \c nlmsgerr system structure.
-		error = NLMSG_ERROR,
-		/// Message is the last part of multipart message.
-		done = NLMSG_DONE,
-		/// Message data was lost due to buffer overrun.
-		overrun = NLMSG_OVERRUN
-	};
-
-	/**
-	\brief Netlink message header.
-	\date 2018-05-24
-	\author Ivan Gankevich
-	\ingroup wrapper net
-	\details
-	A wrapper around \c nlmsghdr system type
-	(see \man{netlink,7}).
-	*/
-	class netlink_header: public ::nlmsghdr {
-
-	public:
-
-		/// Length of message with header.
-		inline u32
-		length() const noexcept {
-			return this->nlmsg_len;
-		}
-
-		/// Set the length of the message with header.
-		inline void
-		length(u32 rhs) noexcept {
-			this->nlmsg_len = rhs;
-		}
-
-		/// Payload type
-		inline netlink_message_type
-		type() const noexcept {
-			return netlink_message_type(this->nlmsg_type);
-		}
-
-		/// Additional flags.
-		inline u16
-		flags() const noexcept {
-			return this->nlmsg_flags;
-		}
-
-		/// Set additional flags.
-		inline void
-		flags(u16 rhs) noexcept {
-			this->nlmsg_flags = rhs;
-		}
-
-		/// Set additional flags.
-		inline void
-		flags(netlink_message_flags rhs) noexcept {
-			this->nlmsg_flags = static_cast<u16>(rhs);
-		}
-
-		/// Message sequence number.
-		inline u32
-		sequence() const noexcept {
-			return this->nlmsg_seq;
-		}
-
-		/// Sender port identifier.
-		inline u32
-		port() const noexcept {
-			return this->nlmsg_pid;
-		}
-
-		/// Returns true, if message type is to be ignored.
-		inline bool
-		noop() const noexcept {
-			return this->type() == netlink_message_type::noop;
-		}
-
-		/// Returns true, if message is the last part of multipart message.
-		inline bool
-		done() const noexcept {
-			return this->type() == netlink_message_type::done;
-		}
-
-		/// Returns true, if message is an error.
-		inline bool
-		error() const noexcept {
-			return this->type() == netlink_message_type::error;
-		}
-
-		/// Returns true, if message data was lost due to buffer overrun.
-		inline bool
-		overrun() const noexcept {
-			return this->type() == netlink_message_type::overrun;
-		}
-
-		/// Returns true, if the message is valid (see \man{netlink,3}).
-		inline bool
-		ok(u32 len) const noexcept {
-			return NLMSG_OK(this, len);
-		}
-
-		/// Returns the next header in multipart message.
-		inline netlink_header*
-		next(int len) noexcept {
-			return static_cast<netlink_header*>(NLMSG_NEXT(this, len));
-		}
-
-		/// Returns message payload length.
-		inline int
-		payload_length(int len) const noexcept {
-			return NLMSG_PAYLOAD(this, len);
-		}
-
-		/// Returns iterator to the first message.
-		template <class T>
-		inline netlink_message_iterator<T>
-		begin(int len) noexcept {
-			return netlink_message_iterator<T>(
-				static_cast<T*>(this),
-				len
-			);
-		}
-
-		/// Returns iterator to the end of messages.
-		template <class T>
-		inline netlink_message_iterator<T>
-		end() noexcept {
-			return netlink_message_iterator<T>();
-		}
-
-		/// Returns all messages as traversable container.
-		template <class T>
-		inline iterator_pair<netlink_message_iterator<T>>
-		messages(int len) noexcept {
-			return make_view(this->begin<T>(len), this->end<T>());
-		}
-
-	};
-
-	/**
-	\brief Netlink route attributes.
-	\date 2018-05-24
-	\author Ivan Gankevich
-	\ingroup wrapper net
-	\tparam A attribute enumeration
-	\details
-	A wrapper around \c rtattr system type (see \man{rtnetlink,7}).
-	*/
-	template <class A>
-	class rtattributes: public ::rtattr {
-
-	public:
-
-		/// Attributes enumeration type.
-		typedef A attributes_type;
-
-		/// Returns true, if the attrubute is valid (see \man{rtnetlink,3}.
-		inline bool
-		ok(int len) const noexcept {
-			return RTA_OK(this, len);
-		}
-
-		/// Returns the next attrubute.
-		inline rtattributes*
-		next(int len) noexcept {
-			return static_cast<rtattributes*>(RTA_NEXT(this, len));
-		}
-
-		/// Returns the pointer to the beginning of attribute data.
-		template <class T>
-		inline T*
-		data() {
-			return static_cast<T*>(RTA_DATA(this));
-		}
-
-		/// Attribute length.
-		inline unsigned short
-		length() const noexcept {
-			return this->rta_len;
-		}
-
-		/// Attribute type (see \man{rtnetlink,3}).
-		inline attributes_type
-		type() const noexcept {
-			return static_cast<attributes_type>(this->rta_type);
-		}
-
-	};
-
-	/// \brief Interface address attributes.
-	/// \ingroup net
-	enum class ifaddr_attribute: u32 {
-		unspecified = IFA_UNSPEC,
-		address = IFA_ADDRESS,
-		local_address = IFA_LOCAL,
-		interface_name = IFA_LABEL,
-		broadcast_address = IFA_BROADCAST,
-		anycast_address = IFA_ANYCAST,
-		address_info = IFA_CACHEINFO,
-		multicast_address = IFA_MULTICAST,
-		flags = IFA_FLAGS,
-	};
-
-	/// Returns attribute name.
-	const char*
-	to_string(ifaddr_attribute rhs);
-
-	/// Print attribute name for debugging.
-	std::ostream&
-	operator<<(std::ostream& out, const ifaddr_attribute& rhs);
-
-	/// \brief Interface address message types.
-	/// \ingroup net
-	enum class ifaddr_message_type: u16 {
-		get_address = RTM_GETADDR,
-		new_address = RTM_NEWADDR,
-		delete_address = RTM_DELADDR,
-	};
-
-	/**
-	\brief Netlink interaface address message.
-	\date 2018-05-24
-	\author Ivan Gankevich
-	\ingroup wrapper net
-	\details
-	A wrapper around \c ifaddrmsg system type (see \man{rtnetlink,7}).
-	*/
-	class ifaddr_message: public ::ifaddrmsg {
-
-	public:
-
-		/// Route attribute type.
-		typedef rtattributes<ifaddr_attribute> attr_type;
-
-		/// Get address family.
-		inline family_type
-		family() const noexcept {
-			return static_cast<family_type>(this->ifa_family);
-		}
-
-		/// Set address family.
-		inline void
-		family(family_type rhs) noexcept {
-			this->ifa_family = static_cast<u8>(rhs);
-		}
-
-		/// Get address prefix.
-		inline int
-		prefix() const noexcept {
-			return static_cast<int>(this->ifa_prefixlen);
-		}
-
-		/// Get address flags.
-		inline unsigned char
-		flags() const noexcept {
-			return this->ifa_flags;
-		}
-
-		/// Get address scope.
-		inline unsigned char
-		scope() const noexcept {
-			return this->ifa_scope;
-		}
-
-		/// Get address index.
-		inline int
-		index() const noexcept {
-			return this->ifa_index;
-		}
-
-		/// Set address index.
-		inline void
-		index(int rhs) noexcept {
-			this->ifa_index = rhs;
-		}
-
-		/// Get route attributes.
-		inline attr_type*
-		routing_attributes() noexcept {
-			return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
-		}
-
-		/// Get route attributes.
-		inline const attr_type*
-		routing_attributes() const noexcept {
-			return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
-		}
-
-		/// Returns iterator to the first attribute.
-		inline netlink_attribute_iterator<attr_type>
-		begin(int len) noexcept {
-			return netlink_attribute_iterator<attr_type>(
-				this->routing_attributes(),
-				len
-			);
-		}
-
-		/// Returns iterator to the end of attributes.
-		inline netlink_attribute_iterator<attr_type>
-		end() noexcept {
-			return netlink_attribute_iterator<attr_type>();
-		}
-
-		/// Returns all attributes as traversable container.
-		inline iterator_pair<netlink_attribute_iterator<attr_type>>
-		attributes(int len) {
-			return make_view(this->begin(len), this->end());
-		}
-
-	};
-
-	/**
-	\brief Netlink interface address message header.
-	\date 2018-05-24
-	\author Ivan Gankevich
-	\ingroup wrapper net
-	\details
-	A wrapper around \c nlmsghdr for \c ifaddrmsg netlink messages
-	(see \man{rtnetlink,7}).
-	*/
-	class ifaddr_message_header: public netlink_header {
-
-	public:
-
-		/// Returns true, if the message contains address that was added.
-		inline bool
-		new_address() const noexcept {
-			return this->netlink_header::type() == netlink_message_type(RTM_NEWADDR);
-		}
-
-		/// Returns true, if the message contains address that was deleted.
-		inline bool
-		delete_address() const noexcept {
-			return this->netlink_header::type() == netlink_message_type(RTM_DELADDR);
-		}
-
-		/// Returns true, if the message contains address.
-		inline bool
-		get_address() const noexcept {
-			return this->netlink_header::type() == netlink_message_type(RTM_GETADDR);
-		}
-
-		/// Returns pointer to message payload.
-		inline ifaddr_message*
-		message() noexcept {
-			return static_cast<ifaddr_message*>(NLMSG_DATA(this));
-		}
-
-		/// Returns pointer to message payload.
-		inline const ifaddr_message*
-		message() const noexcept {
-			return static_cast<const ifaddr_message*>(NLMSG_DATA(this));
-		}
-
-		/// \copydoc netlink_header::payload_length
-		inline int
-		payload_length() const noexcept {
-			return NLMSG_PAYLOAD(this, sizeof(::ifaddrmsg));
-		}
-
-		/// Set message type.
-		inline void
-		type(ifaddr_message_type rhs) noexcept {
-			this->nlmsg_type = static_cast<u16>(rhs);
-		}
-
-	};
-
-	/**
-	\brief Container for netlink messages.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup container net
-	*/
-	template <class T>
-	class netlink_container {
-
-	public:
-		/// Message header type.
-		typedef T value_type;
-		/// Message length type.
-		typedef int size_type;
-		/// Message iterator type.
-		typedef netlink_message_iterator<T> iterator;
-
-	private:
-		int _len = 0;
-		union {
-			netlink_header h;
-			char bytes[4096];
-		} _hdr;
-
-	public:
-
-		/// Read netlink message sequence from socket \p sock.
-		inline void
-		read(socket& sock) {
-			this->_len = sock.read(this->_hdr.bytes, sizeof(this->_hdr.bytes));
-		}
-
-		/// Returns the pointer to the beginning of message sequence.
-		inline iterator
-		begin() noexcept {
-			return this->_hdr.h.template begin<value_type>(this->_len);
-		}
-
-		/// Returns the pointer to the end of message sequence.
-		inline iterator
-		end() noexcept {
-			return this->_hdr.h.template end<value_type>();
-		}
-
-		/// Netlink message length.
-		inline int
-		length() const noexcept {
-			return this->_len;
-		}
-
-	};
-
-	/// \brief Netlink container for interface address messages.
-	/// \ingroup net
-	typedef sys::netlink_container<sys::ifaddr_message_header>
-		ifaddr_message_container;
+    namespace bits {
+
+        template <class T, class Message>
+        inline T*
+        routing_attributes_ptr(Message* m) noexcept {
+            return reinterpret_cast<T*>(
+                reinterpret_cast<char*>(m) + NLMSG_ALIGN(sizeof(Message))
+            );
+        }
+
+        template <class T, class Message>
+        inline const T*
+        routing_attributes_ptr(const Message* m) noexcept {
+            return reinterpret_cast<const T*>(
+                reinterpret_cast<const char*>(m) + NLMSG_ALIGN(sizeof(Message))
+            );
+        }
+
+    }
+
+    /// \brief Netlink message flags.
+    /// \ingroup net
+    enum class netlink_message_flags: u16 {
+        request = NLM_F_REQUEST,
+        multipart = NLM_F_MULTI,
+        acknowledge = NLM_F_ACK,
+        echo = NLM_F_ECHO,
+        dump_inconsistent = NLM_F_DUMP_INTR,
+        dump_filtered = NLM_F_DUMP_FILTERED,
+        root = NLM_F_ROOT,
+        all_matching = NLM_F_MATCH,
+        atomic = NLM_F_ATOMIC,
+        dump = NLM_F_DUMP
+    };
+
+    template <>
+    struct is_flag<netlink_message_flags>: public std::true_type {};
+
+    /// \brief Netlink message types.
+    /// \ingroup net
+    enum class netlink_message_type: u16 {
+        /// Message is to be ignored.
+        noop = NLMSG_NOOP,
+        /// Message is an error and its payload is \c nlmsgerr system structure.
+        error = NLMSG_ERROR,
+        /// Message is the last part of multipart message.
+        done = NLMSG_DONE,
+        /// Message data was lost due to buffer overrun.
+        overrun = NLMSG_OVERRUN
+    };
+
+    /**
+    \brief Netlink message header.
+    \date 2018-05-24
+    \author Ivan Gankevich
+    \ingroup wrapper net
+    \details
+    A wrapper around \c nlmsghdr system type
+    (see \man{netlink,7}).
+    */
+    class netlink_header: public ::nlmsghdr {
+
+    public:
+
+        /// Length of message with header.
+        inline u32
+        length() const noexcept {
+            return this->nlmsg_len;
+        }
+
+        /// Set the length of the message with header.
+        inline void
+        length(u32 rhs) noexcept {
+            this->nlmsg_len = rhs;
+        }
+
+        /// Payload type
+        inline netlink_message_type
+        type() const noexcept {
+            return netlink_message_type(this->nlmsg_type);
+        }
+
+        /// Additional flags.
+        inline u16
+        flags() const noexcept {
+            return this->nlmsg_flags;
+        }
+
+        /// Set additional flags.
+        inline void
+        flags(u16 rhs) noexcept {
+            this->nlmsg_flags = rhs;
+        }
+
+        /// Set additional flags.
+        inline void
+        flags(netlink_message_flags rhs) noexcept {
+            this->nlmsg_flags = static_cast<u16>(rhs);
+        }
+
+        /// Message sequence number.
+        inline u32
+        sequence() const noexcept {
+            return this->nlmsg_seq;
+        }
+
+        /// Sender port identifier.
+        inline u32
+        port() const noexcept {
+            return this->nlmsg_pid;
+        }
+
+        /// Returns true, if message type is to be ignored.
+        inline bool
+        noop() const noexcept {
+            return this->type() == netlink_message_type::noop;
+        }
+
+        /// Returns true, if message is the last part of multipart message.
+        inline bool
+        done() const noexcept {
+            return this->type() == netlink_message_type::done;
+        }
+
+        /// Returns true, if message is an error.
+        inline bool
+        error() const noexcept {
+            return this->type() == netlink_message_type::error;
+        }
+
+        /// Returns true, if message data was lost due to buffer overrun.
+        inline bool
+        overrun() const noexcept {
+            return this->type() == netlink_message_type::overrun;
+        }
+
+        /// Returns true, if the message is valid (see \man{netlink,3}).
+        inline bool
+        ok(u32 len) const noexcept {
+            return NLMSG_OK(this, len);
+        }
+
+        /// Returns the next header in multipart message.
+        inline netlink_header*
+        next(int len) noexcept {
+            return static_cast<netlink_header*>(NLMSG_NEXT(this, len));
+        }
+
+        /// Returns message payload length.
+        inline int
+        payload_length(int len) const noexcept {
+            return NLMSG_PAYLOAD(this, len);
+        }
+
+        /// Returns iterator to the first message.
+        template <class T>
+        inline netlink_message_iterator<T>
+        begin(int len) noexcept {
+            return netlink_message_iterator<T>(
+                static_cast<T*>(this),
+                len
+            );
+        }
+
+        /// Returns iterator to the end of messages.
+        template <class T>
+        inline netlink_message_iterator<T>
+        end() noexcept {
+            return netlink_message_iterator<T>();
+        }
+
+        /// Returns all messages as traversable container.
+        template <class T>
+        inline iterator_pair<netlink_message_iterator<T>>
+        messages(int len) noexcept {
+            return make_view(this->begin<T>(len), this->end<T>());
+        }
+
+    };
+
+    /**
+    \brief Netlink route attributes.
+    \date 2018-05-24
+    \author Ivan Gankevich
+    \ingroup wrapper net
+    \tparam A attribute enumeration
+    \details
+    A wrapper around \c rtattr system type (see \man{rtnetlink,7}).
+    */
+    template <class A>
+    class rtattributes: public ::rtattr {
+
+    public:
+
+        /// Attributes enumeration type.
+        typedef A attributes_type;
+
+        /// Returns true, if the attrubute is valid (see \man{rtnetlink,3}.
+        inline bool
+        ok(int len) const noexcept {
+            return RTA_OK(this, len);
+        }
+
+        /// Returns the next attrubute.
+        inline rtattributes*
+        next(int len) noexcept {
+            return static_cast<rtattributes*>(RTA_NEXT(this, len));
+        }
+
+        /// Returns the pointer to the beginning of attribute data.
+        template <class T>
+        inline T*
+        data() {
+            return static_cast<T*>(RTA_DATA(this));
+        }
+
+        /// Attribute length.
+        inline unsigned short
+        length() const noexcept {
+            return this->rta_len;
+        }
+
+        /// Attribute type (see \man{rtnetlink,3}).
+        inline attributes_type
+        type() const noexcept {
+            return static_cast<attributes_type>(this->rta_type);
+        }
+
+    };
+
+    /// \brief Interface address attributes.
+    /// \ingroup net
+    enum class ifaddr_attribute: u32 {
+        unspecified = IFA_UNSPEC,
+        address = IFA_ADDRESS,
+        local_address = IFA_LOCAL,
+        interface_name = IFA_LABEL,
+        broadcast_address = IFA_BROADCAST,
+        anycast_address = IFA_ANYCAST,
+        address_info = IFA_CACHEINFO,
+        multicast_address = IFA_MULTICAST,
+        flags = IFA_FLAGS,
+    };
+
+    /// Returns attribute name.
+    const char*
+    to_string(ifaddr_attribute rhs);
+
+    /// Print attribute name for debugging.
+    std::ostream&
+    operator<<(std::ostream& out, const ifaddr_attribute& rhs);
+
+    /// \brief Interface address message types.
+    /// \ingroup net
+    enum class ifaddr_message_type: u16 {
+        get_address = RTM_GETADDR,
+        new_address = RTM_NEWADDR,
+        delete_address = RTM_DELADDR,
+    };
+
+    /**
+    \brief Netlink interaface address message.
+    \date 2018-05-24
+    \author Ivan Gankevich
+    \ingroup wrapper net
+    \details
+    A wrapper around \c ifaddrmsg system type (see \man{rtnetlink,7}).
+    */
+    class ifaddr_message: public ::ifaddrmsg {
+
+    public:
+
+        /// Route attribute type.
+        typedef rtattributes<ifaddr_attribute> attr_type;
+
+        /// Get address family.
+        inline family_type
+        family() const noexcept {
+            return static_cast<family_type>(this->ifa_family);
+        }
+
+        /// Set address family.
+        inline void
+        family(family_type rhs) noexcept {
+            this->ifa_family = static_cast<u8>(rhs);
+        }
+
+        /// Get address prefix.
+        inline int
+        prefix() const noexcept {
+            return static_cast<int>(this->ifa_prefixlen);
+        }
+
+        /// Get address flags.
+        inline unsigned char
+        flags() const noexcept {
+            return this->ifa_flags;
+        }
+
+        /// Get address scope.
+        inline unsigned char
+        scope() const noexcept {
+            return this->ifa_scope;
+        }
+
+        /// Get address index.
+        inline int
+        index() const noexcept {
+            return this->ifa_index;
+        }
+
+        /// Set address index.
+        inline void
+        index(int rhs) noexcept {
+            this->ifa_index = rhs;
+        }
+
+        /// Get route attributes.
+        inline attr_type*
+        routing_attributes() noexcept {
+            return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
+        }
+
+        /// Get route attributes.
+        inline const attr_type*
+        routing_attributes() const noexcept {
+            return bits::routing_attributes_ptr<attr_type,::ifaddrmsg>(this);
+        }
+
+        /// Returns iterator to the first attribute.
+        inline netlink_attribute_iterator<attr_type>
+        begin(int len) noexcept {
+            return netlink_attribute_iterator<attr_type>(
+                this->routing_attributes(),
+                len
+            );
+        }
+
+        /// Returns iterator to the end of attributes.
+        inline netlink_attribute_iterator<attr_type>
+        end() noexcept {
+            return netlink_attribute_iterator<attr_type>();
+        }
+
+        /// Returns all attributes as traversable container.
+        inline iterator_pair<netlink_attribute_iterator<attr_type>>
+        attributes(int len) {
+            return make_view(this->begin(len), this->end());
+        }
+
+    };
+
+    /**
+    \brief Netlink interface address message header.
+    \date 2018-05-24
+    \author Ivan Gankevich
+    \ingroup wrapper net
+    \details
+    A wrapper around \c nlmsghdr for \c ifaddrmsg netlink messages
+    (see \man{rtnetlink,7}).
+    */
+    class ifaddr_message_header: public netlink_header {
+
+    public:
+
+        /// Returns true, if the message contains address that was added.
+        inline bool
+        new_address() const noexcept {
+            return this->netlink_header::type() == netlink_message_type(RTM_NEWADDR);
+        }
+
+        /// Returns true, if the message contains address that was deleted.
+        inline bool
+        delete_address() const noexcept {
+            return this->netlink_header::type() == netlink_message_type(RTM_DELADDR);
+        }
+
+        /// Returns true, if the message contains address.
+        inline bool
+        get_address() const noexcept {
+            return this->netlink_header::type() == netlink_message_type(RTM_GETADDR);
+        }
+
+        /// Returns pointer to message payload.
+        inline ifaddr_message*
+        message() noexcept {
+            return static_cast<ifaddr_message*>(NLMSG_DATA(this));
+        }
+
+        /// Returns pointer to message payload.
+        inline const ifaddr_message*
+        message() const noexcept {
+            return static_cast<const ifaddr_message*>(NLMSG_DATA(this));
+        }
+
+        /// \copydoc netlink_header::payload_length
+        inline int
+        payload_length() const noexcept {
+            return NLMSG_PAYLOAD(this, sizeof(::ifaddrmsg));
+        }
+
+        /// Set message type.
+        inline void
+        type(ifaddr_message_type rhs) noexcept {
+            this->nlmsg_type = static_cast<u16>(rhs);
+        }
+
+    };
+
+    /**
+    \brief Container for netlink messages.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup container net
+    */
+    template <class T>
+    class netlink_container {
+
+    public:
+        /// Message header type.
+        typedef T value_type;
+        /// Message length type.
+        typedef int size_type;
+        /// Message iterator type.
+        typedef netlink_message_iterator<T> iterator;
+
+    private:
+        int _len = 0;
+        union {
+            netlink_header h;
+            char bytes[4096];
+        } _hdr;
+
+    public:
+
+        /// Read netlink message sequence from socket \p sock.
+        inline void
+        read(socket& sock) {
+            this->_len = sock.read(this->_hdr.bytes, sizeof(this->_hdr.bytes));
+        }
+
+        /// Returns the pointer to the beginning of message sequence.
+        inline iterator
+        begin() noexcept {
+            return this->_hdr.h.template begin<value_type>(this->_len);
+        }
+
+        /// Returns the pointer to the end of message sequence.
+        inline iterator
+        end() noexcept {
+            return this->_hdr.h.template end<value_type>();
+        }
+
+        /// Netlink message length.
+        inline int
+        length() const noexcept {
+            return this->_len;
+        }
+
+    };
+
+    /// \brief Netlink container for interface address messages.
+    /// \ingroup net
+    typedef sys::netlink_container<sys::ifaddr_message_header>
+        ifaddr_message_container;
 
 }
 

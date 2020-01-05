@@ -7,18 +7,18 @@
 
 namespace sys {
 
-	/**
-	\brief Input stream of system groups.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup stream
-	\see group
-	\see group_iterator
-	\details
-	Useful to traverse all system groups in conjunction with
-	\link group_iterator\endlink.
-	*/
-	class groupstream {
+    /**
+    \brief Input stream of system groups.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup stream
+    \see group
+    \see group_iterator
+    \details
+    Useful to traverse all system groups in conjunction with
+    \link group_iterator\endlink.
+    */
+    class groupstream {
 
     public:
         using iterator = basic_istream_iterator<groupstream,group>;
@@ -28,24 +28,24 @@ namespace sys {
         using pointer = value_type*;
         using const_pointer = const value_type*;
 
-	private:
-		bool _end = false;
+    private:
+        bool _end = false;
 
-	public:
+    public:
 
-		inline groupstream() { this->open(); }
-		inline ~groupstream() { this->close(); }
+        inline groupstream() { this->open(); }
+        inline ~groupstream() { this->close(); }
 
-		UNISTDX_NO_COPY_AND_MOVE(groupstream)
+        UNISTDX_NO_COPY_AND_MOVE(groupstream)
 
-		/// Returns true if the end of stream is not reached.
-		inline explicit operator bool() const noexcept { return !this->_end; }
+        /// Returns true if the end of stream is not reached.
+        inline explicit operator bool() const noexcept { return !this->_end; }
 
-		/// Returns true if the end of stream is reached.
-		inline bool operator!() const noexcept { return !this->operator bool(); }
+        /// Returns true if the end of stream is reached.
+        inline bool operator!() const noexcept { return !this->operator bool(); }
 
-		/// Read the next group from the stream.
-		inline groupstream& operator>>(reference rhs) {
+        /// Read the next group from the stream.
+        inline groupstream& operator>>(reference rhs) {
             if (*this) {
                 if (auto g = ::getgrent()) { rhs = *g; }
                 else { this->_end = true; }
@@ -58,10 +58,10 @@ namespace sys {
         inline void open() { ::setgrent(); }
         inline void close() { ::endgrent(); }
 
-	};
+    };
 
-	/// Iterator for \link groupstream\endlink.
-	using group_iterator = groupstream::iterator;
+    /// Iterator for \link groupstream\endlink.
+    using group_iterator = groupstream::iterator;
 
 }
 

@@ -15,179 +15,179 @@
 
 namespace sys {
 
-	/// 16-byte unsinged integer type.
-	typedef unsigned __int128 uint128_t;
-	/// 16-byte unsinged integer type.
-	typedef uint128_t u128;
+    /// 16-byte unsinged integer type.
+    typedef unsigned __int128 uint128_t;
+    /// 16-byte unsinged integer type.
+    typedef uint128_t u128;
 
-	namespace literals {
+    namespace literals {
 
-		template<char ... Chars>
-		constexpr uint128_t
-		operator"" _u128() noexcept {
-			return bits::parse_uint<uint128_t, sizeof...(Chars)>((const char[]){Chars...});
-		}
+        template<char ... Chars>
+        constexpr uint128_t
+        operator"" _u128() noexcept {
+            return bits::parse_uint<uint128_t, sizeof...(Chars)>((const char[]){Chars...});
+        }
 
-	}
+    }
 
 }
 
 /// Specialisations of standard templates.
 namespace std {
 
-	/// Specialisation of \link std::is_arithmetic\endlink for \link sys::uint128_t\endlink.
-	template<> struct is_arithmetic<sys::uint128_t>: public true_type {};
+    /// Specialisation of \link std::is_arithmetic\endlink for \link sys::uint128_t\endlink.
+    template<> struct is_arithmetic<sys::uint128_t>: public true_type {};
 
-	/// Specialisation of \link std::is_integral\endlink for \link sys::uint128_t\endlink.
-	template<> struct is_integral<sys::uint128_t>: public true_type {};
+    /// Specialisation of \link std::is_integral\endlink for \link sys::uint128_t\endlink.
+    template<> struct is_integral<sys::uint128_t>: public true_type {};
 
-	/// Specialisation of \link std::is_unsigned\endlink for \link sys::uint128_t\endlink.
-	template<> struct is_unsigned<sys::uint128_t>: public true_type {};
+    /// Specialisation of \link std::is_unsigned\endlink for \link sys::uint128_t\endlink.
+    template<> struct is_unsigned<sys::uint128_t>: public true_type {};
 
-	/**
-	\brief
-	Specialisation of \link std::numeric_limits\endlink for \link sys::uint128_t\endlink.
-	\date 2018-05-22
-	\author Ivan Gankevich
-	*/
-	template <>
-	class numeric_limits<sys::uint128_t> {
-	public:
+    /**
+    \brief
+    Specialisation of \link std::numeric_limits\endlink for \link sys::uint128_t\endlink.
+    \date 2018-05-22
+    \author Ivan Gankevich
+    */
+    template <>
+    class numeric_limits<sys::uint128_t> {
+    public:
 
-		/// Equals true.
-		static constexpr bool is_specialized = true;
+        /// Equals true.
+        static constexpr bool is_specialized = true;
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		min() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        min() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Returns \f$2^{128}-1\f$.
-		static constexpr sys::uint128_t
-		max() noexcept {
-			using namespace sys::literals;
-			return 0xffffffffffffffffffffffffffffffff_u128;
-		}
+        /// Returns \f$2^{128}-1\f$.
+        static constexpr sys::uint128_t
+        max() noexcept {
+            using namespace sys::literals;
+            return 0xffffffffffffffffffffffffffffffff_u128;
+        }
 
-		/// \brief \copybrief min
-		static constexpr sys::uint128_t
-		lowest() noexcept {
-			return min();
-		}
+        /// \brief \copybrief min
+        static constexpr sys::uint128_t
+        lowest() noexcept {
+            return min();
+        }
 
-		/// The number of base-2 digits.
-		static constexpr int digits = 128;
-		/// The number of base-10 digits.
-		static constexpr int digits10 = 38;
-		/// Equals false.
-		static constexpr bool is_signed = false;
-		/// Equals true.
-		static constexpr bool is_integer = true;
-		/// Equals true.
-		static constexpr bool is_exact = true;
-		/// Equals 2.
-		static constexpr int radix = 2;
+        /// The number of base-2 digits.
+        static constexpr int digits = 128;
+        /// The number of base-10 digits.
+        static constexpr int digits10 = 38;
+        /// Equals false.
+        static constexpr bool is_signed = false;
+        /// Equals true.
+        static constexpr bool is_integer = true;
+        /// Equals true.
+        static constexpr bool is_exact = true;
+        /// Equals 2.
+        static constexpr int radix = 2;
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		epsilon() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        epsilon() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		round_error() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        round_error() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Equals nought.
-		static constexpr int min_exponent = 0;
-		/// Equals nought.
-		static constexpr int min_exponent10 = 0;
-		/// Equals nought.
-		static constexpr int max_exponent = 0;
-		/// Equals nought.
-		static constexpr int max_exponent10 = 0;
+        /// Equals nought.
+        static constexpr int min_exponent = 0;
+        /// Equals nought.
+        static constexpr int min_exponent10 = 0;
+        /// Equals nought.
+        static constexpr int max_exponent = 0;
+        /// Equals nought.
+        static constexpr int max_exponent10 = 0;
 
-		/// Equals false.
-		static constexpr bool has_infinity = false;
-		/// Equals false.
-		static constexpr bool has_quiet_NaN = false;
-		/// Equals false.
-		static constexpr bool has_signaling_NaN = false;
-		/// Equals \c std::denorm_absent.
-		static constexpr float_denorm_style has_denorm = denorm_absent;
-		/// Equals false.
-		static constexpr bool has_denorm_loss = false;
+        /// Equals false.
+        static constexpr bool has_infinity = false;
+        /// Equals false.
+        static constexpr bool has_quiet_NaN = false;
+        /// Equals false.
+        static constexpr bool has_signaling_NaN = false;
+        /// Equals \c std::denorm_absent.
+        static constexpr float_denorm_style has_denorm = denorm_absent;
+        /// Equals false.
+        static constexpr bool has_denorm_loss = false;
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		infinity() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        infinity() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		quiet_NaN() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        quiet_NaN() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		signaling_NaN() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        signaling_NaN() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Returns nought.
-		static constexpr sys::uint128_t
-		denorm_min() noexcept {
-			using namespace sys::literals;
-			return 0_u128;
-		}
+        /// Returns nought.
+        static constexpr sys::uint128_t
+        denorm_min() noexcept {
+            using namespace sys::literals;
+            return 0_u128;
+        }
 
-		/// Equals false.
-		static constexpr bool is_iec559 = false;
-		/// Equals true.
-		static constexpr bool is_bounded = true;
-		/// Equals true.
-		static constexpr bool is_modulo = true;
+        /// Equals false.
+        static constexpr bool is_iec559 = false;
+        /// Equals true.
+        static constexpr bool is_bounded = true;
+        /// Equals true.
+        static constexpr bool is_modulo = true;
 
-		/// Equals false.
-		static constexpr bool traps = false;
-		/// Equals false.
-		static constexpr bool tinyness_before = false;
-		/// Equals \c std::round_toward_zero.
-		static constexpr float_round_style round_style = round_toward_zero;
+        /// Equals false.
+        static constexpr bool traps = false;
+        /// Equals false.
+        static constexpr bool tinyness_before = false;
+        /// Equals \c std::round_toward_zero.
+        static constexpr float_round_style round_style = round_toward_zero;
 
-	};
+    };
 
-	/// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
-	template<>
-	struct hash<sys::uint128_t> {
+    /// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
+    template<>
+    struct hash<sys::uint128_t> {
 
-		/// Hash function return value type.
-		typedef size_t result_type;
-		/// Hash function argument type.
-		typedef ::sys::uint128_t argument_type;
+        /// Hash function return value type.
+        typedef size_t result_type;
+        /// Hash function argument type.
+        typedef ::sys::uint128_t argument_type;
 
-		/// Compute hash by XOR-ing hashes of lower and upper half.
-		inline result_type
-		operator()(const argument_type& rhs) const noexcept {
-			using ::sys::u64;
-			std::hash<u64> h;
-			using namespace sys::literals;
-			return h(u64(rhs & 0xffffffffffffffff_u128)) ^
-			       h(u64((rhs >> 64) & 0xffffffffffffffff_u128));
-		}
+        /// Compute hash by XOR-ing hashes of lower and upper half.
+        inline result_type
+        operator()(const argument_type& rhs) const noexcept {
+            using ::sys::u64;
+            std::hash<u64> h;
+            using namespace sys::literals;
+            return h(u64(rhs & 0xffffffffffffffff_u128)) ^
+                   h(u64((rhs >> 64) & 0xffffffffffffffff_u128));
+        }
 
-	};
+    };
 
 }
 

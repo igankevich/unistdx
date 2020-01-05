@@ -10,317 +10,317 @@
 
 namespace sys {
 
-	/**
-	\brief Alias for signal type.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	*/
-	typedef int signal_type;
+    /**
+    \brief Alias for signal type.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    */
+    typedef int signal_type;
 
-	/**
-	\brief Alias for \c sigaction system type.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	*/
-	typedef struct ::sigaction sigaction_type;
+    /**
+    \brief Alias for \c sigaction system type.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    */
+    typedef struct ::sigaction sigaction_type;
 
-	/**
-	\brief Alias for \c siginfo_t system type.
-	\date 2018-06-05
-	\author Ivan Gankevich
-	*/
-	typedef ::siginfo_t signal_info_type;
+    /**
+    \brief Alias for \c siginfo_t system type.
+    \date 2018-06-05
+    \author Ivan Gankevich
+    */
+    typedef ::siginfo_t signal_info_type;
 
-	/**
-	\brief Process signals.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc
-	\see \man{signal,7}
-	*/
-	enum struct signal: signal_type {
-		/// Interrupt.
-		hang_up = SIGHUP,
-		/// Keyboard interrupt.
-		keyboard_interrupt = SIGINT,
-		/// Keyboard quit.
-		quit = SIGQUIT,
-		/// Illegal processor instrucion encountered.
-		illegal_instruction = SIGILL,
-		/// Abort signal from \man{abort,3}.
-		abort = SIGABRT,
-		/// Floating-point arithmetic exception.
-		floating_point_exception = SIGFPE,
-		/// Forcibly terminate.
-		kill = SIGKILL,
-		/// Invalid memory address was accessed.
-		segmentation_fault = SIGSEGV,
-		/// Write to a \man{pipe,2} that is closed on the other end.
-		broken_pipe = SIGPIPE,
-		/// A signal from \man{alarm,2} clock or interval timer \man{setitimer,2}.
-		alarm = SIGALRM,
-		/// Gracefully terminate.
-		terminate = SIGTERM,
-		/// User-defined signal 1.
-		user_defined_1 = SIGUSR1,
-		/// User-defined signal 2.
-		user_defined_2 = SIGUSR2,
-		/// Child process stopped or terminated.
-		child = SIGCHLD,
-		/// Resume process execution.
-		resume = SIGCONT,
-		/// Pause process execution.
-		stop = SIGSTOP,
-		/// Stop signal from controlling terminal.
-		terminal_stop = SIGTSTP,
-		/// Background process tried to read from controlling terminal.
-		terminal_input = SIGTTIN,
-		/// Background process tried to write to controlling terminal.
-		terminal_output = SIGTTOU,
-		/// Memory bus error.
-		bad_memory_access = SIGBUS,
-		#if defined(UNISTDX_HAVE_SIGPOLL)
-		/// Asyncrhonous input/output event signal.
-		poll = SIGPOLL,
-		#endif
-		/// A signal from interval timer \man{setitimer,2}.
-		profile = SIGPROF,
-		/// Bad argument to system call.
-		bad_argument = SIGSYS,
-		/// Breakpoint reached by the programme being debugged.
-		breakpoint = SIGTRAP,
-		/// Out-of-band data arrived at a socket.
-		urgent = SIGURG,
-		/// A signal from interval timer \man{setitimer,2}.
-		virtual_alarm = SIGVTALRM,
-		/// CPU time soft limit, which is set by \man{setrlimit,2}, exceeded.
-		cpu_time_limit_exceeded = SIGXCPU,
-		/// Maximum file size limit, which is set by \man{setrlimit,2}, exceeded.
-		file_size_limit_exceeded = SIGXFSZ
-		#if defined(UNISTDX_HAVE_SIGSTKFLT)
-		,
-		/// Stack fault on coprocessor (unused signal).
-		coprocessor_stack_fault = SIGSTKFLT
-		#endif
-		,
-		#if defined(UNISTDX_HAVE_SIGPWR)
-		/// Power failure.
-		power_failure = SIGPWR
-		#endif
-		,
-		#if defined(UNISTDX_HAVE_SIGWINCH)
-		/// Controlling terminal changed its window size.
-		terminal_window_resize = SIGWINCH
-		#endif
-	};
+    /**
+    \brief Process signals.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc
+    \see \man{signal,7}
+    */
+    enum struct signal: signal_type {
+        /// Interrupt.
+        hang_up = SIGHUP,
+        /// Keyboard interrupt.
+        keyboard_interrupt = SIGINT,
+        /// Keyboard quit.
+        quit = SIGQUIT,
+        /// Illegal processor instrucion encountered.
+        illegal_instruction = SIGILL,
+        /// Abort signal from \man{abort,3}.
+        abort = SIGABRT,
+        /// Floating-point arithmetic exception.
+        floating_point_exception = SIGFPE,
+        /// Forcibly terminate.
+        kill = SIGKILL,
+        /// Invalid memory address was accessed.
+        segmentation_fault = SIGSEGV,
+        /// Write to a \man{pipe,2} that is closed on the other end.
+        broken_pipe = SIGPIPE,
+        /// A signal from \man{alarm,2} clock or interval timer \man{setitimer,2}.
+        alarm = SIGALRM,
+        /// Gracefully terminate.
+        terminate = SIGTERM,
+        /// User-defined signal 1.
+        user_defined_1 = SIGUSR1,
+        /// User-defined signal 2.
+        user_defined_2 = SIGUSR2,
+        /// Child process stopped or terminated.
+        child = SIGCHLD,
+        /// Resume process execution.
+        resume = SIGCONT,
+        /// Pause process execution.
+        stop = SIGSTOP,
+        /// Stop signal from controlling terminal.
+        terminal_stop = SIGTSTP,
+        /// Background process tried to read from controlling terminal.
+        terminal_input = SIGTTIN,
+        /// Background process tried to write to controlling terminal.
+        terminal_output = SIGTTOU,
+        /// Memory bus error.
+        bad_memory_access = SIGBUS,
+        #if defined(UNISTDX_HAVE_SIGPOLL)
+        /// Asyncrhonous input/output event signal.
+        poll = SIGPOLL,
+        #endif
+        /// A signal from interval timer \man{setitimer,2}.
+        profile = SIGPROF,
+        /// Bad argument to system call.
+        bad_argument = SIGSYS,
+        /// Breakpoint reached by the programme being debugged.
+        breakpoint = SIGTRAP,
+        /// Out-of-band data arrived at a socket.
+        urgent = SIGURG,
+        /// A signal from interval timer \man{setitimer,2}.
+        virtual_alarm = SIGVTALRM,
+        /// CPU time soft limit, which is set by \man{setrlimit,2}, exceeded.
+        cpu_time_limit_exceeded = SIGXCPU,
+        /// Maximum file size limit, which is set by \man{setrlimit,2}, exceeded.
+        file_size_limit_exceeded = SIGXFSZ
+        #if defined(UNISTDX_HAVE_SIGSTKFLT)
+        ,
+        /// Stack fault on coprocessor (unused signal).
+        coprocessor_stack_fault = SIGSTKFLT
+        #endif
+        ,
+        #if defined(UNISTDX_HAVE_SIGPWR)
+        /// Power failure.
+        power_failure = SIGPWR
+        #endif
+        ,
+        #if defined(UNISTDX_HAVE_SIGWINCH)
+        /// Controlling terminal changed its window size.
+        terminal_window_resize = SIGWINCH
+        #endif
+    };
 
-	/**
-	\brief Output signal name.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc
-	*/
-	std::ostream&
-	operator<<(std::ostream& out, const signal rhs);
+    /**
+    \brief Output signal name.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc
+    */
+    std::ostream&
+    operator<<(std::ostream& out, const signal rhs);
 
-	/**
-	\brief Signal callback.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc comm wrapper
-	*/
-	class signal_action: public sigaction_type {
-	public:
+    /**
+    \brief Signal callback.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc comm wrapper
+    */
+    class signal_action: public sigaction_type {
+    public:
 
-		inline
-		signal_action() = default;
+        inline
+        signal_action() = default;
 
-		/// Construct signal action from old-style signal handler.
-		inline
-		signal_action(void (*func)(int)) noexcept {
-			this->sa_handler = func;
-		}
+        /// Construct signal action from old-style signal handler.
+        inline
+        signal_action(void (*func)(int)) noexcept {
+            this->sa_handler = func;
+        }
 
-		/// Construct signal action from new-style signal handler.
-		inline
-		signal_action(void (*func)(int, siginfo_t*, void*)) noexcept {
-			this->sa_sigaction = func;
-			this->sa_flags = SA_SIGINFO;
-		}
+        /// Construct signal action from new-style signal handler.
+        inline
+        signal_action(void (*func)(int, siginfo_t*, void*)) noexcept {
+            this->sa_sigaction = func;
+            this->sa_flags = SA_SIGINFO;
+        }
 
-	};
+    };
 
-	/// Routines implicitly applied to the currect process.
-	namespace this_process {
+    /// Routines implicitly applied to the currect process.
+    namespace this_process {
 
-		/**
-		\brief Set signal callback function.
-		\date 2018-05-21
-		\author Ivan Gankevich
-		\ingroup ipc
-		\throws bad_call
-		\see \man{sigaction,2}
-		*/
-		inline void
-		bind_signal(signal sig, const signal_action& action) {
-			UNISTDX_CHECK(::sigaction(signal_type(sig), &action, 0));
-		}
+        /**
+        \brief Set signal callback function.
+        \date 2018-05-21
+        \author Ivan Gankevich
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigaction,2}
+        */
+        inline void
+        bind_signal(signal sig, const signal_action& action) {
+            UNISTDX_CHECK(::sigaction(signal_type(sig), &action, 0));
+        }
 
-		/**
-		\brief Ignore specified signal
-		\date 2018-05-21
-		\author Ivan Gankevich
-		\ingroup ipc
-		\throws bad_call
-		\see \man{sigaction,2}
-		\details
-		By default any signal for which callback function
-		is not set may kill the process. This routine allows to ignore
-		specified signals.
-		*/
-		inline void
-		ignore_signal(signal sig) {
-			bind_signal(sig, SIG_IGN);
-		}
+        /**
+        \brief Ignore specified signal
+        \date 2018-05-21
+        \author Ivan Gankevich
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigaction,2}
+        \details
+        By default any signal for which callback function
+        is not set may kill the process. This routine allows to ignore
+        specified signals.
+        */
+        inline void
+        ignore_signal(signal sig) {
+            bind_signal(sig, SIG_IGN);
+        }
 
-	}
+    }
 
-	#if !defined(__MACH__)
-	/**
-	\brief Signal set.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc comm wrapper
-	*/
-	class signal_set: public ::sigset_t {
-	public:
+    #if !defined(__MACH__)
+    /**
+    \brief Signal set.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc comm wrapper
+    */
+    class signal_set: public ::sigset_t {
+    public:
 
-		/**
-		\brief Construct empty signal set.
-		\throws bad_call
-		\see \man{sigemptyset,3}
-		*/
-		inline
-		signal_set() {
-			UNISTDX_CHECK(::sigemptyset(this));
-		}
+        /**
+        \brief Construct empty signal set.
+        \throws bad_call
+        \see \man{sigemptyset,3}
+        */
+        inline
+        signal_set() {
+            UNISTDX_CHECK(::sigemptyset(this));
+        }
 
-		/**
-		\brief Construct signal set containing only signal \p s.
-		\throws bad_call
-		\see \man{sigaddset,3}
-		*/
-		inline explicit
-		signal_set(signal_type s):
-		signal_set() {
-			UNISTDX_CHECK(::sigaddset(this, s));
-		}
+        /**
+        \brief Construct signal set containing only signal \p s.
+        \throws bad_call
+        \see \man{sigaddset,3}
+        */
+        inline explicit
+        signal_set(signal_type s):
+        signal_set() {
+            UNISTDX_CHECK(::sigaddset(this, s));
+        }
 
-		/**
-		\brief Call \p func for each signal in the set.
-		\throws bad_call
-		\see \man{sigismember,3}
-		*/
-		template<class F>
-		void
-		for_each(F func) {
-			for (signal_type s=1; s<=31; ++s) {
-				int ret;
-				UNISTDX_CHECK(ret = ::sigismember(this, s));
-				if (ret) {
-					func(s);
-				}
-			}
-		}
+        /**
+        \brief Call \p func for each signal in the set.
+        \throws bad_call
+        \see \man{sigismember,3}
+        */
+        template<class F>
+        void
+        for_each(F func) {
+            for (signal_type s=1; s<=31; ++s) {
+                int ret;
+                UNISTDX_CHECK(ret = ::sigismember(this, s));
+                if (ret) {
+                    func(s);
+                }
+            }
+        }
 
-	};
+    };
 
-	namespace this_process {
+    namespace this_process {
 
-		/**
-		\brief Block \p signals for the current process.
-		\date 2018-06-15
-		\author Ivan Gankevich
-		\ingroup ipc
-		\throws bad_call
-		\see \man{sigprocmask,2}
-		*/
-		inline void
-		block_signals(const signal_set& signals) {
-			UNISTDX_CHECK(::sigprocmask(SIG_BLOCK, &signals, nullptr));
-		}
+        /**
+        \brief Block \p signals for the current process.
+        \date 2018-06-15
+        \author Ivan Gankevich
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigprocmask,2}
+        */
+        inline void
+        block_signals(const signal_set& signals) {
+            UNISTDX_CHECK(::sigprocmask(SIG_BLOCK, &signals, nullptr));
+        }
 
-		/**
-		\brief Unblock \p signals for the current process.
-		\date 2018-06-15
-		\author Ivan Gankevich
-		\ingroup ipc
-		\throws bad_call
-		\see \man{sigprocmask,2}
-		*/
-		inline void
-		unblock_signals(const signal_set& signals) {
-			UNISTDX_CHECK(::sigprocmask(SIG_UNBLOCK, &signals, nullptr));
-		}
+        /**
+        \brief Unblock \p signals for the current process.
+        \date 2018-06-15
+        \author Ivan Gankevich
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigprocmask,2}
+        */
+        inline void
+        unblock_signals(const signal_set& signals) {
+            UNISTDX_CHECK(::sigprocmask(SIG_UNBLOCK, &signals, nullptr));
+        }
 
-	}
+    }
 
-	/**
-	\brief Blocks/unblocks specified signals upon creation/destruction.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup ipc comm guard
-	*/
-	class signal_guard {
+    /**
+    \brief Blocks/unblocks specified signals upon creation/destruction.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup ipc comm guard
+    */
+    class signal_guard {
 
-	private:
-		signal_set _signals;
+    private:
+        signal_set _signals;
 
-	public:
+    public:
 
-		/**
-		\brief Construct signal guard that blocks all signals in set \p s.
-		\throws bad_call
-		\see \man{sigprocmask,2}
-		*/
-		inline explicit
-		signal_guard(signal_set s):
-		_signals(s) {
-			this->lock();
-		}
+        /**
+        \brief Construct signal guard that blocks all signals in set \p s.
+        \throws bad_call
+        \see \man{sigprocmask,2}
+        */
+        inline explicit
+        signal_guard(signal_set s):
+        _signals(s) {
+            this->lock();
+        }
 
-		/// Terminates if \link unlock\endlink fails.
-		inline
-		~signal_guard() {
-			try {
-				this->unlock();
-			} catch (...) {
-				std::terminate();
-			}
-		}
+        /// Terminates if \link unlock\endlink fails.
+        inline
+        ~signal_guard() {
+            try {
+                this->unlock();
+            } catch (...) {
+                std::terminate();
+            }
+        }
 
-		/**
-		\brief Block all specified signals.
-		\throws bad_call
-		\see \link this_process::block_signals\endlink
-		*/
-		inline void
-		lock() {
-			this_process::block_signals(this->_signals);
-		}
+        /**
+        \brief Block all specified signals.
+        \throws bad_call
+        \see \link this_process::block_signals\endlink
+        */
+        inline void
+        lock() {
+            this_process::block_signals(this->_signals);
+        }
 
-		/**
-		\brief Unblock all specified signals.
-		\throws bad_call
-		\see \link this_process::unblock_signals\endlink
-		*/
-		inline void
-		unlock() {
-			this_process::unblock_signals(this->_signals);
-		}
+        /**
+        \brief Unblock all specified signals.
+        \throws bad_call
+        \see \link this_process::unblock_signals\endlink
+        */
+        inline void
+        unlock() {
+            this_process::unblock_signals(this->_signals);
+        }
 
-	};
-	#endif // if !defined(__MACH__)
+    };
+    #endif // if !defined(__MACH__)
 
 }
 

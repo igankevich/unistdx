@@ -5,25 +5,25 @@
 
 namespace sys {
 
-	namespace bits {
+    namespace bits {
 
-		struct octet {
+        struct octet {
 
-			unsigned int _val;
+            unsigned int _val;
 
-			template <class T>
-			octet(T rhs):
-			_val(static_cast<unsigned char>(rhs)) {}
+            template <class T>
+            octet(T rhs):
+            _val(static_cast<unsigned char>(rhs)) {}
 
-			inline friend std::ostream&
-			operator<<(std::ostream& out, const octet& rhs) {
-				out.width(2);
-				return out << rhs._val;
-			}
+            inline friend std::ostream&
+            operator<<(std::ostream& out, const octet& rhs) {
+                out.width(2);
+                return out << rhs._val;
+            }
 
-		};
+        };
 
-	}
+    }
 
 }
 

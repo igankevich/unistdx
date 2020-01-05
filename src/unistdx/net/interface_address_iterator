@@ -1,122 +1,122 @@
-#ifndef UNISTDX_NET_IFADDRS_ITERATOR
-#define UNISTDX_NET_IFADDRS_ITERATOR
+#ifndef UNISTDX_NET_INTERFACE_ADDRESS_ITERATOR
+#define UNISTDX_NET_INTERFACE_ADDRESS_ITERATOR
 
 #include <unistdx/bits/interface_addresses>
 
 namespace sys {
 
-	/// Alias to \c ifaddrs system type.
-	typedef struct ::ifaddrs ifaddrs_type;
+    /// Alias to \c ifaddrs system type.
+    typedef struct ::ifaddrs ifaddrs_type;
 
-	/**
-	\brief Iterator for interface addresses of the computer.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup iter net
-	\see \man{getifaddrs,3}
-	\deprecated Use netlink wrappers instead
-	*/
-	class interface_address_iterator:
-		public std::iterator<std::input_iterator_tag, ifaddrs_type> {
+    /**
+    \brief Iterator for interface addresses of the computer.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup iter net
+    \see \man{getifaddrs,3}
+    \deprecated Use netlink wrappers instead
+    */
+    class interface_address_iterator:
+        public std::iterator<std::input_iterator_tag, ifaddrs_type> {
 
-	private:
-		typedef typename std::iterator<std::input_iterator_tag, ifaddrs_type>
-			base_type;
+    private:
+        typedef typename std::iterator<std::input_iterator_tag, ifaddrs_type>
+            base_type;
 
-	public:
-		using typename base_type::iterator_category;
-		using typename base_type::value_type;
-		using typename base_type::pointer;
-		using typename base_type::reference;
-		using typename base_type::difference_type;
+    public:
+        using typename base_type::iterator_category;
+        using typename base_type::value_type;
+        using typename base_type::pointer;
+        using typename base_type::reference;
+        using typename base_type::difference_type;
 
-	private:
-		typedef const ifaddrs_type* const_pointer;
-		typedef const ifaddrs_type& const_reference;
+    private:
+        typedef const ifaddrs_type* const_pointer;
+        typedef const ifaddrs_type& const_reference;
 
-	private:
-		pointer _ifa = nullptr;
+    private:
+        pointer _ifa = nullptr;
 
-	public:
+    public:
 
-		/**
-		Construct interface address iterator from the pointer to
-		\c ifaddrs system type.
-		*/
-		inline explicit constexpr
-		interface_address_iterator(pointer rhs) noexcept:
-		_ifa(rhs) {}
+        /**
+        Construct interface address iterator from the pointer to
+        \c ifaddrs system type.
+        */
+        inline explicit constexpr
+        interface_address_iterator(pointer rhs) noexcept:
+        _ifa(rhs) {}
 
-		inline constexpr
-		interface_address_iterator() noexcept = default;
+        inline constexpr
+        interface_address_iterator() noexcept = default;
 
-		inline
-		~interface_address_iterator() = default;
+        inline
+        ~interface_address_iterator() = default;
 
-		/// Copy-constructor.
-		inline constexpr
-		interface_address_iterator(const interface_address_iterator&) noexcept = default;
+        /// Copy-constructor.
+        inline constexpr
+        interface_address_iterator(const interface_address_iterator&) noexcept = default;
 
-		/// Assignment.
-		inline interface_address_iterator&
-		operator=(const interface_address_iterator&) noexcept = default;
+        /// Assignment.
+        inline interface_address_iterator&
+        operator=(const interface_address_iterator&) noexcept = default;
 
-		/// Compare \c ifaddrs pointers.
-		inline constexpr bool
-		operator==(const interface_address_iterator& rhs) const noexcept {
-			return this->_ifa == rhs._ifa;
-		}
+        /// Compare \c ifaddrs pointers.
+        inline constexpr bool
+        operator==(const interface_address_iterator& rhs) const noexcept {
+            return this->_ifa == rhs._ifa;
+        }
 
-		/// Compare \c ifaddrs pointers.
-		inline constexpr bool
-		operator!=(const interface_address_iterator& rhs) const noexcept {
-			return !this->operator==(rhs);
-		}
+        /// Compare \c ifaddrs pointers.
+        inline constexpr bool
+        operator!=(const interface_address_iterator& rhs) const noexcept {
+            return !this->operator==(rhs);
+        }
 
-		/// Dereference.
-		inline reference
-		operator*() noexcept {
-			return *this->_ifa;
-		}
+        /// Dereference.
+        inline reference
+        operator*() noexcept {
+            return *this->_ifa;
+        }
 
-		/// Dereference.
-		inline constexpr const_reference
-		operator*() const noexcept {
-			return *this->_ifa;
-		}
+        /// Dereference.
+        inline constexpr const_reference
+        operator*() const noexcept {
+            return *this->_ifa;
+        }
 
-		/// Access object by pointer.
-		inline pointer
-		operator->() noexcept {
-			return this->_ifa;
-		}
+        /// Access object by pointer.
+        inline pointer
+        operator->() noexcept {
+            return this->_ifa;
+        }
 
-		/// Access object by pointer.
-		inline constexpr const_pointer
-		operator->() const noexcept {
-			return this->_ifa;
-		}
+        /// Access object by pointer.
+        inline constexpr const_pointer
+        operator->() const noexcept {
+            return this->_ifa;
+        }
 
-		/// Increment.
-		inline interface_address_iterator&
-		operator++() noexcept {
-			this->next(); return *this;
-		}
+        /// Increment.
+        inline interface_address_iterator&
+        operator++() noexcept {
+            this->next(); return *this;
+        }
 
-		/// Post-increment.
-		inline interface_address_iterator
-		operator++(int) noexcept {
-			interface_address_iterator tmp(*this); this->next(); return tmp;
-		}
+        /// Post-increment.
+        inline interface_address_iterator
+        operator++(int) noexcept {
+            interface_address_iterator tmp(*this); this->next(); return tmp;
+        }
 
-	private:
+    private:
 
-		inline void
-		next() noexcept {
-			this->_ifa = this->_ifa->ifa_next;
-		}
+        inline void
+        next() noexcept {
+            this->_ifa = this->_ifa->ifa_next;
+        }
 
-	};
+    };
 
 
 }

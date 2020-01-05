@@ -3,9 +3,9 @@
 
 /// disallow copy & move operations
 #define UNISTDX_NO_COPY_AND_MOVE(type) \
-	type(const type&) = delete; \
-	type(type&&) = delete; \
-	type& operator=(const type&) = delete; \
-	type& operator=(type&&) = delete;
+    type(const type&) = delete; \
+    type(type&&) = delete; \
+    type& operator=(const type&) = delete; \
+    type& operator=(type&&) = delete;
 
 #endif // vim:filetype=cpp

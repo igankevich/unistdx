@@ -5,71 +5,71 @@
 
 namespace sys {
 
-	/**
-	\brief Container interface for two iterators.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup container
-	The container stores two iterators and provides begin/end methods.
-	*/
-	template <class T>
-	class iterator_pair {
+    /**
+    \brief Container interface for two iterators.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup container
+    The container stores two iterators and provides begin/end methods.
+    */
+    template <class T>
+    class iterator_pair {
 
-	public:
-		/// Iterator type.
-		typedef T iterator;
-		/// Value type.
-		typedef typename iterator::value_type value_type;
-		/// Reference type.
-		typedef typename iterator::reference reference;
-		/// Difference type.
-		typedef typename iterator::difference_type difference_type;
-		/// Size type.
-		typedef typename std::make_signed<typename iterator::difference_type>::type
-			size_type;
-		/// Constant reference type.
-		typedef typename std::add_const<typename iterator::reference>::type
-			const_reference;
+    public:
+        /// Iterator type.
+        typedef T iterator;
+        /// Value type.
+        typedef typename iterator::value_type value_type;
+        /// Reference type.
+        typedef typename iterator::reference reference;
+        /// Difference type.
+        typedef typename iterator::difference_type difference_type;
+        /// Size type.
+        typedef typename std::make_signed<typename iterator::difference_type>::type
+            size_type;
+        /// Constant reference type.
+        typedef typename std::add_const<typename iterator::reference>::type
+            const_reference;
 
-	private:
-		iterator _first;
-		iterator _last;
+    private:
+        iterator _first;
+        iterator _last;
 
-	public:
+    public:
 
-		/// Construct iterator pair from \p first and \p last.
-		inline
-		iterator_pair(iterator first, iterator last) noexcept:
-		_first(first),
-		_last(last)
-		{}
+        /// Construct iterator pair from \p first and \p last.
+        inline
+        iterator_pair(iterator first, iterator last) noexcept:
+        _first(first),
+        _last(last)
+        {}
 
-		/// Move-constructor.
-		iterator_pair(iterator_pair&&) = default;
+        /// Move-constructor.
+        iterator_pair(iterator_pair&&) = default;
 
-		/// Copy-constructor.
-		iterator_pair(const iterator_pair&) = default;
+        /// Copy-constructor.
+        iterator_pair(const iterator_pair&) = default;
 
-		/// Returns iterator to the beginning of attribute sequence.
-		inline iterator
-		begin() noexcept {
-			return this->_first;
-		}
+        /// Returns iterator to the beginning of attribute sequence.
+        inline iterator
+        begin() noexcept {
+            return this->_first;
+        }
 
-		/// Returns iterator to the end of attribute sequence.
-		inline iterator
-		end() noexcept {
-			return this->_last;
-		}
+        /// Returns iterator to the end of attribute sequence.
+        inline iterator
+        end() noexcept {
+            return this->_last;
+        }
 
-	};
+    };
 
-	/// Construct iterator pair from \p first and \p last.
-	template <class T>
-	inline iterator_pair<T>
-	make_view(T first, T last) noexcept {
-		return iterator_pair<T>(first, last);
-	}
+    /// Construct iterator pair from \p first and \p last.
+    template <class T>
+    inline iterator_pair<T>
+    make_view(T first, T last) noexcept {
+        return iterator_pair<T>(first, last);
+    }
 
 }
 

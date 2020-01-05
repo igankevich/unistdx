@@ -9,89 +9,89 @@
 
 namespace sys {
 
-	/**
-	\brief Byte-swapping function.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup net
-	\details
-	\arg There are specialisations for standard unsigned integer types.
-	\arg Specialisations are compile-time where supported.
-	*/
-	template<class T>
-	inline T
-	byte_swap(T n) noexcept;
+    /**
+    \brief Byte-swapping function.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup net
+    \details
+    \arg There are specialisations for standard unsigned integer types.
+    \arg Specialisations are compile-time where supported.
+    */
+    template<class T>
+    inline T
+    byte_swap(T n) noexcept;
 
-	/// \brief Specialisation for 1-byte unsigned integer.
-	/// \ingroup net
-	template<>
-	inline constexpr u8
-	byte_swap<u8>(u8 n) noexcept {
-		return n;
-	}
+    /// \brief Specialisation for 1-byte unsigned integer.
+    /// \ingroup net
+    template<>
+    inline constexpr u8
+    byte_swap<u8>(u8 n) noexcept {
+        return n;
+    }
 
-	/// \brief Specialisation for 2-byte unsigned integer.
-	/// \ingroup net
-	template<>
-	inline constexpr u16
-	byte_swap<u16>(u16 n) noexcept {
-		#if defined(UNISTDX_HAVE_BUILTIN_BSWAP16)
-		return __builtin_bswap16(n);
-		#else
-		return ((n & 0xff00)>>8) | ((n & 0x00ff)<<8);
-		#endif
-	}
+    /// \brief Specialisation for 2-byte unsigned integer.
+    /// \ingroup net
+    template<>
+    inline constexpr u16
+    byte_swap<u16>(u16 n) noexcept {
+        #if defined(UNISTDX_HAVE_BUILTIN_BSWAP16)
+        return __builtin_bswap16(n);
+        #else
+        return ((n & 0xff00)>>8) | ((n & 0x00ff)<<8);
+        #endif
+    }
 
-	/// \brief Specialisation for 4-byte unsigned integer.
-	/// \ingroup net
-	template<>
-	inline constexpr u32
-	byte_swap<u32>(u32 n) noexcept {
-		#if defined(UNISTDX_HAVE_BUILTIN_BSWAP32)
-		return __builtin_bswap32(n);
-		#else
-		return ((n & UINT32_C(0xff000000)) >> 24) |
-		       ((n & UINT32_C(0x00ff0000)) >> 8) |
-		       ((n & UINT32_C(0x0000ff00)) << 8) |
-		       ((n & UINT32_C(0x000000ff)) << 24);
-		#endif
-	}
+    /// \brief Specialisation for 4-byte unsigned integer.
+    /// \ingroup net
+    template<>
+    inline constexpr u32
+    byte_swap<u32>(u32 n) noexcept {
+        #if defined(UNISTDX_HAVE_BUILTIN_BSWAP32)
+        return __builtin_bswap32(n);
+        #else
+        return ((n & UINT32_C(0xff000000)) >> 24) |
+               ((n & UINT32_C(0x00ff0000)) >> 8) |
+               ((n & UINT32_C(0x0000ff00)) << 8) |
+               ((n & UINT32_C(0x000000ff)) << 24);
+        #endif
+    }
 
-	/// \brief Specialisation for 8-byte unsigned integer.
-	/// \ingroup net
-	template<>
-	inline constexpr u64
-	byte_swap<u64>(u64 n) noexcept {
-		#if defined(UNISTDX_HAVE_BUILTIN_BSWAP64)
-		return __builtin_bswap64(n);
-		#else
-		return ((n & UINT64_C(0xff00000000000000)) >> 56) |
-		       ((n & UINT64_C(0x00ff000000000000)) >> 40) |
-		       ((n & UINT64_C(0x0000ff0000000000)) >> 24) |
-		       ((n & UINT64_C(0x000000ff00000000)) >> 8) |
-		       ((n & UINT64_C(0x00000000ff000000)) << 8) |
-		       ((n & UINT64_C(0x0000000000ff0000)) << 24) |
-		       ((n & UINT64_C(0x000000000000ff00)) << 40) |
-		       ((n & UINT64_C(0x00000000000000ff)) << 56);
-		#endif
-	}
+    /// \brief Specialisation for 8-byte unsigned integer.
+    /// \ingroup net
+    template<>
+    inline constexpr u64
+    byte_swap<u64>(u64 n) noexcept {
+        #if defined(UNISTDX_HAVE_BUILTIN_BSWAP64)
+        return __builtin_bswap64(n);
+        #else
+        return ((n & UINT64_C(0xff00000000000000)) >> 56) |
+               ((n & UINT64_C(0x00ff000000000000)) >> 40) |
+               ((n & UINT64_C(0x0000ff0000000000)) >> 24) |
+               ((n & UINT64_C(0x000000ff00000000)) >> 8) |
+               ((n & UINT64_C(0x00000000ff000000)) << 8) |
+               ((n & UINT64_C(0x0000000000ff0000)) << 24) |
+               ((n & UINT64_C(0x000000000000ff00)) << 40) |
+               ((n & UINT64_C(0x00000000000000ff)) << 56);
+        #endif
+    }
 
-	/// \brief Specialisation for 16-byte unsigned integer.
-	/// \ingroup net
-	template<>
-	inline uint128_t
-	byte_swap(uint128_t x) noexcept {
-		union {
-			uint128_t n;
-			unsigned char raw[sizeof(uint128_t)];
-			u64 words[2];
-		} tmp;
-		tmp.n = x;
-		tmp.words[0] = byte_swap<u64>(tmp.words[0]);
-		tmp.words[1] = byte_swap<u64>(tmp.words[1]);
-		std::swap(tmp.words[0], tmp.words[1]);
-		return tmp.n;
-	}
+    /// \brief Specialisation for 16-byte unsigned integer.
+    /// \ingroup net
+    template<>
+    inline uint128_t
+    byte_swap(uint128_t x) noexcept {
+        union {
+            uint128_t n;
+            unsigned char raw[sizeof(uint128_t)];
+            u64 words[2];
+        } tmp;
+        tmp.n = x;
+        tmp.words[0] = byte_swap<u64>(tmp.words[0]);
+        tmp.words[1] = byte_swap<u64>(tmp.words[1]);
+        std::swap(tmp.words[0], tmp.words[1]);
+        return tmp.n;
+    }
 
 }
 

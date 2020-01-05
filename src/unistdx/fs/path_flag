@@ -8,25 +8,25 @@
 
 namespace sys {
 
-	/// Path flags.
-	enum class path_flag: int {
-		/**
-		Do not follow symlinks.
-		Allows getting status of dangling symbolic links.
-		*/
-		no_follow = AT_SYMLINK_NOFOLLOW
-		#if defined(AT_NO_AUTOMOUNT)
-		,
-		/// Do not automatically mount directories
-		no_automount = AT_NO_AUTOMOUNT
-		#endif
-		,
-		/// Allow empty relative file path.
-		empty = AT_EMPTY_PATH
-	};
+    /// Path flags.
+    enum class path_flag: int {
+        /**
+        Do not follow symlinks.
+        Allows getting status of dangling symbolic links.
+        */
+        no_follow = AT_SYMLINK_NOFOLLOW
+        #if defined(AT_NO_AUTOMOUNT)
+        ,
+        /// Do not automatically mount directories
+        no_automount = AT_NO_AUTOMOUNT
+        #endif
+        ,
+        /// Allow empty relative file path.
+        empty = AT_EMPTY_PATH
+    };
 
-	template <>
-	struct is_flag<path_flag>: public std::true_type {};
+    template <>
+    struct is_flag<path_flag>: public std::true_type {};
 
 }
 

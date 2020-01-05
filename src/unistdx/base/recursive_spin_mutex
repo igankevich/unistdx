@@ -8,61 +8,61 @@
 
 namespace sys {
 
-	/**
-	\brief Spin mutex that can be lock multiple times by the same thread.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup mutex
-	*/
-	class recursive_spin_mutex: public spin_mutex {
+    /**
+    \brief Spin mutex that can be lock multiple times by the same thread.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup mutex
+    */
+    class recursive_spin_mutex: public spin_mutex {
 
-	private:
-		typedef std::thread::id id_type;
+    private:
+        typedef std::thread::id id_type;
 
-	private:
-		std::atomic<id_type> _owner;
-		volatile int _counter = 0;
+    private:
+        std::atomic<id_type> _owner;
+        volatile int _counter = 0;
 
-	public:
+    public:
 
-		/// Lock the mutex.
-		inline void
-		lock() noexcept {
-			const id_type tid = std::this_thread::get_id();
-			if (tid != this->_owner) {
-				this->spin_mutex::lock();
-				this->_owner = tid;
-				this->_counter = 1;
-			} else {
-				++this->_counter;
-			}
-		}
+        /// Lock the mutex.
+        inline void
+        lock() noexcept {
+            const id_type tid = std::this_thread::get_id();
+            if (tid != this->_owner) {
+                this->spin_mutex::lock();
+                this->_owner = tid;
+                this->_counter = 1;
+            } else {
+                ++this->_counter;
+            }
+        }
 
-		/// Unlock the mutex.
-		inline void
-		unlock() noexcept {
-			if (std::this_thread::get_id() == this->_owner) {
-				if (--this->_counter == 0) {
-					this->_owner = id_type();
-					this->spin_mutex::unlock();
-				}
-			}
-		}
+        /// Unlock the mutex.
+        inline void
+        unlock() noexcept {
+            if (std::this_thread::get_id() == this->_owner) {
+                if (--this->_counter == 0) {
+                    this->_owner = id_type();
+                    this->spin_mutex::unlock();
+                }
+            }
+        }
 
-		/// Try to lock the mutex without blocking.
-		inline bool
-		try_lock() noexcept {
-			return std::this_thread::get_id() == this->_owner
-				|| this->spin_mutex::try_lock();
-		}
+        /// Try to lock the mutex without blocking.
+        inline bool
+        try_lock() noexcept {
+            return std::this_thread::get_id() == this->_owner
+                || this->spin_mutex::try_lock();
+        }
 
-		/// Construct recursive spin mutex.
-		inline
-		recursive_spin_mutex() noexcept = default;
+        /// Construct recursive spin mutex.
+        inline
+        recursive_spin_mutex() noexcept = default;
 
-		UNISTDX_NO_COPY_AND_MOVE(recursive_spin_mutex)
+        UNISTDX_NO_COPY_AND_MOVE(recursive_spin_mutex)
 
-	};
+    };
 
 }
 

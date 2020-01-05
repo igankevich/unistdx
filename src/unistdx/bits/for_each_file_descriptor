@@ -1,5 +1,5 @@
-#ifndef UNISTDX_BITS_FOR_EACH_OPEN_FILE_DESCRIPTOR
-#define UNISTDX_BITS_FOR_EACH_OPEN_FILE_DESCRIPTOR
+#ifndef UNISTDX_BITS_FOR_EACH_FILE_DESCRIPTOR
+#define UNISTDX_BITS_FOR_EACH_FILE_DESCRIPTOR
 
 #include <sys/resource.h>
 
@@ -11,41 +11,41 @@
 
 namespace sys {
 
-	namespace bits {
+    namespace bits {
 
-		template<class F>
-		void
-		for_each_file_descriptor(F func) {
-			struct ::rlimit rlim;
-			UNISTDX_CHECK(::getrlimit(RLIMIT_NOFILE, &rlim));
-			const int num_fds = rlim.rlim_cur == RLIM_INFINITY
-			                    ? FD_SETSIZE : rlim.rlim_cur;
-			const int batch_size = FD_SETSIZE;
-			const int num_batches = num_fds / batch_size
-			                        + (num_fds % FD_SETSIZE == 0 ?  0 : 1);
-			const int no_timeout = -1;
-			for (int i=0; i<num_batches; ++i) {
-				std::vector<sys::poll_event> fds;
-				const int from = i*batch_size;
-				const int to = std::min((i+1)*batch_size, num_fds);
-				for (int fd=from; fd<to; ++fd) {
-					fds.emplace_back(fd, 0, 0);
-				}
-				UNISTDX_CHECK(::poll(fds.data(), fds.size(), no_timeout));
-				std::for_each(
-					fds.begin(),
-					fds.end(),
-					[&func] (const sys::poll_event& rhs) {
-					    if (not rhs.bad()) {
-					        func(rhs);
-						}
-					}
-				);
-			}
+        template<class F>
+        void
+        for_each_file_descriptor(F func) {
+            struct ::rlimit rlim;
+            UNISTDX_CHECK(::getrlimit(RLIMIT_NOFILE, &rlim));
+            const int num_fds = rlim.rlim_cur == RLIM_INFINITY
+                                ? FD_SETSIZE : rlim.rlim_cur;
+            const int batch_size = FD_SETSIZE;
+            const int num_batches = num_fds / batch_size
+                                    + (num_fds % FD_SETSIZE == 0 ?  0 : 1);
+            const int no_timeout = -1;
+            for (int i=0; i<num_batches; ++i) {
+                std::vector<sys::poll_event> fds;
+                const int from = i*batch_size;
+                const int to = std::min((i+1)*batch_size, num_fds);
+                for (int fd=from; fd<to; ++fd) {
+                    fds.emplace_back(fd, 0, 0);
+                }
+                UNISTDX_CHECK(::poll(fds.data(), fds.size(), no_timeout));
+                std::for_each(
+                    fds.begin(),
+                    fds.end(),
+                    [&func] (const sys::poll_event& rhs) {
+                        if (not rhs.bad()) {
+                            func(rhs);
+                        }
+                    }
+                );
+            }
 
-		}
+        }
 
-	}
+    }
 
 
 }

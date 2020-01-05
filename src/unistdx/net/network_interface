@@ -56,8 +56,8 @@ namespace sys {
         #endif
     };
 
-	template <>
-	struct is_flag<network_interface_flags>: public std::true_type {};
+    template <>
+    struct is_flag<network_interface_flags>: public std::true_type {};
 
     class network_interface {
 

@@ -34,12 +34,12 @@ SEPARATE_MEMBER_PAGES  = NO
 TAB_SIZE               = 4
 ALIASES                =
 ALIASES               += man{2}="<a href=\"http://man7.org/linux/man-pages/man\2/\1.\2.html\">\1(\2)</a>"
-ALIASES               += rfc{1}="<a href=\"https://tools.ietf.org/html/rfc\1\">RFC \1</a>" 
+ALIASES               += rfc{1}="<a href=\"https://tools.ietf.org/html/rfc\1\">RFC \1</a>"
 ALIASES               += nowarn="\{"
 ALIASES               += endnowarn="\}"
 ALIASES               += throws_bad_call_non_blocking="\throws bad_call if system error occurs, except \c std::errc::resource_unavailable_try_again and \c std::errc::operation_in_progress \see std::errc"
-ALIASES               += unistdx_example_link{2}="<a href=\"\1_8\2-example.html\">Full source code</a>" 
-ALIASES               += unistdx_example_download{1}="<a href=\"examples/\1\">Download</a>" 
+ALIASES               += unistdx_example_link{2}="<a href=\"\1_8\2-example.html\">Full source code</a>"
+ALIASES               += unistdx_example_download{1}="<a href=\"examples/\1\">Download</a>"
 ALIASES               += unistdx_example{1}="\example \1 \unistdx_example_download{\1}\par"
 TCL_SUBST              =
 OPTIMIZE_OUTPUT_FOR_C  = NO

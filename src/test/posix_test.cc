@@ -18,96 +18,96 @@ support posix_2;
 
 void
 printval(const std::string& name) {
-	std::cout << std::setw(40) << std::left
-		<< name << Color::FG_LIGHT_RED;
-	if (name.find("SOURCE") == std::string::npos) {
-		if (name.find("POSIX2") != std::string::npos) {
-			++posix_2.num_unsupported;
-		} else {
-			++posix_1.num_unsupported;
-		}
-		std::cout << "not supported";
-	} else {
-		std::cout << "undefined";
-	}
-	std::cout << Color::RESET << '\n';
+    std::cout << std::setw(40) << std::left
+        << name << Color::FG_LIGHT_RED;
+    if (name.find("SOURCE") == std::string::npos) {
+        if (name.find("POSIX2") != std::string::npos) {
+            ++posix_2.num_unsupported;
+        } else {
+            ++posix_1.num_unsupported;
+        }
+        std::cout << "not supported";
+    } else {
+        std::cout << "undefined";
+    }
+    std::cout << Color::RESET << '\n';
 }
 
 void
 might_be_supported(const std::string& name) {
-	if (name.find("POSIX2") != std::string::npos) {
-		++posix_2.num_semisupported;
-	} else {
-		++posix_1.num_semisupported;
-	}
-	std::cout << std::setw(40) << std::left << name
-		<< Color::FG_LIGHT_YELLOW
-		<< "might or might not be supported"
-		<< Color::RESET << '\n';
+    if (name.find("POSIX2") != std::string::npos) {
+        ++posix_2.num_semisupported;
+    } else {
+        ++posix_1.num_semisupported;
+    }
+    std::cout << std::setw(40) << std::left << name
+        << Color::FG_LIGHT_YELLOW
+        << "might or might not be supported"
+        << Color::RESET << '\n';
 }
 
 template<class T>
 void
 printval(const std::string& name, T val) {
-	if (val == -1) {
-		printval(name.c_str());
-	} else if (val == 0) {
-		might_be_supported(name);
-	} else {
-		std::cout << std::setw(40) << std::left << name;
-		if (name.find("VERSION") != std::string::npos) {
-			std::cout << val;
-		} else {
-			std::cout << Color::FG_LIGHT_GREEN;
-			if (name.find("SOURCE") != std::string::npos) {
-				std::cout << "defined";
-			} else {
-				std::cout << "supported";
-				if (name.find("POSIX2") != std::string::npos) {
-					++posix_2.num_supported;
-				} else {
-					++posix_1.num_supported;
-				}
-			}
-			std::cout << Color::RESET;
-			if (val != 1) {
-				std::cout << " (" << val << ')';
-			}
-		}
-		std::cout << '\n';
-	}
+    if (val == -1) {
+        printval(name.c_str());
+    } else if (val == 0) {
+        might_be_supported(name);
+    } else {
+        std::cout << std::setw(40) << std::left << name;
+        if (name.find("VERSION") != std::string::npos) {
+            std::cout << val;
+        } else {
+            std::cout << Color::FG_LIGHT_GREEN;
+            if (name.find("SOURCE") != std::string::npos) {
+                std::cout << "defined";
+            } else {
+                std::cout << "supported";
+                if (name.find("POSIX2") != std::string::npos) {
+                    ++posix_2.num_supported;
+                } else {
+                    ++posix_1.num_supported;
+                }
+            }
+            std::cout << Color::RESET;
+            if (val != 1) {
+                std::cout << " (" << val << ')';
+            }
+        }
+        std::cout << '\n';
+    }
 }
 
 void
 ruler() {
 std::cout << std::setw(40 + 31) << std::setfill('-')
-	<< "" << '\n' << std::setfill(' ');
+    << "" << '\n' << std::setfill(' ');
 }
 
 unsigned int
 posix_support(support s) {
-	return 100u
-		* (float(s.num_supported)
-		/ float(s.num_supported + s.num_unsupported + s.num_semisupported));
+    return 100u
+        * (float(s.num_supported)
+        / float(s.num_supported + s.num_unsupported + s.num_semisupported));
 }
 
 void
 summary() {
-	ruler();
-	std::cout << std::setw(40) << std::left
-		<< "POSIX1 support: "
-		<< posix_support(posix_1) << '%'
-		<< '\n';
-	std::cout << std::setw(40) << std::left
-		<< "POSIX2 support: "
-		<< posix_support(posix_2) << '%'
-		<< '\n';
-	ruler();
+    ruler();
+    std::cout << std::setw(40) << std::left
+        << "POSIX1 support: "
+        << posix_support(posix_1) << '%'
+        << '\n';
+    std::cout << std::setw(40) << std::left
+        << "POSIX2 support: "
+        << posix_support(posix_2) << '%'
+        << '\n';
+    ruler();
 }
 
 void test_posix() {
 std::cout << std::setw(40) << std::left
-	<< "feature" << "status" << '\n';
+    << "feature" << "status" << '\n';
 ruler();
 #if defined(_POSIX2_C_BIND)
 printval("_POSIX2_C_BIND", _POSIX2_C_BIND);
@@ -585,6 +585,6 @@ printval("_XOPEN_VERSION");
 }
 
 int main() {
-	test_posix();
-	return 0;
+    test_posix();
+    return 0;
 }

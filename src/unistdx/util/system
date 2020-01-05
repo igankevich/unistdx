@@ -8,158 +8,158 @@
 /// POSIX and Linux system call wrappers.
 namespace sys {
 
-	/// Alias to \link std::size_t\endlink.
-	typedef ::std::size_t size_type;
+    /// Alias to \link std::size_t\endlink.
+    typedef ::std::size_t size_type;
 
-	/**
-	\brief Get system page size.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\details
-	Falls back to 4096 when the page size can not be determined.
-	*/
-	inline size_type
-	page_size() noexcept {
-		#if defined(_SC_PAGESIZE)
-			#define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGESIZE
-		#elif defined(_SC_PAGE_SIZE)
-			#define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGE_SIZE
-		#endif
-		#if defined(UNISTDX_SYSCONF_PAGE_SIZE)
-		long result = ::sysconf(UNISTDX_SYSCONF_PAGE_SIZE);
-		return result < 1 ? 4096 : result;
-		#else
-		return 4096;
-		#endif
-		#undef UNISTDX_SYSCONF_PAGE_SIZE
-	}
+    /**
+    \brief Get system page size.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \details
+    Falls back to 4096 when the page size can not be determined.
+    */
+    inline size_type
+    page_size() noexcept {
+        #if defined(_SC_PAGESIZE)
+            #define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGESIZE
+        #elif defined(_SC_PAGE_SIZE)
+            #define UNISTDX_SYSCONF_PAGE_SIZE _SC_PAGE_SIZE
+        #endif
+        #if defined(UNISTDX_SYSCONF_PAGE_SIZE)
+        long result = ::sysconf(UNISTDX_SYSCONF_PAGE_SIZE);
+        return result < 1 ? 4096 : result;
+        #else
+        return 4096;
+        #endif
+        #undef UNISTDX_SYSCONF_PAGE_SIZE
+    }
 
-	/**
-	\brief Returns maximum number of threads for the system.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\details
-	\arg If \c UNISTDX_SINGLE_THREAD preprocessor macro is defined, returns 1.
-	\arg If \c UNISTDX_CONCURRENCY environment variable equals positive integer,
-	returns its value.
-	\arg Otherwise return \link std::thread::hardware_concurrency\endlink.
-	*/
-	extern unsigned
-	thread_concurrency() noexcept;
+    /**
+    \brief Returns maximum number of threads for the system.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \details
+    \arg If \c UNISTDX_SINGLE_THREAD preprocessor macro is defined, returns 1.
+    \arg If \c UNISTDX_CONCURRENCY environment variable equals positive integer,
+    returns its value.
+    \arg Otherwise return \link std::thread::hardware_concurrency\endlink.
+    */
+    extern unsigned
+    thread_concurrency() noexcept;
 
-	/// Always returns 1.
-	inline unsigned
-	io_concurrency() noexcept {
-		return 1u;
-	}
+    /// Always returns 1.
+    inline unsigned
+    io_concurrency() noexcept {
+        return 1u;
+    }
 
-	class cache;
+    class cache;
 
-	/**
-	\brief A particular level of cache.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	*/
-	class cache_level {
+    /**
+    \brief A particular level of cache.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    */
+    class cache_level {
 
-	private:
-		int _level = 0;
-		size_type _size = 0;
-		size_type _linesize = 0;
-		size_type _assoc = 0;
+    private:
+        int _level = 0;
+        size_type _size = 0;
+        size_type _linesize = 0;
+        size_type _assoc = 0;
 
-	public:
+    public:
 
-		/// Get level number.
-		inline int
-		level() const noexcept {
-			return this->_level;
-		}
+        /// Get level number.
+        inline int
+        level() const noexcept {
+            return this->_level;
+        }
 
-		/// Get cache size.
-		inline size_type
-		size() const noexcept {
-			return this->_size;
-		}
+        /// Get cache size.
+        inline size_type
+        size() const noexcept {
+            return this->_size;
+        }
 
-		/// Get cache line size.
-		inline size_type
-		line_size() const noexcept {
-			return this->_linesize;
-		}
+        /// Get cache line size.
+        inline size_type
+        line_size() const noexcept {
+            return this->_linesize;
+        }
 
-		/// Get cache associativity (the number of sets into which cache blocks go).
-		inline size_type
-		associativity() const noexcept {
-			return this->_assoc;
-		}
+        /// Get cache associativity (the number of sets into which cache blocks go).
+        inline size_type
+        associativity() const noexcept {
+            return this->_assoc;
+        }
 
-		friend class cache;
+        friend class cache;
 
-	};
+    };
 
-	/**
-	\brief System caches.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup container
-	\details
-	The data is queried in a series of \man{sysconf,3} calls.
-	*/
-	class cache {
+    /**
+    \brief System caches.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup container
+    \details
+    The data is queried in a series of \man{sysconf,3} calls.
+    */
+    class cache {
 
-	public:
-		/// Alias to \link cache_level\endlink.
-		typedef cache_level value_type;
-		/// Constant iterator.
-		typedef const value_type* const_iterator;
+    public:
+        /// Alias to \link cache_level\endlink.
+        typedef cache_level value_type;
+        /// Constant iterator.
+        typedef const value_type* const_iterator;
 
-	private:
-		cache_level _levels[4];
-		int _nlevels = 0;
+    private:
+        cache_level _levels[4];
+        int _nlevels = 0;
 
-	public:
+    public:
 
-		cache();
-		~cache() = default;
+        cache();
+        ~cache() = default;
 
-		/// Copy-constructor.
-		cache(const cache&) = default;
+        /// Copy-constructor.
+        cache(const cache&) = default;
 
-		/// Move-constructor.
-		cache(cache&&) = default;
+        /// Move-constructor.
+        cache(cache&&) = default;
 
-		/// The number of cache levels.
-		inline int
-		num_levels() const noexcept {
-			return this->_nlevels;
-		}
+        /// The number of cache levels.
+        inline int
+        num_levels() const noexcept {
+            return this->_nlevels;
+        }
 
-		/// Get iterator to the beginning of cache level sequence.
-		inline const_iterator
-		begin() const noexcept {
-			return this->_levels;
-		}
+        /// Get iterator to the beginning of cache level sequence.
+        inline const_iterator
+        begin() const noexcept {
+            return this->_levels;
+        }
 
-		/// Get iterator to the end of cache level sequence.
-		inline const_iterator
-		end() const noexcept {
-			return this->_levels + this->_nlevels;
-		}
+        /// Get iterator to the end of cache level sequence.
+        inline const_iterator
+        end() const noexcept {
+            return this->_levels + this->_nlevels;
+        }
 
-		/// \copydoc num_levels
-		inline int
-		size() const noexcept {
-			return this->_nlevels;
-		}
+        /// \copydoc num_levels
+        inline int
+        size() const noexcept {
+            return this->_nlevels;
+        }
 
-		/// Get cache by index.
-		inline value_type
-		operator[](int i) const noexcept {
-			return this->_levels[i];
-		}
+        /// Get cache by index.
+        inline value_type
+        operator[](int i) const noexcept {
+            return this->_levels[i];
+        }
 
-	};
+    };
 
 }
 

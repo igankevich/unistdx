@@ -12,30 +12,30 @@
 
 namespace sys {
 
-	/// Alias to \c DIR system type.
-	typedef DIR dir_type;
+    /// Alias to \c DIR system type.
+    typedef DIR dir_type;
 
-	typedef ::uid_t uid_type;
-	typedef ::gid_t gid_type;
+    typedef ::uid_t uid_type;
+    typedef ::gid_t gid_type;
 
-	/**
-	\brief Directory entry input stream.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup stream fs
-	\tparam FilePred file predicate type, that determines which
-	directory entries to include in the stream.
-	\see directory_entry
-	\details
-	An input stream from which directory entries are read non-recursively.
-	\arg File predicate may have internal state.
-	*/
-	template<class FilePred>
-	class basic_idirectory: public dirstream {
+    /**
+    \brief Directory entry input stream.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup stream fs
+    \tparam FilePred file predicate type, that determines which
+    directory entries to include in the stream.
+    \see directory_entry
+    \details
+    An input stream from which directory entries are read non-recursively.
+    \arg File predicate may have internal state.
+    */
+    template<class FilePred>
+    class basic_idirectory: public dirstream {
 
-	public:
-		/// File predicate type.
-		using filepred_type = FilePred;
+    public:
+        /// File predicate type.
+        using filepred_type = FilePred;
         /// Directory entry type.
         using value_type = directory_entry;
         /// Directory entry reference.
@@ -49,194 +49,194 @@ namespace sys {
         /// Directory entry stream iterator.
         using iterator = basic_istream_iterator<basic_idirectory,value_type>;
 
-	private:
-		path _dirpath;
-		dir_type* _dir = nullptr;
-		filepred_type _filepred;
+    private:
+        path _dirpath;
+        dir_type* _dir = nullptr;
+        filepred_type _filepred;
 
-	public:
+    public:
 
-		basic_idirectory() = default;
+        basic_idirectory() = default;
 
-		/// Construct directory entry input stream for directory \p path.
-		inline explicit
-		basic_idirectory(const path& path) {
-			this->open(path);
-		}
+        /// Construct directory entry input stream for directory \p path.
+        inline explicit
+        basic_idirectory(const path& path) {
+            this->open(path);
+        }
 
-		/// Move-constructor.
-		inline
-		basic_idirectory(basic_idirectory&& rhs):
-		dirstream(std::forward<dirstream>(rhs)),
-		_dirpath(std::move(rhs._dirpath)),
-		_dir(rhs._dir),
-		_filepred(std::move(rhs._filepred)) {
-			rhs._dir = nullptr;
-		}
+        /// Move-constructor.
+        inline
+        basic_idirectory(basic_idirectory&& rhs):
+        dirstream(std::forward<dirstream>(rhs)),
+        _dirpath(std::move(rhs._dirpath)),
+        _dir(rhs._dir),
+        _filepred(std::move(rhs._filepred)) {
+            rhs._dir = nullptr;
+        }
 
-		basic_idirectory(const basic_idirectory&) = delete;
+        basic_idirectory(const basic_idirectory&) = delete;
 
-		inline
-		~basic_idirectory() {
-			this->close();
-		}
+        inline
+        ~basic_idirectory() {
+            this->close();
+        }
 
-		/**
-		\brief Open directory \p p as input directory for reading entries.
-		\see \man{opendir,3}
-		*/
-		inline void
-		open(const path& p) {
-			this->close();
-			this->_dirpath = p;
-			this->_dir = ::opendir(p);
-			UNISTDX_CHECK2(this->_dir, nullptr);
-		}
+        /**
+        \brief Open directory \p p as input directory for reading entries.
+        \see \man{opendir,3}
+        */
+        inline void
+        open(const path& p) {
+            this->close();
+            this->_dirpath = p;
+            this->_dir = ::opendir(p);
+            UNISTDX_CHECK2(this->_dir, nullptr);
+        }
 
-		/**
-		\brief Close input directory.
-		\see \man{closedir,3}
-		*/
-		inline void
-		close() {
-			if (this->_dir) {
-				UNISTDX_CHECK(::closedir(this->_dir));
-				this->_dir = nullptr;
-			}
-		}
+        /**
+        \brief Close input directory.
+        \see \man{closedir,3}
+        */
+        inline void
+        close() {
+            if (this->_dir) {
+                UNISTDX_CHECK(::closedir(this->_dir));
+                this->_dir = nullptr;
+            }
+        }
 
-		/// Returns true, if the directory was opened.
-		inline bool
-		is_open() const noexcept {
-			return this->_dir != nullptr;
-		}
+        /// Returns true, if the directory was opened.
+        inline bool
+        is_open() const noexcept {
+            return this->_dir != nullptr;
+        }
 
-		/// Get file predicate.
-		inline const filepred_type&
-		getfilepred() const noexcept {
-			return this->_filepred;
-		}
+        /// Get file predicate.
+        inline const filepred_type&
+        getfilepred() const noexcept {
+            return this->_filepred;
+        }
 
-		/**
-		\brief Set file predicate.
-		\details
-		This method allows for file predicate to have internal state, that
-		affects which entries are included in the stream.
-		*/
-		inline void
-		setfilepred(filepred_type rhs) {
-			this->_filepred = rhs;
-		}
+        /**
+        \brief Set file predicate.
+        \details
+        This method allows for file predicate to have internal state, that
+        affects which entries are included in the stream.
+        */
+        inline void
+        setfilepred(filepred_type rhs) {
+            this->_filepred = rhs;
+        }
 
-		/// Get input directory.
-		inline const path&
-		getpath() const noexcept {
-			return this->_dirpath;
-		}
+        /// Get input directory.
+        inline const path&
+        getpath() const noexcept {
+            return this->_dirpath;
+        }
 
-		/// Get next directory entry as \link directory_entry\endlink.
-		inline basic_idirectory&
-		operator>>(reference rhs) {
-			assert(this->is_open()); // LCOV_EXCL_LINE
-			this->read_direntry(rhs);
-			return *this;
-		}
+        /// Get next directory entry as \link directory_entry\endlink.
+        inline basic_idirectory&
+        operator>>(reference rhs) {
+            assert(this->is_open()); // LCOV_EXCL_LINE
+            this->read_direntry(rhs);
+            return *this;
+        }
 
         inline iterator begin() { return iterator(*this); }
         inline iterator end() { return iterator(); }
 
-		/**
-		\brief Set \p filename owner.
-		\date 2018-07-03
-		\author Ivan Gankevich
-		\see \man{fchownat,2}
-		*/
-		inline void
-		owner(
-			const char* filename,
-			uid_type uid,
-			gid_type gid,
-			path_flag flags = path_flag(0)
-		) {
-			UNISTDX_CHECK(::fchownat(
-				::dirfd(this->_dir),
-				filename,
-				uid,
-				gid,
-				int(flags)
-			));
-		}
+        /**
+        \brief Set \p filename owner.
+        \date 2018-07-03
+        \author Ivan Gankevich
+        \see \man{fchownat,2}
+        */
+        inline void
+        owner(
+            const char* filename,
+            uid_type uid,
+            gid_type gid,
+            path_flag flags = path_flag(0)
+        ) {
+            UNISTDX_CHECK(::fchownat(
+                ::dirfd(this->_dir),
+                filename,
+                uid,
+                gid,
+                int(flags)
+            ));
+        }
 
-		/**
-		\brief Set directory owner.
-		\date 2018-07-03
-		\author Ivan Gankevich
-		\see \man{fchownat,2}
-		*/
-		inline void
-		owner(uid_type uid, gid_type gid, path_flag flags = path_flag(0)) {
-			this->owner("", uid, gid, flags|path_flag::empty);
-		}
+        /**
+        \brief Set directory owner.
+        \date 2018-07-03
+        \author Ivan Gankevich
+        \see \man{fchownat,2}
+        */
+        inline void
+        owner(uid_type uid, gid_type gid, path_flag flags = path_flag(0)) {
+            this->owner("", uid, gid, flags|path_flag::empty);
+        }
 
-	private:
+    private:
 
-		inline pointer
-		read_direntry() noexcept {
-			assert(this->is_open()); // LCOV_EXCL_LINE
-			return static_cast<pointer>(::readdir(this->_dir));
-		}
+        inline pointer
+        read_direntry() noexcept {
+            assert(this->is_open()); // LCOV_EXCL_LINE
+            return static_cast<pointer>(::readdir(this->_dir));
+        }
 
-		inline void
-		read_direntry(reference rhs) {
-			assert(this->is_open()); // LCOV_EXCL_LINE
-			if (this->good()) {
-				bool success = false;
-				while (!success && !this->eof()) {
-					const_pointer result = this->read_direntry();
-					if (!result) {
-						this->setstate(eofbit);
-					} else {
-						if (this->_filepred(this->_dirpath, *result)) {
-							rhs = *result;
-							success = true;
-						}
-					}
-				}
-			}
-		}
+        inline void
+        read_direntry(reference rhs) {
+            assert(this->is_open()); // LCOV_EXCL_LINE
+            if (this->good()) {
+                bool success = false;
+                while (!success && !this->eof()) {
+                    const_pointer result = this->read_direntry();
+                    if (!result) {
+                        this->setstate(eofbit);
+                    } else {
+                        if (this->_filepred(this->_dirpath, *result)) {
+                            rhs = *result;
+                            success = true;
+                        }
+                    }
+                }
+            }
+        }
 
-	};
+    };
 
-	/**
-	\brief Do not include hidden file when traversing directories.
-	\date 2018-05-25
-	\author Ivan Gankevich
-	\ingroup fs
-	\details
-	This is the default file predicate for \link idirectory\endlink.
-	*/
-	struct ignore_hidden_files {
+    /**
+    \brief Do not include hidden file when traversing directories.
+    \date 2018-05-25
+    \author Ivan Gankevich
+    \ingroup fs
+    \details
+    This is the default file predicate for \link idirectory\endlink.
+    */
+    struct ignore_hidden_files {
 
-		/// Returns true, if directory entry rhs is not hidden.
-		template <class Entry>
-		inline bool
-		operator()(const path&, const Entry& rhs) const noexcept {
-			return !rhs.is_hidden();
-		}
+        /// Returns true, if directory entry rhs is not hidden.
+        template <class Entry>
+        inline bool
+        operator()(const path&, const Entry& rhs) const noexcept {
+            return !rhs.is_hidden();
+        }
 
-	};
+    };
 
-	/**
-	\brief
-	Directory entry input stream that ignores all hidden files during traversal.
-	\ingroup fs
-	*/
-	typedef basic_idirectory<ignore_hidden_files> idirectory;
+    /**
+    \brief
+    Directory entry input stream that ignores all hidden files during traversal.
+    \ingroup fs
+    */
+    typedef basic_idirectory<ignore_hidden_files> idirectory;
 
-	/// \brief Directory entry input stream iterator.
-	/// \ingroup fs
-	template<class T>
-	using idirectory_iterator = basic_istream_iterator<idirectory, T>;
+    /// \brief Directory entry input stream iterator.
+    /// \ingroup fs
+    template<class T>
+    using idirectory_iterator = basic_istream_iterator<idirectory, T>;
 
 }
 

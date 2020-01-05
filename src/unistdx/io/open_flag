@@ -6,45 +6,45 @@
 
 namespace sys {
 
-	/**
-	\brief Flags used when opening file.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup io
-	*/
-	enum class open_flag: int {
-		append = O_APPEND,
-		async = O_ASYNC,
-		close_on_exec = UNISTDX_O_CLOEXEC,
-		create = O_CREAT,
-		direct = UNISTDX_O_DIRECT,
-		directory = UNISTDX_O_DIRECTORY,
-		dsync = O_DSYNC,
-		exclude = O_EXCL,
-		large_file = UNISTDX_O_LARGEFILE,
-		no_atime = UNISTDX_O_NOATIME,
-		no_ctty = O_NOCTTY,
-		no_follow = UNISTDX_O_NOFOLLOW,
-		non_blocking = O_NONBLOCK,
-		path = UNISTDX_O_PATH,
-		read_only = O_RDONLY,
-		read_write = O_RDWR,
-		rsync = UNISTDX_O_RSYNC,
-		sync = O_SYNC,
-		tmp_file = UNISTDX_O_TMPFILE,
-		truncate = O_TRUNC,
-		write_only = O_WRONLY,
-	};
+    /**
+    \brief Flags used when opening file.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup io
+    */
+    enum class open_flag: int {
+        append = O_APPEND,
+        async = O_ASYNC,
+        close_on_exec = UNISTDX_O_CLOEXEC,
+        create = O_CREAT,
+        direct = UNISTDX_O_DIRECT,
+        directory = UNISTDX_O_DIRECTORY,
+        dsync = O_DSYNC,
+        exclude = O_EXCL,
+        large_file = UNISTDX_O_LARGEFILE,
+        no_atime = UNISTDX_O_NOATIME,
+        no_ctty = O_NOCTTY,
+        no_follow = UNISTDX_O_NOFOLLOW,
+        non_blocking = O_NONBLOCK,
+        path = UNISTDX_O_PATH,
+        read_only = O_RDONLY,
+        read_write = O_RDWR,
+        rsync = UNISTDX_O_RSYNC,
+        sync = O_SYNC,
+        tmp_file = UNISTDX_O_TMPFILE,
+        truncate = O_TRUNC,
+        write_only = O_WRONLY,
+    };
 
-	template <>
-	struct is_flag<open_flag>: public std::true_type {};
+    template <>
+    struct is_flag<open_flag>: public std::true_type {};
 
-	/// Check if flag \p rhs is supported by operating system.
-	inline constexpr bool
-	supports(open_flag rhs) noexcept {
-		typedef typename std::underlying_type<open_flag>::type tp;
-		return tp(rhs) != tp(0);
-	}
+    /// Check if flag \p rhs is supported by operating system.
+    inline constexpr bool
+    supports(open_flag rhs) noexcept {
+        typedef typename std::underlying_type<open_flag>::type tp;
+        return tp(rhs) != tp(0);
+    }
 
 }
 

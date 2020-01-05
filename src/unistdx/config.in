@@ -171,10 +171,10 @@
 // }}}
 
 #if !defined(UNISTDX_HAVE_SOCK_NONBLOCK) || \
-	!defined(UNISTDX_HAVE_SOCK_CLOEXEC) || \
-	!defined(UNISTDX_HAVE_SOCK_CLOEXEC) || \
-	!defined(UNISTDX_HAVE_ACCEPT4) || \
-	!defined(UNISTDX_HAVE_PIPE2)
+    !defined(UNISTDX_HAVE_SOCK_CLOEXEC) || \
+    !defined(UNISTDX_HAVE_SOCK_CLOEXEC) || \
+    !defined(UNISTDX_HAVE_ACCEPT4) || \
+    !defined(UNISTDX_HAVE_PIPE2)
 #define UNISTDX_FORK_MUTEX
 #else
 #undef UNISTDX_FORK_MUTEX

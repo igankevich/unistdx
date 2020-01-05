@@ -6,172 +6,172 @@
 
 namespace sys {
 
-	/**
-	\brief Two-way pipe implemented as two one-way pipes.
-	\date 2018-05-23
-	\author Ivan Gankevich
-	\ingroup io wrapper
-	\details
-	\arg The pipe is designed for communication between
-	parent and child processes.
-	*/
-	class two_way_pipe {
+    /**
+    \brief Two-way pipe implemented as two one-way pipes.
+    \date 2018-05-23
+    \author Ivan Gankevich
+    \ingroup io wrapper
+    \details
+    \arg The pipe is designed for communication between
+    parent and child processes.
+    */
+    class two_way_pipe {
 
-	private:
-		pipe _pipe1;
-		pipe _pipe2;
-		pid_type _owner;
+    private:
+        pipe _pipe1;
+        pipe _pipe2;
+        pid_type _owner;
 
-	public:
+    public:
 
-		inline
-		two_way_pipe():
-		_pipe1(),
-		_pipe2(),
-		_owner(this_process::id())
-		{}
+        inline
+        two_way_pipe():
+        _pipe1(),
+        _pipe2(),
+        _owner(this_process::id())
+        {}
 
-		~two_way_pipe() = default;
+        ~two_way_pipe() = default;
 
-		two_way_pipe(const two_way_pipe&) = delete;
+        two_way_pipe(const two_way_pipe&) = delete;
 
-		/// Move-constructor.
-		two_way_pipe(two_way_pipe&&) = default;
+        /// Move-constructor.
+        two_way_pipe(two_way_pipe&&) = default;
 
-		two_way_pipe&
-		operator=(two_way_pipe&) = delete;
+        two_way_pipe&
+        operator=(two_way_pipe&) = delete;
 
-		/// Move-assignment.
-		two_way_pipe&
-		operator=(two_way_pipe&& rhs) noexcept {
-			this->swap(rhs);
-			return *this;
-		}
+        /// Move-assignment.
+        two_way_pipe&
+        operator=(two_way_pipe&& rhs) noexcept {
+            this->swap(rhs);
+            return *this;
+        }
 
-		/// Parent input file descriptor.
-		inline fildes&
-		parent_in() noexcept {
-			return this->_pipe1.in();
-		}
+        /// Parent input file descriptor.
+        inline fildes&
+        parent_in() noexcept {
+            return this->_pipe1.in();
+        }
 
-		/// Parent input file descriptor.
-		inline const fildes&
-		parent_in() const noexcept {
-			return this->_pipe1.in();
-		}
+        /// Parent input file descriptor.
+        inline const fildes&
+        parent_in() const noexcept {
+            return this->_pipe1.in();
+        }
 
-		/// Parent output file descriptor.
-		inline fildes&
-		parent_out() noexcept {
-			return this->_pipe2.out();
-		}
+        /// Parent output file descriptor.
+        inline fildes&
+        parent_out() noexcept {
+            return this->_pipe2.out();
+        }
 
-		/// Parent output file descriptor.
-		inline const fildes&
-		parent_out() const noexcept {
-			return this->_pipe2.out();
-		}
+        /// Parent output file descriptor.
+        inline const fildes&
+        parent_out() const noexcept {
+            return this->_pipe2.out();
+        }
 
-		/// Child input file descriptor.
-		inline fildes&
-		child_in() noexcept {
-			return this->_pipe2.in();
-		}
+        /// Child input file descriptor.
+        inline fildes&
+        child_in() noexcept {
+            return this->_pipe2.in();
+        }
 
-		/// Child input file descriptor.
-		inline const fildes&
-		child_in() const noexcept {
-			return this->_pipe2.in();
-		}
+        /// Child input file descriptor.
+        inline const fildes&
+        child_in() const noexcept {
+            return this->_pipe2.in();
+        }
 
-		/// Child output file descriptor.
-		inline fildes&
-		child_out() noexcept {
-			return this->_pipe1.out();
-		}
+        /// Child output file descriptor.
+        inline fildes&
+        child_out() noexcept {
+            return this->_pipe1.out();
+        }
 
-		/// Child output file descriptor.
-		inline const fildes&
-		child_out() const noexcept {
-			return this->_pipe1.out();
-		}
+        /// Child output file descriptor.
+        inline const fildes&
+        child_out() const noexcept {
+            return this->_pipe1.out();
+        }
 
-		/// Returns true, if the calling process created this pipe.
-		inline bool
-		is_owner() const noexcept {
-			return sys::this_process::id() == this->_owner;
-		}
+        /// Returns true, if the calling process created this pipe.
+        inline bool
+        is_owner() const noexcept {
+            return sys::this_process::id() == this->_owner;
+        }
 
-		/// Get calling process' input file descriptor.
-		inline fildes&
-		in() noexcept {
-			return this->is_owner() ? this->parent_in() : this->child_in();
-		}
+        /// Get calling process' input file descriptor.
+        inline fildes&
+        in() noexcept {
+            return this->is_owner() ? this->parent_in() : this->child_in();
+        }
 
-		/// Get calling process' input file descriptor.
-		inline const fildes&
-		in() const noexcept {
-			return this->is_owner() ? this->parent_in() : this->child_in();
-		}
+        /// Get calling process' input file descriptor.
+        inline const fildes&
+        in() const noexcept {
+            return this->is_owner() ? this->parent_in() : this->child_in();
+        }
 
-		/// Get calling process' output file descriptor.
-		inline fildes&
-		out() noexcept {
-			return this->is_owner() ? this->parent_out() : this->child_out();
-		}
+        /// Get calling process' output file descriptor.
+        inline fildes&
+        out() noexcept {
+            return this->is_owner() ? this->parent_out() : this->child_out();
+        }
 
-		/// Get calling process' output file descriptor.
-		inline const fildes&
-		out() const noexcept {
-			return this->is_owner() ? this->parent_out() : this->child_out();
-		}
+        /// Get calling process' output file descriptor.
+        inline const fildes&
+        out() const noexcept {
+            return this->is_owner() ? this->parent_out() : this->child_out();
+        }
 
-		/// Create two-way pipe by creating two one-way pipes.
-		void
-		open();
+        /// Create two-way pipe by creating two one-way pipes.
+        void
+        open();
 
-		/// Close all pipe file descriptors.
-		void
-		close();
+        /// Close all pipe file descriptors.
+        void
+        close();
 
-		/// Close unused file descriptors in child process.
-		void
-		close_in_child();
+        /// Close unused file descriptors in child process.
+        void
+        close_in_child();
 
-		/// Close unused file descriptors in parent process.
-		void
-		close_in_parent();
+        /// Close unused file descriptors in parent process.
+        void
+        close_in_parent();
 
-		/// Close unused file descriptors in the calling process.
-		void
-		close_unused();
+        /// Close unused file descriptors in the calling process.
+        void
+        close_unused();
 
-		/// Validate files descriptors in the calling process.
-		void
-		validate();
+        /// Validate files descriptors in the calling process.
+        void
+        validate();
 
-		/// Swap with \p rhs.
-		inline void
-		swap(two_way_pipe& rhs) noexcept {
-			sys::swap(this->_pipe1, rhs._pipe1);
-			sys::swap(this->_pipe2, rhs._pipe2);
-			std::swap(this->_owner, rhs._owner);
-		}
+        /// Swap with \p rhs.
+        inline void
+        swap(two_way_pipe& rhs) noexcept {
+            sys::swap(this->_pipe1, rhs._pipe1);
+            sys::swap(this->_pipe2, rhs._pipe2);
+            std::swap(this->_owner, rhs._owner);
+        }
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const two_way_pipe& rhs);
+        friend std::ostream&
+        operator<<(std::ostream& out, const two_way_pipe& rhs);
 
-	};
+    };
 
-	/// Overload of \link std::swap\endlink for \link two_way_pipe\endlink.
-	inline void
-	swap(two_way_pipe& lhs, two_way_pipe& rhs) noexcept {
-		lhs.swap(rhs);
-	}
+    /// Overload of \link std::swap\endlink for \link two_way_pipe\endlink.
+    inline void
+    swap(two_way_pipe& lhs, two_way_pipe& rhs) noexcept {
+        lhs.swap(rhs);
+    }
 
-	/// Output both pipes.
-	std::ostream&
-	operator<<(std::ostream& out, const two_way_pipe& rhs);
+    /// Output both pipes.
+    std::ostream&
+    operator<<(std::ostream& out, const two_way_pipe& rhs);
 
 }
 

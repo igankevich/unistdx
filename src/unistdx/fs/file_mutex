@@ -11,94 +11,94 @@
 
 namespace sys {
 
-	/// File lock types.
-	enum struct file_lock_type: int {
-		/// Shared read lock.
-		read_lock = LOCK_SH,
-		/// Exclusive write lock.
-		write_lock = LOCK_EX
-	};
+    /// File lock types.
+    enum struct file_lock_type: int {
+        /// Shared read lock.
+        read_lock = LOCK_SH,
+        /// Exclusive write lock.
+        write_lock = LOCK_EX
+    };
 
-	/**
-	\brief File-based mutex.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	\ingroup mutex fs
-	\see \man{flock,2}
-	\details
-	\arg Uses the sanest (but not very portable) \man{flock,2}
-	system call for file locking.
-	\arg Read locks may be acquired by multiple processes, provided
-	that there no write lock on the file.
-	\arg Write lock may be acquired by only one process.
-	*/
-	class file_mutex: public fildes {
+    /**
+    \brief File-based mutex.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    \ingroup mutex fs
+    \see \man{flock,2}
+    \details
+    \arg Uses the sanest (but not very portable) \man{flock,2}
+    system call for file locking.
+    \arg Read locks may be acquired by multiple processes, provided
+    that there no write lock on the file.
+    \arg Write lock may be acquired by only one process.
+    */
+    class file_mutex: public fildes {
 
-	public:
+    public:
 
-		using fildes::open;
+        using fildes::open;
 
-		/// Acquire file lock of type \p tp.
-		inline void
-		lock(file_lock_type tp=file_lock_type::write_lock) {
-			this->do_lock(int(tp));
-		}
+        /// Acquire file lock of type \p tp.
+        inline void
+        lock(file_lock_type tp=file_lock_type::write_lock) {
+            this->do_lock(int(tp));
+        }
 
-		/// Release file lock.
-		inline void
-		unlock() {
-			this->do_lock(LOCK_UN);
-		}
+        /// Release file lock.
+        inline void
+        unlock() {
+            this->do_lock(LOCK_UN);
+        }
 
-		/// Try to acquire file lock of type \p tp.
-		bool
-		try_lock(file_lock_type tp=file_lock_type::write_lock);
+        /// Try to acquire file lock of type \p tp.
+        bool
+        try_lock(file_lock_type tp=file_lock_type::write_lock);
 
-		file_mutex() noexcept = default;
+        file_mutex() noexcept = default;
 
-		/**
-		Construct file mutex with file \p filename, flags \p flags,
-		file mode \p mode.
-		*/
-		inline
-		file_mutex(
-			const char* filename,
-			open_flag flags,
-			mode_type mode
-		) noexcept:
-		fildes() {
-			this->open(filename, flags, mode);
-		}
+        /**
+        Construct file mutex with file \p filename, flags \p flags,
+        file mode \p mode.
+        */
+        inline
+        file_mutex(
+            const char* filename,
+            open_flag flags,
+            mode_type mode
+        ) noexcept:
+        fildes() {
+            this->open(filename, flags, mode);
+        }
 
-		/**
-		Construct file mutex with file \p filename, read-write permissions,
-		file mode \p mode.
-		*/
-		inline
-		file_mutex(const char* filename, mode_type mode) noexcept:
-		fildes() {
-			this->open(filename, mode);
-		}
+        /**
+        Construct file mutex with file \p filename, read-write permissions,
+        file mode \p mode.
+        */
+        inline
+        file_mutex(const char* filename, mode_type mode) noexcept:
+        fildes() {
+            this->open(filename, mode);
+        }
 
-		/**
-		Open file \p filename for mutex with read-write permissions and
-		file mode \p mode.
-		*/
-		inline void
-		open(const char* filename, mode_type mode) noexcept {
-			this->open(filename, open_flag::read_write|open_flag::create, mode);
-		}
+        /**
+        Open file \p filename for mutex with read-write permissions and
+        file mode \p mode.
+        */
+        inline void
+        open(const char* filename, mode_type mode) noexcept {
+            this->open(filename, open_flag::read_write|open_flag::create, mode);
+        }
 
-		UNISTDX_NO_COPY_AND_MOVE(file_mutex)
+        UNISTDX_NO_COPY_AND_MOVE(file_mutex)
 
-	private:
+    private:
 
-		inline void
-		do_lock(int cmd) {
-			UNISTDX_CHECK(::flock(this->_fd, cmd));
-		}
+        inline void
+        do_lock(int cmd) {
+            UNISTDX_CHECK(::flock(this->_fd, cmd));
+        }
 
-	};
+    };
 
 }
 

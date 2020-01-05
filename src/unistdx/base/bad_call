@@ -8,56 +8,56 @@
 
 namespace sys {
 
-	/**
-	\brief
-	A \link std::system_error\endlink that records file, line and function where
-	the exception was thrown.
-	\date 2018-05-21
-	\author Ivan Gankevich
-	*/
-	class bad_call: public std::system_error {
+    /**
+    \brief
+    A \link std::system_error\endlink that records file, line and function where
+    the exception was thrown.
+    \date 2018-05-21
+    \author Ivan Gankevich
+    */
+    class bad_call: public std::system_error {
 
-	private:
-		const char* _file;
-		const int _line;
-		const char* _function;
+    private:
+        const char* _file;
+        const int _line;
+        const char* _function;
 
-	public:
+    public:
 
-		/// Construct the error with precise location where it was thrown.
-		inline
-		bad_call(
-			std::errc errcond,
-			const char* file,
-			const int line,
-			const char* function
-		) noexcept:
-		std::system_error(int(errcond), std::generic_category()),
-		_file(file), _line(line), _function(function) {}
+        /// Construct the error with precise location where it was thrown.
+        inline
+        bad_call(
+            std::errc errcond,
+            const char* file,
+            const int line,
+            const char* function
+        ) noexcept:
+        std::system_error(int(errcond), std::generic_category()),
+        _file(file), _line(line), _function(function) {}
 
-		/// Construct the error with precise location where it was thrown.
-		inline
-		bad_call(
-			const char* file,
-			const int line,
-			const char* function
-		) noexcept:
-		bad_call(std::errc(errno), file, line, function) {}
+        /// Construct the error with precise location where it was thrown.
+        inline
+        bad_call(
+            const char* file,
+            const int line,
+            const char* function
+        ) noexcept:
+        bad_call(std::errc(errno), file, line, function) {}
 
-		friend std::ostream&
-		operator<<(std::ostream& out, const bad_call& rhs);
+        friend std::ostream&
+        operator<<(std::ostream& out, const bad_call& rhs);
 
-		/// Get error condition.
-		inline std::errc
-		errc() const noexcept {
-			return std::errc(this->code().value());
-		}
+        /// Get error condition.
+        inline std::errc
+        errc() const noexcept {
+            return std::errc(this->code().value());
+        }
 
-	};
+    };
 
-	/// Output error message prefixed by the location where it was thrown.
-	std::ostream&
-	operator<<(std::ostream& out, const bad_call& rhs);
+    /// Output error message prefixed by the location where it was thrown.
+    std::ostream&
+    operator<<(std::ostream& out, const bad_call& rhs);
 
 }
 
