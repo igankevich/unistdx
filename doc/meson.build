@@ -44,6 +44,8 @@ doxyfile.set('INPUT', ' '.join(input_files))
 perl = find_program('perl', required: false)
 if perl.found()
 	doxyfile.set('PERL_PATH', perl.path())
+else
+	doxyfile.set('PERL_PATH', '')
 endif
 dot = find_program('dot', required: false)
 if dot.found()
@@ -51,6 +53,7 @@ if dot.found()
 	doxyfile.set('HAVE_DOT', 'YES')
 else
 	doxyfile.set('HAVE_DOT', 'NO')
+	doxyfile.set('DOT_PATH', '')
 endif
 doxyfile.set('HTML_EXTRA_STYLESHEET', join_paths(csd, 'doxygen-extra.css'))
 doxyfile.set('HTML_OUTPUT', html_output_dir)

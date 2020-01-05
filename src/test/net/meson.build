@@ -8,6 +8,7 @@ foreach conf : [
 	['interface_address', [unistdx,gtest]],
 	['ipv4_address', [unistdx,gtest]],
 	['netlink_poller', [threads,unistdx,gtest]],
+	['network_interface', [unistdx,gtest]],
 	['socket', [threads,unistdx,gtest]],
 	['socket_address', [unistdx,gtest]],
 ]

@@ -1,0 +1,131 @@
+#ifndef UNISTDX_NET_NETWORK_INTERFACE
+#define UNISTDX_NET_NETWORK_INTERFACE
+
+#include <net/if.h>
+
+#include <string>
+
+#include <unistdx/config>
+#include <unistdx/io/fildes>
+#include <unistdx/net/socket>
+
+namespace sys {
+
+    enum class network_interface_flags: u16 {
+        #if defined(UNISTDX_HAVE_IFF_ALLMULTI)
+        receive_all_multicast_packets = IFF_ALLMULTI,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_BROADCAST)
+        broadcast = IFF_BROADCAST,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_DEBUG)
+        debug = IFF_DEBUG,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_LOOPBACK)
+        loopback = IFF_LOOPBACK,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_MASTER)
+        master = IFF_MASTER,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_MULTICAST)
+        multicast = IFF_MULTICAST,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_NOARP)
+        no_arg = IFF_NOARP,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_NOTRAILERS)
+        no_trailers = IFF_NOTRAILERS,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_POINTOPOINT)
+        point_to_point = IFF_POINTOPOINT,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_PORTSEL)
+        media = IFF_PORTSEL,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_PROMISC)
+        promiscuous = IFF_PROMISC,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_RUNNING)
+        running = IFF_RUNNING,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_SLAVE)
+        slave = IFF_SLAVE,
+        #endif
+        #if defined(UNISTDX_HAVE_IFF_UP)
+        up = IFF_UP,
+        #endif
+    };
+
+	template <>
+	struct is_flag<network_interface_flags>: public std::true_type {};
+
+    class network_interface {
+
+    public:
+        static constexpr size_t max_name_size() { return IFNAMSIZ-1; }
+
+    public:
+        using flag = network_interface_flags;
+
+    private:
+        using network_interface_request = ::ifreq;
+        using traits_type = std::string::traits_type;
+
+    private:
+        std::string _name;
+        mutable socket _socket{family_type::inet,socket_type::datagram};
+
+    public:
+
+        inline explicit
+        network_interface(std::string name): _name(name) {
+            if (name.size() > max_name_size()) { throw std::invalid_argument("bad name"); }
+        }
+
+        inline explicit
+        network_interface(int index) {
+            this->_name.resize(max_name_size());
+            this->_socket.call(fildes::operation::interface_get_name, this->_name);
+            this->_name.resize(traits_type::length(this->_name.data()));
+        }
+
+        inline const std::string& name() const { return this->_name; }
+
+        inline void
+        flags(flag f) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            req.ifr_flags = static_cast<short>(f);
+            this->_socket.call(fildes::operation::interface_set_flags, req);
+        }
+
+        inline flag
+        flags() const {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            this->_socket.call(fildes::operation::interface_get_flags, req);
+            return static_cast<flag>(req.ifr_flags);
+        }
+
+        inline void
+        setf(flag f) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            this->_socket.call(fildes::operation::interface_get_flags, req);
+            flags(static_cast<flag>(req.ifr_flags) | f);
+        }
+
+        inline void
+        unsetf(flag f) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            this->_socket.call(fildes::operation::interface_get_flags, req);
+            flags(static_cast<flag>(req.ifr_flags) & (~f));
+        }
+
+    };
+
+}
+
+
+#endif // vim:filetype=cpp

@@ -35,6 +35,42 @@ namespace sys {
 		UNISTDX_CHECK(::kill(p, signal_type(s)));
 	}
 
+    enum class unshare_flag: int {
+        #if defined(UNISTDX_HAVE_CLONE_FILES)
+        file_descriptors = CLONE_FILES,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_FS)
+        file_system = CLONE_FS,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWCGROUP)
+        control_groups = CLONE_NEWCGROUP,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWIPC)
+        ipc = CLONE_NEWIPC,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWNET)
+        network = CLONE_NEWNET,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWNS)
+        mount_points = CLONE_NEWNS,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWPID)
+        processes = CLONE_NEWPID,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWUSER)
+        users = CLONE_NEWUSER,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWUTS)
+        hostname = CLONE_NEWUTS,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_SYSVSEM)
+        ipc_sysv = CLONE_SYSVSEM,
+        #endif
+    };
+
+	template <>
+	struct is_flag<unshare_flag>: public std::true_type {};
+
 	namespace this_process {
 
 		/**
@@ -128,6 +164,12 @@ namespace sys {
 			return nm;
 		}
 		#endif
+
+        #if defined(UNISTDX_HAVE_UNSHARE)
+        inline void unshare(unshare_flag flags) {
+            UNISTDX_CHECK(::unshare(static_cast<int>(flags)));
+        }
+        #endif
 
 	}
 

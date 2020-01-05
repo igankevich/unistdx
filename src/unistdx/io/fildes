@@ -7,7 +7,7 @@
 #include <ostream>
 
 #include <unistdx/config>
-#if defined(UNISTDX_HAVE_FIONREAD)
+#if defined(UNISTDX_HAVE_IOCTL)
 #include <sys/ioctl.h>
 #endif
 
@@ -53,6 +53,115 @@ namespace sys {
 
 	private:
 		typedef int flag_type;
+
+    public:
+        enum class operation {
+            #if defined(UNISTDX_HAVE_FIONREAD)
+            bytes_available = FIONREAD,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFFLAGS)
+            interface_get_flags = SIOCGIFFLAGS,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFFLAGS)
+            interface_set_flags = SIOCSIFFLAGS,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCADDMULTI)
+            interface_add_multicast = SIOCADDMULTI,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCDELMULTI)
+            interface_del_multicast = SIOCDELMULTI,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCDIFADDR)
+            interface_delete_address = SIOCDIFADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFADDR)
+            interface_get_address = SIOCGIFADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFADDR)
+            interface_set_address = SIOCSIFADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFBRDADDR)
+            interface_get_broadcast_address = SIOCGIFBRDADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFBRDADDR)
+            interface_set_broadcast_address = SIOCSIFBRDADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFCONF)
+            list_interface_addresses = SIOCGIFCONF,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFCOUNT)
+            num_interfaces = SIOCGIFCOUNT,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFDSTADDR)
+            interface_get_destination_address = SIOCGIFDSTADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFDSTADDR)
+            interface_set_destination_address = SIOCSIFDSTADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFENCAP)
+            interface_get_encapsulation = SIOCGIFENCAP,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFENCAP)
+            interface_set_encapsulation = SIOCSIFENCAP,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFHWADDR)
+            interface_get_hardware_address = SIOCGIFHWADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFHWADDR)
+            interface_set_hardware_address = SIOCSIFHWADDR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFINDEX)
+            interface_get_index = SIOCGIFINDEX,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFMEM)
+            interface_get_memory_address = SIOCGIFMEM,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFMEM)
+            interface_set_memory_address = SIOCSIFMEM,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFMETRIC)
+            interface_get_metric = SIOCGIFMETRIC,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFMETRIC)
+            interface_set_metric = SIOCSIFMETRIC,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFMTU)
+            interface_get_mtu = SIOCGIFMTU,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFMTU)
+            interface_set_mtu = SIOCSIFMTU,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFNAME)
+            interface_get_name = SIOCGIFNAME,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFNAME)
+            interface_set_name = SIOCSIFNAME,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFNETMASK)
+            interface_get_network_mask = SIOCGIFNETMASK,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFNETMASK)
+            interface_set_network_mask = SIOCSIFNETMASK,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFPFLAGS)
+            interface_get_private_flags = SIOCGIFPFLAGS,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFPFLAGS)
+            interface_set_private_flags = SIOCSIFPFLAGS,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCGIFSLAVE)
+            interface_get_slave = SIOCGIFSLAVE,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFSLAVE)
+            interface_set_slave = SIOCSIFSLAVE,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFHWBROADCAST)
+            interface_set_hardware_broadcast_address = SIOCSIFHWBROADCAST,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCSIFLINK)
+            interface_set_channel = SIOCSIFLINK,
+            #endif
+        };
 
 	public:
 
@@ -349,6 +458,13 @@ namespace sys {
 			return file_status{this->_fd};
 		}
 
+        #if defined(UNISTDX_HAVE_IOCTL)
+        template <class T>
+        inline void call(operation op, T& argument) {
+            UNISTDX_CHECK(::ioctl(this->_fd, static_cast<int>(op), &argument));
+        }
+        #endif
+
 	private:
 
 		inline int
@@ -446,12 +562,8 @@ namespace sys {
 		*/
 		inline static std::streamsize
 		in_avail(T& rhs) {
-			#if defined(UNISTDX_HAVE_FIONREAD)
-			int nread;
-			if (::ioctl(rhs.fd(), FIONREAD, &nread) < 0) {
-				nread = 0;
-			}
-			return nread;
+			#if defined(UNISTDX_HAVE_IOCTL) && defined(UNISTDX_HAVE_FIONREAD)
+            return rhs.call(fildes::operation::bytes_available);
 			#else
 			return 0;
 			#endif

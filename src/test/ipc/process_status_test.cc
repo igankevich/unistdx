@@ -25,7 +25,7 @@ TEST(process_status, exit) {
 
 TEST(process_status, abort) {
 	sys::process child {
-		[] () [[noreturn]] -> int {
+		[] () -> int {
 			std::abort();
 		}
 	};
