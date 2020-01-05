@@ -1,0 +1,42 @@
+#ifndef UNISTDX_NET_NETWORK_BRIDGE
+#define UNISTDX_NET_NETWORK_BRIDGE
+
+#include <unistdx/net/network_interface>
+
+namespace sys {
+
+    class network_bridge: public network_interface {
+
+    protected:
+        using network_interface::traits_type;
+
+    public:
+
+        inline explicit
+        network_bridge(std::string name): network_interface(name) {
+            this->_socket.call(fildes::operation::bridge_add, this->_name[0]);
+        }
+
+        inline ~network_bridge() {
+            this->_socket.call(fildes::operation::bridge_del, this->_name[0]);
+        }
+
+        inline void add(const sys::network_interface& iface) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            req.ifr_ifindex = iface.index();
+            this->_socket.call(fildes::operation::bridge_add_interface, req);
+        }
+
+        inline void remove(const sys::network_interface& iface) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            req.ifr_ifindex = iface.index();
+            this->_socket.call(fildes::operation::bridge_del_interface, req);
+        }
+
+    };
+
+}
+
+#endif // vim:filetype=cpp

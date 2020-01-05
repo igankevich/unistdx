@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.7.2',
+    version: '0.8.0',
     meson_version: '>=0.46',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -80,6 +80,10 @@ foreach pair : [
     ['fcntl.h', 'SPLICE_F_NONBLOCK'],
     ['grp.h', 'getgrgid_r'],
     ['grp.h', 'getgrnam_r'],
+    ['linux/sockios.h', 'SIOCBRADDBR'],
+    ['linux/sockios.h', 'SIOCBRADDIF'],
+    ['linux/sockios.h', 'SIOCBRDELBR'],
+    ['linux/sockios.h', 'SIOCBRDELIF'],
     ['net/if.h', 'IFF_ALLMULTI'],
     ['net/if.h', 'IFF_BROADCAST'],
     ['net/if.h', 'IFF_DEBUG'],
@@ -208,13 +212,14 @@ foreach pair : [
     ['cxxabi.h', 'cxxabi'],
     ['ifaddrs.h', 'ifaddrs'],
     ['linux/netlink.h', 'netlink'],
+    ['linux/sockios.h', 'linux_sockios_h'],
     ['semaphore.h', 'posix_semaphores'],
     ['sys/epoll.h', 'epoll'],
     ['sys/sem.h', 'sysv_semaphores'],
 ]
     header = pair[0]
     name = pair[1]
-    all_defines += 'UNISTDX_HAVE_' + name.to_upper()
+    all_defines += 'UNISTDX_HAVE_' + header.underscorify().to_upper()
     if cpp.has_header(header)
         config.set(all_defines[-1], true)
     endif

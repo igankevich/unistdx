@@ -67,11 +67,11 @@ namespace sys {
     public:
         using flag = network_interface_flags;
 
-    private:
+    protected:
         using network_interface_request = ::ifreq;
         using traits_type = std::string::traits_type;
 
-    private:
+    protected:
         std::string _name;
         mutable socket _socket{family_type::inet,socket_type::datagram};
 
@@ -79,7 +79,7 @@ namespace sys {
 
         inline explicit
         network_interface(std::string name): _name(name) {
-            if (name.size() > max_name_size()) { throw std::invalid_argument("bad name"); }
+            this->validate_name(name);
         }
 
         inline explicit
@@ -90,6 +90,8 @@ namespace sys {
         }
 
         inline const std::string& name() const { return this->_name; }
+        inline void up() { this->setf(flag::up); }
+        inline void down() { this->unsetf(flag::up); }
 
         inline void
         flags(flag f) {
@@ -123,6 +125,19 @@ namespace sys {
             flags(static_cast<flag>(req.ifr_flags) & (~f));
         }
 
+        inline int
+        index() const {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            this->_socket.call(fildes::operation::interface_get_index, req);
+            return req.ifr_ifindex;
+        }
+
+    protected:
+
+        inline void validate_name(const std::string& name) {
+            if (name.size() > max_name_size()) { throw std::invalid_argument("bad name"); }
+        }
     };
 
 }

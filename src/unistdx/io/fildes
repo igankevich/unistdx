@@ -10,6 +10,9 @@
 #if defined(UNISTDX_HAVE_IOCTL)
 #include <sys/ioctl.h>
 #endif
+#if defined(UNISTDX_HAVE_LINUX_SOCKIOS_H)
+#include <linux/sockios.h>
+#endif
 
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
@@ -160,6 +163,18 @@ namespace sys {
             #endif
             #if defined(UNISTDX_HAVE_SIOCSIFLINK)
             interface_set_channel = SIOCSIFLINK,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCBRADDBR)
+            bridge_add = SIOCBRADDBR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCBRDELBR)
+            bridge_del = SIOCBRDELBR,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCBRADDIF)
+            bridge_add_interface = SIOCBRADDIF,
+            #endif
+            #if defined(UNISTDX_HAVE_SIOCBRDELIF)
+            bridge_del_interface = SIOCBRDELIF,
             #endif
         };
 
@@ -462,6 +477,12 @@ namespace sys {
         template <class T>
         inline void call(operation op, T& argument) {
             UNISTDX_CHECK(::ioctl(this->_fd, static_cast<int>(op), &argument));
+        }
+        #endif
+
+        #if defined(UNISTDX_HAVE_IOCTL)
+        inline void call(operation op) {
+            UNISTDX_CHECK(::ioctl(this->_fd, static_cast<int>(op)));
         }
         #endif
 

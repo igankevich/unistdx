@@ -5,6 +5,7 @@
 
 #include <unistdx/ipc/process>
 #include <unistdx/net/network_interface>
+#include <unistdx/net/network_bridge>
 
 namespace {
     template <class T>
@@ -29,6 +30,15 @@ TEST(network_interface, flags) {
     ASSERT_EQ(f{}, (lo.flags() & f::up));
     lo.setf(f::up);
     ASSERT_EQ(f::up, (lo.flags() & f::up));
+}
+
+TEST(network_bridge, add) {
+    using f = sys::network_interface::flag;
+    sys::network_bridge br("br0");
+    br.up();
+    ASSERT_EQ(f::up, (br.flags() & f::up));
+    br.down();
+    ASSERT_EQ(f{}, (br.flags() & f::up));
 }
 
 int main(int argc, char* argv[]) {
