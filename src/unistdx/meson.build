@@ -9,6 +9,8 @@ configure_file(
     )
 )
 
+install_headers('forward', subdir: meson.project_name())
+
 libunistdx_src = files()
 
 subdir('base')

@@ -133,11 +133,50 @@ namespace sys {
             return req.ifr_ifindex;
         }
 
+        inline socket_address
+        address() const {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            this->_socket.call(fildes::operation::interface_get_address, req);
+            return req.ifr_addr;
+        }
+
+        inline void
+        address(const socket_address& addr) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            req.ifr_addr = *addr.sockaddr();
+            this->_socket.call(fildes::operation::interface_set_address, req);
+        }
+
+        inline void address(ipv4_address addr) { this->address({addr,0}); }
+
+        inline socket_address
+        network_mask() const {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            this->_socket.call(fildes::operation::interface_get_network_mask, req);
+            return req.ifr_netmask;
+        }
+
+        inline void
+        network_mask(const socket_address& addr) {
+            network_interface_request req{};
+            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
+            req.ifr_netmask = *addr.sockaddr();
+            this->_socket.call(fildes::operation::interface_set_network_mask, req);
+        }
+
+        inline void network_mask(ipv4_address addr) { this->network_mask({addr,0}); }
+
+        void set_namespace(fd_type ns);
+
     protected:
 
         inline void validate_name(const std::string& name) {
             if (name.size() > max_name_size()) { throw std::invalid_argument("bad name"); }
         }
+
     };
 
 }

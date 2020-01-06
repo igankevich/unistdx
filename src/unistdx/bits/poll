@@ -4,9 +4,9 @@
 #include <poll.h>
 #include <unistdx/config>
 #if !defined(UNISTDX_HAVE_POLLRDHUP)
-    #define UNISTDX_POLLRDHUP 0
+#define UNISTDX_POLLRDHUP 0
 #else
-    #define UNISTDX_POLLRDHUP POLLRDHUP
+#define UNISTDX_POLLRDHUP POLLRDHUP
 #endif
 
 #endif // vim:filetype=cpp

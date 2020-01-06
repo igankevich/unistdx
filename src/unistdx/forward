@@ -1,0 +1,10 @@
+#ifndef UNISTDX_FORWARD
+#define UNISTDX_FORWARD
+
+#include <unistdx/config>
+
+namespace sys {
+
+}
+
+#endif // vim:filetype=cpp

@@ -4,12 +4,15 @@ libunistdx_src += files([
     'ipv4_address.cc',
     'ipv6_address.cc',
     'netlink_poller.cc',
+    'network_interface.cc',
     'socket_address.cc',
     'socket.cc',
+    'veth_interface.cc',
 ])
 
 install_headers(
     'bit_count',
+    'bridge_interface',
     'bstream',
     'byte_order',
     'bytes',
@@ -27,5 +30,6 @@ install_headers(
     'socket',
     'socket_address',
     'subnet_iterator',
+    'veth_interface',
     subdir: join_paths(meson.project_name(), 'net')
 )

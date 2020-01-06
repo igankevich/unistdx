@@ -1,24 +1,11 @@
-#include <limits>
-#include <type_traits>
-
 #include <gtest/gtest.h>
 
 #include <unistdx/ipc/process>
+#include <unistdx/net/bridge_interface>
 #include <unistdx/net/network_interface>
-#include <unistdx/net/network_bridge>
-
-namespace {
-    template <class T>
-    void print_flags(T flags) {
-        using int_type = typename std::underlying_type<T>::type;
-        auto nbits = std::numeric_limits<int_type>::nbits * sizeof(int_type);
-        for (int_type i=0; i<nbits; ++i) {
-            if (flags & (int_type(1) << i)) {
-                std::printf("%d 0x%x\n", i, 1<<i);
-            }
-        }
-    }
-}
+#include <unistdx/net/netlink_poller>
+#include <unistdx/net/veth_interface>
+#include <unistdx/test/print_flags>
 
 TEST(network_interface, flags) {
     using f = sys::network_interface::flag;
@@ -32,13 +19,24 @@ TEST(network_interface, flags) {
     ASSERT_EQ(f::up, (lo.flags() & f::up));
 }
 
-TEST(network_bridge, add) {
+TEST(bridge_interface, add) {
     using f = sys::network_interface::flag;
-    sys::network_bridge br("br0");
+    sys::bridge_interface br("br0");
     br.up();
     ASSERT_EQ(f::up, (br.flags() & f::up));
     br.down();
     ASSERT_EQ(f{}, (br.flags() & f::up));
+}
+
+TEST(veth_interface, _) {
+    sys::netlink_socket sock(sys::netlink_protocol::route);
+    sys::veth_interface veth0("veth0", "veth1", sock);
+    using flags = sys::network_interface::flag;
+    veth0.up();
+    ASSERT_EQ(flags::up, (veth0.flags() & flags::up));
+    veth0.down();
+    ASSERT_EQ(flags{}, (veth0.flags() & flags::up));
+    //sys::test::print_flags(veth0.flags());
 }
 
 int main(int argc, char* argv[]) {

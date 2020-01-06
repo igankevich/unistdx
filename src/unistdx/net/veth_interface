@@ -1,0 +1,31 @@
+#ifndef UNISTDX_NET_VETH_INTERFACE
+#define UNISTDX_NET_VETH_INTERFACE
+
+#include <unistdx/net/netlink_socket>
+#include <unistdx/net/network_interface>
+
+namespace sys {
+
+    class veth_interface: public network_interface {
+
+    private:
+        network_interface _peer;
+
+    public:
+
+        inline explicit
+        veth_interface(
+            const std::string& name,
+            const std::string& peer,
+            sys::netlink_socket& sock
+        ):
+        network_interface(name), _peer(peer) { this->init(sock); }
+
+        void init(sys::netlink_socket& sock);
+        inline network_interface peer() const { return this->_peer; }
+
+    };
+
+}
+
+#endif // vim:filetype=cpp

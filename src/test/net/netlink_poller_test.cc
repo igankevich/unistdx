@@ -1,16 +1,16 @@
 #include <mutex>
 
+#include <unistdx/ipc/process>
 #include <unistdx/net/netlink_poller>
-
+#include <unistdx/net/netlink_socket>
+#include <unistdx/net/network_interface>
+#include <unistdx/net/veth_interface>
 #include <unistdx/test/operator>
+#include <unistdx/test/print_flags>
 
 TEST(NetlinkPoller, First) {
     sys::socket_address endp(RTMGRP_IPV4_IFADDR);
-    sys::socket sock(
-        sys::family_type::netlink,
-        sys::socket_type::raw,
-        NETLINK_ROUTE
-    );
+    sys::netlink_socket sock(sys::netlink_protocol::route);
     sock.bind(endp);
     sys::event_poller poller;
     poller.insert({sock.fd(), sys::event::in});
@@ -19,9 +19,9 @@ TEST(NetlinkPoller, First) {
     for (const sys::epoll_event& ev : poller) {
         std::clog << "ev=" << ev << std::endl;
         if (ev.fd() == sock.fd()) {
-            sys::ifaddr_message_container cont;
-            cont.read(sock);
-            for (sys::ifaddr_message_header& hdr : cont) {
+            sys::ifaddr_message_container response;
+            response.read(sock);
+            for (sys::ifaddr_message_header& hdr : response) {
                 std::string action;
                 if (hdr.new_address()) {
                     action = "add";
@@ -31,7 +31,7 @@ TEST(NetlinkPoller, First) {
                 if (hdr.new_address() || hdr.delete_address()) {
                     sys::ifaddr_message* m = hdr.message();
                     sys::ipv4_address address;
-                    for (auto& attr : m->attributes(cont.length())) {
+                    for (auto& attr : m->attributes(response.length())) {
                         if (attr.type() == sys::ifaddr_attribute::address) {
                             address = *attr.data<sys::ipv4_address>();
                         }
@@ -67,15 +67,15 @@ TEST(netlink, get_address) {
     ssize_t n = sock.send(&req, sizeof(req));
     std::clog << "n=" << n << std::endl;
     std::clog << "sizeof(req)=" << sizeof(req) << std::endl;
-    sys::ifaddr_message_container cont;
-    cont.read(sock);
-    for (sys::ifaddr_message_header& hdr : cont) {
+    sys::ifaddr_message_container response;
+    response.read(sock);
+    for (sys::ifaddr_message_header& hdr : response) {
         EXPECT_FALSE(hdr.delete_address());
         if (hdr.new_address()) {
             sys::ifaddr_message* m = hdr.message();
             sys::ipv4_address address;
             std::string name;
-            for (auto& attr : m->attributes(cont.length())) {
+            for (auto& attr : m->attributes(response.length())) {
                 if (attr.type() == sys::ifaddr_attribute::address) {
                     address = *attr.data<sys::ipv4_address>();
                 } else if (attr.type() == sys::ifaddr_attribute::interface_name) {
@@ -134,3 +134,10 @@ INSTANTIATE_TEST_CASE_P(
     ifaddr_attribute_test,
     ::testing::ValuesIn(all_attributes)
 );
+
+int main(int argc, char* argv[]) {
+    using f = sys::unshare_flag;
+    sys::this_process::unshare(f::users | f::network);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -1,11 +1,11 @@
-#ifndef UNISTDX_NET_NETWORK_BRIDGE
-#define UNISTDX_NET_NETWORK_BRIDGE
+#ifndef UNISTDX_NET_BRIDGE_INTERFACE
+#define UNISTDX_NET_BRIDGE_INTERFACE
 
 #include <unistdx/net/network_interface>
 
 namespace sys {
 
-    class network_bridge: public network_interface {
+    class bridge_interface: public network_interface {
 
     protected:
         using network_interface::traits_type;
@@ -13,11 +13,11 @@ namespace sys {
     public:
 
         inline explicit
-        network_bridge(std::string name): network_interface(name) {
+        bridge_interface(std::string name): network_interface(name) {
             this->_socket.call(fildes::operation::bridge_add, this->_name[0]);
         }
 
-        inline ~network_bridge() {
+        inline ~bridge_interface() {
             this->_socket.call(fildes::operation::bridge_del, this->_name[0]);
         }
 

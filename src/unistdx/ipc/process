@@ -4,7 +4,7 @@
 #include <unistdx/config>
 
 #include <unistd.h>
-#if defined(UNISTDX_HAVE_CLONE)
+#if defined(UNISTDX_HAVE_SCHED_H)
 #include <sched.h>
 #endif
 #if defined(UNISTDX_HAVE_PRCTL)
@@ -15,6 +15,7 @@
 #include <unistdx/base/flag>
 #include <unistdx/bits/process>
 #include <unistdx/bits/safe_calls>
+#include <unistdx/io/fildes>
 #include <unistdx/ipc/process_status>
 #include <unistdx/ipc/signal>
 
@@ -70,6 +71,31 @@ namespace sys {
 
     template <>
     struct is_flag<unshare_flag>: public std::true_type {};
+
+    enum class namespace_type {
+        any = 0,
+        #if defined(UNISTDX_HAVE_CLONE_NEWCGROUP)
+        control_groups = CLONE_NEWCGROUP,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWIPC)
+        ipc = CLONE_NEWIPC,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWNET)
+        network = CLONE_NEWNET,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWNS)
+        mount_points = CLONE_NEWNS,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWPID)
+        processes = CLONE_NEWPID,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWUSER)
+        users = CLONE_NEWUSER,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWUTS)
+        hostname = CLONE_NEWUTS,
+        #endif
+    };
 
     namespace this_process {
 
@@ -169,6 +195,16 @@ namespace sys {
         inline void unshare(unshare_flag flags) {
             UNISTDX_CHECK(::unshare(static_cast<int>(flags)));
         }
+        #endif
+
+        #if defined(UNISTDX_HAVE_SETNS)
+        inline void enter(fd_type fd, namespace_type ns=namespace_type::any) {
+            UNISTDX_CHECK(::setns(fd, static_cast<int>(ns)));
+        }
+        #endif
+
+        #if defined(UNISTDX_HAVE_SETNS)
+        fildes get_namespace(const char* proc_suffix);
         #endif
 
     }

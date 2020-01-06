@@ -1,0 +1,28 @@
+#ifndef UNISTDX_TEST_PRINT_FLAGS
+#define UNISTDX_TEST_PRINT_FLAGS
+
+#include <limits>
+#include <type_traits>
+#include <cstdio>
+
+namespace sys {
+
+    namespace test {
+
+        template <class T>
+        void print_flags(T flags) {
+            using int_type = typename std::underlying_type<T>::type;
+            auto iflags = static_cast<int_type>(flags);
+            auto nbits = std::numeric_limits<int_type>::digits * sizeof(int_type);
+            for (int_type i=0; i<nbits; ++i) {
+                if (iflags & (int_type(1) << i)) {
+                    std::printf("%d 0x%x\n", i, 1<<i);
+                }
+            }
+        }
+
+    }
+
+}
+
+#endif // vim:filetype=cpp

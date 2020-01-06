@@ -1,0 +1,32 @@
+#ifndef UNISTDX_NET_NETLINK_SOCKET
+#define UNISTDX_NET_NETLINK_SOCKET
+
+#include <unistdx/net/socket>
+
+namespace sys {
+
+    enum class netlink_protocol {
+        route = NETLINK_ROUTE,
+        rdma = NETLINK_RDMA,
+        generic = NETLINK_GENERIC,
+    };
+
+    class netlink_socket: public socket {
+
+    public:
+
+        netlink_socket() = default;
+
+        inline explicit
+        netlink_socket(socket_type type, netlink_protocol protocol):
+        socket{sys::family_type::netlink,type,static_cast<int>(protocol)} {}
+
+        inline explicit
+        netlink_socket(netlink_protocol protocol):
+        socket{sys::family_type::netlink,socket_type::raw,static_cast<int>(protocol)} {}
+
+    };
+
+}
+
+#endif // vim:filetype=cpp

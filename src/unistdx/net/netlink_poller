@@ -1,7 +1,9 @@
 #ifndef UNISTDX_NET_NETLINK_POLLER
 #define UNISTDX_NET_NETLINK_POLLER
 
+#include <cstring>
 #include <iosfwd>
+#include <string>
 
 #include <unistdx/base/flag>
 #include <unistdx/config>
@@ -15,8 +17,10 @@
 #error netlink.h is required to use netlink
 #endif
 
+#include <asm/types.h>
 #include <linux/netlink.h>
 #include <linux/rtnetlink.h>
+#include <linux/veth.h>
 
 namespace sys {
 
@@ -52,7 +56,11 @@ namespace sys {
         root = NLM_F_ROOT,
         all_matching = NLM_F_MATCH,
         atomic = NLM_F_ATOMIC,
-        dump = NLM_F_DUMP
+        dump = NLM_F_DUMP,
+        replace = NLM_F_REPLACE,
+        exclude = NLM_F_EXCL,
+        create = NLM_F_CREATE,
+        append = NLM_F_APPEND,
     };
 
     template <>
@@ -126,6 +134,9 @@ namespace sys {
             return this->nlmsg_seq;
         }
 
+        /// Message sequence number.
+        inline u32 increment_sequence() { return ++this->nlmsg_seq; }
+
         /// Sender port identifier.
         inline u32
         port() const noexcept {
@@ -198,6 +209,19 @@ namespace sys {
             return make_view(this->begin<T>(len), this->end<T>());
         }
 
+        template <class T>
+        inline T* message() { return static_cast<T*>(NLMSG_DATA(this)); }
+
+        template <class T>
+        inline const T* message() const { return static_cast<T*>(NLMSG_DATA(this)); }
+
+        template <class T>
+        inline T* tail() {
+            return reinterpret_cast<T*>(
+                reinterpret_cast<u8*>(this) + NLMSG_ALIGN(this->length())
+            );
+        }
+
     };
 
     /**
@@ -231,22 +255,16 @@ namespace sys {
 
         /// Returns the pointer to the beginning of attribute data.
         template <class T>
-        inline T*
-        data() {
-            return static_cast<T*>(RTA_DATA(this));
-        }
+        inline T* data() { return static_cast<T*>(RTA_DATA(this)); }
+        inline void data(const void* ptr, u16 n) { std::memcpy(RTA_DATA(this), ptr, n); }
 
         /// Attribute length.
-        inline unsigned short
-        length() const noexcept {
-            return this->rta_len;
-        }
+        inline u16 length() const { return this->rta_len; }
+        inline void length(u16 rhs) { this->rta_len = rhs; }
 
         /// Attribute type (see \man{rtnetlink,3}).
-        inline attributes_type
-        type() const noexcept {
-            return static_cast<attributes_type>(this->rta_type);
-        }
+        inline attributes_type type() const { return attributes_type(this->rta_type); }
+        inline void type(attributes_type rhs) { this->rta_type = u16(rhs); }
 
     };
 
@@ -427,7 +445,168 @@ namespace sys {
             this->nlmsg_type = static_cast<u16>(rhs);
         }
 
+        using netlink_header::type;
+
     };
+
+    enum class ifinfo_message_type: u16 {
+        new_link = RTM_NEWLINK,
+        delete_link = RTM_DELLINK,
+        get_link = RTM_GETLINK,
+        set_link = RTM_SETLINK,
+    };
+
+    enum class ifinfo_attribute: u32 {
+        unspecified = IFLA_UNSPEC,
+        interface_name = IFLA_IFNAME,
+        link_info = IFLA_LINKINFO,
+        link_info_kind = IFLA_INFO_KIND,
+        link_info_data = IFLA_INFO_DATA,
+        veth_peer_info = VETH_INFO_PEER,
+        network_namespace_fd = IFLA_NET_NS_FD,
+    };
+
+    class ifinfo_message: public ::ifinfomsg {
+
+    private:
+        using base_type = ::ifinfomsg;
+
+    public:
+
+        using attr_type = rtattributes<ifinfo_attribute>;
+        using message_type = ifinfo_message_type;
+
+        inline family_type family() const { return family_type(this->ifi_family); }
+        inline message_type type() const { return message_type(this->ifi_type); }
+        inline int index() const { return this->ifi_index; }
+        inline u8 flags() const { return this->ifi_flags; }
+        inline u32 change_mask() const { return this->ifi_change; }
+        inline void family(family_type rhs) { this->ifi_family = static_cast<u8>(rhs); }
+        inline void type(message_type rhs) { this->ifi_type = u16(rhs); }
+        inline void index(int rhs) noexcept { this->ifi_index = rhs; }
+        inline void flags(u8 rhs) { this->ifi_flags = rhs; }
+        inline void change_mask(u32 rhs) { this->ifi_change = rhs; }
+
+        /// Get route attributes.
+        inline attr_type*
+        routing_attributes() noexcept {
+            return bits::routing_attributes_ptr<attr_type,base_type>(this);
+        }
+
+        /// Get route attributes.
+        inline const attr_type*
+        routing_attributes() const noexcept {
+            return bits::routing_attributes_ptr<attr_type,base_type>(this);
+        }
+
+        /// Returns iterator to the first attribute.
+        inline netlink_attribute_iterator<attr_type>
+        begin(int len) noexcept {
+            return netlink_attribute_iterator<attr_type>(
+                this->routing_attributes(),
+                len
+            );
+        }
+
+        /// Returns iterator to the end of attributes.
+        inline netlink_attribute_iterator<attr_type>
+        end() noexcept {
+            return netlink_attribute_iterator<attr_type>();
+        }
+
+        /// Returns all attributes as traversable container.
+        inline iterator_pair<netlink_attribute_iterator<attr_type>>
+        attributes(int len) {
+            return make_view(this->begin(len), this->end());
+        }
+
+    };
+
+    class ifinfo_message_header: public netlink_header {
+
+    public:
+
+        using message_type = ifinfo_message_type;
+
+        /// Returns pointer to message payload.
+        inline ifinfo_message*
+        message() { return netlink_header::message<ifinfo_message>(); }
+
+        /// Returns pointer to message payload.
+        inline const ifinfo_message*
+        message() const { return netlink_header::message<const ifinfo_message>(); }
+
+        inline int payload_length() const { return NLMSG_PAYLOAD(this, sizeof(message_type)); }
+        inline message_type type() const { return message_type(this->nlmsg_type); }
+        inline void type(message_type rhs) { this->nlmsg_type = u16(rhs); }
+
+    };
+    class ifinfo_request {
+
+    public:
+        using attr_type = ifinfo_message::attr_type;
+        using message_type = ifinfo_message;
+
+    private:
+        union {
+            struct {
+                ifinfo_message_header _header;
+                message_type _message;
+            };
+            attr_type _attributes;
+            char _bytes[4096];
+        };
+
+    public:
+
+        inline ifinfo_request() { this->_header.length(NLMSG_LENGTH(sizeof(ifinfo_message))); }
+        inline ifinfo_message_header& header() { return this->_header; }
+        inline ifinfo_message& message() { return this->_message; }
+
+        inline void
+        write(socket& sock) {
+            this->_header.increment_sequence();
+            auto nbytes = sock.write(this->_bytes, this->_header.length());
+            if (nbytes != this->_header.length()) {
+                UNISTDX_THROW_BAD_CALL();
+            }
+        }
+
+        inline void
+        add(ifinfo_attribute type, const void* data, u16 size) {
+            u16 nbytes = RTA_LENGTH(size);
+            u32 new_length = NLMSG_ALIGN(this->_header.length()) + RTA_ALIGN(nbytes);
+            if (new_length > sizeof(this->_bytes)) {
+                throw std::length_error("attribute size exceeds message size");
+            }
+            attr_type* attr = this->_header.tail<attr_type>();
+            attr->type(type);
+            attr->length(nbytes);
+            if (data) { attr->data(data, size); }
+            this->_header.length(new_length);
+        }
+
+        inline void
+        add(ifinfo_attribute type, const std::string& value) {
+            this->add(type, value.data(), value.size()+1); // TODO +1?
+        }
+
+        inline attr_type*
+        begin(ifinfo_attribute type) {
+            attr_type* attr = this->_header.tail<attr_type>();
+            this->add(type, nullptr, 0);
+            return attr;
+        }
+
+        inline void
+        end(attr_type* attr) {
+            attr->length(this->_header.tail<u8>() - reinterpret_cast<u8*>(attr));
+        }
+
+        inline void skip(u16 n) { this->_header.length(this->_header.length()+n); }
+
+    };
+
 
     /**
     \brief Container for netlink messages.
@@ -483,8 +662,8 @@ namespace sys {
 
     /// \brief Netlink container for interface address messages.
     /// \ingroup net
-    typedef sys::netlink_container<sys::ifaddr_message_header>
-        ifaddr_message_container;
+    using ifaddr_message_container = sys::netlink_container<sys::ifaddr_message_header>;
+    using ifinfo_message_container = sys::netlink_container<sys::ifinfo_message_header>;
 
 }
 
