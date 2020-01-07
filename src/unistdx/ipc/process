@@ -36,6 +36,8 @@ namespace sys {
         UNISTDX_CHECK(::kill(p, signal_type(s)));
     }
 
+    fildes get_namespace(const char* proc_suffix, pid_type p);
+
     enum class unshare_flag: int {
         #if defined(UNISTDX_HAVE_CLONE_FILES)
         file_descriptors = CLONE_FILES,
@@ -203,9 +205,9 @@ namespace sys {
         }
         #endif
 
-        #if defined(UNISTDX_HAVE_SETNS)
-        fildes get_namespace(const char* proc_suffix);
-        #endif
+        inline fildes get_namespace(const char* proc_suffix) {
+            return ::sys::get_namespace(proc_suffix, id());
+        }
 
     }
 
@@ -469,6 +471,10 @@ namespace sys {
         inline void
         join() {
             this->wait();
+        }
+
+        inline fildes get_namespace(const char* proc_suffix) {
+            return ::sys::get_namespace(proc_suffix, id());
         }
 
     private:
