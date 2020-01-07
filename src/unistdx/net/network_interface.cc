@@ -4,7 +4,12 @@
 
 sys::network_interface::network_interface(int index) {
     this->_name.resize(max_name_size());
-    this->_socket.call(fildes::operation::interface_get_name, this->_name);
+    network_interface_request req{};
+    req.ifr_ifindex = index;
+    this->_socket.call(fildes::operation::interface_get_name, req);
+    constexpr auto n = sizeof(req.ifr_name)-1;
+    if (req.ifr_name[n] != 0) { req.ifr_name[n] = 0; }
+    this->_name = req.ifr_name;
     this->_name.resize(traits_type::length(this->_name.data()));
 }
 

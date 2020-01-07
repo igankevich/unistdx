@@ -1,0 +1,6 @@
+#ifndef UNISTDX_TEST_CONFIG_IN
+#define UNISTDX_TEST_CONFIG_IN
+
+#define UNISTDX_TEST_EMPTY_EXE_PATH "@empty_exe_path@"
+
+#endif // vim:filetype=cpp

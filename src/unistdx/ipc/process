@@ -209,6 +209,10 @@ namespace sys {
             return ::sys::get_namespace(proc_suffix, id());
         }
 
+        inline void hostname(const std::string& name) {
+            UNISTDX_CHECK(::sethostname(name.data(), name.size()));
+        }
+
     }
 
     /**
@@ -241,10 +245,41 @@ namespace sys {
     \author Ivan Gankevich
     */
     enum class process_flag: int {
-        fork
+        fork = 0,
+        signal_parent = SIGCHLD,
         #if defined(UNISTDX_HAVE_CLONE)
-        , wait_for_exec = CLONE_VFORK
-        , new_process_namespace = CLONE_NEWPID
+        wait_for_exec = CLONE_VFORK,
+        new_process_namespace = CLONE_NEWPID,
+        #endif
+        share_memory = CLONE_VM,
+        share_signal_handlesr = CLONE_SIGHAND,
+        share_ipc_sysv = CLONE_SYSVSEM,
+        #if defined(UNISTDX_HAVE_CLONE_FILES)
+        share_file_descriptors = CLONE_FILES,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_FS)
+        share_file_system = CLONE_FS,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWCGROUP)
+        unshare_control_groups = CLONE_NEWCGROUP,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWIPC)
+        unshare_ipc = CLONE_NEWIPC,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWNET)
+        unshare_network = CLONE_NEWNET,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWNS)
+        unshare_mount_points = CLONE_NEWNS,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWPID)
+        unshare_processes = CLONE_NEWPID,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWUSER)
+        unshare_users = CLONE_NEWUSER,
+        #endif
+        #if defined(UNISTDX_HAVE_CLONE_NEWUTS)
+        unshare_hostname = CLONE_NEWUTS,
         #endif
     };
 
@@ -283,7 +318,7 @@ namespace sys {
                 UNISTDX_CHECK(this->_pid = ::clone(
                     &traits_type::template child_main<F>,
                     stack + sizeof(stack),
-                    static_cast<int>(pf) | SIGCHLD,
+                    static_cast<int>(pf),
                     &f
                 ));
             #endif

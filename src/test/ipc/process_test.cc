@@ -8,6 +8,7 @@
 #include <unistdx/ipc/execute>
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
+#include <unistdx/test/config>
 
 TEST(process, basic) {
     sys::pid_type pid = sys::this_process::id();
@@ -35,11 +36,12 @@ struct process_exec_params {
 struct process_exec_test:
     public ::testing::TestWithParam<process_exec_params> {};
 
+using f = sys::process_flag;
 std::vector<process_exec_params> all_params{
-    {sys::process_flag::fork, "non-existent-file", false},
-    {sys::process_flag::wait_for_exec, "non-existent-file", false},
-    {sys::process_flag::fork, "ls", true},
-    {sys::process_flag::wait_for_exec, "ls", true},
+    {f::fork, "non-existent-file", false},
+    {f::wait_for_exec|f::signal_parent, "non-existent-file", false},
+    {f::fork, UNISTDX_TEST_EMPTY_EXE_PATH, true},
+    {f::wait_for_exec|f::signal_parent, UNISTDX_TEST_EMPTY_EXE_PATH, true},
 };
 
 TEST_P(process_exec_test, return_int) {

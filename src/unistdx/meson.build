@@ -21,6 +21,7 @@ subdir('io')
 subdir('ipc')
 subdir('util')
 subdir('bits')
+subdir('test')
 
 libunistdx_shared = shared_library(
     'unistdx',

@@ -1,18 +1,16 @@
 #include <mutex>
 
 #include <unistdx/ipc/process_group>
-
+#include <unistdx/test/config>
 #include <unistdx/test/operator>
+
+using f = sys::process_flag;
 
 TEST(process_group, wait_async) {
     sys::process_group g;
     test::stream_insert_starts_with("{gid=0", g);
-    g.emplace([] () {
-        return 0;
-    }, sys::process_flag::wait_for_exec);
-    g.emplace([] () {
-        return 0;
-    }, sys::process_flag::wait_for_exec);
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     std::mutex mtx;
     g.wait(
         mtx,
@@ -33,12 +31,8 @@ TEST(process_group, wait_async) {
 TEST(process_group, wait_sync) {
     sys::process_group g;
     test::stream_insert_starts_with("{gid=0", g);
-    g.emplace([] () {
-        return 0;
-    }, sys::process_flag::wait_for_exec);
-    g.emplace([] () {
-        return 0;
-    }, sys::process_flag::wait_for_exec);
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     int ret = g.wait();
     EXPECT_EQ(0, ret);
 }

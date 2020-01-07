@@ -19,6 +19,13 @@ TEST(network_interface, flags) {
     ASSERT_EQ(f::up, (lo.flags() & f::up));
 }
 
+TEST(network_interface, index) {
+    sys::network_interface lo("lo");
+    auto index = lo.index();
+    sys::network_interface lo2(index);
+    EXPECT_EQ(index, lo2.index());
+}
+
 TEST(bridge_interface, add) {
     using f = sys::network_interface::flag;
     sys::bridge_interface br("br0");
