@@ -7,7 +7,9 @@
 
 #include <unistdx/config>
 #include <unistdx/io/fildes>
+#include <unistdx/net/interface_address>
 #include <unistdx/net/socket>
+#include <unistdx/net/ipv4_address>
 
 namespace sys {
 
@@ -66,6 +68,7 @@ namespace sys {
 
     public:
         using flag = network_interface_flags;
+        using interface_address_type = sys::interface_address<sys::ipv4_address>;
 
     protected:
         using network_interface_request = ::ifreq;
@@ -79,103 +82,23 @@ namespace sys {
 
         inline explicit
         network_interface(std::string name): _name(name) {
-            this->validate_name(name);
+            if (name.size() > max_name_size()) { throw std::invalid_argument("bad name"); }
         }
 
-        inline explicit
-        network_interface(int index) {
-            this->_name.resize(max_name_size());
-            this->_socket.call(fildes::operation::interface_get_name, this->_name);
-            this->_name.resize(traits_type::length(this->_name.data()));
-        }
+        explicit network_interface(int index);
+
+        void flags(flag f);
+        auto flags() const -> flag;
+        void setf(flag f);
+        void unsetf(flag f);
+        auto index() const -> int;
+        auto address() const -> interface_address_type;
+        void address(const interface_address_type& addr);
+        void set_namespace(fd_type ns);
 
         inline const std::string& name() const { return this->_name; }
         inline void up() { this->setf(flag::up); }
         inline void down() { this->unsetf(flag::up); }
-
-        inline void
-        flags(flag f) {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            req.ifr_flags = static_cast<short>(f);
-            this->_socket.call(fildes::operation::interface_set_flags, req);
-        }
-
-        inline flag
-        flags() const {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            this->_socket.call(fildes::operation::interface_get_flags, req);
-            return static_cast<flag>(req.ifr_flags);
-        }
-
-        inline void
-        setf(flag f) {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            this->_socket.call(fildes::operation::interface_get_flags, req);
-            flags(static_cast<flag>(req.ifr_flags) | f);
-        }
-
-        inline void
-        unsetf(flag f) {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            this->_socket.call(fildes::operation::interface_get_flags, req);
-            flags(static_cast<flag>(req.ifr_flags) & (~f));
-        }
-
-        inline int
-        index() const {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            this->_socket.call(fildes::operation::interface_get_index, req);
-            return req.ifr_ifindex;
-        }
-
-        inline socket_address
-        address() const {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            this->_socket.call(fildes::operation::interface_get_address, req);
-            return req.ifr_addr;
-        }
-
-        inline void
-        address(const socket_address& addr) {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            req.ifr_addr = *addr.sockaddr();
-            this->_socket.call(fildes::operation::interface_set_address, req);
-        }
-
-        inline void address(ipv4_address addr) { this->address({addr,0}); }
-
-        inline socket_address
-        network_mask() const {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            this->_socket.call(fildes::operation::interface_get_network_mask, req);
-            return req.ifr_netmask;
-        }
-
-        inline void
-        network_mask(const socket_address& addr) {
-            network_interface_request req{};
-            traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-            req.ifr_netmask = *addr.sockaddr();
-            this->_socket.call(fildes::operation::interface_set_network_mask, req);
-        }
-
-        inline void network_mask(ipv4_address addr) { this->network_mask({addr,0}); }
-
-        void set_namespace(fd_type ns);
-
-    protected:
-
-        inline void validate_name(const std::string& name) {
-            if (name.size() > max_name_size()) { throw std::invalid_argument("bad name"); }
-        }
 
     };
 

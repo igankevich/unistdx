@@ -14,14 +14,10 @@ namespace sys {
     public:
 
         inline explicit
-        veth_interface(
-            const std::string& name,
-            const std::string& peer,
-            sys::netlink_socket& sock
-        ):
-        network_interface(name), _peer(peer) { this->init(sock); }
+        veth_interface(const std::string& name, const std::string& peer):
+        network_interface(name), _peer(peer) { this->init(); }
 
-        void init(sys::netlink_socket& sock);
+        void init();
         inline network_interface peer() const { return this->_peer; }
 
     };

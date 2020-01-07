@@ -29,8 +29,7 @@ TEST(bridge_interface, add) {
 }
 
 TEST(veth_interface, _) {
-    sys::netlink_socket sock(sys::netlink_protocol::route);
-    sys::veth_interface veth0("veth0", "veth1", sock);
+    sys::veth_interface veth0("veth0", "veth1");
     using flags = sys::network_interface::flag;
     veth0.up();
     ASSERT_EQ(flags::up, (veth0.flags() & flags::up));

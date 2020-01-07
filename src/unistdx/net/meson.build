@@ -1,4 +1,5 @@
 libunistdx_src += files([
+    'bridge_interface.cc',
     'ethernet_address.cc',
     'family.cc',
     'ipv4_address.cc',
@@ -25,6 +26,7 @@ install_headers(
     'ipaddr_traits',
     'ipv4_address',
     'ipv6_address',
+    'netlink_socket',
     'network_interface',
     'pstream',
     'socket',

@@ -99,7 +99,7 @@ namespace sys {
         }
 
         /// Post-increment.
-        inline subnet_iterator&
+        inline subnet_iterator
         operator++(int) noexcept {
             subnet_iterator tmp(*this);
             this->operator++();

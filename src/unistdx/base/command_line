@@ -51,28 +51,28 @@ namespace sys {
 
     public:
         /// Alias to \link std::string\endlink.
-        typedef std::string key_type;
+        using key_type = std::string;
+        /// Alias to \link std::string::value_type\endlink.
+        using delimiter_type = std::string::value_type;
 
     private:
         key_type _key;
         T& _value;
+        delimiter_type _delim;
 
     public:
 
         /**
         Construct key-value pair with key \p key and reference to value \p value.
         */
-        inline
-        key_value(const key_type& key, T& value):
-        _key(key),
-        _value(value)
-        {}
+        inline key_value(const key_type& key, T& value, delimiter_type delim='='):
+        _key(key), _value(value), _delim(delim) {}
 
         /// Parse command line argument as key-value pair.
         inline bool
         operator()(int, const std::string& arg) {
             bool success = false;
-            std::string::size_type eq_pos = arg.find('=');
+            std::string::size_type eq_pos = arg.find(this->_delim);
             if (eq_pos != std::string::npos) {
                 if (arg.compare(0, eq_pos, this->_key) == 0) {
                     std::stringstream in(arg.substr(eq_pos+1));

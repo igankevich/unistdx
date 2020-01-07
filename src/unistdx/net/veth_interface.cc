@@ -2,7 +2,7 @@
 #include <unistdx/net/veth_interface>
 
 void
-sys::veth_interface::init(sys::netlink_socket& sock) {
+sys::veth_interface::init() {
     sys::ifinfo_request request;
     using f = sys::netlink_message_flags;
     request.header().type(sys::ifinfo_message_type::new_link);
@@ -19,6 +19,7 @@ sys::veth_interface::init(sys::netlink_socket& sock) {
     request.end(veth_info_peer);
     request.end(link_info_data);
     request.end(link_info);
+    sys::netlink_socket sock(sys::netlink_protocol::route);
     request.write(sock);
     sys::ifinfo_message_container response;
     response.read(sock);
