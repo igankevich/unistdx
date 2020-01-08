@@ -11,8 +11,19 @@ namespace sys {
         using network_interface::traits_type;
 
     public:
-        explicit bridge_interface(const std::string& name);
-        ~bridge_interface();
+
+        inline explicit bridge_interface(const std::string& name):
+        network_interface(name) { init(); }
+        inline ~bridge_interface() { down(); destroy(); }
+
+        bridge_interface() = default;
+        bridge_interface(bridge_interface&&) = default;
+        bridge_interface& operator=(bridge_interface&&) = default;
+        bridge_interface(const bridge_interface&) = delete;
+        bridge_interface& operator=(const bridge_interface&) = delete;
+
+        void init();
+        void destroy();
         void add(const sys::network_interface& iface);
         void remove(const sys::network_interface& iface);
 

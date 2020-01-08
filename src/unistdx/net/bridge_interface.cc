@@ -1,11 +1,11 @@
 #include <unistdx/net/bridge_interface>
 
-sys::bridge_interface::bridge_interface(const std::string& name): network_interface(name) {
+void sys::bridge_interface::init() {
     this->_socket.call(fildes::operation::bridge_add, this->_name[0]);
 }
 
-sys::bridge_interface::~bridge_interface() {
-    this->down();
+void sys::bridge_interface::destroy() {
+    if (!*this) { return; }
     this->_socket.call(fildes::operation::bridge_del, this->_name[0]);
 }
 

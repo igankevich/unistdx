@@ -87,6 +87,12 @@ namespace sys {
 
         explicit network_interface(int index);
 
+        network_interface() = default;
+        network_interface(network_interface&&) = default;
+        network_interface& operator=(network_interface&&) = default;
+        network_interface(const network_interface&) = delete;
+        network_interface& operator=(const network_interface&) = delete;
+
         void flags(flag f);
         auto flags() const -> flag;
         void setf(flag f);
@@ -99,6 +105,8 @@ namespace sys {
         inline const std::string& name() const { return this->_name; }
         inline void up() { this->setf(flag::up); }
         inline void down() { this->unsetf(flag::up); }
+        inline explicit operator bool() const { return !this->_name.empty(); }
+        inline bool operator !() const { return !this->operator bool(); }
 
     };
 
