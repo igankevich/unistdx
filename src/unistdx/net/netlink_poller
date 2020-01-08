@@ -634,6 +634,8 @@ namespace sys {
 
     public:
 
+        inline const netlink_header& header() const { return this->_hdr.h; }
+
         /// Read netlink message sequence from socket \p sock.
         inline void
         read(socket& sock) {

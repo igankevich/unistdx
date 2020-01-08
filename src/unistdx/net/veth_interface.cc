@@ -4,7 +4,6 @@
 #include <iostream>
 
 void sys::veth_interface::destroy() {
-    if (!*this) { return; }
     sys::ifinfo_request request;
     using f = sys::netlink_message_flags;
     request.header().type(sys::ifinfo_message_type::delete_link);
@@ -16,13 +15,15 @@ void sys::veth_interface::destroy() {
     request.write(sock);
     sys::ifinfo_message_container response;
     response.read(sock);
+    // TODO
+    /*
     for (auto& hdr : response) {
         auto m = hdr.sys::netlink_header::message<nlmsgerr>();
         if (hdr.error() && m->error != 0) {
             errno = -m->error;
             UNISTDX_THROW_BAD_CALL();
         }
-    }
+    }*/
 }
 
 void sys::veth_interface::init() {
@@ -46,11 +47,13 @@ void sys::veth_interface::init() {
     request.write(sock);
     sys::ifinfo_message_container response;
     response.read(sock);
+    // TODO
+    /*
     for (auto& hdr : response) {
         auto m = hdr.sys::netlink_header::message<nlmsgerr>();
         if (hdr.error() && m->error != 0) {
             errno = -m->error;
             UNISTDX_THROW_BAD_CALL();
         }
-    }
+    }*/
 }

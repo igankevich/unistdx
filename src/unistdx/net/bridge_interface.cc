@@ -5,7 +5,6 @@ void sys::bridge_interface::init() {
 }
 
 void sys::bridge_interface::destroy() {
-    if (!*this) { return; }
     this->_socket.call(fildes::operation::bridge_del, this->_name[0]);
 }
 

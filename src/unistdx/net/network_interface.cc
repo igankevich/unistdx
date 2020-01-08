@@ -81,6 +81,8 @@ sys::network_interface::set_namespace(fd_type ns) {
     request.write(sock);
     sys::ifinfo_message_container response;
     response.read(sock);
+    // TODO
+    /*
     for (auto& hdr : response) {
         auto m = hdr.sys::netlink_header::message<nlmsgerr>();
         if (hdr.error() && m->error != 0) {
@@ -88,4 +90,5 @@ sys::network_interface::set_namespace(fd_type ns) {
             UNISTDX_THROW_BAD_CALL();
         }
     }
+    */
 }

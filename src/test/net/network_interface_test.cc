@@ -42,7 +42,17 @@ TEST(veth_interface, _) {
     ASSERT_EQ(flags::up, (veth0.flags() & flags::up));
     veth0.down();
     ASSERT_EQ(flags{}, (veth0.flags() & flags::up));
+    veth0.destroy();
     //sys::test::print_flags(veth0.flags());
+}
+
+TEST(veth_interface, move) {
+    std::vector<sys::veth_interface> veths;
+    veths.emplace_back("zeth0", "zeth0x");
+    veths.emplace_back("zeth1", "zeth1x");
+    veths.emplace_back("zeth2", "zeth2x");
+    veths.emplace_back("zeth3", "zeth3x");
+    veths.resize(100);
 }
 
 int main(int argc, char* argv[]) {

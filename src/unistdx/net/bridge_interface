@@ -14,7 +14,7 @@ namespace sys {
 
         inline explicit bridge_interface(const std::string& name):
         network_interface(name) { init(); }
-        inline ~bridge_interface() { down(); destroy(); }
+        inline ~bridge_interface() { if (!*this) { return; } down(); destroy(); }
 
         bridge_interface() = default;
         bridge_interface(bridge_interface&&) = default;
