@@ -16,7 +16,7 @@ namespace sys {
         inline explicit
         veth_interface(const std::string& name, const std::string& peer):
         network_interface(name), _peer(peer) { this->init(); }
-        inline ~veth_interface() { if (!*this) { return; } down(); destroy(); }
+        //inline ~veth_interface() { if (!*this) { return; } down(); destroy(); }
 
         veth_interface() = default;
         veth_interface(veth_interface&&) = default;
