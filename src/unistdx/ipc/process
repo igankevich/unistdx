@@ -213,6 +213,8 @@ namespace sys {
             UNISTDX_CHECK(::sethostname(name.data(), name.size()));
         }
 
+        std::string hostname();
+
     }
 
     /**

@@ -130,6 +130,17 @@ TEST(SetIdentity, Exceptions) {
     EXPECT_EQ(old_gid, group());
 }
 
+TEST(unshare, hostname) {
+    using namespace sys::this_process;
+    auto status = sys::process{[] () {
+        using f = sys::unshare_flag;
+        unshare(f::users | f::hostname);
+        hostname("unistdx");
+        return (hostname() == "unistdx") ? 0 : 1;
+    }}.wait();
+    EXPECT_EQ(0, status.exit_code());
+}
+
 /*
 TEST(Process, LogMessage) {
     sys::process child {

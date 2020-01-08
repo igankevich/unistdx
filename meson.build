@@ -1,22 +1,32 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.13.2',
+    version: '0.14.0',
     meson_version: '>=0.46',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
 )
 
+cpp = meson.get_compiler('cpp')
+
 if not get_option('buildtype').contains('debug')
     add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
+
+foreach arg : [
+    '-Werror=return-type',
+    '-Werror=return-local-addr',
+    '-Werror=cast-align']
+    if cpp.has_argument(arg)
+        add_global_arguments(arg, language: 'cpp')
+    endif
+endforeach
 
 with_tests = get_option('with_tests')
 
 # compile-time configuration {{{
 all_defines = []
 config = configuration_data()
-cpp = meson.get_compiler('cpp')
 foreach pair : [
     ['bswap16', '0'],
     ['bswap32', '0'],
