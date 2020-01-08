@@ -3,10 +3,34 @@
 
 #include <limits>
 #include <stdexcept>
+#include <type_traits>
 
 #include <unistdx/base/types>
 
 namespace sys {
+
+    template <class T>
+    constexpr bool is_basic() {
+        return std::is_same<T,bool>::value ||
+               std::is_same<T,char>::value ||
+               std::is_same<T,unsigned char>::value ||
+               std::is_same<T,char16_t>::value ||
+               std::is_same<T,char32_t>::value ||
+               std::is_same<T,sys::u8>::value ||
+               std::is_same<T,sys::u16>::value ||
+               std::is_same<T,sys::u32>::value ||
+               std::is_same<T,sys::u64>::value ||
+               std::is_same<T,sys::i8>::value ||
+               std::is_same<T,sys::i16>::value ||
+               std::is_same<T,sys::i32>::value ||
+               std::is_same<T,sys::i64>::value ||
+               std::is_same<T,sys::f32>::value ||
+               std::is_same<T,sys::f64>::value
+               #if defined(UNISTDX_HAVE_LONG_DOUBLE)
+               || std::is_same<T,sys::f128>::value
+               #endif
+               ;
+    }
 
     /**
     \brief
@@ -26,33 +50,35 @@ namespace sys {
 
     public:
         /// Alias to \c char.
-        typedef char value_type;
+        using value_type = char;
         /// Pointer to \c char.
-        typedef value_type* iterator;
+        using iterator = value_type*;
         /// Constant pointer to \c char.
-        typedef const value_type* const_iterator;
+        using const_iterator = const value_type*;
         /// Alias to \link std::size_t\endlink.
-        typedef std::size_t size_type;
+        using size_type = std::size_t;
+        using pointer = void*;
+        using const_pointer = const void*;
 
     private:
         value_type* _data = nullptr;
         size_type _size = 0;
+        size_type _position = 0;
+        size_type _limit = 0;
 
     public:
 
         byte_buffer() = default;
-
         byte_buffer(const byte_buffer&) = delete;
-
-        byte_buffer&
-        operator=(const byte_buffer&) = delete;
+        byte_buffer& operator=(const byte_buffer&) = delete;
 
         /// Move-constructor.
-        inline
-        byte_buffer(byte_buffer&& rhs):
-        _data(rhs._data),
-        _size(rhs._size) {
+        inline byte_buffer(byte_buffer&& rhs):
+        _data(rhs._data), _size(rhs._size), _position(rhs._position), _limit(rhs._limit) {
             rhs._data = nullptr;
+            rhs._size = 0;
+            rhs._position = 0;
+            rhs._limit = 0;
         }
 
         /**
@@ -64,8 +90,7 @@ namespace sys {
         If \p size is nought, unusable buffer is created
         and no memory is allocated.
         */
-        explicit
-        byte_buffer(size_type size);
+        explicit byte_buffer(size_type size);
 
         ~byte_buffer();
 
@@ -160,6 +185,65 @@ namespace sys {
         swap(byte_buffer& rhs) noexcept {
             std::swap(this->_data, rhs._data);
             std::swap(this->_size, rhs._size);
+            std::swap(this->_position, rhs._position);
+            std::swap(this->_limit, rhs._limit);
+        }
+
+        inline size_type position() const { return this->_position; }
+        inline size_type limit() const { return this->_limit; }
+        inline size_type remaining() const { return this->_limit - this->_position; }
+        inline void position(size_type rhs) { this->_position = rhs; }
+        inline void limit(size_type rhs) { this->_limit = rhs; }
+        inline void flip() { this->_limit = position(); this->_position = 0; }
+
+        auto write(const_pointer src, size_type n) -> size_type;
+        auto read(pointer dst, size_type n) -> size_type;
+        void peek(pointer dst, size_type n);
+        void bump(size_type n);
+        void compact();
+        void clear();
+
+        template <class Sink> auto flush(Sink& dst) -> size_type {
+            size_type nwritten = 0, n = 0;
+            while (remaining() != 0 && (n = dst.write(data()+position(), remaining())) > 0) {
+                this->_position += n;
+                nwritten += n;
+            }
+            return nwritten;
+        }
+
+        template <class Source> auto fill(Source& src) -> size_type {
+            size_type nread = 0, n = 0;
+            while ((n = src.read(data()+position(), remaining())) > 0) {
+                if (remaining() == 0) { grow(); }
+                this->_position += n;
+                nread += n;
+            }
+            return nread;
+        }
+
+        template <class T>
+        auto write(T x) -> typename std::enable_if<is_basic<T>(),void>::type {
+            this->write(&x, sizeof(T));
+        }
+
+        template <class T>
+        auto read(T& x) -> typename std::enable_if<is_basic<T>(),void>::type {
+            this->read(&x, sizeof(T));
+        }
+
+        template <class C, class T, class A>
+        void write(const std::basic_string<C,T,A>& x) {
+            this->write(static_cast<sys::u64>(x.size()));
+            this->write(x.data(), x.size());
+        }
+
+        template <class C, class T, class A>
+        void read(std::basic_string<C,T,A>& x) {
+            sys::u64 size = 0;
+            this->read<sys::u64>(size);
+            x.resize(size);
+            this->read(&x[0], x.size());
         }
 
     };
