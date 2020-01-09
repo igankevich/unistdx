@@ -33,7 +33,7 @@ namespace sys {
                 } catch (...) {
                     ret = 1;
                 }
-                std::exit(ret);
+                return ret;
             }
 
         };
@@ -64,7 +64,7 @@ namespace sys {
                 } catch (...) {
                     ret = 1;
                 }
-                std::exit(ret);
+                return ret;
             }
 
         };

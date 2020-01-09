@@ -9,27 +9,6 @@
 
 namespace sys {
 
-    namespace this_process {
-
-        /**
-        \brief Get process group ID of the calling process.
-        \see \man{getpgrp,2}
-        */
-        inline pid_type
-        process_group_id() noexcept { return ::getpgrp(); }
-
-        /**
-        \brief Set process group ID of the calling process.
-        \throws bad_call
-        \see \man{setpgid,2}
-        */
-        inline void
-        set_process_group_id(pid_type rhs) {
-            UNISTDX_CHECK(::setpgid(this_process::id(), rhs));
-        }
-
-    }
-
     /**
     \brief A group of processes.
     \date 2018-05-21
@@ -72,14 +51,12 @@ namespace sys {
         /// Add new process to a group using \p childmain as the main function.
         template<class F>
         const process&
-        emplace(F&& childmain, process_flag pf=process_flag::fork) {
+        emplace(F&& childmain, process_flag pf=process_flag::fork, size_t stack_size=4096*2) {
             const bool has_gid = !this->_procs.empty();
             this->_procs.emplace_back([this,&childmain,has_gid] () {
-                this_process::set_group_id(
-                    has_gid ? this->_gid : this_process::id()
-                );
+                this_process::group_id(has_gid ? this->_gid : this_process::id());
                 return childmain();
-            }, pf);
+            }, pf, stack_size);
             process& proc = this->_procs.back();
             if (!has_gid) {
                 this->_gid = proc.id();
@@ -218,9 +195,6 @@ namespace sys {
             std::swap(this->_gid, rhs._gid);
         }
 
-        friend std::ostream&
-        operator<<(std::ostream& out, const process_group& rhs);
-
     };
 
     /// Overload of \link std::swap\endlink for \link process_group\endlink.
@@ -228,10 +202,6 @@ namespace sys {
     swap(process_group& lhs, process_group& rhs) {
         lhs.swap(rhs);
     }
-
-    /// Output process group ID and all processes in the group.
-    std::ostream&
-    operator<<(std::ostream& out, const process_group& rhs);
 
 }
 

@@ -160,6 +160,15 @@ TEST(clone, users) {
     EXPECT_EQ(0, status.exit_code());
 }
 
+TEST(thread, _) {
+    using pf = sys::process_flag;
+    sys::process t{[] () -> int {
+        return 0;
+    }, pf::signal_parent | pf::share_memory};
+    auto status = t.wait();
+    EXPECT_EQ(0, status.exit_code());
+}
+
 /*
 TEST(Process, LogMessage) {
     sys::process child {

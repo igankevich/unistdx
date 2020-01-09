@@ -1,6 +1,8 @@
 #ifndef UNISTDX_IPC_PROCESS
 #define UNISTDX_IPC_PROCESS
 
+#include <memory>
+
 #include <unistdx/config>
 
 #include <unistd.h>
@@ -160,14 +162,17 @@ namespace sys {
         }
 
         /**
+        \brief Get process group ID of the calling process.
+        \see \man{getpgrp,2}
+        */
+        inline pid_type group_id() { return ::getpgrp(); }
+
+        /**
         \brief Set calling process group ID.
         \throws bad_call
         \see \man{setpgid,2}
         */
-        inline void
-        set_group_id(pid_type rhs) {
-            UNISTDX_CHECK(::setpgid(::sys::this_process::id(), rhs));
-        }
+        inline void group_id(pid_type rhs) { UNISTDX_CHECK(::setpgid(id(), rhs)); }
 
         #if defined(UNISTDX_HAVE_PRCTL)
         /**
@@ -175,10 +180,7 @@ namespace sys {
         \throws bad_call
         \see \man{prctl,2}
         */
-        inline void
-        set_name(const char* name) {
-            UNISTDX_CHECK(::prctl(PR_SET_NAME, name));
-        }
+        inline void name(const char* name) { UNISTDX_CHECK(::prctl(PR_SET_NAME, name)); }
 
         /**
         \brief Get calling process name.
@@ -298,6 +300,13 @@ namespace sys {
     class process {
 
     public:
+        using stack_ptr = std::unique_ptr<char>;
+
+    private:
+        pid_type _pid = 0;
+        stack_ptr _stack;
+
+    public:
 
         /**
         \brief Construct new process by forking a child with \p f as main function.
@@ -307,67 +316,51 @@ namespace sys {
         */
         template<class F>
         inline explicit
-        process(F f, process_flag pf=process_flag::fork) {
+        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*2) {
             typedef bits::call_traits<decltype(f())> traits_type;
-            if (pf == process_flag::fork) {
+            if (flags == process_flag::fork) {
                 this->_pid = this_process::fork();
                 if (this->_pid == 0) {
                     std::exit(traits_type::call(f));
                 }
             #if defined(UNISTDX_HAVE_CLONE)
             } else {
-                char stack[4096] = {0};
-                UNISTDX_CHECK(this->_pid = ::clone(
+                this->_stack.reset(new char[stack_size]);
+                this->_pid = ::clone(
                     &traits_type::template child_main<F>,
-                    stack + sizeof(stack),
-                    static_cast<int>(pf),
+                    this->_stack.get() + stack_size,
+                    static_cast<int>(flags),
                     &f
-                ));
+                );
+                // do not delete the stack for threads
+                if (!(flags & process_flag::share_memory)) { this->_stack.reset(); }
+                UNISTDX_CHECK(this->_pid);
             #endif
             }
         }
 
         /// Construct process by its ID.
-        inline explicit
-        process(pid_type rhs) noexcept:
-        _pid(rhs)
-        {}
+        inline explicit process(pid_type rhs): _pid(rhs) {}
 
         inline process() = default;
         process(const process&) = delete;
 
         /// Move-constructor.
-        inline
-        process(process&& rhs) noexcept:
-        _pid(rhs._pid)
-        {
-            rhs._pid = 0;
-        }
+        inline process(process&& rhs): _pid(rhs._pid), _stack(std::move(rhs._stack))
+        { rhs._pid = 0; }
 
         /// Terminates the process, if any.
-        inline
-        ~process() {
-            if (this->_pid > 0) {
-                this->do_kill(sys::signal::terminate);
-            }
-        }
+        inline ~process() { if (this->_pid > 0) { this->do_kill(sys::signal::terminate); } }
 
         /// Move-assignment.
-        inline process&
-        operator=(process&& rhs) noexcept {
-            this->swap(rhs);
-            return *this;
-        }
+        inline process& operator=(process&& rhs) { this->swap(rhs); return *this; }
 
         /**
         Gracefully terminate the process by sending \link signal::terminate\endlink
         signal.
         \see \man{kill,2}
         */
-        inline void
-        terminate() {
-            this->send(sys::signal::terminate);
-        }
+        inline void terminate() { this->send(sys::signal::terminate); }
 
         /**
         \brief
@@ -376,10 +369,7 @@ namespace sys {
         \throws bad_call
         \see \man{kill,2}
         */
-        inline void
-        kill() {
-            this->send(sys::signal::kill);
-        }
+        inline void kill() { this->send(sys::signal::kill); }
 
         /**
         \brief
@@ -388,10 +378,7 @@ namespace sys {
         \throws bad_call
         \see \man{kill,2}
         */
-        inline void
-        interrupt() {
-            this->send(sys::signal::keyboard_interrupt);
-        }
+        inline void interrupt() { this->send(sys::signal::keyboard_interrupt); }
 
         /**
         \brief
@@ -399,10 +386,7 @@ namespace sys {
         \throws bad_call
         \see \man{kill,2}
         */
-        inline void
-        hang_up() {
-            this->send(sys::signal::hang_up);
-        }
+        inline void hang_up() { this->send(sys::signal::hang_up); }
 
         /**
         \brief
@@ -410,10 +394,7 @@ namespace sys {
         \throws bad_call
         \see \man{kill,2}
         */
-        inline void
-        stop() {
-            this->send(sys::signal::stop);
-        }
+        inline void stop() { this->send(sys::signal::stop); }
 
         /**
         \brief
@@ -421,19 +402,13 @@ namespace sys {
         \throws bad_call
         \see \man{kill,2}
         */
-        inline void
-        resume() {
-            this->send(sys::signal::resume);
-        }
+        inline void resume() { this->send(sys::signal::resume); }
 
         /**
         \brief Send signal \p s to the process.
         \throws bad_call
         */
-        inline void
-        send(sys::signal s) {
-            UNISTDX_CHECK(this->do_kill(s));
-        }
+        inline void send(sys::signal s) { UNISTDX_CHECK(this->do_kill(s)); }
 
         /**
         \brief Wait until process changes its state or terminates.
@@ -445,48 +420,33 @@ namespace sys {
         inline sys::process_status
         wait(wait_flags flags = wait_flags::exited) {
             sys::siginfo_type info;
-            if (this->_pid > 0) {
-                UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
-                this->_pid = 0;
-            }
-            return sys::process_status(info);
+            UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
+            sys::process_status status(info);
+            if (status.exited()) { this->_pid = 0; this->_stack.reset(); }
+            return status;
         }
 
         /// Check if process is alive by sending nought signal to it.
         inline explicit
-        operator bool() const noexcept {
-            return this->_pid > 0 && do_kill(sys::signal(0)) != -1;
-        }
+        operator bool() const { return this->_pid > 0 && do_kill(sys::signal{}) != -1; }
 
         /// Check if process is alive by sending nought signal to it.
-        inline bool
-        operator !() const noexcept {
-            return !this->operator bool();
-        }
+        inline bool operator !() const { return !this->operator bool(); }
 
         /// Swap with \p rhs.
-        inline void
-        swap(process& rhs) {
+        inline void swap(process& rhs) {
             std::swap(this->_pid, rhs._pid);
+            std::swap(this->_stack, rhs._stack);
         }
-
-        friend std::ostream&
-        operator<<(std::ostream& out, const process& rhs);
 
         /// Get process ID.
-        inline pid_type
-        id() const noexcept {
-            return this->_pid;
-        }
+        inline pid_type id() const { return this->_pid; }
 
         /**
         \brief Get process group ID.
         \see \man{getpgid,2}
         */
-        inline pid_type
-        group_id() const noexcept {
-            return ::getpgid(this->_pid);
-        }
+        inline pid_type group_id() const { return ::getpgid(this->_pid); }
 
         /**
         \brief Set process group ID.
@@ -494,21 +454,15 @@ namespace sys {
         \see \man{setpgid,2}
         */
         inline void
-        set_group_id(pid_type rhs) const {
+        group_id(pid_type rhs) const {
             UNISTDX_CHECK(::setpgid(this->_pid, rhs));
         }
 
         /// Always returns true to be compatible with \link std::thread\endlink.
-        inline bool
-        joinable() {
-            return true;
-        }
+        inline bool joinable() const { return true; }
 
         /// \copydoc wait
-        inline void
-        join() {
-            this->wait();
-        }
+        inline void join() { this->wait(); }
 
         inline fildes get_namespace(const char* proc_suffix) {
             return ::sys::get_namespace(proc_suffix, id());
@@ -518,12 +472,9 @@ namespace sys {
 
     private:
 
-        inline int
-        do_kill(sys::signal sig) const noexcept {
-               return ::kill(_pid, signal_type(sig));
+        inline int do_kill(sys::signal sig) const noexcept {
+            return ::kill(this->_pid, signal_type(sig));
         }
-
-        pid_type _pid = 0;
 
     };
 

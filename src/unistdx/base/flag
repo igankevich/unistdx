@@ -44,6 +44,13 @@ namespace sys {
         using tp = typename std::underlying_type<T>::type;
         return T(~tp(a));
     }
+
+    template <class T>
+    inline constexpr typename std::enable_if<is_flag<T>::value,bool>::type
+    operator!(T a) {
+        using tp = typename std::underlying_type<T>::type;
+        return !tp(a);
+    }
     /// \}
 
 }
