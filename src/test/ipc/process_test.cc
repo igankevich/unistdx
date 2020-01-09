@@ -4,6 +4,7 @@
 
 #include <unistdx/base/log_message>
 #include <unistdx/base/make_object>
+#include <unistdx/io/pipe>
 #include <unistdx/ipc/argstream>
 #include <unistdx/ipc/execute>
 #include <unistdx/ipc/identity>
@@ -138,6 +139,24 @@ TEST(unshare, hostname) {
         hostname("unistdx");
         return (hostname() == "unistdx") ? 0 : 1;
     }}.wait();
+    EXPECT_EQ(0, status.exit_code());
+}
+
+TEST(clone, users) {
+    using namespace sys::this_process;
+    using pf = sys::process_flag;
+    sys::pipe pipe;
+    pipe.in().unsetf(sys::open_flag::non_blocking);
+    pipe.out().unsetf(sys::open_flag::non_blocking);
+    sys::process child{[&pipe] () {
+        char ch;
+        pipe.in().read(&ch, 1);
+        sys::log_message("clone-users", "_ _", user(), group());
+        return (user() == 0 && group() == 0) ? 0 : 1;
+    }, pf::signal_parent | pf::unshare_users};
+    child.init_user_namespace();
+    pipe.out().write("x", 1);
+    auto status = child.wait();
     EXPECT_EQ(0, status.exit_code());
 }
 

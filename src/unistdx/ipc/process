@@ -514,6 +514,8 @@ namespace sys {
             return ::sys::get_namespace(proc_suffix, id());
         }
 
+        void init_user_namespace();
+
     private:
 
         inline int
