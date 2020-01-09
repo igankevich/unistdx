@@ -35,6 +35,7 @@ TEST(bridge_interface, add) {
     ASSERT_EQ(f{}, (br.flags() & f::up));
 }
 
+/*
 TEST(veth_interface, _) {
     sys::veth_interface veth0("veth0", "veth1");
     using flags = sys::network_interface::flag;
@@ -53,6 +54,7 @@ TEST(veth_interface, move) {
     veths.emplace_back("zeth3", "zeth3x");
     veths.resize(100);
 }
+*/
 
 int main(int argc, char* argv[]) {
     using f = sys::unshare_flag;
