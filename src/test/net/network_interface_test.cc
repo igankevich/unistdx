@@ -42,7 +42,6 @@ TEST(veth_interface, _) {
     ASSERT_EQ(flags::up, (veth0.flags() & flags::up));
     veth0.down();
     ASSERT_EQ(flags{}, (veth0.flags() & flags::up));
-    veth0.destroy();
     //sys::test::print_flags(veth0.flags());
 }
 
