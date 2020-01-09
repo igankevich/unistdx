@@ -1,9 +1,13 @@
 #ifndef UNISTDX_IO_FD_TYPE
 #define UNISTDX_IO_FD_TYPE
 
+#include <unistd.h>
+
 #include <functional>
 #include <istream>
 #include <ostream>
+
+#include <unistdx/base/check>
 
 namespace sys {
 
@@ -32,6 +36,20 @@ namespace sys {
             return this->fd;
         }
 
+        inline ssize_t
+        read(void* buf, size_t n) const {
+            ssize_t ret = ::read(this->fd, buf, n);
+            UNISTDX_CHECK_IO(ret);
+            return ret;
+        }
+
+        inline ssize_t
+        write(const void* buf, size_t n) const {
+            ssize_t ret = ::write(this->fd, buf, n);
+            UNISTDX_CHECK_IO(ret);
+            return ret;
+        }
+
     };
 
     static_assert(sizeof(fd_type) == sizeof(int), "bad fd_type");
@@ -50,7 +68,7 @@ namespace sys {
 
 namespace std {
 
-    /// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
+    /// Specialisation of \link std::hash\endlink for \link sys::fd_type\endlink.
     template<>
     struct hash<::sys::fd_type>: public hash<int> {
 

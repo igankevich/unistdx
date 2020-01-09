@@ -214,8 +214,10 @@ namespace sys {
 
         template <class Source> auto fill(Source& src) -> size_type {
             size_type nread = 0, n = 0;
-            while ((n = src.read(data()+position(), remaining())) > 0) {
+            while (true) {
                 if (remaining() == 0) { grow(); }
+                n = src.read(data()+position(), remaining());
+                if (!(n > 0)) { break; }
                 this->_position += n;
                 nread += n;
             }
