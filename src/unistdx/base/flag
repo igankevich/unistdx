@@ -8,126 +8,43 @@ namespace sys {
     template <class T>
     struct is_flag: public std::false_type {};
 
-    /**
-    \brief Template for system call flags.
-    \date 2018-07-08
-    \author Ivan Gankevich
-    */
-    template <class T>
-    class flag {
-
-        static_assert(is_flag<T>::value, "bad flag type");
-
-    public:
-        /// Enumeration type.
-        typedef T enum_type;
-        /// Underlying enumeration type.
-        typedef typename std::underlying_type<T>::type flag_type;
-
-    private:
-        flag_type _flag = 0;
-
-    public:
-
-        /// \{
-        flag() = default;
-        flag(flag&&) = default;
-        flag(const flag&) = default;
-        flag& operator=(flag&&) = default;
-        flag& operator=(const flag&) = default;
-        ~flag() = default;
-        /// \}
-
-        /// Construct the flag from the corresponding enumeration.
-        inline constexpr
-        flag(enum_type rhs):
-        _flag(static_cast<flag_type>(rhs))
-        {}
-
-        /// Automatically cast to enumeration.
-        inline constexpr
-        operator enum_type() const noexcept {
-            return enum_type(this->_flag);
-        }
-
-        /// Explicit cast to underlying type.
-        inline constexpr explicit
-        operator flag_type() const noexcept {
-            return this->_flag;
-        }
-
-        /// \{
-        inline constexpr bool
-        operator==(flag rhs) const noexcept {
-            return this->_flag == rhs._flag;
-        }
-
-        inline constexpr bool
-        operator!=(flag rhs) const noexcept {
-            return !this->operator==(rhs);
-        }
-
-        inline constexpr flag
-        operator~() const noexcept {
-            return flag(enum_type(~this->_flag));
-        }
-        /// \}
-
-        #define UNISTDX_MAKE_OP(op) \
-            inline flag& \
-            operator op(flag rhs) { \
-                this->_flag op rhs._flag; \
-                return *this; \
-            }
-
-        /// \{
-        UNISTDX_MAKE_OP(|=)
-        UNISTDX_MAKE_OP(&=)
-        UNISTDX_MAKE_OP(^=)
-        /// \}
-
-        #undef UNISTDX_MAKE_OP
-
-        #define UNISTDX_MAKE_OP(op) \
-            friend inline constexpr flag \
-            operator op(flag lhs, flag rhs) { \
-                return flag(enum_type(lhs._flag op rhs._flag)); \
-            }
-
-        /// \{
-        UNISTDX_MAKE_OP(|)
-        UNISTDX_MAKE_OP(&)
-        UNISTDX_MAKE_OP(^)
-        /// \}
-
-        #undef UNISTDX_MAKE_OP
-
-    };
+    /// \{
 
     #define UNISTDX_MAKE_OP(op) \
-    template <class T> \
-    inline constexpr auto \
-    operator op(T lhs, T rhs) \
-    -> typename std::enable_if<is_flag<T>::value,flag<T>>::type \
-    { \
-        return flag<T>(lhs) op flag<T>(rhs); \
-    }
+        template <class T> \
+        inline constexpr typename std::enable_if<is_flag<T>::value,T>::type \
+        operator op(T a, T b) { \
+            using tp = typename std::underlying_type<T>::type; \
+            return T(tp(a) op tp(b)); \
+        }
 
-    /// \{
     UNISTDX_MAKE_OP(|)
     UNISTDX_MAKE_OP(&)
     UNISTDX_MAKE_OP(^)
 
-    template <class T>
-    inline constexpr auto
-    operator ~(T rhs)
-    -> typename std::enable_if<is_flag<T>::value,flag<T>>::type
-    {
-        return ~flag<T>(rhs);
-    }
-    /// \}
+    #undef UNISTDX_MAKE_OP
+
+    #define UNISTDX_MAKE_OP(op,op2) \
+        template <class T> \
+        inline constexpr typename std::enable_if<is_flag<T>::value,T>::type \
+        operator op(T& a, T b) { \
+            using tp = typename std::underlying_type<T>::type; \
+            return a = T(tp(a) op2 tp(b)); \
+        }
+
+    UNISTDX_MAKE_OP(|=,|)
+    UNISTDX_MAKE_OP(&=,&)
+    UNISTDX_MAKE_OP(^=,^)
 
     #undef UNISTDX_MAKE_OP
+
+    template <class T>
+    inline constexpr typename std::enable_if<is_flag<T>::value,T>::type
+    operator~(T a) {
+        using tp = typename std::underlying_type<T>::type;
+        return T(~tp(a));
+    }
+    /// \}
 
 }
 

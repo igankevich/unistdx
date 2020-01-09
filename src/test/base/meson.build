@@ -3,6 +3,7 @@ foreach conf : [
     ['byte_buffer', [unistdx,gtest]],
     ['command_line', [unistdx,gtest]],
     ['delete_each', [unistdx,gtest]],
+    ['flag', [unistdx,gtest]],
     ['log_message', [unistdx,gtest]],
     ['sha1', [unistdx,gtest]],
     ['spin_mutex', [threads,unistdx,gtest]],
