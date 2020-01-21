@@ -22,6 +22,10 @@ struct BufferTest: public ::testing::Test {
     typedef typename Fildesbuf::traits_type traits_type;
     typedef std::basic_string<char_type,traits_type> string_type;
 
+    void SetUp() override {
+        _sizes = {1, 2, 3, 133, 4095, 4096, 4097};
+    }
+
     inline string_type
     random_string(std::streamsize n) {
         std::uniform_int_distribution<char_type> dist('a', 'z');
@@ -30,7 +34,7 @@ struct BufferTest: public ::testing::Test {
         return str;
     }
 
-    std::vector<std::streamsize> _sizes {1, 2, 3, 133, 4095, 4096, 4097};
+    std::vector<std::streamsize> _sizes;
     std::default_random_engine rng;
 };
 

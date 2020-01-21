@@ -300,7 +300,7 @@ namespace sys {
     class process {
 
     public:
-        using stack_ptr = std::unique_ptr<char>;
+        using stack_ptr = std::unique_ptr<char[]>;
 
     private:
         pid_type _pid = 0;
