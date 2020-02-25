@@ -7,10 +7,14 @@
 #include <iosfwd>
 
 #include <unistdx/base/types>
-#include <unistdx/base/uint128>
+#include <unistdx/config>
 #include <unistdx/net/bit_count>
 #include <unistdx/net/ipaddr_traits>
 #include <unistdx/net/pstream>
+
+#if defined(UNISTDX_HAVE_INT128)
+#include <unistdx/base/uint128>
+#endif
 
 namespace sys {
 
@@ -19,8 +23,10 @@ namespace sys {
     typedef struct ::sockaddr_in6 sockinet6_type;
     /// IPv6 Internet address type.
     typedef struct ::in6_addr inet6_type;
+    #if defined(UNISTDX_HAVE_INT128)
     /// IPv6 address representation unsigned integer type.
     typedef uint128_t addr6_type;
+    #endif
     typedef ::in_port_t port_type;
     typedef ::sa_family_t sa_family_type;
     typedef unsigned int prefix_type;
@@ -40,8 +46,10 @@ namespace sys {
         typedef u16 hex_type;
         /// Octet type (1-byte unsigned integer).
         typedef u8 value_type;
+        #if defined(UNISTDX_HAVE_INT128)
         /// Unsigned 16-byte integer type.
         typedef addr6_type rep_type;
+        #endif
         /// Pointer to octet.
         typedef value_type* pointer;
         /// Constant pointer to octet.
@@ -59,8 +67,11 @@ namespace sys {
 
     private:
         union {
+            #if defined(UNISTDX_HAVE_INT128)
             addr6_type _integer;
+            #endif
             inet6_type _address;
+            u64 _integers[2];
             hex_type _hextets[8];
             value_type _octets[16];
             char _bytes[16];
@@ -77,10 +88,12 @@ namespace sys {
         ipv6_address(const ipv6_address &rhs) noexcept:
         _address(rhs._address) {}
 
+        #if defined(UNISTDX_HAVE_INT128)
         /// Construct IPv6 address from integer type.
         inline constexpr explicit
         ipv6_address(addr6_type rhs) noexcept:
         _integer{rhs} {}
+        #endif
 
         /// Construct IPv4 address from \c in6_addr system type.
         inline constexpr explicit
@@ -106,11 +119,15 @@ namespace sys {
             return this->_address;
         }
 
+        inline constexpr const u64* integers() const noexcept { return this->_integers; }
+
+        #if defined(UNISTDX_HAVE_INT128)
         /// Get integer representation of the address.
         inline constexpr const addr6_type&
         rep() const noexcept {
             return this->_integer;
         }
+        #endif
 
         /// Get address octet by index.
         inline constexpr value_type
@@ -119,27 +136,40 @@ namespace sys {
         }
 
         /// Compare address integer representations.
-        inline constexpr bool
+        inline bool
         operator<(const ipv6_address& rhs) const {
+            #if defined(UNISTDX_HAVE_INT128)
             return this->_integer < rhs._integer;
+            #else
+            return std::lexicographical_compare(this->_integers, this->_integers+2,
+                                                rhs._integers, rhs._integers+2);
+            #endif
         }
 
         /// \copydoc operator<
-        inline constexpr bool
+        inline bool
         operator==(const ipv6_address& rhs) const {
+            #if defined(UNISTDX_HAVE_INT128)
             return this->_integer == rhs._integer;
+            #else
+            return std::equal(this->_integers, this->_integers+2, rhs._integers);
+            #endif
         }
 
         /// \copydoc operator<
-        inline constexpr bool
+        inline bool
         operator!=(ipv6_address rhs) const noexcept {
-            return this->_integer != rhs._integer;
+            return !this->operator==(rhs);
         }
 
         /// Returns true if integer representations is non-nought.
         inline constexpr explicit
         operator bool() const {
+            #if defined(UNISTDX_HAVE_INT128)
             return this->_integer != 0;
+            #else
+            return this->_integers[0] != 0 || this->_integers[1] != 0;
+            #endif
         }
 
         /// Returns true if integer representations is nought.
@@ -166,15 +196,19 @@ namespace sys {
             return in.read(rhs._bytes, rhs.size());
         }
 
+        #if defined(UNISTDX_HAVE_INT128)
         /// Return network prefix assuming that this address is network mask.
         inline prefix_type
         to_prefix() const noexcept {
             return bit_count(this->_integer);
         }
+        #endif
 
+        #if defined(UNISTDX_HAVE_INT128)
         /// Create network mask from network prefix.
         inline static ipv6_address
         from_prefix(prefix_type prefix) noexcept;
+        #endif
 
         /// Get pointer to the first octet.
         inline pointer
@@ -257,6 +291,7 @@ namespace sys {
 
     public:
 
+        #if defined(UNISTDX_HAVE_INT128)
         /// Compute address position in the subnetwork specified by \p netmask.
         inline constexpr addr6_type
         position(const ipv6_address& netmask) const noexcept {
@@ -265,6 +300,7 @@ namespace sys {
                 to_host_format(netmask.rep())
             );
         }
+        #endif
 
     private:
 
@@ -273,9 +309,9 @@ namespace sys {
             return sizeof(_hextets) / sizeof(hex_type);
         }
 
-        static_assert(sizeof(_integer) == sizeof(_address), "bad ipv6_address size");
-        static_assert(sizeof(_integer) == sizeof(_hextets), "bad ipv6_address size");
-        static_assert(sizeof(_integer) == sizeof(_bytes), "bad ipv6_address size");
+        static_assert(sizeof(_integers) == sizeof(_address), "bad ipv6_address size");
+        static_assert(sizeof(_integers) == sizeof(_hextets), "bad ipv6_address size");
+        static_assert(sizeof(_integers) == sizeof(_bytes), "bad ipv6_address size");
 
     };
 
@@ -330,6 +366,7 @@ namespace sys {
 
     };
 
+    #if defined(UNISTDX_HAVE_INT128)
     ipv6_address
     ipv6_address::from_prefix(prefix_type prefix) noexcept {
         constexpr const size_t nbits = sizeof(addr6_type) *
@@ -338,11 +375,13 @@ namespace sys {
                ? ipaddr_traits<ipv6_address>::widearea_mask()
                : ipv6_address((addr6_type(1) << prefix) - addr6_type(1));
     }
+    #endif
 
 }
 
 namespace std {
 
+    #if defined(UNISTDX_HAVE_INT128)
     /// Specialisation of \link std::hash\endlink for \link sys::ipv6_address\endlink.
     template<>
     struct hash<sys::ipv6_address>: public std::hash<sys::ipv6_address::rep_type> {
@@ -363,6 +402,29 @@ namespace std {
         }
 
     };
+    #else
+    /// Specialisation of \link std::hash\endlink for \link sys::ipv6_address\endlink.
+    template<>
+    struct hash<sys::ipv6_address>: public std::hash<sys::u64> {
+
+    private:
+        typedef std::hash<sys::u64> base_type;
+
+    public:
+        /// Hash function return value type.
+        typedef size_t result_type;
+        /// Hash function argument type.
+        typedef sys::ipv6_address argument_type;
+
+        /// Return hash of 16-byte integer that represents the address.
+        inline result_type
+        operator()(const argument_type& rhs) const noexcept {
+            auto ptr = rhs.integers();
+            return base_type::operator()(ptr[0]) ^ base_type::operator()(ptr[1]);
+        }
+
+    };
+    #endif
 
 }
 

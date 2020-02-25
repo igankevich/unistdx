@@ -4,8 +4,11 @@
 #include <utility>
 
 #include <unistdx/base/types>
-#include <unistdx/base/uint128>
 #include <unistdx/config>
+
+#if defined(UNISTDX_HAVE_INT128)
+#include <unistdx/base/uint128>
+#endif
 
 namespace sys {
 
@@ -76,6 +79,7 @@ namespace sys {
         #endif
     }
 
+    #if defined(UNISTDX_HAVE_INT128)
     /// \brief Specialisation for 16-byte unsigned integer.
     /// \ingroup net
     template<>
@@ -92,6 +96,7 @@ namespace sys {
         std::swap(tmp.words[0], tmp.words[1]);
         return tmp.n;
     }
+    #endif
 
 }
 

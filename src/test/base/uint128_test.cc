@@ -1,9 +1,14 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <unistdx/base/uint128>
+
 #include <gtest/gtest.h>
 
+#if defined(UNISTDX_HAVE_INT128)
+#include <unistdx/base/uint128>
+#endif
+
+#if defined(UNISTDX_HAVE_INT128)
 namespace std {
     constexpr int numeric_limits<sys::uint128_t>::digits;
 }
@@ -18,3 +23,4 @@ TEST(Uint128Test, Limits) {
     EXPECT_EQ(0_u128, std::numeric_limits<uint128_t>::min());
     EXPECT_EQ(128, std::numeric_limits<uint128_t>::digits);
 }
+#endif
