@@ -13,9 +13,10 @@ TEST(bit_count, long_types) {
     bits.set(2);
     bits.set(3);
     bits.set(bits.size()-1);
-    EXPECT_EQ(bits.count(), sys::bit_count<unsigned long>(bits.to_ulong()));
     #if defined(UNISTDX_HAVE_LONG_LONG)
     EXPECT_EQ(bits.count(), sys::bit_count<unsigned long long>(bits.to_ullong()));
+    #else
+    EXPECT_EQ(bits.count(), sys::bit_count<unsigned long>(bits.to_ulong()));
     #endif
 }
 
