@@ -26,7 +26,7 @@ namespace sys {
                std::is_same<T,sys::i64>::value ||
                std::is_same<T,sys::f32>::value ||
                std::is_same<T,sys::f64>::value
-               #if defined(UNISTDX_HAVE_LONG_DOUBLE)
+               #if defined(UNISTDX_HAVE_FLOAT_128)
                || std::is_same<T,sys::f128>::value
                #endif
                ;

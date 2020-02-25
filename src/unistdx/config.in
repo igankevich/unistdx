@@ -15,6 +15,12 @@
 #mesondefine UNISTDX_HAVE_INT128
 #mesondefine UNISTDX_HAVE_LONG_DOUBLE
 #mesondefine UNISTDX_HAVE_LONG_LONG
+#if defined(UNISTDX_HAVE_LONG_DOUBLE)
+    #define UNISTDX_SIZE_OF_LONG_DOUBLE @UNISTDX_SIZE_OF_LONG_DOUBLE@
+    #if UNISTDX_SIZE_OF_LONG_DOUBLE == 16
+        #define UNISTDX_HAVE_FLOAT_128
+    #endif
+#endif
 // }}}
 
 // header symbols {{{

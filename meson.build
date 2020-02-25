@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.19.4',
+    version: '0.19.5',
     meson_version: '>=0.46',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -66,6 +66,7 @@ foreach pair : [
     all_defines += 'UNISTDX_HAVE_' + name.to_upper()
     if cpp.has_type(type)
         config.set(all_defines[-1], true)
+        config.set('UNISTDX_SIZE_OF_' + name.to_upper(), cpp.sizeof(type))
     endif
 endforeach
 foreach pair : [

@@ -145,7 +145,7 @@ namespace sys {
         UNISTDX_MAKE_PUT_GET_OPERATOR(u64)
         UNISTDX_MAKE_PUT_GET_OPERATOR(f32)
         UNISTDX_MAKE_PUT_GET_OPERATOR(f64)
-        #if defined(UNISTDX_HAVE_LONG_DOUBLE)
+        #if defined(UNISTDX_HAVE_FLOAT_128)
         UNISTDX_MAKE_PUT_GET_OPERATOR(f128)
         #endif
         UNISTDX_MAKE_PUT_GET_OPERATOR(string_type)
