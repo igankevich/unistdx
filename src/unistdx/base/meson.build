@@ -4,8 +4,9 @@ libunistdx_src += files([
     'byte_buffer.cc',
     'command_line.cc',
     'sha1.cc',
-    'websocket.cc',
+    'uint128.cc',
     'websocketbuf.cc',
+    'websocket.cc',
 ])
 
 install_headers(

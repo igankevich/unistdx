@@ -15,8 +15,7 @@
 // }}}
 
 // types {{{
-//#mesondefine UNISTDX_HAVE_INT128
-//TODO
+#mesondefine UNISTDX_HAVE_INT128
 #mesondefine UNISTDX_HAVE_LONG_DOUBLE
 #mesondefine UNISTDX_HAVE_LONG_LONG
 #if defined(UNISTDX_HAVE_LONG_DOUBLE)

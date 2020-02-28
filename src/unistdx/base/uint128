@@ -2,7 +2,9 @@
 #define UNISTDX_BASE_UINT128
 
 #include <functional>
+#include <iosfwd>
 #include <limits>
+#include <string>
 #include <type_traits>
 
 #include <unistdx/base/types>
@@ -11,9 +13,24 @@
 
 namespace sys {
 
-    #if !defined(UNISTDX_HAVE_INT128)
     class u128;
     struct u128_div;
+
+    inline constexpr bool operator==(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr bool operator!=(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr bool operator<(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr bool operator>(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr bool operator<=(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr bool operator>=(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr u128 operator|(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr u128 operator&(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr u128 operator^(const u128& lhs, const u128& rhs) noexcept;
+    inline u128 operator<<(const u128& lhs, const u128& rhs) noexcept;
+    inline u128 operator>>(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr u128 operator+(const u128& lhs, const u128& rhs) noexcept;
+    inline constexpr u128 operator-(const u128& lhs, const u128& rhs) noexcept;
+    inline u128 operator/(const u128& lhs, const u128& rhs) noexcept;
+    inline u128 operator%(const u128& lhs, const u128& rhs) noexcept;
 
     class u128 {
 
@@ -22,7 +39,7 @@ namespace sys {
 
     public:
 
-        inline constexpr u128(u64 b): _b(b) {}
+        inline constexpr u128(u64 b): _a(0), _b(b) {}
         inline constexpr explicit u128(u64 a, u64 b): _a(a), _b(b) {}
 
         u128() = default;
@@ -47,36 +64,6 @@ namespace sys {
             return !operator bool();
         }
 
-        inline constexpr bool
-        operator<(const u128& rhs) const noexcept {
-            return this->_a < rhs._a || (this->_a == rhs._a && this->_b < rhs._b);
-        }
-
-        inline constexpr bool
-        operator<=(const u128& rhs) const noexcept {
-            return operator==(rhs) || operator<(rhs);
-        }
-
-        inline constexpr bool
-        operator>=(const u128& rhs) const noexcept {
-            return !operator<(rhs);
-        }
-
-        inline constexpr bool
-        operator>(const u128& rhs) const noexcept {
-            return !operator<=(rhs);
-        }
-
-        inline constexpr bool
-        operator==(const u128& rhs) const noexcept {
-            return this->_a == rhs._a && this->_b == rhs._b;
-        }
-
-        inline constexpr bool
-        operator!=(const u128& rhs) const noexcept {
-            return !operator==(rhs);
-        }
-
         inline constexpr u128
         operator~() const noexcept {
             return u128(~this->_a, ~this->_b);
@@ -90,31 +77,16 @@ namespace sys {
                 : *this;
         }
 
-        inline constexpr u128
-        operator|(const u128& rhs) const noexcept {
-            return u128(this->_a | rhs._a, this->_b | rhs._b);
-        }
-
         inline u128&
         operator|=(const u128& rhs) noexcept {
             this->_a |= rhs._a, this->_b |= rhs._b;
             return *this;
         }
 
-        inline constexpr u128
-        operator&(const u128& rhs) const noexcept {
-            return u128(this->_a & rhs._a, this->_b & rhs._b);
-        }
-
         inline u128&
         operator&=(const u128& rhs) noexcept {
             this->_a &= rhs._a, this->_b &= rhs._b;
             return *this;
-        }
-
-        inline constexpr u128
-        operator^(const u128& rhs) const noexcept {
-            return u128(this->_a ^ rhs._a, this->_b ^ rhs._b);
         }
 
         inline u128&
@@ -125,16 +97,6 @@ namespace sys {
 
         inline constexpr u64 a() const noexcept { return this->_a; }
         inline constexpr u64 b() const noexcept { return this->_b; }
-
-        inline u128
-        operator<<(const u128& rhs) const noexcept {
-            auto n = rhs.b();
-            if (n == 0) { return *this; }
-            if (n < 64u) {
-                return u128((this->_a << n) | (this->_b >> (64u-n)), (this->_b << n));
-            }
-            return u128(this->_b << (n-64u), 0);
-        }
 
         inline u128&
         operator<<=(const u128& rhs) noexcept {
@@ -149,16 +111,6 @@ namespace sys {
                 this->_b = 0;
             }
             return *this;
-        }
-
-        inline u128
-        operator>>(const u128& rhs) const noexcept {
-            auto n = rhs.b();
-            if (n == 0) { return *this; }
-            if (n < 64u) {
-                return u128((this->_a >> n), (this->_b >> n) | (this->_a << (64u-n)));
-            }
-            return u128(0, this->_a << (n-64u));
         }
 
         inline u128&
@@ -194,15 +146,6 @@ namespace sys {
 
         inline u128 operator--(int) noexcept { u128 old(*this); --*this; return old; }
 
-        inline constexpr u128
-        operator+(const u128& rhs) const noexcept {
-            static_assert(std::numeric_limits<u64>::max()+1 == u64(0),
-                          "u64 does not wrap to nought on overflow");
-            return u128(this->_a + rhs._a +
-                        (std::numeric_limits<u64>::max()-rhs._b < this->_b ? 1u : 0u),
-                         this->_b + rhs._b);
-        }
-
         inline u128&
         operator+=(const u128& rhs) noexcept {
             static_assert(std::numeric_limits<u64>::max()+1 == u64(0),
@@ -211,13 +154,6 @@ namespace sys {
             if (std::numeric_limits<u64>::max()-rhs._b < this->_b) { ++this->_a; }
             this->_b += rhs._b;
             return *this;
-        }
-
-        inline constexpr u128
-        operator-(const u128& rhs) const noexcept {
-            static_assert(u64(-1) == std::numeric_limits<u64>::max(),
-                          "u64 does not wrap to max on underflow");
-            return u128(this->_a - rhs._a - (this->_b < rhs._b ? 1u : 0u), this->_b - rhs._b);
         }
 
         inline u128&
@@ -232,10 +168,22 @@ namespace sys {
 
         inline u128
         operator*(const u128& rhs) const noexcept {
-            auto z2 = this->_a*rhs._a;
-            auto z0 = this->_b*rhs._b;
-            auto z1 = abs_subtract(this->_a, this->_b) * abs_subtract(rhs._b, rhs._a) + z2 + z0;
-            return u128(z1,z0);
+            u128 b(rhs), result;
+            for (int i=0; i<128; ++i) {
+                if (b._b & 1) { result += (*this << i); }
+                b.shift_right_by_one();
+            }
+            return result;
+        }
+
+        inline u128
+        operator*(u128&& rhs) const noexcept {
+            u128 result;
+            for (int i=0; i<128; ++i) {
+                if (rhs._b & 1) { result += (*this << i); }
+                rhs.shift_right_by_one();
+            }
+            return result;
         }
 
         inline u128&
@@ -244,8 +192,6 @@ namespace sys {
         }
 
         inline u128_div div(const u128& rhs) const noexcept;
-        inline u128 operator/(const u128& rhs) const noexcept;
-        inline u128 operator%(const u128& rhs) const noexcept;
 
         inline u128&
         operator/=(const u128& rhs) noexcept {
@@ -278,8 +224,8 @@ namespace sys {
                 : u128(rhs._a, rhs._b-1);
         }
 
-        inline unsigned int clz() const noexcept {
-            unsigned int cnt = 0;
+        inline int clz() const noexcept {
+            int cnt = 0;
             u64 x;
             if (this->_a) { x = this->_a, cnt = 64; }
             else { x = this->_b; }
@@ -294,8 +240,12 @@ namespace sys {
             this->_b <<= 1u;
         }
 
-        inline constexpr bool is_odd() const noexcept { return this->_b & 1; }
-        inline constexpr bool is_even() const noexcept { return !is_odd(); }
+        inline void
+        shift_right_by_one() noexcept {
+            this->_a >>= 1u;
+            this->_b >>= 1u;
+            this->_b |= (this->_a << (64u-1u));
+        }
 
         static inline constexpr u64
         lshift(u64 a, u64 b) noexcept {
@@ -313,35 +263,119 @@ namespace sys {
 
     inline u128_div
     u128::div(const u128& rhs) const noexcept {
-        u128_div d;
-        for (unsigned int i=clz(); i>0; --i) {
+        if (*this < rhs) { return u128_div{0,*this}; }
+        u128_div d{0,*this};
+        for (int diff=clz()-rhs.clz(); diff >= 0; --diff) {
             d.quot.shift_left_by_one();
-            d.rem.shift_left_by_one();
-            if ((this->_a >> (i-1u)) & 1) { ++d.rem; }
-            if (rhs <= d.rem) { d.rem -= rhs, ++d.quot; }
+            const auto& tmp = rhs << diff;
+            if (tmp <= d.rem) { d.rem -= tmp, ++d.quot; }
         }
         return d;
     }
 
-    inline u128 u128::operator/(const u128& rhs) const noexcept { return div(rhs).quot; }
-    inline u128 u128::operator%(const u128& rhs) const noexcept { return div(rhs).rem; }
+
+    inline constexpr bool
+    operator<(const u128& lhs, const u128& rhs) noexcept {
+        return lhs.a() < rhs.a() || (lhs.a() == rhs.a() && lhs.b() < rhs.b());
+    }
+
+    inline constexpr bool
+    operator<=(const u128& lhs, const u128& rhs) noexcept {
+        return operator==(lhs, rhs) || operator<(lhs, rhs);
+    }
+
+    inline constexpr bool
+    operator>=(const u128& lhs, const u128& rhs) noexcept {
+        return !operator<(lhs, rhs);
+    }
+
+    inline constexpr bool
+    operator>(const u128& lhs, const u128& rhs) noexcept {
+        return !operator<=(lhs, rhs);
+    }
+
+    inline constexpr bool
+    operator==(const u128& lhs, const u128& rhs) noexcept {
+        return lhs.a() == rhs.a() && lhs.b() == rhs.b();
+    }
+
+    inline constexpr bool
+    operator!=(const u128& lhs, const u128& rhs) noexcept {
+        return !operator==(lhs, rhs);
+    }
+
+    inline constexpr u128
+    operator|(const u128& lhs, const u128& rhs) noexcept {
+        return u128(lhs.a() | rhs.a(), lhs.b() | rhs.b());
+    }
+
+    inline constexpr u128
+    operator&(const u128& lhs, const u128& rhs) noexcept {
+        return u128(lhs.a() & rhs.a(), lhs.b() & rhs.b());
+    }
+
+    inline constexpr u128
+    operator^(const u128& lhs, const u128& rhs) noexcept {
+        return u128(lhs.a() ^ rhs.a(), lhs.b() ^ rhs.b());
+    }
+
+    inline u128
+    operator<<(const u128& lhs, const u128& rhs) noexcept {
+        auto n = rhs.b();
+        if (n == 0) { return lhs; }
+        if (n < 64u) {
+            return u128((lhs.a() << n) | (lhs.b() >> (64u-n)), (lhs.b() << n));
+        }
+        return u128(lhs.b() << (n-64u), 0);
+    }
+
+    inline u128
+    operator>>(const u128& lhs, const u128& rhs) noexcept {
+        auto n = rhs.b();
+        if (n == 0) { return lhs; }
+        if (n < 64u) {
+            return u128((lhs.a() >> n), (lhs.b() >> n) | (lhs.a() << (64u-n)));
+        }
+        return u128(0, lhs.a() << (n-64u));
+    }
+
+    inline constexpr u128
+    operator+(const u128& lhs, const u128& rhs) noexcept {
+        static_assert(std::numeric_limits<u64>::max()+1 == u64(0),
+                      "u64 does not wrap to nought on overflow");
+        return u128(lhs.a() + rhs.a() +
+                    (std::numeric_limits<u64>::max()-rhs.b() < lhs.b() ? 1u : 0u),
+                     lhs.b() + rhs.b());
+    }
+
+    inline constexpr u128
+    operator-(const u128& lhs, const u128& rhs) noexcept {
+        static_assert(u64(-1) == std::numeric_limits<u64>::max(),
+                      "u64 does not wrap to max on underflow");
+        return u128(lhs.a() - rhs.a() - (lhs.b() < rhs.b() ? 1u : 0u), lhs.b() - rhs.b());
+    }
+
+    inline u128
+    operator/(const u128& lhs, const u128& rhs) noexcept {
+        return lhs.div(rhs).quot;
+    }
+
+    inline u128
+    operator%(const u128& lhs, const u128& rhs) noexcept {
+        return lhs.div(rhs).rem;
+    }
+
     inline u128_div div(const u128& lhs, const u128& rhs) { return lhs.div(rhs); }
 
-    using uint128_t = u128;
-    #else
-
-    /// 16-byte unsinged integer type.
-    typedef unsigned __int128 uint128_t;
-    /// 16-byte unsinged integer type.
-    typedef uint128_t u128;
-    #endif
+    std::string to_string(const u128& rhs);
+    std::ostream& operator<<(std::ostream& out, const u128& rhs);
 
     namespace literals {
 
         template<char ... Chars>
-        constexpr uint128_t
+        constexpr u128
         operator"" _u128() noexcept {
-            return bits::parse_uint<uint128_t, sizeof...(Chars)>((const char[]){Chars...});
+            return bits::parse_uint<u128, sizeof...(Chars)>((const char[]){Chars...});
         }
 
     }
@@ -351,19 +385,18 @@ namespace sys {
 /// Specialisations of standard templates.
 namespace std {
 
-    /// Specialisation of \link std::is_arithmetic\endlink for \link sys::uint128_t\endlink.
-    template<> struct is_arithmetic<sys::uint128_t>: public true_type {};
+    /// Specialisation of \link std::is_arithmetic\endlink for \link sys::u128\endlink.
+    template<> struct is_arithmetic<sys::u128>: public true_type {};
 
-    /// Specialisation of \link std::is_integral\endlink for \link sys::uint128_t\endlink.
-    template<> struct is_integral<sys::uint128_t>: public true_type {};
+    /// Specialisation of \link std::is_integral\endlink for \link sys::u128\endlink.
+    template<> struct is_integral<sys::u128>: public true_type {};
 
-    /// Specialisation of \link std::is_unsigned\endlink for \link sys::uint128_t\endlink.
-    template<> struct is_unsigned<sys::uint128_t>: public true_type {};
+    /// Specialisation of \link std::is_unsigned\endlink for \link sys::u128\endlink.
+    template<> struct is_unsigned<sys::u128>: public true_type {};
 
-    #if !defined(UNISTDX_HAVE_INT128)
     /**
     \brief
-    Specialisation of \link std::numeric_limits\endlink for \link sys::uint128_t\endlink.
+    Specialisation of \link std::numeric_limits\endlink for \link sys::u128\endlink.
     \date 2018-05-22
     \author Ivan Gankevich
     */
@@ -471,152 +504,6 @@ namespace std {
         }
 
     };
-    #else
-    /**
-    \brief
-    Specialisation of \link std::numeric_limits\endlink for \link sys::uint128_t\endlink.
-    \date 2018-05-22
-    \author Ivan Gankevich
-    */
-    template <>
-    class numeric_limits<sys::uint128_t> {
-    public:
-
-        /// Equals true.
-        static constexpr bool is_specialized = true;
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        min() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Returns \f$2^{128}-1\f$.
-        static constexpr sys::uint128_t
-        max() noexcept {
-            using namespace sys::literals;
-            return 0xffffffffffffffffffffffffffffffff_u128;
-        }
-
-        /// \brief \copybrief min
-        static constexpr sys::uint128_t
-        lowest() noexcept {
-            return min();
-        }
-
-        /// The number of base-2 digits.
-        static constexpr int digits = 128;
-        /// The number of base-10 digits.
-        static constexpr int digits10 = 38;
-        /// Equals false.
-        static constexpr bool is_signed = false;
-        /// Equals true.
-        static constexpr bool is_integer = true;
-        /// Equals true.
-        static constexpr bool is_exact = true;
-        /// Equals 2.
-        static constexpr int radix = 2;
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        epsilon() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        round_error() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Equals nought.
-        static constexpr int min_exponent = 0;
-        /// Equals nought.
-        static constexpr int min_exponent10 = 0;
-        /// Equals nought.
-        static constexpr int max_exponent = 0;
-        /// Equals nought.
-        static constexpr int max_exponent10 = 0;
-
-        /// Equals false.
-        static constexpr bool has_infinity = false;
-        /// Equals false.
-        static constexpr bool has_quiet_NaN = false;
-        /// Equals false.
-        static constexpr bool has_signaling_NaN = false;
-        /// Equals \c std::denorm_absent.
-        static constexpr float_denorm_style has_denorm = denorm_absent;
-        /// Equals false.
-        static constexpr bool has_denorm_loss = false;
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        infinity() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        quiet_NaN() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        signaling_NaN() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Returns nought.
-        static constexpr sys::uint128_t
-        denorm_min() noexcept {
-            using namespace sys::literals;
-            return 0_u128;
-        }
-
-        /// Equals false.
-        static constexpr bool is_iec559 = false;
-        /// Equals true.
-        static constexpr bool is_bounded = true;
-        /// Equals true.
-        static constexpr bool is_modulo = true;
-
-        /// Equals false.
-        static constexpr bool traps = false;
-        /// Equals false.
-        static constexpr bool tinyness_before = false;
-        /// Equals \c std::round_toward_zero.
-        static constexpr float_round_style round_style = round_toward_zero;
-
-    };
-
-    /// Specialisation of \link std::hash\endlink for \link sys::uint128_t\endlink.
-    template<>
-    struct hash<sys::uint128_t> {
-
-        /// Hash function return value type.
-        typedef size_t result_type;
-        /// Hash function argument type.
-        typedef ::sys::uint128_t argument_type;
-
-        /// Compute hash by XOR-ing hashes of lower and upper half.
-        inline result_type
-        operator()(const argument_type& rhs) const noexcept {
-            using ::sys::u64;
-            std::hash<u64> h;
-            using namespace sys::literals;
-            return h(u64(rhs & 0xffffffffffffffff_u128)) ^
-                   h(u64((rhs >> 64) & 0xffffffffffffffff_u128));
-        }
-
-    };
-    #endif
 
 }
 

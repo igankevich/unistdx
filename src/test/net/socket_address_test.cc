@@ -49,7 +49,6 @@ struct EndpointTest: public ::testing::Test {
     engine_type generator;
 };
 
-#if defined(UNISTDX_HAVE_INT128)
 TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_address, sys::ipv6_address));
 
 TYPED_TEST(EndpointTest, WriteReadSingle) {
@@ -74,7 +73,6 @@ TYPED_TEST(EndpointTest, WriteReadMultiple) {
     std::copy(iit, eos, std::back_inserter(addrs2));
     EXPECT_EQ(addrs, addrs2);
 }
-#endif
 
 TEST(EndpointIPv4Test, All) {
     EXPECT_EQ(
