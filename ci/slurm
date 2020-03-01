@@ -45,8 +45,8 @@ slurm_job "coverage" sh -c "
     meson test --verbose
     ninja -v coverage-text
     cat meson-logs/coverage.txt
-    ninja -v coverage-html
-    rsync -a meson-logs/coveragereport/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
+    ninja -v test-lcov
+    rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
 "
 
 # build documentation
