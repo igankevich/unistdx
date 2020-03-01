@@ -28,10 +28,12 @@ test_flags() {
         rm -rf \$d"
 }
 
-for i in none address
-do
-    slurm_job "sanitize-\$i" sh -c "\$(test_flags -Db_sanitize=\$i)"
-done
+slurm_job "sanitize-none" sh -c "\$(test_flags -Db_sanitize=none)"
+
+if ! test "$GUIX_SYSTEM" = "i686-linux"
+then
+    slurm_job "sanitize-address" sh -c "\$(test_flags -Db_sanitize=address)"
+fi
 
 slurm_job "arch-native" sh -c "\$(test_flags -Dbuildtype=release -Dcpp_args=-march=native)"
 
