@@ -46,7 +46,7 @@ slurm_job "coverage" sh -c "
     ninja -v coverage-text
     cat meson-logs/coverage.txt
     ninja -v coverage-html
-    cp -r meson-logs/coveragereport \$OUTDIR
+    cp -r meson-logs/coveragereport \$OUTDIR/\$GUIX_SYSTEM-coverage
 "
 
 # build documentation
