@@ -30,7 +30,7 @@ test_flags() {
 
 slurm_job "sanitize-none" sh -c "\$(test_flags -Db_sanitize=none)"
 
-if ! test "$GUIX_SYSTEM" = "i686-linux"
+if ! test "\$GUIX_SYSTEM" = "i686-linux"
 then
     slurm_job "sanitize-address" sh -c "\$(test_flags -Db_sanitize=address)"
 fi
@@ -50,7 +50,7 @@ slurm_job "coverage" sh -c "
 "
 
 # build documentation
-if test "$CI_BUILD_BRANCH" = "master" && test "$GUIX_SYSTEM" = "x86_64-linux"
+if test "$CI_BUILD_BRANCH" = "master" && test "\$GUIX_SYSTEM" = "x86_64-linux"
 then
     d=/tmp/gitbucket-ci-\$(uuidgen)
     slurm_job "doc" sh -c "
