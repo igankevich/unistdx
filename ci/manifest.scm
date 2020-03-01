@@ -1,5 +1,5 @@
 (use-package-modules build-tools check code commencement curl documentation
-                     gcc gcovr graphviz ninja pkg-config pre-commit)
+                     gcc gcovr graphviz ninja pkg-config pre-commit xml)
 
 (packages->manifest
  (list
@@ -10,5 +10,5 @@
   gcc-toolchain
   pkg-config
   python-pre-commit
-  curl graphviz doxygen
+  curl graphviz doxygen libxslt
   lcov python-gcovr))

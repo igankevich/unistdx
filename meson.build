@@ -23,6 +23,7 @@ foreach arg : [
 endforeach
 
 with_tests = get_option('with_tests')
+with_rpm = get_option('with_rpm')
 
 # compile-time configuration {{{
 all_defines = []
@@ -263,7 +264,9 @@ endif
 
 subdir('src')
 subdir('doc')
-subdir('pkg')
+if with_rpm
+    subdir('rpm')
+endif
 
 # pkgconfig {{{
 pkgconfig = import('pkgconfig')

@@ -1,7 +1,8 @@
 #!/bin/sh
 
 URL="ssh://git@fennec:29418/${CI_REPO_SLUG}.git"
-CMMSHQ_URL="cmmshq.ru:/usr/share/nginx/html/doc/unistdx"
+CMMSHQ_DOC="cmmshq.ru:/usr/share/nginx/html/doc/unistdx"
+CMMSHQ_COVERAGE="cmmshq.ru:/usr/share/nginx/html/doc/unistdx/coverage"
 
 export GUIX_MANIFEST=ci/manifest.scm
 export GUIX_CHANNELS=ci/channels.scm
@@ -19,7 +20,7 @@ do
 
 test_flags() {
     flags="\$@"
-    d=/var/tmp/\$(uuidgen)
+    d=/tmp/gitbucket-ci-\$(uuidgen)
     echo "
         set -ex
         meson \$flags . \$d
@@ -37,23 +38,26 @@ slurm_job "arch-native" sh -c "\$(test_flags -Dbuildtype=release -Dcpp_args=-mar
 
 slurm_job "coverage" sh -c "
     set -ex
-    d=/var/tmp/\$(uuidgen)
+    d=/tmp/gitbucket-ci-\$(uuidgen)
     meson -Db_coverage=true . \$d
     cd \$d
     meson test --verbose
     ninja -v coverage-text
-    cat meson-logs/coverage.txt"
+    cat meson-logs/coverage.txt
+    ninja -v coverage-html
+    cp -r meson-logs/coveragereport $OUTDIR
+"
 
 # build documentation
-if test "$CI_BUILD_BRANCH" = "master" || test -n "$CI_PULL_REQUEST"
+if test "$CI_BUILD_BRANCH" = "master" && test "$GUIX_SYSTEM" = "x86_64-linux"
 then
-    d=/var/tmp/\$(uuidgen)
+    d=/tmp/gitbucket-ci-\$(uuidgen)
     slurm_job "doc" sh -c "
         set -ex
         meson . \$d
         cd \$d
         ninja -v doc
-        rsync -acv --delete html/ $CMMSHQ_URL/
+        rsync -acv --delete html/ $CMMSHQ_DOC/
     "
 fi
 
