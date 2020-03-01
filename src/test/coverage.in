@@ -11,7 +11,11 @@ $lcov --capture --initial --directory . --output-file $tmp.initial --quiet
 ninja test
 $lcov --capture --directory . --output-file $tmp.actual --quiet
 $lcov -a $tmp.initial -a $tmp.actual -o $tmp.total --quiet
-for pattern in /usr/include/\* /usr/local/include/\* \*test\*
+for pattern in \
+    /gnu/store/\* \
+    $HOME/.guix-profile/\* \
+    /usr/\* \
+    \*test\*
 do
     $lcov --remove $tmp.total "$pattern" --output-file $tmp.new --quiet
     mv $tmp.new $tmp.total

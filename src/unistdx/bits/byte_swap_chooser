@@ -3,13 +3,10 @@
 
 #include <algorithm>
 
+#include <unistdx/base/uint128>
 #include <unistdx/config>
 #include <unistdx/net/byte_order>
 #include <unistdx/net/byte_swap>
-
-#if defined(UNISTDX_HAVE_INT128)
-#include <unistdx/base/uint128>
-#endif
 
 namespace sys {
 
@@ -108,11 +105,8 @@ namespace sys {
         struct Integral<4>: public byte_swap_chooser<u32,is_network_byte_order(),true> {};
         template<>
         struct Integral<8>: public byte_swap_chooser<u64,is_network_byte_order(),true> {};
-
-        #if defined(UNISTDX_HAVE_INT128)
         template<>
-        struct Integral<16>: public byte_swap_chooser<uint128_t,is_network_byte_order(),true> {};
-        #endif
+        struct Integral<16>: public byte_swap_chooser<u128,is_network_byte_order(),true> {};
 
     }
 

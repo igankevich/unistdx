@@ -35,9 +35,11 @@ TEST(Socket, SendFDs) {
     const char* path = "\0testsendfds";
     sys::socket_address e(path);
     sys::socket sock(e);
+    sock.unsetf(sys::open_flag::non_blocking);
     EXPECT_NE("", test::stream_insert(sock));
     sys::process child([&] () {
         sys::socket s(sys::family_type::unix);
+        s.unsetf(sys::open_flag::non_blocking);
         s.connect(e);
         std::clog << "sending fds: 0 1 2" << std::endl;
         sys::fd_type fds[3] = {0, 1, 2};
@@ -54,6 +56,7 @@ TEST(Socket, SendFDs) {
     sys::socket_address client_end;
     sys::socket client;
     sock.accept(client, client_end);
+    client.unsetf(sys::open_flag::non_blocking);
     sys::fd_type fds[3] = {0, 0, 0};
     EXPECT_THROW(client.receive_fds(fds, 10000), std::invalid_argument);
     EXPECT_THROW(client.send_fds(fds, 10000), std::invalid_argument);

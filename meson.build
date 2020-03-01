@@ -23,6 +23,7 @@ foreach arg : [
 endforeach
 
 with_tests = get_option('with_tests')
+with_rpm = get_option('with_rpm')
 
 # compile-time configuration {{{
 all_defines = []
@@ -31,6 +32,9 @@ foreach pair : [
     ['bswap16', '0'],
     ['bswap32', '0'],
     ['bswap64', '0'],
+    ['clz', '1'],
+    ['clzl', '1'],
+    ['clzll', '1'],
     ['popcount', '0'],
     ['popcountl', '0'],
     ['popcountll', '0'],
@@ -260,7 +264,9 @@ endif
 
 subdir('src')
 subdir('doc')
-subdir('pkg')
+if with_rpm
+    subdir('rpm')
+endif
 
 # pkgconfig {{{
 pkgconfig = import('pkgconfig')

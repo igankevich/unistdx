@@ -4,11 +4,8 @@
 #include <utility>
 
 #include <unistdx/base/types>
-#include <unistdx/config>
-
-#if defined(UNISTDX_HAVE_INT128)
 #include <unistdx/base/uint128>
-#endif
+#include <unistdx/config>
 
 namespace sys {
 
@@ -79,24 +76,18 @@ namespace sys {
         #endif
     }
 
-    #if defined(UNISTDX_HAVE_INT128)
     /// \brief Specialisation for 16-byte unsigned integer.
     /// \ingroup net
     template<>
-    inline uint128_t
-    byte_swap(uint128_t x) noexcept {
-        union {
-            uint128_t n;
-            unsigned char raw[sizeof(uint128_t)];
-            u64 words[2];
-        } tmp;
+    inline u128
+    byte_swap(u128 x) noexcept {
+        union { u128 n{}; u64 words[2]; } tmp;
         tmp.n = x;
         tmp.words[0] = byte_swap<u64>(tmp.words[0]);
         tmp.words[1] = byte_swap<u64>(tmp.words[1]);
         std::swap(tmp.words[0], tmp.words[1]);
         return tmp.n;
     }
-    #endif
 
 }
 

@@ -24,7 +24,6 @@ random_ifaddr() {
     return sys::interface_address<Addr>(Addr(genrandom<rep>()), genrandom<sys::prefix_type>());
 }
 
-#if defined(UNISTDX_HAVE_INT128)
 TEST(Ifaddr, LocalhostIPv6) {
     typedef sys::interface_address<sys::ipv6_address> ifaddr_type;
     typedef sys::ipaddr_traits<sys::ipv6_address> traits_type;
@@ -33,12 +32,10 @@ TEST(Ifaddr, LocalhostIPv6) {
     str << ifa;
     EXPECT_EQ(str.str(), "0:0:0:0:0:0:0:1/128");
 }
-#endif
 
 template <class Addr>
 struct IfaddrTest: public ::testing::Test {};
 
-#if defined(UNISTDX_HAVE_INT128)
 TYPED_TEST_CASE(IfaddrTest, MAKE_TYPES(sys::ipv4_address, sys::ipv6_address));
 
 TYPED_TEST(IfaddrTest, InputOutputOperatorsLocalHost) {
@@ -71,7 +68,6 @@ TYPED_TEST(IfaddrTest, Loopback) {
         ).is_widearea()
     );
 }
-#endif
 
 TEST(Ifaddr, ContainsIpV4) {
     typedef sys::interface_address<sys::ipv4_address> ifaddr_type;
