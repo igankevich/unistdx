@@ -6,15 +6,14 @@ CMMSHQ_COVERAGE="cmmshq.ru:/usr/share/nginx/html/doc/unistdx/coverage"
 
 export GUIX_MANIFEST=ci/manifest.scm
 export GUIX_CHANNELS=ci/channels.scm
+export GUIX_SYSTEMS="x86_64-linux i686-linux"
 
 echo
 echo "Environment:"
 env | grep -E '^(CI_|HOME|SINGULARITY|GUIX)' | sort | column -t -s= -R 1
 echo
 
-for system in x86_64-linux i686-linux
-do
-    env GUIX_SYSTEM=$system /usr/libexec/gitbucket-ci << EOF
+/usr/libexec/gitbucket-ci << EOF
 # prefix all commands with
 # slurm_job TESTNAME CMD ARG1 ARG2
 
@@ -36,16 +35,16 @@ done
 
 slurm_job "arch-native" sh -c "\$(test_flags -Dbuildtype=release -Dcpp_args=-march=native)"
 
+d=/tmp/gitbucket-ci-\$(uuidgen)
 slurm_job "coverage" sh -c "
     set -ex
-    d=/tmp/gitbucket-ci-\$(uuidgen)
     meson -Db_coverage=true . \$d
     cd \$d
     meson test --verbose
     ninja -v coverage-text
     cat meson-logs/coverage.txt
     ninja -v coverage-html
-    cp -r meson-logs/coveragereport $OUTDIR
+    cp -r meson-logs/coveragereport \$OUTDIR
 "
 
 # build documentation
@@ -62,5 +61,3 @@ then
 fi
 
 EOF
-
-done
