@@ -1,0 +1,62 @@
+#!/bin/sh
+
+URL="ssh://git@fennec:29418/${CI_REPO_SLUG}.git"
+CMMSHQ_URL="cmmshq.ru:/usr/share/nginx/html/doc/unistdx"
+
+export GUIX_MANIFEST=ci/manifest.scm
+export GUIX_CHANNELS=ci/channels.scm
+
+echo
+echo "Environment:"
+env | grep -E '^(CI_|HOME|SINGULARITY|GUIX)' | sort | column -t -s= -R 1
+echo
+
+for system in x86_64-linux i686-linux
+do
+    env GUIX_SYSTEM=$system /usr/libexec/gitbucket-ci << EOF
+# prefix all commands with
+# slurm_job TESTNAME CMD ARG1 ARG2
+
+test_flags() {
+    flags="\$@"
+    d=/var/tmp/\$(uuidgen)
+    echo "
+        set -ex
+        meson \$flags . \$d
+        cd \$d
+        meson test --verbose
+        rm -rf \$d"
+}
+
+for i in none address
+do
+    slurm_job "sanitize-\$i" sh -c "\$(test_flags -Db_sanitize=\$i)"
+done
+
+slurm_job "arch-native" sh -c "\$(test_flags -Dbuildtype=release -Dcpp_args=-march=native)"
+
+slurm_job "coverage" sh -c "
+    set -ex
+    d=/var/tmp/\$(uuidgen)
+    meson -Db_coverage=true . \$d
+    cd \$d
+    meson test --verbose
+    ninja -v coverage-text
+    cat meson-logs/coverage.txt"
+
+# build documentation
+if test "$CI_BUILD_BRANCH" = "master" || test -n "$CI_PULL_REQUEST"
+then
+    d=/var/tmp/\$(uuidgen)
+    slurm_job "doc" sh -c "
+        set -ex
+        meson . \$d
+        cd \$d
+        ninja -v doc
+        rsync -acv --delete html/ $CMMSHQ_URL/
+    "
+fi
+
+EOF
+
+done
