@@ -95,8 +95,10 @@ sys::socket::connect(const socket_address& e) {
 bool
 sys::socket::accept(socket& sock, socket_address& addr) {
     auto client_fd = safe_accept(this->_fd, addr);
-    if (errno == EAGAIN || errno == EWOULDBLOCK) { return false; }
-    UNISTDX_CHECK(client_fd);
+    if (client_fd == -1) {
+        if (errno == EAGAIN || errno == EWOULDBLOCK) { return false; }
+        UNISTDX_THROW_BAD_CALL();
+    }
     sock.close();
     sock._fd = client_fd;
     return true;
