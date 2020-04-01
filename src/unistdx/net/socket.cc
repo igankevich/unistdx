@@ -28,6 +28,24 @@ namespace {
         return sock;
     }
 
+    inline int
+    safe_accept(int server_fd, sys::socket_address& client_address) {
+        using namespace sys::bits;
+        sys::socklen_type len = sizeof(sys::socket_address);
+        int fd = -1;
+        #if defined(UNISTDX_HAVE_ACCEPT4) && \
+            defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
+            defined(UNISTDX_HAVE_SOCK_CLOEXEC)
+        fd = ::accept4(server_fd, client_address.sockaddr(), &len,
+                       UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC);
+        #else
+        global_lock_type lock(fork_mutex);
+        fd = ::accept(server_fd, client_address.sockaddr(), &len);
+        set_mandatory_flags(fd);
+        #endif
+        return fd;
+    }
+
 }
 
 sys::socket::socket(const socket_address& bind_addr) {
@@ -74,31 +92,14 @@ sys::socket::connect(const socket_address& e) {
     }
 }
 
-void
+bool
 sys::socket::accept(socket& sock, socket_address& addr) {
-    using namespace bits;
-    socklen_type len = sizeof(socket_address);
+    auto client_fd = safe_accept(this->_fd, addr);
+    if (client_fd == EAGAIN || client_fd == EWOULDBLOCK) { return false; }
+    UNISTDX_CHECK(client_fd);
     sock.close();
-    #if defined(UNISTDX_HAVE_ACCEPT4) && \
-    defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
-    defined(UNISTDX_HAVE_SOCK_CLOEXEC)
-    UNISTDX_CHECK(
-        sock._fd =
-            ::accept4(
-                this->_fd,
-                addr.sockaddr(),
-                &len,
-                UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC
-            )
-    );
-    #else
-    global_lock_type lock(fork_mutex);
-    UNISTDX_CHECK(sock._fd = ::accept(this->_fd, addr.sockaddr(), &len));
-    set_mandatory_flags(sock._fd);
-    #endif
-    #ifndef NDEBUG
-    log_message("sys", "accept connection from _", addr);
-    #endif
+    sock._fd = client_fd;
+    return true;
 }
 
 void

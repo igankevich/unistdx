@@ -9,3 +9,9 @@ TEST(byte_buffer, resize) {
     EXPECT_THROW(buf.resize(max0), sys::bad_call);
     EXPECT_THROW(sys::byte_buffer b(max0), sys::bad_call);
 }
+
+TEST(byte_buffer, resize_empty) {
+    sys::byte_buffer buf(0);
+    buf.resize(4096);
+    EXPECT_EQ(4096u, buf.size());
+}

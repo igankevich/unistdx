@@ -188,11 +188,13 @@ namespace sys {
         \author Ivan Gankevich
         \throws bad_call
         \see \man{accept4,2}
-        \param[out] sock socket that initiated a connection (client)
-        \param[out] addr sockt address of the client
+        \param[out] client_socket socket that initiated a connection (client)
+        \param[out] client_address socket address of the client
+        \return true if the connection was accepted and more connections might be
+        accepted, false if there are no more connections to be accepted
         */
-        void
-        accept(socket& sock, socket_address& addr);
+        bool
+        accept(socket& client_socket, socket_address& client_address);
 
         /**
         \brief Shutdown communication on the socket, but do not close it.
