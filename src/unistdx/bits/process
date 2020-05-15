@@ -14,6 +14,9 @@ namespace sys {
             template <class Function>
             inline static int
             call(Function f) {
+                #if defined(UNISTDX_DEGUG_PROCESS)
+                return f();
+                #else
                 int ret;
                 try {
                     ret = f();
@@ -21,12 +24,16 @@ namespace sys {
                     ret = 1;
                 }
                 return ret;
+                #endif
             }
 
             template <class F>
             static int
             child_main(void* arg) {
                 F* func = reinterpret_cast<F*>(arg);
+                #if defined(UNISTDX_DEGUG_PROCESS)
+                return (*func)();
+                #else
                 int ret;
                 try {
                     ret = (*func)();
@@ -34,6 +41,7 @@ namespace sys {
                     ret = 1;
                 }
                 return ret;
+                #endif
             }
 
         };
@@ -45,6 +53,10 @@ namespace sys {
             template <class Function>
             inline static int
             call(Function f) {
+                #if defined(UNISTDX_DEGUG_PROCESS)
+                f();
+                return 0;
+                #else
                 int ret = 0;
                 try {
                     f();
@@ -52,12 +64,17 @@ namespace sys {
                     ret = 1;
                 }
                 return ret;
+                #endif
             }
 
             template <class F>
             static int
             child_main(void* arg) {
                 F* func = reinterpret_cast<F*>(arg);
+                #if defined(UNISTDX_DEGUG_PROCESS)
+                (*func)();
+                return 0;
+                #else
                 int ret = 0;
                 try {
                     (*func)();
@@ -65,6 +82,7 @@ namespace sys {
                     ret = 1;
                 }
                 return ret;
+                #endif
             }
 
         };
