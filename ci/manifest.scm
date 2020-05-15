@@ -9,12 +9,14 @@
  (append
   (list
    (@ (gnu packages build-tools) meson)
-   (@ (gnu packages ninja) ninja)
+   (@ (stables packages ninja) ninja/lfs)
    (@ (gnu packages check) googletest)
    (list (@ (gnu packages gcc) gcc) "lib")
    (@ (gnu packages commencement) gcc-toolchain)
    (@ (gnu packages pkg-config) pkg-config)
-   (@ (gnu packages pre-commit) python-pre-commit))
+   (@ (gnu packages pre-commit) python-pre-commit)
+   (@ (gnu packages code) lcov)
+   (@ (gnu packages gcovr) python-gcovr))
   (if-enabled "site"
               (list (@ (gnu packages curl) curl)
                     (@ (gnu packages graphviz) graphviz)
@@ -25,8 +27,7 @@
                     (@ (gnu packages guile-xyz) guile-syntax-highlight)
                     (@ (gnu packages groff) groff)
                     (@ (gnu packages xml) libxslt)
-                    (@ (gnu packages code) lcov)
-                    (@ (gnu packages gcovr) python-gcovr)))
+                    ))
   (if-enabled "ci"
               (list (@ (gnu packages rsync) rsync)
                     (@ (gnu packages ssh) openssh)

@@ -4,11 +4,11 @@ lcovrc_options="@lcovrc_options@"
 lcov="@lcov_path@ @lcov_options@ $lcovrc_options"
 genhtml="@genhtml_path@ @genhtml_options@ $lcovrc_options"
 
-set -e
+set -ex
 cd "$MESON_BUILD_ROOT"
 tmp="coverage.info"
-$lcov --capture --initial --directory . --output-file $tmp.initial --quiet
 ninja test
+$lcov --capture --initial --directory . --output-file $tmp.initial --quiet
 $lcov --capture --directory . --output-file $tmp.actual --quiet
 $lcov -a $tmp.initial -a $tmp.actual -o $tmp.total --quiet
 for pattern in \
