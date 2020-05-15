@@ -32,4 +32,5 @@
               (list (@ (gnu packages rsync) rsync)
                     (@ (gnu packages ssh) openssh)
                     (@ (gnu packages base) coreutils)
+                    (@ (gnu packages base) findutils) ;; lcov needs find
                     (@ (gnu packages bash) bash)))))

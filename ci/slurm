@@ -60,11 +60,8 @@ slurm_job "coverage" sh -c "
     meson -Db_coverage=true . \$d
     cd \$d
     meson configure -Db_coverage=true
-    ninja -v test
-    ninja -v coverage-html
-    #ninja -v test-lcov
-    #rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
-    rsync -a meson-logs/coveragereport/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
+    ninja -v test-lcov
+    rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
 "
 
 EOF

@@ -37,6 +37,7 @@ genhtml_options = [
 coverage.set('lcovrc_options', ' '.join(lcovrc_options))
 coverage.set('lcov_options', ' '.join(lcov_options))
 coverage.set('genhtml_options', ' '.join(genhtml_options))
+coverage.set('gcov', join_paths(meson.current_build_dir(), 'gcov-tool'))
 configure_file(
     input: 'coverage.in',
     output: 'coverage',
