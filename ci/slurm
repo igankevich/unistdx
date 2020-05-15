@@ -1,8 +1,6 @@
 #!/bin/sh
 
-URL="ssh://git@fennec:29418/${CI_REPO_SLUG}.git"
-CMMSHQ_DOC="cmmshq.ru:/usr/share/nginx/html/doc/unistdx"
-CMMSHQ_COVERAGE="cmmshq.ru:/usr/share/nginx/html/doc/unistdx/coverage"
+CMMSHQ_URL="cmmshq.ru:/srv/unistdx"
 
 export GUIX_MANIFEST=ci/manifest.scm
 export GUIX_CHANNELS=ci/channels.scm
@@ -13,9 +11,28 @@ echo "Environment:"
 env | grep -E '^(CI_|HOME|SINGULARITY|GUIX)' | sort | column -t -s= -R 1
 echo
 
+if test "$CI_BUILD_BRANCH" = "site"
+then
+    echo "Building the site"
+    echo
 /usr/libexec/gitbucket-ci << EOF
-# prefix all commands with
-# slurm_job TESTNAME CMD ARG1 ARG2
+export UNISTDX_MANIFEST=ci,site
+if test "$CI_BUILD_BRANCH" = "site"
+then
+    d=/tmp/gitbucket-ci-\$(uuidgen)
+    slurm_job "doc" sh -c "
+        set -ex
+        meson . \$d
+        cd \$d
+        ninja -v doc
+        rsync -e 'ssh -p 22222' -acv --delete html/ $CMMSHQ_URL/
+        rm -rf \$d
+    "
+fi
+EOF
+else
+/usr/libexec/gitbucket-ci << EOF
+export UNISTDX_MANIFEST=ci,site
 
 test_flags() {
     flags="\$@"
@@ -42,24 +59,10 @@ slurm_job "coverage" sh -c "
     set -ex
     meson -Db_coverage=true . \$d
     cd \$d
-    meson test --verbose
-    ninja -v coverage-text
-    cat meson-logs/coverage.txt
+    meson configure -Db_coverage=true
     ninja -v test-lcov
     rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
 "
 
-# build documentation
-if test "$CI_BUILD_BRANCH" = "master" && test "\$GUIX_SYSTEM" = "x86_64-linux"
-then
-    d=/tmp/gitbucket-ci-\$(uuidgen)
-    slurm_job "doc" sh -c "
-        set -ex
-        meson . \$d
-        cd \$d
-        ninja -v doc
-        rsync -acv --delete html/ $CMMSHQ_DOC/
-    "
-fi
-
 EOF
+fi
