@@ -11,7 +11,7 @@ foreach conf : [
     ['network_interface', [unistdx,gtest]],
     ['socket', [threads,unistdx,gtest]],
     ['socket_address', [unistdx,gtest]],
-]
+    ['veth_interface', [unistdx,gtest]]]
     test_name = join_paths('net', conf[0])
     executable_name = conf[0] + '_test'
     source_name = executable_name + '.cc'

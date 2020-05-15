@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.19.11',
+    version: '0.19.12',
     meson_version: '>=0.46',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -245,7 +245,7 @@ if cpp.has_member('passwd', 'pw_gecos', prefix: '#include <pwd.h>')
     config.set('UNISTDX_HAVE_GECOS', true)
 endif
 if config.has('UNISTDX_HAVE_BACKTRACE')
-    if cpp.get_id() == 'gcc' or cpp.has_argument('-rdynamic')
+    if cpp.get_id() == 'gcc' or cpp.has_link_argument('-rdynamic')
         add_global_link_arguments('-rdynamic', language: 'cpp')
     endif
 endif
