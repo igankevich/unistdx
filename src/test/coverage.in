@@ -8,6 +8,7 @@ set -ex
 cd "$MESON_BUILD_ROOT"
 tmp="coverage.info"
 ninja test
+ls -R
 $lcov --capture --initial --directory . --output-file $tmp.initial --quiet
 $lcov --capture --directory . --output-file $tmp.actual --quiet
 $lcov -a $tmp.initial -a $tmp.actual -o $tmp.total --quiet

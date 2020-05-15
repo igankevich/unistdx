@@ -59,6 +59,7 @@ slurm_job "coverage" sh -c "
     set -ex
     meson -Db_coverage=true . \$d
     cd \$d
+    meson configure -Db_coverage=true
     ninja -v test-lcov
     rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
 "
