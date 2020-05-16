@@ -1,3 +1,35 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2017, 2018, 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #ifndef UNISTDX_IPC_PROCESS
 #define UNISTDX_IPC_PROCESS
 
@@ -29,7 +61,6 @@ namespace sys {
     \brief
     Send signal \p s to process \p p.
     \date 2018-05-21
-    \author Ivan Gankevich
     \throw bad_call
     \see \man{kill,2}
     */
@@ -140,7 +171,6 @@ namespace sys {
         \brief
         Send signal \p s to the current process.
         \date 2018-05-21
-        \author Ivan Gankevich
         \throws bad_call
         \see \man{kill,2}
         */
@@ -152,7 +182,6 @@ namespace sys {
         /**
         \brief Set current process' working directory.
         \date 2018-05-21
-        \author Ivan Gankevich
         \throws bad_call
         \see \man{chdir,2}
         */
@@ -223,7 +252,6 @@ namespace sys {
     \brief
     Flags used by \man{waitid,2} system call.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc
     */
     enum class wait_flags: int {
@@ -232,7 +260,7 @@ namespace sys {
         /// Process execution was stopped by a signal.
         stopped = WSTOPPED,
         /**
-        Process execution was resumed with \link signal::resume\endlink signal.
+        Process execution was resumed with \link signal::resume \endlink signal.
         */
         resumed = WCONTINUED,
         /// Return immediately, do not wait for child process to exit.
@@ -246,7 +274,6 @@ namespace sys {
     \brief
     Flags used by \man{clone,2} system call.
     \date 2018-05-21
-    \author Ivan Gankevich
     */
     enum class process_flag: int {
         fork = 0,
@@ -292,9 +319,8 @@ namespace sys {
 
     /**
     \brief
-    System process with \link std::thread\endlink interface.
+    System process with \link std::thread \endlink interface.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc
     */
     class process {
@@ -356,7 +382,7 @@ namespace sys {
         inline process& operator=(process&& rhs) { this->swap(rhs); return *this; }
 
         /**
-        Gracefully terminate the process by sending \link signal::terminate\endlink
+        Gracefully terminate the process by sending \link signal::terminate \endlink
         signal.
         \see \man{kill,2}
         */
@@ -364,7 +390,7 @@ namespace sys {
 
         /**
         \brief
-        Forcibly terminate the process by sending \link signal::kill\endlink
+        Forcibly terminate the process by sending \link signal::kill \endlink
         signal.
         \throws bad_call
         \see \man{kill,2}
@@ -373,7 +399,7 @@ namespace sys {
 
         /**
         \brief
-        Interrupt the process by sending \link signal::keyboard_interrupt\endlink
+        Interrupt the process by sending \link signal::keyboard_interrupt \endlink
         signal.
         \throws bad_call
         \see \man{kill,2}
@@ -382,7 +408,7 @@ namespace sys {
 
         /**
         \brief
-        Interrupt the process by sending \link signal::hang_up\endlink signal.
+        Interrupt the process by sending \link signal::hang_up \endlink signal.
         \throws bad_call
         \see \man{kill,2}
         */
@@ -390,7 +416,7 @@ namespace sys {
 
         /**
         \brief
-        Interrupt the process by sending \link signal::stop\endlink signal.
+        Interrupt the process by sending \link signal::stop \endlink signal.
         \throws bad_call
         \see \man{kill,2}
         */
@@ -398,7 +424,7 @@ namespace sys {
 
         /**
         \brief
-        Interrupt the process by sending \link signal::resume\endlink signal.
+        Interrupt the process by sending \link signal::resume \endlink signal.
         \throws bad_call
         \see \man{kill,2}
         */
@@ -458,7 +484,7 @@ namespace sys {
             UNISTDX_CHECK(::setpgid(this->_pid, rhs));
         }
 
-        /// Always returns true to be compatible with \link std::thread\endlink.
+        /// Always returns true to be compatible with \link std::thread \endlink.
         inline bool joinable() const { return true; }
 
         /// \copydoc wait
@@ -478,7 +504,7 @@ namespace sys {
 
     };
 
-    /// Overload of \link std::swap\endlink for \link process\endlink.
+    /// Overload of \link std::swap \endlink for \link process \endlink.
     inline void
     swap(process& lhs, process& rhs) {
         lhs.swap(rhs);

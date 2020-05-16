@@ -1,3 +1,35 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2017, 2018, 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #ifndef UNISTDX_IPC_PROCESS_STATUS
 #define UNISTDX_IPC_PROCESS_STATUS
 
@@ -13,7 +45,6 @@ namespace sys {
     /**
     \brief Alias for signinfo_t;
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc
     */
     typedef ::siginfo_t siginfo_type;
@@ -21,19 +52,17 @@ namespace sys {
     /**
     \brief Alias for pid_t;
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc
     */
     typedef ::pid_t pid_type;
 
     /**
     \brief
-    A \link process_status\endlink object that tells how the process
+    A \link process_status \endlink object that tells how the process
     was terminated.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc wrapper
-    \details Wraps \link siginfo_type\endlink.
+    \details Wraps \link siginfo_type \endlink.
     */
     struct process_status {
 
@@ -52,7 +81,7 @@ namespace sys {
             /// Traced process was trapped.
             trapped = CLD_TRAPPED,
             /**
-            Process execution was continued with \link signal::resume\endlink signal.
+            Process execution was continued with \link signal::resume \endlink signal.
             */
             continued = CLD_CONTINUED
         };
@@ -169,7 +198,6 @@ namespace sys {
     /**
     \brief Output PID, exit status, exit code/termination signal.
     \date 2018-05-21
-    \author Ivan Gankevich
     */
     std::ostream&
     operator<<(std::ostream& out, const process_status& rhs);

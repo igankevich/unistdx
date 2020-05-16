@@ -10,7 +10,7 @@ repos:
     -   id: detect-private-key
     -   id: forbid-new-submodules
 -   repo: https://github.com/igankevich/pre-commit-cpp
-    rev: 0.4.1
+    rev: 0.6.3
     hooks:
     -   id: normalise
         types: [text]
@@ -19,3 +19,8 @@ repos:
         files: (^src/[^\.]+|\.cc)$
     -   id: header-guard
         files: ^src/[^\.]+$
+    -   id: legal
+        files: (^src/[^\.]+|\.cc|config\.in)$
+        args: ['--copyright-string=©', '--programme-name=UNISTDX',
+               '--license-notice=unlicense',
+               '--preamble=UNISTDX — C++ library for Linux system calls.']

@@ -2,6 +2,12 @@
 
 CMMSHQ_URL="cmmshq.ru:/srv/unistdx"
 
+if test "$CI_PULL_REQUEST" != "false"
+then
+    echo "Skipping pull requests"
+    exit 0
+fi
+
 export GUIX_MANIFEST=ci/manifest.scm
 export GUIX_CHANNELS=ci/channels.scm
 export GUIX_SYSTEMS="x86_64-linux i686-linux"

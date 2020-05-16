@@ -1,3 +1,35 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2016, 2017, 2018, 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #ifndef UNISTDX_IPC_SIGNAL
 #define UNISTDX_IPC_SIGNAL
 
@@ -13,28 +45,24 @@ namespace sys {
     /**
     \brief Alias for signal type.
     \date 2018-05-21
-    \author Ivan Gankevich
     */
     typedef int signal_type;
 
     /**
     \brief Alias for \c sigaction system type.
     \date 2018-05-21
-    \author Ivan Gankevich
     */
     typedef struct ::sigaction sigaction_type;
 
     /**
     \brief Alias for \c siginfo_t system type.
     \date 2018-06-05
-    \author Ivan Gankevich
     */
     typedef ::siginfo_t signal_info_type;
 
     /**
     \brief Process signals.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc
     \see \man{signal,7}
     */
@@ -117,7 +145,6 @@ namespace sys {
     /**
     \brief Output signal name.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc
     */
     std::ostream&
@@ -126,7 +153,6 @@ namespace sys {
     /**
     \brief Signal callback.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc comm wrapper
     */
     class signal_action: public sigaction_type {
@@ -156,7 +182,6 @@ namespace sys {
         /**
         \brief Set signal callback function.
         \date 2018-05-21
-        \author Ivan Gankevich
         \ingroup ipc
         \throws bad_call
         \see \man{sigaction,2}
@@ -169,7 +194,6 @@ namespace sys {
         /**
         \brief Ignore specified signal
         \date 2018-05-21
-        \author Ivan Gankevich
         \ingroup ipc
         \throws bad_call
         \see \man{sigaction,2}
@@ -189,7 +213,6 @@ namespace sys {
     /**
     \brief Signal set.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc comm wrapper
     */
     class signal_set: public ::sigset_t {
@@ -240,7 +263,6 @@ namespace sys {
         /**
         \brief Block \p signals for the current process.
         \date 2018-06-15
-        \author Ivan Gankevich
         \ingroup ipc
         \throws bad_call
         \see \man{sigprocmask,2}
@@ -253,7 +275,6 @@ namespace sys {
         /**
         \brief Unblock \p signals for the current process.
         \date 2018-06-15
-        \author Ivan Gankevich
         \ingroup ipc
         \throws bad_call
         \see \man{sigprocmask,2}
@@ -268,7 +289,6 @@ namespace sys {
     /**
     \brief Blocks/unblocks specified signals upon creation/destruction.
     \date 2018-05-21
-    \author Ivan Gankevich
     \ingroup ipc comm guard
     */
     class signal_guard {
@@ -289,7 +309,7 @@ namespace sys {
             this->lock();
         }
 
-        /// Terminates if \link unlock\endlink fails.
+        /// Terminates if \link unlock \endlink fails.
         inline
         ~signal_guard() {
             try {
@@ -302,7 +322,7 @@ namespace sys {
         /**
         \brief Block all specified signals.
         \throws bad_call
-        \see \link this_process::block_signals\endlink
+        \see \link this_process::block_signals \endlink
         */
         inline void
         lock() {
@@ -312,7 +332,7 @@ namespace sys {
         /**
         \brief Unblock all specified signals.
         \throws bad_call
-        \see \link this_process::unblock_signals\endlink
+        \see \link this_process::unblock_signals \endlink
         */
         inline void
         unlock() {

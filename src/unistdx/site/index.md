@@ -1,3 +1,14 @@
+\mainpage
+
+Unistdx is a C++ library that offers *object-oriented* interface to Linux
+system calls. It is built on several core principles:
+\arg use UNIX API where possible, but optimise for Linux,
+\arg use standard C++ abstractions to map system calls (containers, iterators,
+  input/output streams, traits classes, guards etc.),
+\arg inherit standard libc structures for maximal transparency,
+\arg throw an exception when system call fails,
+\arg use asynchronous input/output by default.
+
 \defgroup concepts C++ concepts
 \brief Group classes and functions by concept.
 
@@ -20,15 +31,15 @@ interface.
 \ingroup concepts
 
 \defgroup streambuf Stream buffers
-\brief Classes with \link std::streambuf\endlink interface.
+\brief Classes with \link std::streambuf \endlink interface.
 \ingroup concepts
 
 \defgroup mutex Mutexes
-\brief Classes with \link std::mutex\endlink interface.
+\brief Classes with \link std::mutex \endlink interface.
 \ingroup concepts
 
 \defgroup semaphore Semaphores
-\brief Classes with \link std::condition_variable\endlink interface.
+\brief Classes with \link std::condition_variable \endlink interface.
 \ingroup concepts
 
 \defgroup guard Guards

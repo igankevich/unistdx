@@ -21,10 +21,8 @@ endif
 # generate Doxyfile {{{
 csd = meson.current_source_dir()
 cbd = meson.current_build_dir()
-examples = join_paths(csd, 'examples')
 html_output_dir = join_paths(meson.build_root(), 'html')
 doxyfile = configuration_data()
-doxyfile.set('EXAMPLE_PATH', examples)
 doxyfile.set('LAYOUT_FILE', join_paths(csd, 'layout.xml'))
 doxyfile.set('OUTPUT_DIRECTORY', meson.build_root())
 doxyfile.set('TAGFILES', std_tag_xml + '=' + std_tag_url)
@@ -32,14 +30,15 @@ doxyfile.set('PREDEFINED', ' '.join(all_defines))
 excluded_files = [
     'meson.build',
     join_paths(meson.source_root(), 'src', 'unistdx', 'bits'),
-    join_paths(meson.source_root(), 'src', 'unistdx', 'test')
+    join_paths(meson.source_root(), 'src', 'unistdx', 'test'),
+    join_paths(meson.source_root(), 'src', 'unistdx', 'doxygen'),
+    meson.build_root(),
 ]
 doxyfile.set('EXCLUDE', ' '.join(excluded_files))
-input_files = [
-    join_paths(meson.source_root(), 'src', 'unistdx'),
-    examples,
-    join_paths(csd, 'pages'),
-]
+doxyfile.set('EXCLUDE_PATTERNS', ' '.join(['*.css', '*.scm', '*_test.cc', 'meson.build',
+                                           '*~', '.*']))
+doxyfile.set('EXCLUDE_SYMBOLS', ' '.join(['bits']))
+input_files = [join_paths(meson.source_root(), 'src', 'unistdx')]
 doxyfile.set('INPUT', ' '.join(input_files))
 perl = find_program('perl', required: false)
 if perl.found()
@@ -55,43 +54,34 @@ else
     doxyfile.set('HAVE_DOT', 'NO')
     doxyfile.set('DOT_PATH', '')
 endif
-doxyfile.set('HTML_EXTRA_STYLESHEET', join_paths(csd, 'doxygen-extra.css'))
-doxyfile.set('HTML_OUTPUT', html_output_dir)
+xml_output_dir = meson.current_build_dir()
+doxyfile.set('XML_OUTPUT', xml_output_dir)
 configure_file(
     input: 'Doxyfile.in',
     output: 'Doxyfile',
     configuration: doxyfile
 )
+doxyfile_path = join_paths(meson.current_build_dir(), 'Doxyfile')
 # }}}
 
-doxygen = find_program('doxygen', required: false)
-if doxygen.found()
-    run_target('doc-doxygen', command: [doxygen, join_paths(cbd, 'Doxyfile')])
-    run_target(
-        'doc-temp',
+doxygen = find_program('doxygen')
+sh = find_program('sh', required: false)
+if doxygen.found() and sh.found()
+    # N.B. Doxygen is sensitive to the working directory if you use pages.
+    # Always run it in the current source directory.
+    doxygen_xml = [custom_target(
+        'doxygen',
         command: [
-            doxygen,
-            '-w',
-            'html',
-            join_paths(meson.build_root(), 'header.html'),
-            join_paths(meson.build_root(), 'footer.html'),
-            join_paths(meson.build_root(), 'doxygen.css'),
-            join_paths(cbd, 'Doxyfile')
-        ]
-    )
-    run_target(
-        'doc-rename',
-        command: join_paths(csd, 'rename')
-    )
-    run_target('doc', command: join_paths(csd, 'all'))
-    run_target(
-        'doc-copy-examples',
-        command: ['cp', '-r', examples, html_output_dir]
-    )
-endif
-
-
-xsltproc = find_program('xsltproc', required: false)
-if xsltproc.found()
-    run_target('man', command: join_paths(csd, 'man'))
+            sh,
+            '-c',
+            ' && '.join([
+                ' '.join(['cd', meson.current_source_dir()]),
+                ' '.join([doxygen.path(), join_paths(meson.current_build_dir(), 'Doxyfile')])
+            ])
+        ],
+        output: 'index.xml',
+        build_always_stale: true
+    )]
+else
+    doxygen_xml = []
 endif
