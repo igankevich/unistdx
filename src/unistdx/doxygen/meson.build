@@ -8,12 +8,12 @@ wget = find_program('wget', required: false)
 curl = find_program('curl', required: false)
 if wget.found()
     run_target(
-        'doc-std-tagfile',
+        'doxygen-std-tagfile',
         command: [wget, '-O', std_tag_xml, std_tagfile_url]
     )
 elif curl.found()
     run_target(
-        'doc-std-tagfile',
+        'doxygen-std-tagfile',
         command: [curl, '-v', '-o', std_tag_xml, std_tagfile_url]
     )
 endif

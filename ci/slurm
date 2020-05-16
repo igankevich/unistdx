@@ -31,6 +31,7 @@ then
         set -ex
         meson . \$d
         cd \$d
+        ninja -v doxygen-std-tagfile
         ninja -v site
         rsync -e 'ssh -p 22222' -acv --delete src/unistdx/site/ $CMMSHQ_URL/
         rm -rf \$d
