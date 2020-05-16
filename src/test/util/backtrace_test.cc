@@ -78,7 +78,7 @@ print_error() {
 }
 
 void
-print_error_signal(int) {
+print_error_signal(int,sys::siginfo_type*,void*) {
     print_error();
 }
 

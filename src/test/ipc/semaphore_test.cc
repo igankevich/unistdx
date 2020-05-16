@@ -157,7 +157,13 @@ TYPED_TEST_CASE(
 );
 
 TYPED_TEST(SemaphoreWaitTest, WaitUntil) {
-    this->test_wait_until();
+    try {
+        this->test_wait_until();
+    } catch (const sys::bad_call& err) {
+        if (err.errc() != std::errc::function_not_supported) {
+            throw;
+        }
+    }
 }
 
 TYPED_TEST(SemaphoreWaitTest, ProducerConsumer) {

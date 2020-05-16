@@ -20,12 +20,13 @@ catch_signal_2(int) {
 
 void
 catch_sigaction(int,sys::siginfo_type*,void*) {
+    caught = 1;
 }
 
 TEST(Signal, BindSignal) {
     using namespace sys::this_process;
-    bind_signal(sys::signal::user_defined_1, catch_signal);
-    send(sys::signal::user_defined_1);
+    bind_signal(sys::signal::user_defined_1, catch_sigaction);
+    sys::this_process::send(sys::signal::user_defined_1);
     EXPECT_EQ(1, caught);
 }
 

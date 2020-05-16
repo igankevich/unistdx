@@ -131,6 +131,7 @@ TEST(SetIdentity, Exceptions) {
     EXPECT_EQ(old_gid, group());
 }
 
+#if defined(UNISTDX_TEST_HAVE_UNSHARE)
 TEST(unshare, hostname) {
     using namespace sys::this_process;
     auto status = sys::process{[] () {
@@ -168,6 +169,7 @@ TEST(thread, _) {
     auto status = t.wait();
     EXPECT_EQ(0, status.exit_code());
 }
+#endif
 
 /*
 TEST(Process, LogMessage) {

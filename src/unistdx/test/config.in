@@ -3,5 +3,6 @@
 
 #define UNISTDX_TEST_EMPTY_EXE_PATH "@empty_exe_path@"
 #mesondefine UNISTDX_TEST_SANITIZE_ADDRESS
+#mesondefine UNISTDX_TEST_HAVE_UNSHARE
 
 #endif // vim:filetype=cpp

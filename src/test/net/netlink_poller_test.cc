@@ -1,6 +1,5 @@
 #include <mutex>
 
-#include <unistdx/ipc/process>
 #include <unistdx/net/netlink_poller>
 #include <unistdx/net/netlink_socket>
 #include <unistdx/net/network_interface>
@@ -136,8 +135,6 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 int main(int argc, char* argv[]) {
-    using f = sys::unshare_flag;
-    sys::this_process::unshare(f::users | f::network);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

@@ -316,7 +316,7 @@ namespace sys {
         */
         template<class F>
         inline explicit
-        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*2) {
+        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*4) {
             typedef bits::call_traits<decltype(f())> traits_type;
             if (flags == process_flag::fork) {
                 this->_pid = this_process::fork();

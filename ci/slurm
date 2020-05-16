@@ -4,7 +4,7 @@ CMMSHQ_URL="cmmshq.ru:/srv/unistdx"
 
 export GUIX_MANIFEST=ci/manifest.scm
 export GUIX_CHANNELS=ci/channels.scm
-export GUIX_SYSTEMS="x86_64-linux i686-linux"
+export GUIX_SYSTEMS="x86_64-linux i686-linux aarch64-linux"
 
 echo
 echo "Environment:"
@@ -59,7 +59,6 @@ slurm_job "coverage" sh -c "
     set -ex
     meson -Db_coverage=true . \$d
     cd \$d
-    meson configure -Db_coverage=true
     ninja -v test-lcov
     rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
 "
