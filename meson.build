@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.20.1',
+    version: '0.20.2',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
