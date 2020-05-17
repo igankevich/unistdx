@@ -1,3 +1,35 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2017, 2018, 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #include <unistdx/net/socket_address>
 
 #include <cstring>
@@ -67,7 +99,7 @@ sys::operator<<(std::ostream& out, const socket_address& rhs) {
                 ++unix_socket_path;
             }
             out << unix_socket_path;
-        #if defined(UNISTDX_HAVE_NETLINK)
+        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         } else if (rhs.family() == family_type::netlink) {
             out << "netlink";
         #endif
@@ -172,7 +204,7 @@ sys::socket_address::sockaddrlen() const noexcept {
     case family_type::unix: return unix_sockaddr_len(
             this->_bytes.begin() + sizeof(sa_family_t)
         );
-    #if defined(UNISTDX_HAVE_NETLINK)
+    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
     case family_type::netlink: return sizeof(netlink_sa_type);
     #endif
     default: return 0;
@@ -199,7 +231,7 @@ sys::socket_address::operator<(const socket_address& rhs) const noexcept {
         case family_type::inet6:
             return std::make_tuple(sa_family(), addr6(), port6()) <
                    std::make_tuple(rhs.sa_family(), rhs.addr6(), rhs.port6());
-        #if defined(UNISTDX_HAVE_NETLINK)
+        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         case family_type::netlink:
             return std::make_tuple(
                 sa_family(),
@@ -242,7 +274,7 @@ sys::socket_address::operator==(const socket_address& rhs) const noexcept {
     case family_type::inet6:
         return this->addr6() == rhs.addr6() &&
                this->port6() == rhs.port6();
-    #if defined(UNISTDX_HAVE_NETLINK)
+    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
     case family_type::netlink:
         return this->_naddr.nl_pid == rhs._naddr.nl_pid &&
                this->_naddr.nl_groups == rhs._naddr.nl_groups;

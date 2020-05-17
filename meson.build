@@ -1,8 +1,8 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.20.1',
-    meson_version: '>=0.46',
+    version: '0.20.2',
+    meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
 )
@@ -23,6 +23,8 @@ foreach arg : [
 endforeach
 
 with_tests = get_option('with_tests')
+with_rpm = get_option('with_rpm')
+with_site = get_option('with_site')
 with_rpm = get_option('with_rpm')
 
 # compile-time configuration {{{
@@ -263,7 +265,6 @@ if with_tests
 endif
 
 subdir('src')
-subdir('doc')
 if with_rpm
     subdir('rpm')
 endif

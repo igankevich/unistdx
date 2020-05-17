@@ -1,6 +1,10 @@
 #!/bin/sh
 
-CMMSHQ_URL="cmmshq.ru:/srv/unistdx"
+if test "$CI_PULL_REQUEST" != "false"
+then
+    echo "Skipping pull requests"
+    exit 0
+fi
 
 export GUIX_MANIFEST=ci/manifest.scm
 export GUIX_CHANNELS=ci/channels.scm
@@ -13,22 +17,23 @@ echo
 
 if test "$CI_BUILD_BRANCH" = "site"
 then
+    export GUIX_SYSTEMS="x86_64-linux"
     echo "Building the site"
     echo
-/usr/libexec/gitbucket-ci << EOF
+/usr/libexec/gitbucket-ci << 'EOF'
 export UNISTDX_MANIFEST=ci,site
-if test "$CI_BUILD_BRANCH" = "site"
-then
+slurm_job "site" sh -c "
+    set -ex
+    CMMSHQ_URL=cmmshq.ru:/srv/unistdx
+    export PYTHONUNBUFFERED=1
     d=/tmp/gitbucket-ci-\$(uuidgen)
-    slurm_job "doc" sh -c "
-        set -ex
-        meson . \$d
-        cd \$d
-        ninja -v doc
-        rsync -e 'ssh -p 22222' -acv --delete html/ $CMMSHQ_URL/
-        rm -rf \$d
-    "
-fi
+    meson . $d
+    cd $d
+    ninja -v doxygen-std-tagfile
+    ninja -v site
+    rsync -e 'ssh -p 22222' -acv --delete src/unistdx/site/ $CMMSHQ_URL/
+    rm -rf $d
+"
 EOF
 else
 /usr/libexec/gitbucket-ci << EOF

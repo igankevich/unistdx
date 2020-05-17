@@ -1,3 +1,35 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2017, 2018, 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #ifndef UNISTDX_BASE_PACKETBUF
 #define UNISTDX_BASE_PACKETBUF
 
@@ -40,7 +72,6 @@ namespace sys {
     \brief
     Stream buffer that can reads/writes data in packets with arbitrary header.
     \date 2018-05-22
-    \author Ivan Gankevich
     \ingroup streambuf
     \arg By default header size is nought, and packet buffer works
     as a regular stream buffer.
@@ -318,7 +349,7 @@ namespace sys {
 
         /**
         Write packet header into the put buffer. Does nothing by default.
-        The method is called in \link begin_packet\endlink to write intiial
+        The method is called in \link begin_packet \endlink to write intiial
         packet header when actual packet size is not known.
         */
         virtual void
@@ -366,7 +397,7 @@ namespace sys {
 
         /**
         Offset of the first incoming packet payload byte
-        relative to \link eback\endlink.
+        relative to \link eback \endlink.
         */
         inline off_type
         ipayloadpos() const noexcept {
@@ -375,7 +406,7 @@ namespace sys {
 
         /**
         Offset of the first incoming packet byte
-        relative to \link eback\endlink.
+        relative to \link eback \endlink.
         */
         inline off_type
         ipacketpos() const noexcept {
@@ -396,7 +427,7 @@ namespace sys {
 
         /**
         Offset of the first outgoing packet byte
-        relative to \link pbase\endlink.
+        relative to \link pbase \endlink.
         */
         inline off_type
         opacketpos() const noexcept {
@@ -421,7 +452,7 @@ namespace sys {
             this->_oheadersize = size;
         }
 
-        /// Set outgoing packet offset relative to \link pbase\endlink.
+        /// Set outgoing packet offset relative to \link pbase \endlink.
         inline void
         set_opacket(off_type pos1) noexcept {
             this->_opacketpos = pos1;
@@ -597,7 +628,7 @@ namespace sys {
         }
 
         /// Start reading payload. This method limits how many bytes
-        /// can be read with a call to \link setg\endlink.
+        /// can be read with a call to \link setg \endlink.
         void
         begin_payload() {
             assert(this->_state == state_type::payload_is_ready); // LCOV_EXCL_LINE
@@ -638,7 +669,6 @@ namespace sys {
     /**
     \brief Guard object that preserves packet buffer state upon failure.
     \date 2018-05-22
-    \author Ivan Gankevich
     \ingroup guard
     */
     template<class Ch, class Tr>

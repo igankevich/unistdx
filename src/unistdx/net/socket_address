@@ -1,3 +1,35 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2016, 2017, 2018, 2019, 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #ifndef UNISTDX_NET_SOCKET_ADDRESS
 #define UNISTDX_NET_SOCKET_ADDRESS
 
@@ -17,7 +49,7 @@
 #include <unistdx/net/ipv4_address>
 #include <unistdx/net/ipv6_address>
 
-#if defined(UNISTDX_HAVE_NETLINK)
+#if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
 #include <linux/netlink.h>
 #include <unistd.h>
 #endif
@@ -32,7 +64,7 @@ namespace sys {
     typedef ::in_port_t port_type;
     /// Unix socket address type.
     typedef struct ::sockaddr_un sockunix_type;
-    #if defined(UNISTDX_HAVE_NETLINK)
+    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
     /// Netlink socket address type.
     typedef struct ::sockaddr_nl netlink_sa_type;
     #endif
@@ -83,12 +115,11 @@ namespace sys {
     /**
     \brief Socket address wrapper.
     \date 2018-05-23
-    \author Ivan Gankevich
     \ingroup wrapper net
     \details
     This class wraps all socket address types. Socket address is
-    retrieved with \link sockaddr\endlink method and its length
-    with \link sockaddrlen\endlink method.
+    retrieved with \link sockaddr \endlink method and its length
+    with \link sockaddrlen \endlink method.
     \arg This is variant class, type of which is encoded in address
     family.
     */
@@ -97,7 +128,7 @@ namespace sys {
     private:
         sockinet6_type _addr6 = {};
         sockinet4_type _addr4;
-        #if defined(UNISTDX_HAVE_NETLINK)
+        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         netlink_sa_type _naddr;
         #endif
         sa_type _sockaddr;
@@ -116,7 +147,6 @@ namespace sys {
         /**
         \brief Construct socket_address with host and port.
         \date 2018-05-23
-        \author Ivan Gankevich
         \details
         \arg Host name resolution is not performed.
         \arg Parameter \p host is text representation of an IP-address.
@@ -155,7 +185,7 @@ namespace sys {
         explicit
         socket_address(const char* unix_socket_path) noexcept;
 
-        #if defined(UNISTDX_HAVE_NETLINK)
+        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         /// Construct socket_address by specifying netlink groups.
         inline explicit
         socket_address(int groups) {
@@ -362,7 +392,7 @@ namespace sys {
 
 namespace std {
 
-    /// Specialisation of \link std::hash\endlink for \link sys::socket_address\endlink.
+    /// Specialisation of \link std::hash \endlink for \link sys::socket_address \endlink.
     template<>
     struct hash<sys::socket_address> {
 

@@ -35,3 +35,6 @@ unistdx = declare_dependency(
     link_with: libunistdx_shared,
     include_directories: srcdir
 )
+
+subdir('doxygen')
+subdir('site')
