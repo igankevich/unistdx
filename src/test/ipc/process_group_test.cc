@@ -66,11 +66,3 @@ TEST(process_group, wait_sync) {
     int ret = g.wait();
     EXPECT_EQ(0, ret);
 }
-
-int main(int argc, char* argv[]) {
-    #if !defined(UNISTDX_TEST_HAVE_VFORK)
-    std::exit(77);
-    #endif
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

@@ -56,48 +56,38 @@ namespace sys {
 
     private:
         std::vector<process> _procs;
-        pid_type _gid = 0;
+        pid_type _id = 0;
 
     public:
 
         process_group() = default;
-
         ~process_group() = default;
-
         /// Move-constructor.
         process_group(process_group&& rhs) = default;
-
         process_group(const process_group&) = delete;
-
-        process_group&
-        operator=(const process_group&) = delete;
+        process_group& operator=(const process_group&) = delete;
 
         /// Move-assignment.
-        inline process_group&
-        operator=(process_group&& rhs) {
-            this->swap(rhs);
-            return *this;
-        }
+        inline process_group& operator=(process_group&& rhs) { this->swap(rhs); return *this; }
 
         /// Add new process to a group using \p childmain as the main function.
         template<class F>
         const process&
         emplace(F&& childmain, process_flag pf=process_flag::fork, size_t stack_size=4096*2) {
-            const bool has_gid = !this->_procs.empty();
-            this->_procs.emplace_back([this,&childmain,has_gid] () {
-                this_process::group_id(has_gid ? this->_gid : this_process::id());
+            const bool has_id = !this->_procs.empty();
+            const auto id = this->_id;
+            this->_procs.emplace_back([id,&childmain] () {
+                this_process::group_id(id);
                 return childmain();
             }, pf, stack_size);
-            process& proc = this->_procs.back();
-            if (!has_gid) {
-                this->_gid = proc.id();
-            }
+            auto& proc = this->_procs.back();
+            if (!has_id) { this->_id = proc.id(); }
+            proc.group_id(this->_id);
             return proc;
         }
 
         /// Wait until all processes finish their execution.
-        int
-        wait();
+        int wait();
 
         /**
         \brief Wait until all processes finish their execution
@@ -116,7 +106,7 @@ namespace sys {
             while (!this->_procs.empty()) {
                 {
                     unlock_guard<Lock> g(lock);
-                    UNISTDX_CHECK(::waitid(P_PGID, this->_gid, &info, int(flags)));
+                    UNISTDX_CHECK(::waitid(P_PGID, this->_id, &info, int(flags)));
                 }
                 status = sys::process_status(info);
                 result = std::find_if(
@@ -139,8 +129,8 @@ namespace sys {
         */
         inline void
         send(signal s) {
-            if (this->_gid > 0) {
-                UNISTDX_CHECK(::killpg(this->_gid, signal_type(s)));
+            if (this->_id > 0) {
+                UNISTDX_CHECK(::killpg(this->_id, signal_type(s)));
             }
         }
 
@@ -148,82 +138,46 @@ namespace sys {
         \brief Terminate all processes in the group.
         \throws bad_call
         */
-        inline void
-        terminate() {
-            this->send(signal::terminate);
-        }
+        inline void terminate() { this->send(signal::terminate); }
 
         /// Get process group ID.
-        inline pid_type
-        id() const noexcept {
-            return this->_gid;
-        }
+        inline pid_type id() const noexcept { return this->_id; }
 
         /// Get process by index \p i.
-        const process&
-        operator[](size_t i) const noexcept {
-            return this->_procs[i];
-        }
+        const process& operator[](size_t i) const noexcept { return this->_procs[i]; }
 
         /// Get process by index \p i.
-        inline process&
-        operator[](size_t i) noexcept {
-            return this->_procs[i];
-        }
+        inline process& operator[](size_t i) noexcept { return this->_procs[i]; }
 
         /// Get the number of proccess in the group.
-        inline size_t
-        size() const noexcept {
-            return this->_procs.size();
-        }
+        inline size_t size() const noexcept { return this->_procs.size(); }
 
         /// Returns iterator to the beginning of the container.
-        inline iterator
-        begin() noexcept {
-            return this->_procs.begin();
-        }
+        inline iterator begin() noexcept { return this->_procs.begin(); }
 
         /// Returns iterator to the end of the container.
-        inline iterator
-        end() noexcept {
-            return this->_procs.end();
-        }
+        inline iterator end() noexcept { return this->_procs.end(); }
 
         /// Returns the first process.
-        inline const process&
-        front() const noexcept {
-            return this->_procs.front();
-        }
+        inline const process& front() const noexcept { return this->_procs.front(); }
 
         /// Returns the first process.
-        inline process&
-        front() noexcept {
-            return this->_procs.front();
-        }
+        inline process& front() noexcept { return this->_procs.front(); }
 
         /// Returns the last process.
-        inline const process&
-        back() const noexcept {
-            return this->_procs.back();
-        }
+        inline const process& back() const noexcept { return this->_procs.back(); }
 
         /// Returns the last process.
-        inline process&
-        back() noexcept {
-            return this->_procs.back();
-        }
+        inline process& back() noexcept { return this->_procs.back(); }
 
         /// Check if the group is empty.
-        inline bool
-        empty() const noexcept {
-            return this->_procs.empty();
-        }
+        inline bool empty() const noexcept { return this->_procs.empty(); }
 
         /// Swap with \p rhs.
         inline void
         swap(process_group& rhs) {
             std::swap(this->_procs, rhs._procs);
-            std::swap(this->_gid, rhs._gid);
+            std::swap(this->_id, rhs._id);
         }
 
     };

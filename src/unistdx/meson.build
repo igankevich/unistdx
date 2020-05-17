@@ -36,5 +36,7 @@ unistdx = declare_dependency(
     include_directories: srcdir
 )
 
-subdir('doxygen')
-subdir('site')
+if with_site
+    subdir('doxygen')
+    subdir('site')
+endif
