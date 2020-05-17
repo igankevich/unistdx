@@ -60,7 +60,7 @@ fi
 if ! test "\$GUIX_SYSTEM" = "aarch64-linux"
 then
     slurm_job "arch-native" sh -c "\$(test_flags -Dbuildtype=release -Dcpp_args=-march=native)"
-fir
+fi
 
 d=/tmp/gitbucket-ci-\$(uuidgen)
 slurm_job "coverage" sh -c "
