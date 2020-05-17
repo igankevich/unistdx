@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 #define UNISTDX_TEST_CONFIG_IN
 
 #define UNISTDX_TEST_EMPTY_EXE_PATH "@empty_exe_path@"
+#mesondefine UNISTDX_TEST_HAVE_UNSHARE
 #mesondefine UNISTDX_TEST_SANITIZE_ADDRESS
 
 #endif // vim:filetype=cpp

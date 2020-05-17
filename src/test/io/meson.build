@@ -2,8 +2,8 @@ foreach conf : [
     ['epoll_event', [unistdx,gtest], []],
     ['fildes', [unistdx,gtest], []],
     ['fildesbuf', [unistdx,gtest], [
-        '-DUNISTDX_DEBUG_PACKETBUF',
-        '-DUNISTDX_DEBUG_FILDESBUF'
+        #'-DUNISTDX_DEBUG_PACKETBUF',
+        #'-DUNISTDX_DEBUG_FILDESBUF'
     ]],
     ['poll_event', [unistdx,gtest], []],
     ['poller', [unistdx,gtest], []],

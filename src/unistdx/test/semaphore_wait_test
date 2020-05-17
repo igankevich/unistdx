@@ -173,18 +173,14 @@ struct SemaphoreWaitTest: public ::testing::Test {
         using namespace std::chrono;
         semaphore_type sem;
         sys::process child([&sem] () {
-            std::cv_status ret = std::cv_status::timeout;
-            try {
-                semaphore_type sem_child(sem.id());
-                std::mutex mtx;
-                ret = sem_child.wait_for(mtx, milliseconds(100));
-            } catch (const sys::bad_call& err) {
-                std::cerr << err << std::endl;
-            }
-            return ret == std::cv_status::timeout ? EXIT_FAILURE : EXIT_SUCCESS;
+            semaphore_type sem_child(sem.id());
+            std::mutex mtx;
+            sem_child.wait(mtx);
         });
         using namespace std::this_thread;
         sem.notify_one();
+        sleep_for(milliseconds(100));
+        if (child) { child.terminate(); }
         sys::process_status status = child.wait();
         EXPECT_TRUE(status.exited());
         EXPECT_EQ(EXIT_SUCCESS, status.exit_code());

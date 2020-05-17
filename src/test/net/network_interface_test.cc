@@ -37,6 +37,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/netlink_poller>
 #include <unistdx/net/network_interface>
 #include <unistdx/net/veth_interface>
+#include <unistdx/test/config>
 #include <unistdx/test/print_flags>
 
 TEST(network_interface, flags) {
@@ -68,6 +69,9 @@ TEST(bridge_interface, add) {
 }
 
 int main(int argc, char* argv[]) {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::exit(77);
+    #endif
     using f = sys::unshare_flag;
     sys::this_process::unshare(f::users | f::network);
     ::testing::InitGoogleTest(&argc, argv);

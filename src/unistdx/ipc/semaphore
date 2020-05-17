@@ -221,7 +221,7 @@ namespace sys {
             const auto d = std::max(duration<Rep,Period>::zero(), dur);
             const auto s = duration_cast<seconds>(d);
             const auto ns = duration_cast<nanoseconds>(d - s);
-            const timespec_type timeout{s.count(), ns.count()};
+            const timespec_type timeout{static_cast<std::time_t>(s.count()), ns.count()};
             unlock_guard<Lock> unlock(lock);
             return this->increment(-1, &timeout);
         }
@@ -453,7 +453,8 @@ namespace sys {
             using namespace std::chrono;
             const auto s = time_point_cast<seconds>(tp);
             const auto ns = duration_cast<nanoseconds>(tp - s);
-            const timespec_type timeout{s.time_since_epoch().count(), ns.count()};
+            const timespec_type
+                timeout{static_cast<std::time_t>(s.time_since_epoch().count()), ns.count()};
             unlock_guard<Lock> unlock(lock);
             std::cv_status st = std::cv_status::no_timeout;
             int ret = ::sem_timedwait(&this->_sem, &timeout);
