@@ -40,9 +40,13 @@ struct process_exec_test:
 using f = sys::process_flag;
 std::vector<process_exec_params> all_params{
     {f::fork, "non-existent-file", false},
+    #if defined(UNISTDX_TEST_HAVE_VFORK)
     {f::wait_for_exec|f::signal_parent, "non-existent-file", false},
+    #endif
     {f::fork, UNISTDX_TEST_EMPTY_EXE_PATH, true},
+    #if defined(UNISTDX_TEST_HAVE_VFORK)
     {f::wait_for_exec|f::signal_parent, UNISTDX_TEST_EMPTY_EXE_PATH, true},
+    #endif
 };
 
 TEST_P(process_exec_test, return_int) {

@@ -6,6 +6,10 @@ status = cpp.run(files('unshare_test.cc'))
 if status.compiled() and status.returncode() == 0
     test_config.set('UNISTDX_TEST_HAVE_UNSHARE', true)
 endif
+status = cpp.run(files('vfork_test.cc'))
+if status.compiled() and status.returncode() == 0
+    test_config.set('UNISTDX_TEST_HAVE_VFORK', true)
+endif
 configure_file(
     input: 'config.in',
     output: 'config',

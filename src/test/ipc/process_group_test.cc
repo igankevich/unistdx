@@ -7,13 +7,11 @@
 #include <unistdx/test/operator>
 
 using f = sys::process_flag;
-using std::this_thread::sleep_for;
-using std::chrono::milliseconds;
 
 TEST(process_group, wait_async) {
     sys::process_group g;
-    g.emplace([] () { sleep_for(milliseconds(10)); return 0; });
-    g.emplace([] () { sleep_for(milliseconds(10)); return 0; });
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     std::mutex mtx;
     g.wait(
         mtx,
@@ -33,8 +31,16 @@ TEST(process_group, wait_async) {
 
 TEST(process_group, wait_sync) {
     sys::process_group g;
-    g.emplace([] () { sleep_for(milliseconds(10)); return 0; });
-    g.emplace([] () { sleep_for(milliseconds(10)); return 0; });
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
+    g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     int ret = g.wait();
     EXPECT_EQ(0, ret);
+}
+
+int main(int argc, char* argv[]) {
+    #if !defined(UNISTDX_TEST_HAVE_VFORK)
+    std::exit(77);
+    #endif
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
