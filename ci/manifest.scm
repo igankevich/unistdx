@@ -15,6 +15,7 @@
    (@ (gnu packages commencement) gcc-toolchain)
    (@ (gnu packages pkg-config) pkg-config)
    (@ (gnu packages pre-commit) python-pre-commit)
+   (@ (gnu packages python-xyz) python-chardet)
    (@ (gnu packages code) lcov)
    (@ (gnu packages gcovr) python-gcovr))
   (if-enabled "site"

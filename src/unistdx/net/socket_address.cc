@@ -284,3 +284,16 @@ sys::socket_address::operator==(const socket_address& rhs) const noexcept {
                rhs.sa_family() == 0;
     }
 }
+
+sys::socket_address::operator bool() const noexcept {
+    switch (this->family()) {
+        case family_type::unix: return unix_sockaddr_len(this->unix_path()) != 0;
+        case family_type::inet: return static_cast<bool>(addr4());
+        case family_type::inet6: return static_cast<bool>(addr6());
+        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
+        case family_type::netlink: return this->_naddr.nl_pid != 0 ||
+                                          this->_naddr.nl_groups != 0;
+        #endif
+        default: return false;
+    }
+}

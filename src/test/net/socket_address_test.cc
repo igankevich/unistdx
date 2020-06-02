@@ -294,6 +294,10 @@ TEST(socket_address, unix_domain) {
     EXPECT_NE(sys::socket_address("/path"), sys::socket_address("\0/path"));
     EXPECT_NE(sys::socket_address("/path"), sys::socket_address("\0/path"));
     EXPECT_FALSE(sys::socket_address("/path") < sys::socket_address("/path"));
+    EXPECT_TRUE(sys::socket_address("/path"));
+    EXPECT_TRUE(sys::socket_address("\0/path"));
+    EXPECT_TRUE(sys::socket_address("\0"));
+    EXPECT_FALSE(sys::socket_address());
 }
 
 struct socket_address_test: public ::testing::TestWithParam<sys::socket_address> {};

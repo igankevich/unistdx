@@ -33,8 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_SOCKET_ADDRESS
 #define UNISTDX_NET_SOCKET_ADDRESS
 
-#include <netinet/in.h>
 #include <sys/types.h>
+#include <netinet/in.h>
 #include <sys/un.h>
 
 #include <functional>
@@ -213,12 +213,10 @@ namespace sys {
         ) {}
 
         /// Compare socket addresses taking into account particular address family.
-        bool
-        operator<(const socket_address& rhs) const noexcept;
+        bool operator<(const socket_address& rhs) const noexcept;
 
         /// \copydoc operator<
-        bool
-        operator==(const socket_address& rhs) const noexcept;
+        bool operator==(const socket_address& rhs) const noexcept;
 
         /// \copydoc operator<
         inline bool
@@ -233,18 +231,10 @@ namespace sys {
         }
 
         /// Returns true, if socket_address has valid address and family.
-        inline constexpr explicit
-        operator bool() const noexcept {
-            return sa_family() != 0 && (family() == family_type::inet
-                                        ? static_cast<bool>(addr4())
-                                        : static_cast<bool>(addr6()));
-        }
+        explicit operator bool() const noexcept;
 
         /// Returns true, if socket_address has either invalid address or invalid family.
-        inline constexpr bool
-        operator!() const noexcept {
-            return !this->operator bool();
-        }
+        inline bool operator!() const noexcept { return !this->operator bool(); }
 
         friend std::ostream&
         operator<<(std::ostream& out, const socket_address& rhs);
