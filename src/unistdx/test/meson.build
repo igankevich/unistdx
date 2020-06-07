@@ -11,3 +11,8 @@ configure_file(
     output: 'config',
     configuration: test_config
 )
+
+install_headers(
+    'print_flags',
+    subdir: join_paths(meson.project_name(), 'test')
+)

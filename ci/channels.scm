@@ -10,4 +10,4 @@
     (channel
       (name 'guix)
       (url "https://git.cmmshq.ru/git/infrastructure/guix.git")
-      (commit "71804546b182b8300334df6fb23d207d5e5ba61c"))))
+      (commit "24268ec4184860192d2ec9043501ab6dc8aee99e"))))

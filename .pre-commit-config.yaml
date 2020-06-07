@@ -15,6 +15,7 @@ repos:
     -   id: normalise
         types: [text]
         files: .*
+        additional_dependencies: ['chardet']
     -   id: normalise-cpp
         files: (^src/[^\.]+|\.cc)$
     -   id: header-guard
