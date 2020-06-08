@@ -85,6 +85,44 @@ namespace sys {
     }
     /// \}
 
+    /**
+    \brief Define bitwise operations for the specified enumeration.
+    */
+    #define UNISTDX_FLAGS(ENUM) \
+        static_assert(::std::is_enum<ENUM>::value, "expect enum"); \
+        constexpr inline ENUM operator|(ENUM a, ENUM b) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return ENUM(type(a) | type(b)); \
+        } \
+        constexpr inline ENUM operator&(ENUM a, ENUM b) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return ENUM(type(a) & type(b)); \
+        } \
+        constexpr inline ENUM operator^(ENUM a, ENUM b) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return ENUM(type(a) ^ type(b)); \
+        } \
+        constexpr inline ENUM operator~(ENUM a) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return ENUM(~type(a)); \
+        } \
+        constexpr inline bool operator!(ENUM a) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return !type(a); \
+        } \
+        inline ENUM& operator|=(ENUM& a, ENUM b) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return a = ENUM(type(a) | type(b)); \
+        } \
+        inline ENUM& operator&=(ENUM& a, ENUM b) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return a = ENUM(type(a) & type(b)); \
+        } \
+        inline ENUM& operator^=(ENUM& a, ENUM b) noexcept { \
+            using type = typename ::std::underlying_type<ENUM>::type; \
+            return a = ENUM(type(a) ^ type(b)); \
+        }
+
 }
 
 #endif // vim:filetype=cpp

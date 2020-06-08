@@ -57,3 +57,24 @@ TEST(flag, _) {
     EXPECT_FALSE(bool(f & My_flag::B));
     EXPECT_TRUE(bool(f & My_flag::C));
 }
+
+namespace another_ns {
+    enum class Another_flag {A=1, B=2, C=4};
+    UNISTDX_FLAGS(Another_flag)
+}
+
+TEST(flags, _) {
+    using another_ns::Another_flag;
+    Another_flag f = Another_flag::A | Another_flag::B;
+    EXPECT_TRUE(bool(f & Another_flag::A));
+    EXPECT_TRUE(bool(f & Another_flag::B));
+    EXPECT_FALSE(bool(f & Another_flag::C));
+    f |= Another_flag::C;
+    EXPECT_TRUE(bool(f & Another_flag::A));
+    EXPECT_TRUE(bool(f & Another_flag::B));
+    EXPECT_TRUE(bool(f & Another_flag::C));
+    f &= ~Another_flag::B;
+    EXPECT_TRUE(bool(f & Another_flag::A));
+    EXPECT_FALSE(bool(f & Another_flag::B));
+    EXPECT_TRUE(bool(f & Another_flag::C));
+}
