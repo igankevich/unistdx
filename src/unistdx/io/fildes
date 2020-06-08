@@ -79,6 +79,22 @@ namespace sys {
     #endif
 
     /**
+    \brief Origin of file seek operations.
+    \ingroup io
+    */
+    enum class seek_origin: int {
+        start=SEEK_SET,
+        current=SEEK_CUR,
+        end=SEEK_END,
+        #if defined(UNISTDX_HAVE_SEEK_DATA)
+        data=SEEK_DATA,
+        #endif
+        #if defined(UNISTDX_HAVE_SEEK_HOLE)
+        hole=SEEK_HOLE,
+        #endif
+    };
+
+    /**
     \brief File descriptor wrapper.
     \date 2018-05-22
     \ingroup wrapper io
@@ -321,6 +337,71 @@ namespace sys {
             UNISTDX_CHECK_IO(ret);
             return ret;
         }
+
+        /**
+        \brief Get the current file offset in bytes.
+        \throws bad_call
+        \see \man{lseek,2}
+        */
+        inline offset_type
+        offset() const {
+            auto ret = ::lseek(this->_fd, 0, SEEK_CUR);
+            UNISTDX_CHECK(ret);
+            return ret;
+        }
+
+        /**
+        \brief Set the current file offset in bytes.
+        \throws bad_call
+        \see \man{lseek,2}
+        */
+        inline offset_type
+        offset(offset_type rhs) {
+            return this->offset(rhs, seek_origin::start);
+        }
+
+        /**
+        \brief Set the current file offset in bytes starting from the specified origin.
+        \throws bad_call
+        \see \man{lseek,2}
+        */
+        inline offset_type
+        offset(offset_type nbytes, seek_origin origin) {
+            auto ret = ::lseek(this->_fd, nbytes, static_cast<int>(origin));
+            UNISTDX_CHECK(ret);
+            return ret;
+        }
+
+        /**
+        \brief Set file size in bytes.
+        \throws bad_call
+        \see \man{ftruncate,2}
+        */
+        inline void
+        truncate(offset_type length) {
+            UNISTDX_CHECK(::ftruncate(this->_fd, length));
+        }
+
+        /**
+        \brief Write file data and metadata from system memory to the disk.
+        \throws bad_call
+        \see \man{fsync,2}
+        */
+        inline void sync() { UNISTDX_CHECK(::fsync(this->_fd)); }
+
+        /**
+        \brief Write file data (but not metadata) from system memory to the disk.
+        \throws bad_call
+        \see \man{fdatasync,2}
+        */
+        inline void sync_data() { UNISTDX_CHECK(::fdatasync(this->_fd)); }
+
+        /**
+        \brief Write file system cache to disk.
+        \throws bad_call
+        \see \man{syncfs,2}
+        */
+        inline void sync_file_system() { UNISTDX_CHECK(::syncfs(this->_fd)); }
 
         /// Get bare file descriptor.
         inline fd_type
@@ -668,6 +749,12 @@ namespace sys {
         }
 
     };
+
+    /**
+    \brief Write file system cache to disk. Affects all mounted file systems.
+    \see \man{sync,2}
+    */
+    inline void sync_file_systems() { ::sync(); }
 
 }
 

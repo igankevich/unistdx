@@ -218,6 +218,8 @@ foreach pair : [
     ['sys/socket.h', 'SO_PEERCRED'],
     ['unistd.h', 'copy_file_range'],
     ['unistd.h', 'pipe2'],
+    ['unistd.h', 'SEEK_DATA'],
+    ['unistd.h', 'SEEK_HOLE'],
 ]
     header = pair[0]
     symbol = pair[1]
