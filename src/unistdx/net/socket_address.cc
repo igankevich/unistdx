@@ -101,7 +101,7 @@ sys::operator<<(std::ostream& out, const socket_address& rhs) {
             out << unix_socket_path;
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         } else if (rhs.family() == family_type::netlink) {
-            out << "netlink";
+            out << rhs._naddr.nl_pid;
         #endif
         }
     }

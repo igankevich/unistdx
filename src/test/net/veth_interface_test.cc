@@ -37,32 +37,10 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/log_message>
 #include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
+#include <unistdx/net/interface_addresses>
 #include <unistdx/net/veth_interface>
 #include <unistdx/test/config>
 #include <unistdx/test/print_flags>
-
-TEST(veth_interface, _) {
-    sys::veth_interface veth0("veth0", "veth1");
-    using flags = sys::network_interface::flag;
-    veth0.up();
-    ASSERT_EQ(flags::up, (veth0.flags() & flags::up));
-    veth0.down();
-    ASSERT_EQ(flags{}, (veth0.flags() & flags::up));
-    sys::test::print_flags(veth0.flags());
-}
-
-TEST(veth_interface, move) {
-    std::vector<sys::veth_interface> veths;
-    veths.emplace_back("zeth0", "zeth0x");
-    veths.emplace_back("zeth1", "zeth1x");
-    veths.emplace_back("zeth2", "zeth2x");
-    veths.emplace_back("zeth3", "zeth3x");
-    for (auto& v : veths) {
-        std::clog << "v.index()=" << v.index() << std::endl;
-        std::clog << "v.peer().index()=" << v.peer().index() << std::endl;
-    }
-    veths.resize(100);
-}
 
 template <class ... Args>
 inline void
@@ -70,6 +48,42 @@ log(const Args& ... args) {
     sys::log_message("tst", args...);
 }
 
+void print_network_interfaces() {
+    for (const auto& ifa : sys::interface_addresses()) {
+        //sys::socket_address addr(*ifa.ifa_addr);
+        std::clog << std::setw(20) << ifa.ifa_name << std::endl;
+    }
+}
+
+#if defined(UNISTDX_TEST_HAVE_UNSHARE)
+void test_veth_up_down() {
+    {
+        sys::veth_interface veth0("veth0", "veth1");
+        using flags = sys::network_interface::flag;
+        veth0.up();
+        ASSERT_EQ(flags::up, (veth0.flags() & flags::up));
+        veth0.down();
+        ASSERT_EQ(flags{}, (veth0.flags() & flags::up));
+        sys::test::print_flags(veth0.flags());
+    }
+    {
+        std::vector<sys::veth_interface> veths;
+        veths.emplace_back("x0", "y0");
+        veths.emplace_back("x1", "y1");
+        veths.emplace_back("x2", "y2");
+        veths.emplace_back("x3", "y3");
+        for (auto& v : veths) {
+            std::clog << std::setw(10) << v.index();
+            std::clog << std::setw(20) << v.name();
+            std::clog << std::setw(20) << v.peer().index();
+            std::clog << std::setw(20) << v.peer().name();
+            std::clog << std::endl;
+        }
+        veths.resize(100);
+    }
+    print_network_interfaces();
+}
+#endif
 
 void test_bare() {
     std::vector<sys::veth_interface> veths;
@@ -86,6 +100,7 @@ void test_bare() {
     }
 }
 
+#if defined(UNISTDX_TEST_HAVE_UNSHARE)
 void test_unshare() {
     using f = sys::unshare_flag;
     sys::this_process::unshare(f::users | f::network);
@@ -129,15 +144,17 @@ void test_clone() {
 }
 
 TEST(fork, _) {
+    test_clone();
     test_clone_unshare();
-    //test_clone();
     std::clog << "-\n";
+    //test_bare();
     test_unshare();
+    test_veth_up_down();
 }
+#endif
 
 int main(int argc, char* argv[]) {
-    std::exit(77); // TODO find out why this test does not work
-    #if defined(UNISTDX_TEST_SANITIZE_ADDRESS)
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
     std::exit(77);
     #endif
     ::testing::InitGoogleTest(&argc, argv);

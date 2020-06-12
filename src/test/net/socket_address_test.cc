@@ -279,8 +279,8 @@ TEST(Endpoint, Literals) {
     using sys::ipv6_address;
     constexpr ipv4_address any4;
     constexpr ipv6_address any6;
-    constexpr sys::socket_address endpU(sys::socket_address(ipv6_address(), 1234), 100);
-    constexpr sys::socket_address endpV(ipv6_address(), 100);
+    sys::socket_address endpU(sys::socket_address(ipv6_address(), 1234), 100);
+    sys::socket_address endpV(ipv6_address(), 100);
     EXPECT_EQ(endpU, endpV);
 }
 

@@ -68,6 +68,7 @@ namespace sys {
     /// Netlink socket address type.
     typedef struct ::sockaddr_nl netlink_sa_type;
     #endif
+    typedef ::pid_t pid_type;
 
     namespace bits {
 
@@ -123,24 +124,26 @@ namespace sys {
     \arg This is variant class, type of which is encoded in address
     family.
     */
-    union socket_address {
+    class socket_address {
 
-    private:
-        sockinet6_type _addr6 = {};
-        sockinet4_type _addr4;
-        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        netlink_sa_type _naddr;
-        #endif
-        sa_type _sockaddr;
-        bytes<sockinet6_type> _bytes;
+    protected:
+        union {
+            sockinet6_type _addr6{};
+            sockinet4_type _addr4;
+            #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
+            netlink_sa_type _naddr;
+            #endif
+            sa_type _sockaddr;
+            bytes<sockinet6_type> _bytes;
+        };
 
     public:
 
-        inline constexpr
+        inline
         socket_address() noexcept {}
 
         /// Copy-constructor.
-        inline constexpr
+        inline
         socket_address(const socket_address &rhs) noexcept:
         _addr6(rhs._addr6) {}
 
@@ -157,27 +160,27 @@ namespace sys {
         }
 
         /// Construct socket_address with IPv4 address \p h and port \p p.
-        inline constexpr
+        inline
         socket_address(const ipv4_address h, const port_type p) noexcept:
         _addr6(bits::new_sockinet(family_type::inet, p, h)) {}
 
         /// Construct socket_address with IPv6 address \p h and port \p p.
-        inline constexpr
+        inline
         socket_address(const ipv6_address &h, const port_type p) noexcept:
         _addr6(bits::new_sockinet(family_type::inet6, p, h)) {}
 
         /// Construct socket_address from \c sockaddr_in system type.
-        inline constexpr
+        inline
         socket_address(const sockinet4_type &rhs) noexcept:
         _addr4(rhs) {}
 
         /// Construct socket_address from \c sockaddr_in6 system type.
-        inline constexpr
+        inline
         socket_address(const sockinet6_type &rhs) noexcept:
         _addr6(rhs) {}
 
         /// Construct socket_address from \c sockaddr system type.
-        inline constexpr
+        inline
         socket_address(const sa_type& rhs) noexcept:
         _sockaddr(rhs) {}
 
@@ -190,13 +193,13 @@ namespace sys {
         inline explicit
         socket_address(int groups) {
             this->_naddr.nl_family = AF_NETLINK;
-            this->_naddr.nl_pid = ::getpid();
+            this->_naddr.nl_pid = 0;
             this->_naddr.nl_groups = groups;
         }
         #endif
 
         /// Construct socket_address from another one and a new port.
-        inline constexpr
+        inline
         socket_address(const socket_address &rhs, const port_type newport) noexcept:
         _addr6(
             rhs.family() == family_type::inet ?
@@ -249,7 +252,7 @@ namespace sys {
         operator>>(bstream& in, socket_address& rhs);
 
         /// Get socket_address port.
-        inline constexpr port_type
+        inline port_type
         port() const noexcept {
             return to_host_format<port_type>(
                 this->family() == family_type::inet
@@ -259,13 +262,13 @@ namespace sys {
         }
 
         /// Get socket_address address family.
-        inline constexpr family_type
+        inline family_type
         family() const noexcept {
             return static_cast<family_type>(this->_addr6.sin6_family);
         }
 
         /// Get socket_address address family.
-        inline constexpr sa_family_type
+        inline sa_family_type
         sa_family() const noexcept {
             return this->_addr6.sin6_family;
         }
@@ -279,25 +282,25 @@ namespace sys {
         }
 
         /// Get IPv4 address.
-        inline constexpr ipv4_address
+        inline ipv4_address
         addr4() const noexcept {
             return ipv4_address(this->_addr4.sin_addr);
         }
 
         /// Get IPv4 port.
-        inline constexpr port_type
+        inline port_type
         port4() const {
             return this->_addr4.sin_port;
         }
 
         /// Get IPv6 address.
-        inline constexpr ipv6_address
+        inline ipv6_address
         addr6() const {
             return ipv6_address(this->_addr6.sin6_addr);
         }
 
         /// Get IPv6 port.
-        inline constexpr port_type
+        inline port_type
         port6() const {
             return this->_addr6.sin6_port;
         }
@@ -358,25 +361,47 @@ namespace sys {
     _address(sys::socket_address(rhs)._addr4.sin_addr)
     {}
 
-    constexpr ipv4_address
+    ipv4_address
     ipaddr_traits<ipv4_address>::address(const socket_address& rhs) noexcept {
         return rhs.addr4();
     }
 
-    constexpr port_type
+    port_type
     ipaddr_traits<ipv4_address>::port(const socket_address& rhs) noexcept {
         return to_host_format(rhs.port4());
     }
 
-    constexpr ipv6_address
+    ipv6_address
     ipaddr_traits<ipv6_address>::address(const socket_address& rhs) noexcept {
         return rhs.addr6();
     }
 
-    constexpr port_type
+    port_type
     ipaddr_traits<ipv6_address>::port(const socket_address& rhs) noexcept {
         return to_host_format(rhs.port6());
     }
+
+    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
+    class netlink_socket_address: public socket_address {
+    public:
+        inline explicit netlink_socket_address(pid_type id=0, u32 groups=0) noexcept {
+            this->_naddr.nl_family = AF_NETLINK,
+            this->_naddr.nl_pid = id,
+            this->_naddr.nl_groups = groups;
+        }
+        ~netlink_socket_address() = default;
+        netlink_socket_address(const netlink_socket_address&) = default;
+        netlink_socket_address& operator=(const netlink_socket_address&) = default;
+        netlink_socket_address(netlink_socket_address&&) = default;
+        netlink_socket_address& operator=(netlink_socket_address&&) = default;
+        inline constexpr static family_type family() noexcept { return family_type::netlink; }
+        inline constexpr static sa_family_type sa_family() noexcept { return AF_NETLINK; }
+        inline pid_type id() const noexcept { return this->_naddr.nl_pid; }
+        inline void id(pid_type rhs) noexcept { this->_naddr.nl_pid = rhs; }
+        inline u32 groups() const noexcept { return this->_naddr.nl_groups; }
+        inline void groups(u32 rhs) noexcept { this->_naddr.nl_groups = rhs; }
+    };
+    #endif
 
 }
 

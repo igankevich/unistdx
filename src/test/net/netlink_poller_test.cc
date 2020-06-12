@@ -40,7 +40,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/print_flags>
 
 TEST(NetlinkPoller, First) {
-    sys::socket_address endp(RTMGRP_IPV4_IFADDR);
+    sys::netlink_socket_address endp(0, RTMGRP_IPV4_IFADDR);
     sys::netlink_socket sock(sys::netlink_protocol::route);
     sock.bind(endp);
     sys::event_poller poller;

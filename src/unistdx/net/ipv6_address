@@ -58,7 +58,7 @@ namespace sys {
     typedef ::sa_family_t sa_family_type;
     typedef unsigned int prefix_type;
 
-    union socket_address;
+    class socket_address;
 
     /**
     \brief IPv6 address class.
@@ -356,11 +356,11 @@ namespace sys {
         }
 
         /// Get IPv6 address from socket_address.
-        inline static constexpr ipv6_address
+        inline static ipv6_address
         address(const socket_address& rhs) noexcept;
 
         /// Get IPv6 port from socket_address.
-        inline static constexpr port_type
+        inline static port_type
         port(const socket_address& rhs) noexcept;
 
     };

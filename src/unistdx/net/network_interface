@@ -108,7 +108,6 @@ namespace sys {
 
     protected:
         std::string _name;
-        mutable socket _socket{family_type::inet,socket_type::datagram};
 
     public:
 
@@ -120,6 +119,7 @@ namespace sys {
         explicit network_interface(int index);
 
         network_interface() = default;
+        ~network_interface() = default;
         network_interface(network_interface&&) = default;
         network_interface& operator=(network_interface&&) = default;
         network_interface(const network_interface&) = delete;
@@ -143,6 +143,5 @@ namespace sys {
     };
 
 }
-
 
 #endif // vim:filetype=cpp

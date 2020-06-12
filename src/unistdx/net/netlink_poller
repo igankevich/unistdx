@@ -35,8 +35,10 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <cstring>
 #include <iosfwd>
+#include <memory>
 #include <string>
 
+#include <unistdx/base/byte_buffer>
 #include <unistdx/base/flag>
 #include <unistdx/config>
 #include <unistdx/io/poller>
@@ -44,6 +46,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/netlink_attribute_iterator>
 #include <unistdx/net/netlink_message_iterator>
 #include <unistdx/net/socket>
+#include <unistdx/util/system>
 
 #if !defined(UNISTDX_HAVE_LINUX_NETLINK_H)
 #error netlink.h is required to use netlink
@@ -569,6 +572,7 @@ namespace sys {
         inline void type(message_type rhs) { this->nlmsg_type = u16(rhs); }
 
     };
+
     class ifinfo_request {
 
     public:
@@ -576,42 +580,42 @@ namespace sys {
         using message_type = ifinfo_message;
 
     private:
-        union {
-            struct {
-                ifinfo_message_header _header;
-                message_type _message;
-            };
-            attr_type _attributes;
-            char _bytes[4096];
+        struct data_type {
+            ifinfo_message_header _header;
+            message_type _message;
         };
+        data_type* _data{};
+        byte_buffer _buffer;
 
     public:
-
-        inline ifinfo_request() { this->_header.length(NLMSG_LENGTH(sizeof(ifinfo_message))); }
-        inline ifinfo_message_header& header() { return this->_header; }
-        inline ifinfo_message& message() { return this->_message; }
+        inline ifinfo_request():
+        _buffer(page_size()) {
+            this->_data = new (this->_buffer.data()) data_type;
+            header().length(NLMSG_LENGTH(sizeof(ifinfo_message)));
+        }
+        inline ~ifinfo_request() { this->_data->~data_type(); }
+        inline ifinfo_message_header& header() { return this->_data->_header; }
+        inline ifinfo_message& message() { return this->_data->_message; }
 
         inline void
         write(socket& sock) {
-            this->_header.increment_sequence();
-            auto nbytes = sock.write(this->_bytes, this->_header.length());
-            if (nbytes != this->_header.length()) {
-                UNISTDX_THROW_BAD_CALL();
-            }
+            header().increment_sequence();
+            auto nbytes = sock.write(this->_buffer.data(), header().length());
+            if (nbytes != header().length()) { UNISTDX_THROW_BAD_CALL(); }
         }
 
         inline void
         add(ifinfo_attribute type, const void* data, u16 size) {
             u16 nbytes = RTA_LENGTH(size);
-            u32 new_length = NLMSG_ALIGN(this->_header.length()) + RTA_ALIGN(nbytes);
-            if (new_length > sizeof(this->_bytes)) {
+            u32 new_length = NLMSG_ALIGN(header().length()) + RTA_ALIGN(nbytes);
+            if (new_length > this->_buffer.size()) {
                 throw std::length_error("attribute size exceeds message size");
             }
-            attr_type* attr = this->_header.tail<attr_type>();
+            attr_type* attr = header().tail<attr_type>();
             attr->type(type);
             attr->length(nbytes);
             if (data) { attr->data(data, size); }
-            this->_header.length(new_length);
+            header().length(new_length);
         }
 
         inline void
@@ -621,17 +625,17 @@ namespace sys {
 
         inline attr_type*
         begin(ifinfo_attribute type) {
-            attr_type* attr = this->_header.tail<attr_type>();
+            attr_type* attr = header().tail<attr_type>();
             this->add(type, nullptr, 0);
             return attr;
         }
 
         inline void
         end(attr_type* attr) {
-            attr->length(this->_header.tail<u8>() - reinterpret_cast<u8*>(attr));
+            attr->length(header().tail<u8>() - reinterpret_cast<u8*>(attr));
         }
 
-        inline void skip(u16 n) { this->_header.length(this->_header.length()+n); }
+        inline void skip(u16 n) { header().length(header().length()+n); }
 
     };
 
@@ -654,38 +658,38 @@ namespace sys {
 
     private:
         int _len = 0;
-        union {
-            netlink_header h;
-            char bytes[4096];
-        } _hdr;
+        netlink_header* _header{};
+        byte_buffer _buffer;
 
     public:
 
-        inline const netlink_header& header() const { return this->_hdr.h; }
+        inline netlink_container():
+        _buffer(page_size()) {
+            _header = new (this->_buffer.data()) netlink_header;
+        }
+
+        inline ~netlink_container() { this->_header->~netlink_header(); }
+        inline const netlink_header& header() const noexcept { return *this->_header; }
+        inline netlink_header& header() noexcept { return *this->_header; }
 
         /// Read netlink message sequence from socket \p sock.
         inline void
         read(socket& sock) {
-            this->_len = sock.read(this->_hdr.bytes, sizeof(this->_hdr.bytes));
+            this->_len = sock.read(this->_buffer.data(), this->_buffer.size());
         }
 
         /// Returns the pointer to the beginning of message sequence.
-        inline iterator
-        begin() noexcept {
-            return this->_hdr.h.template begin<value_type>(this->_len);
+        inline iterator begin() noexcept {
+            return header().template begin<value_type>(this->_len);
         }
 
         /// Returns the pointer to the end of message sequence.
-        inline iterator
-        end() noexcept {
-            return this->_hdr.h.template end<value_type>();
+        inline iterator end() noexcept {
+            return header().template end<value_type>();
         }
 
         /// Netlink message length.
-        inline int
-        length() const noexcept {
-            return this->_len;
-        }
+        inline int length() const noexcept { return this->_len; }
 
     };
 

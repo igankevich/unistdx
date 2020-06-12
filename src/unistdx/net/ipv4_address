@@ -56,7 +56,7 @@ namespace sys {
     /// Network prefix type.
     typedef unsigned int prefix_type;
 
-    union socket_address;
+    class socket_address;
 
     /**
     \brief IPv4 address class.
@@ -343,11 +343,11 @@ namespace sys {
         }
 
         /// Get IPv4 address from socket_address.
-        inline static constexpr ipv4_address
+        inline static ipv4_address
         address(const socket_address& rhs) noexcept;
 
         /// Get IPv4 port from socket_address.
-        inline static constexpr port_type
+        inline static port_type
         port(const socket_address& rhs) noexcept;
 
     };
