@@ -79,6 +79,17 @@ namespace sys {
         return is_network_byte_order() ? n : byte_swap<T>(n);
     }
 
+    enum class byte_order {little_endian, big_endian};
+
+    inline constexpr byte_order
+    native_byte_order() noexcept {
+        #if defined(UNISTDX_BIG_ENDIAN)
+        return byte_order::big_endian;
+        #else
+        return byte_order::little_endian;
+        #endif
+    }
+
 }
 
 #endif // vim:filetype=cpp

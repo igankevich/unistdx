@@ -40,14 +40,14 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace {
 
-    void init_pages(void* addr, size_t n) {
+    inline void init_pages(void* addr, size_t n) {
         // LCOV_EXCL_START
         UNISTDX_CHECK(::madvise(addr, n, MADV_DONTFORK));
         UNISTDX_CHECK(::madvise(addr, n, MADV_DONTDUMP));
         // LCOV_EXCL_STOP
     }
 
-    void* do_mmap(size_t size) {
+    inline void* do_mmap(size_t size) {
         void* ptr = ::mmap(
             nullptr,
             size,
@@ -60,11 +60,11 @@ namespace {
         return ptr;
     }
 
-    void do_unmap(void* ptr, size_t size) {
+    inline void do_unmap(void* ptr, size_t size) {
         if (ptr) { UNISTDX_CHECK(::munmap(ptr, size)); }
     }
 
-    void* do_mremap(void* ptr, size_t old_size, size_t new_size) {
+    inline void* do_mremap(void* ptr, size_t old_size, size_t new_size) {
         ptr = ::mremap(ptr, old_size, new_size, MREMAP_MAYMOVE);
         UNISTDX_CHECK2(ptr, MAP_FAILED);
         return ptr;
@@ -131,6 +131,7 @@ sys::byte_buffer::read(pointer dst, size_type n) -> size_type {
 
 void
 sys::byte_buffer::peek(pointer dst, size_type n) {
+    if (n > remaining()) { throw std::range_error("sys::byte_buffer::peek"); }
     std::memcpy(dst, data()+position(), n);
 }
 
@@ -141,7 +142,7 @@ sys::byte_buffer::bump(size_type n) {
 }
 
 void
-sys::byte_buffer::compact() {
+sys::byte_buffer::compact() noexcept {
     auto n = remaining();
     std::memmove(data(), data()+position(), n);
     this->_position = n;
@@ -149,7 +150,7 @@ sys::byte_buffer::compact() {
 }
 
 void
-sys::byte_buffer::clear() {
+sys::byte_buffer::clear() noexcept {
     this->_position = 0;
     this->_limit = size();
     std::memset(data(), 0, size());

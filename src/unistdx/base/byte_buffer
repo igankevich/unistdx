@@ -33,11 +33,13 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BASE_BYTE_BUFFER
 #define UNISTDX_BASE_BYTE_BUFFER
 
+#include <chrono>
 #include <limits>
 #include <stdexcept>
 #include <type_traits>
 
 #include <unistdx/base/types>
+#include <unistdx/net/byte_order>
 
 namespace sys {
 
@@ -48,18 +50,18 @@ namespace sys {
                std::is_same<T,unsigned char>::value ||
                std::is_same<T,char16_t>::value ||
                std::is_same<T,char32_t>::value ||
-               std::is_same<T,sys::u8>::value ||
-               std::is_same<T,sys::u16>::value ||
-               std::is_same<T,sys::u32>::value ||
-               std::is_same<T,sys::u64>::value ||
-               std::is_same<T,sys::i8>::value ||
-               std::is_same<T,sys::i16>::value ||
-               std::is_same<T,sys::i32>::value ||
-               std::is_same<T,sys::i64>::value ||
-               std::is_same<T,sys::f32>::value ||
-               std::is_same<T,sys::f64>::value
+               std::is_same<T,u8>::value ||
+               std::is_same<T,u16>::value ||
+               std::is_same<T,u32>::value ||
+               std::is_same<T,u64>::value ||
+               std::is_same<T,i8>::value ||
+               std::is_same<T,i16>::value ||
+               std::is_same<T,i32>::value ||
+               std::is_same<T,i64>::value ||
+               std::is_same<T,f32>::value ||
+               std::is_same<T,f64>::value
                #if defined(UNISTDX_HAVE_FLOAT_128)
-               || std::is_same<T,sys::f128>::value
+               || std::is_same<T,f128>::value
                #endif
                ;
     }
@@ -96,6 +98,7 @@ namespace sys {
         size_type _size = 0;
         size_type _position = 0;
         size_type _limit = 0;
+        byte_order _order = native_byte_order();
 
     public:
 
@@ -104,8 +107,9 @@ namespace sys {
         byte_buffer& operator=(const byte_buffer&) = delete;
 
         /// Move-constructor.
-        inline byte_buffer(byte_buffer&& rhs):
-        _data(rhs._data), _size(rhs._size), _position(rhs._position), _limit(rhs._limit) {
+        inline byte_buffer(byte_buffer&& rhs) noexcept:
+        _data(rhs._data), _size(rhs._size), _position(rhs._position), _limit(rhs._limit),
+        _order(rhs._order) {
             rhs._data = nullptr;
             rhs._size = 0;
             rhs._position = 0;
@@ -126,58 +130,31 @@ namespace sys {
         ~byte_buffer();
 
         /// Get pointer to raw data.
-        inline iterator
-        data() noexcept {
-            return this->_data;
-        }
+        inline iterator data() noexcept { return this->_data; }
 
         /// Get pointer to raw data.
-        inline const_iterator
-        data() const noexcept {
-            return this->_data;
-        }
+        inline const_iterator data() const noexcept { return this->_data; }
 
         /// Get iterator to the beginning of the container.
-        inline iterator
-        begin() noexcept {
-            return this->_data;
-        }
+        inline iterator begin() noexcept { return this->_data; }
 
         /// Get iterator to the beginning of the container.
-        inline const_iterator
-        begin() const noexcept {
-            return this->_data;
-        }
+        inline const_iterator begin() const noexcept { return this->_data; }
 
         /// Get iterator to the end of the container.
-        inline iterator
-        end() noexcept {
-            return this->_data + this->_size;
-        }
+        inline iterator end() noexcept { return this->_data + this->_size; }
 
         /// Get iterator to the end of the container.
-        inline const_iterator
-        end() const noexcept {
-            return this->_data + this->_size;
-        }
+        inline const_iterator end() const noexcept { return this->_data + this->_size; }
 
         /// Get number of bytes in byte buffer.
-        inline size_type
-        size() const noexcept {
-            return this->_size;
-        }
+        inline size_type size() const noexcept { return this->_size; }
 
         /// Check if the buffer is valid.
-        inline explicit
-        operator bool() const noexcept {
-            return this->_data;
-        }
+        inline explicit operator bool() const noexcept { return this->_data; }
 
         /// Check if the buffer is valid.
-        inline bool
-        operator!() const noexcept {
-            return !this->operator bool();
-        }
+        inline bool operator!() const noexcept { return !this->operator bool(); }
 
         /**
         \brief Resize the buffer preserving its contents.
@@ -185,8 +162,7 @@ namespace sys {
         \see \man{mremap,2}
         \see \man{madvise,2}
         */
-        void
-        resize(size_type new_size);
+        void resize(size_type new_size);
 
         /**
         \brief Double the buffer size.
@@ -198,7 +174,7 @@ namespace sys {
         void grow();
 
         /// Returns maximum size a buffer may occupy (theoretical limit).
-        inline static size_type
+        inline constexpr static size_type
         max_size() noexcept {
             return std::numeric_limits<size_type>::max();
         }
@@ -210,21 +186,24 @@ namespace sys {
             std::swap(this->_size, rhs._size);
             std::swap(this->_position, rhs._position);
             std::swap(this->_limit, rhs._limit);
+            std::swap(this->_order, rhs._order);
         }
 
-        inline size_type position() const { return this->_position; }
-        inline size_type limit() const { return this->_limit; }
-        inline size_type remaining() const { return this->_limit - this->_position; }
-        inline void position(size_type rhs) { this->_position = rhs; }
-        inline void limit(size_type rhs) { this->_limit = rhs; }
-        inline void flip() { this->_limit = position(); this->_position = 0; }
+        inline size_type position() const noexcept { return this->_position; }
+        inline size_type limit() const noexcept { return this->_limit; }
+        inline size_type remaining() const noexcept { return this->_limit - this->_position; }
+        inline byte_order order() const noexcept { return this->_order; }
+        inline void position(size_type rhs) noexcept { this->_position = rhs; }
+        inline void limit(size_type rhs) noexcept { this->_limit = rhs; }
+        inline void order(byte_order rhs) noexcept { this->_order = rhs; }
+        inline void flip() noexcept { this->_limit = position(); this->_position = 0; }
 
         auto write(const_pointer src, size_type n) -> size_type;
         auto read(pointer dst, size_type n) -> size_type;
         void peek(pointer dst, size_type n);
         void bump(size_type n);
-        void compact();
-        void clear();
+        void compact() noexcept;
+        void clear() noexcept;
 
         template <class Sink> auto flush(Sink& dst) -> size_type {
             size_type nwritten = 0, n = 0;
@@ -249,26 +228,70 @@ namespace sys {
 
         template <class T>
         auto write(T x) -> typename std::enable_if<is_basic<T>(),void>::type {
+            if (order() != native_byte_order()) { byte_swap(x); }
             this->write(&x, sizeof(T));
         }
 
         template <class T>
         auto read(T& x) -> typename std::enable_if<is_basic<T>(),void>::type {
             this->read(&x, sizeof(T));
+            if (order() != native_byte_order()) { byte_swap(x); }
         }
 
         template <class C, class T, class A>
         void write(const std::basic_string<C,T,A>& x) {
-            this->write(static_cast<sys::u64>(x.size()));
+            this->write(static_cast<u64>(x.size()));
             this->write(x.data(), x.size());
         }
 
         template <class C, class T, class A>
         void read(std::basic_string<C,T,A>& x) {
-            sys::u64 size = 0;
-            this->read<sys::u64>(size);
+            u64 size = 0;
+            this->read<u64>(size);
             x.resize(size);
             this->read(&x[0], x.size());
+        }
+
+        template <class T>
+        auto write(T x) -> typename std::enable_if<std::is_enum<T>::value,void>::type {
+            using type = typename std::underlying_type<T>::type;
+            this->write(static_cast<type>(x));
+        }
+
+        template <class T>
+        auto read(T& x) -> typename std::enable_if<std::is_enum<T>::value,void>::type {
+            using type = typename std::underlying_type<T>::type;
+            this->read(reinterpret_cast<type&>(x));
+        }
+
+        template <class Rep, class Period>
+        void write(std::chrono::duration<Rep,Period> dt) {
+            using std::chrono::duration_cast;
+            using std::chrono::nanoseconds;
+            this->write(u64(duration_cast<nanoseconds>(dt).count()));
+        }
+
+        template <class Rep, class Period>
+        void read(std::chrono::duration<Rep,Period>& dt) {
+            using std::chrono::duration_cast;
+            using std::chrono::nanoseconds;
+            u64 n = 0;
+            this->read(n);
+            dt = duration_cast<std::chrono::duration<Rep,Period>>(nanoseconds(n));
+        }
+
+        template <class Clock, class Duration>
+        void write(std::chrono::time_point<Clock,Duration> t) {
+            this->write(t.time_since_epoch());
+        }
+
+        template <class Clock, class Duration>
+        void read(std::chrono::time_point<Clock,Duration>& t) {
+            using time_point = std::chrono::time_point<Clock,Duration>;
+            using duration = typename time_point::duration;
+            duration dt{};
+            this->read(dt);
+            t = time_point(dt);
         }
 
     };

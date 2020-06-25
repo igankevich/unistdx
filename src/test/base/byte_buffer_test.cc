@@ -47,3 +47,19 @@ TEST(byte_buffer, resize_empty) {
     buf.resize(4096);
     EXPECT_EQ(4096u, buf.size());
 }
+
+TEST(byte_buffer, read) {
+    sys::byte_buffer buf(0);
+    char tmp[16];
+    EXPECT_THROW(buf.read(tmp, sizeof(tmp)), std::range_error);
+    buf.resize(4096);
+    EXPECT_NO_THROW(buf.read(tmp, sizeof(tmp)));
+}
+
+TEST(byte_buffer, peek) {
+    sys::byte_buffer buf(0);
+    char tmp[16];
+    EXPECT_THROW(buf.peek(tmp, sizeof(tmp)), std::range_error);
+    buf.resize(4096);
+    EXPECT_NO_THROW(buf.peek(tmp, sizeof(tmp)));
+}
