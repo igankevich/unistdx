@@ -40,6 +40,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/base/types>
 #include <unistdx/net/byte_order>
+#include <unistdx/net/bytes>
 
 namespace sys {
 
@@ -228,14 +229,17 @@ namespace sys {
 
         template <class T>
         auto write(T x) -> typename std::enable_if<is_basic<T>(),void>::type {
-            if (order() != native_byte_order()) { byte_swap(x); }
-            this->write(&x, sizeof(T));
+            bytes<T> tmp(x);
+            if (order() != native_byte_order()) { tmp.swap(); }
+            this->write(tmp.data(), sizeof(T));
         }
 
         template <class T>
         auto read(T& x) -> typename std::enable_if<is_basic<T>(),void>::type {
-            this->read(&x, sizeof(T));
-            if (order() != native_byte_order()) { byte_swap(x); }
+            bytes<T> tmp;
+            this->read(tmp.data(), sizeof(T));
+            if (order() != native_byte_order()) { tmp.swap(); }
+            x = tmp;
         }
 
         template <class C, class T, class A>

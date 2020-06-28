@@ -51,6 +51,9 @@ namespace sys {
         struct byte_swap_chooser<Int, true, true> {
 
             inline void
+            swap() noexcept {}
+
+            inline void
             to_network_format() noexcept {}
 
             inline void
@@ -69,13 +72,18 @@ namespace sys {
         struct byte_swap_chooser<Int, false, true> {
 
             inline void
-            to_network_format() noexcept {
+            swap() noexcept {
                 this->_intval = byte_swap<Int>(this->_intval);
             }
 
             inline void
+            to_network_format() noexcept {
+                this->swap();
+            }
+
+            inline void
             to_host_format() noexcept {
-                this->to_network_format();
+                this->swap();
             }
 
             inline constexpr bool
@@ -89,6 +97,9 @@ namespace sys {
 
         template<class Arr>
         struct byte_swap_chooser<Arr, true, false> {
+
+            inline void
+            swap() noexcept {}
 
             inline void
             to_network_format() noexcept {}
@@ -109,8 +120,13 @@ namespace sys {
         struct byte_swap_chooser<Arr, false, false> {
 
             inline void
-            to_network_format() noexcept {
+            swap() noexcept {
                 std::reverse(this->_arr, this->_arr + sizeof(Arr));
+            }
+
+            inline void
+            to_network_format() noexcept {
+                this->swap();
             }
 
             inline void

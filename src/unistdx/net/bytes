@@ -112,6 +112,12 @@ namespace sys {
             std::copy_n(first, n, this->_bytes);
         }
 
+        /// Swap (reverse) byte order in-place.
+        inline void
+        swap() noexcept {
+            this->_intval.swap();
+        }
+
         /// Convert binary representation to network byte order in-place.
         inline void
         to_network_format() noexcept {
