@@ -72,6 +72,24 @@ namespace {
 
 }
 
+sys::byte_buffer::byte_buffer(const byte_buffer& rhs):
+_size(rhs._size), _position(rhs._position), _limit(rhs._limit), _order(rhs._order) {
+    if (size() > 0) {
+        this->_data = static_cast<value_type*>(do_mmap(size())),
+        init_pages(data(), size());
+        std::memcpy(data(), rhs.data(), size());
+    }
+}
+
+sys::byte_buffer& sys::byte_buffer::operator=(const byte_buffer& rhs) {
+    resize(rhs.size());
+    std::memcpy(data(), rhs.data(), size());
+    this->_position = rhs._position;
+    this->_limit = rhs._limit;
+    this->_order = rhs._order;
+    return *this;
+}
+
 sys::byte_buffer::byte_buffer(size_type size):
 _size(size), _limit(size) {
     if (size > 0) {

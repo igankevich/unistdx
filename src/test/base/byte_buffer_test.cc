@@ -63,3 +63,18 @@ TEST(byte_buffer, peek) {
     buf.resize(4096);
     EXPECT_NO_THROW(buf.peek(tmp, sizeof(tmp)));
 }
+
+TEST(byte_buffer, copy) {
+    sys::byte_buffer a(4096);
+    a.write(1);
+    a.write(2);
+    a.write(3);
+    sys::byte_buffer b(a);
+    EXPECT_TRUE(std::equal(a.data(), a.data()+a.size(), b.data()));
+    sys::byte_buffer c(4096);
+    c.write(4);
+    c.write(5);
+    c.write(6);
+    c = a;
+    EXPECT_TRUE(std::equal(a.data(), a.data()+a.size(), c.data()));
+}

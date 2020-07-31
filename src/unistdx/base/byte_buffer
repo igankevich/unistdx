@@ -104,8 +104,8 @@ namespace sys {
     public:
 
         byte_buffer() = default;
-        byte_buffer(const byte_buffer&) = delete;
-        byte_buffer& operator=(const byte_buffer&) = delete;
+        byte_buffer(const byte_buffer& rhs);
+        byte_buffer& operator=(const byte_buffer& rhs);
 
         /// Move-constructor.
         inline byte_buffer(byte_buffer&& rhs) noexcept:
