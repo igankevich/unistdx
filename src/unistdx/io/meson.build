@@ -13,6 +13,7 @@ install_headers(
     'fildes',
     'fildes_pair',
     'fildesbuf',
+    'memory_mapping',
     'open_flag',
     'pipe',
     'poll_event',

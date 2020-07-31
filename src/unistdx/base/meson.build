@@ -15,6 +15,7 @@ install_headers(
     'byte_buffer',
     'check',
     'command_line',
+    'contracts',
     'delete_each',
     'flag',
     'ios_guard',
