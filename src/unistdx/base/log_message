@@ -33,8 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BASE_LOG_MESSAGE
 #define UNISTDX_BASE_LOG_MESSAGE
 
-#include <cassert>
-
+#include <unistdx/base/contracts>
 #include <unistdx/bits/macros>
 #include <unistdx/io/sysstream>
 
@@ -95,8 +94,8 @@ namespace sys {
         ):
         _str(STDERR_FILENO, 256),
         _spec(spec) {
-            assert(name != nullptr); // LCOV_EXCL_LINE
-            assert(fmt != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(name != nullptr);
+            UNISTDX_PRECONDITION(fmt != nullptr);
             this->write_name(name);
             this->format_msg(fmt, tokens ...);
         }
@@ -113,7 +112,7 @@ namespace sys {
         log_message(const char* name, char spec='_'):
         _str(STDERR_FILENO, 256),
         _spec(spec) {
-            assert(name != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(name != nullptr);
             this->write_name(name);
         }
 
@@ -135,14 +134,14 @@ namespace sys {
 
         inline void
         format_msg(const char* s) {
-            assert(s != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(s != nullptr);
             this->_str << s;
         }
 
         template<class T, class ... Args>
         void
         format_msg(const char* s, const T& value, const Args& ... args) {
-            assert(s != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(s != nullptr);
             const char* olds = s;
             while (*s && *s != this->_spec) {
                 ++s;
@@ -156,7 +155,7 @@ namespace sys {
 
         inline void
         write_name(const char* name) {
-            assert(name != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(name != nullptr);
             this->_str.width(10);
             this->_str.setf(std::ios::right, std::ios::adjustfield);
             this->_str << name << ": ";

@@ -21,7 +21,8 @@ foreach conf : [
             executable_name,
             sources: source_name,
             include_directories: srcdir,
-            dependencies: conf[1]
+            dependencies: conf[1],
+            implicit_include_directories: false,
         )
     )
 endforeach

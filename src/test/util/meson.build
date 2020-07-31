@@ -19,7 +19,8 @@ foreach conf : [
                 sources: source_name,
                 include_directories: srcdir,
                 dependencies: conf[1],
-                link_with: libs
+                link_with: libs,
+                implicit_include_directories: false,
             )
         )
     endforeach
@@ -38,7 +39,8 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
             sources: 'backtrace_test.cc',
             include_directories: srcdir,
             dependencies: [unistdx,threads],
-            link_with: libs
+            link_with: libs,
+            implicit_include_directories: false,
         )
         foreach type : ['signal', 'terminate']
             test(

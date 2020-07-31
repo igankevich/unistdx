@@ -11,6 +11,7 @@ executable(
     'posix-test',
     sources: 'posix_test.cc',
     include_directories: srcdir,
+    implicit_include_directories: false,
 )
 
 # test coverage {{{

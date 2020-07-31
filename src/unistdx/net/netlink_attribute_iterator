@@ -33,8 +33,9 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_NETLINK_ATTRIBUTE_ITERATOR
 #define UNISTDX_NET_NETLINK_ATTRIBUTE_ITERATOR
 
-#include <cassert>
 #include <iterator>
+
+#include <unistdx/base/contracts>
 
 namespace sys {
 
@@ -74,8 +75,8 @@ namespace sys {
         _attr(rhs),
         _len(len) {
             // LCOV_EXCL_START
-            assert(this->_attr);
-            assert(this->_len >= 0);
+            UNISTDX_PRECONDITION(rhs != nullptr);
+            UNISTDX_PRECONDITION(len >= 0);
             // LCOV_EXCL_STOP
         }
 
@@ -161,7 +162,7 @@ namespace sys {
 
         inline void
         do_next() noexcept {
-            assert(this->_attr); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->_attr);
             this->_attr = this->next();
             if (!this->ok()) {
                 this->_attr = nullptr;

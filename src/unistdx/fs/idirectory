@@ -33,9 +33,9 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_FS_IDIRECTORY
 #define UNISTDX_FS_IDIRECTORY
 
-#include <cassert>
 #include <unistd.h>
 
+#include <unistdx/base/contracts>
 #include <unistdx/fs/directory_entry>
 #include <unistdx/fs/dirstream>
 #include <unistdx/fs/path_flag>
@@ -168,7 +168,7 @@ namespace sys {
         /// Get next directory entry as \link directory_entry \endlink.
         inline basic_idirectory&
         operator>>(reference rhs) {
-            assert(this->is_open()); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->is_open());
             this->read_direntry(rhs);
             return *this;
         }
@@ -211,13 +211,13 @@ namespace sys {
 
         inline pointer
         read_direntry() noexcept {
-            assert(this->is_open()); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->is_open()); // LCOV_EXCL_LINE
             return static_cast<pointer>(::readdir(this->_dir));
         }
 
         inline void
         read_direntry(reference rhs) {
-            assert(this->is_open()); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->is_open()); // LCOV_EXCL_LINE
             if (this->good()) {
                 bool success = false;
                 while (!success && !this->eof()) {

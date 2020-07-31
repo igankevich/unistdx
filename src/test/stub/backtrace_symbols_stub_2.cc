@@ -33,10 +33,11 @@ For more information, please refer to <http://unlicense.org/>
 #include <execinfo.h>
 
 #include <algorithm>
-#include <cassert>
 #include <cstdlib>
 #include <new>
 #include <vector>
+
+#include <unistdx/base/contracts>
 
 char**
 backtrace_symbols(void *const *, int n) throw () {
@@ -56,7 +57,7 @@ backtrace_symbols(void *const *, int n) throw () {
     }
     // skip pointers area
     char* pbuf = buf + sizeof(Bytes)*n;
-    assert(size_t(pbuf) % sizeof(Bytes) == 0);
+    UNISTDX_ASSERTION(size_t(pbuf) % sizeof(Bytes) == 0);
     // put all entries to the buffer and record their pointers
     std::vector<char*> ptrs(n);
     for (int i=0; i<n; ++i) {

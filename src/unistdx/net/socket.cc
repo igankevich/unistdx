@@ -32,8 +32,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/net/socket>
 
-#include <netinet/tcp.h>
-
 #include <unistdx/base/log_message>
 #include <unistdx/base/make_object>
 #include <unistdx/bits/safe_calls>
@@ -96,8 +94,8 @@ sys::fildes(safe_socket(int (family), int(type)|default_flags, proto))
 
 void
 sys::socket::bind(const socket_address& e) {
-    this->create_socket_if_necessary(e);
-    this->setopt(reuse_addr);
+    create_socket_if_necessary(e);
+    set(options::reuse_address);
     #ifndef NDEBUG
     log_message("sys", "binding to _", e);
     #endif
@@ -155,22 +153,8 @@ sys::socket::close() {
 void
 sys::socket::setopt(option opt) {
     int one = 1;
-    UNISTDX_CHECK(
-        ::setsockopt(this->_fd, SOL_SOCKET, opt, &one, sizeof(one))
-    );
+    set(SOL_SOCKET, opt, one);
 }
-
-#if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
-void
-sys::socket::set_user_timeout(const duration& d) {
-    using namespace std::chrono;
-    const unsigned int ms = duration_cast<milliseconds>(d).count();
-    UNISTDX_CHECK(
-        ::setsockopt(this->_fd, IPPROTO_TCP, TCP_USER_TIMEOUT, &ms, sizeof(ms))
-    );
-}
-
-#endif
 
 // LCOV_EXCL_START
 int
@@ -181,16 +165,7 @@ sys::socket::error() const noexcept {
         ret = -1;
     } else {
         try {
-            socklen_type sz = sizeof(opt);
-            UNISTDX_CHECK(
-                ::getsockopt(
-                    this->_fd,
-                    SOL_SOCKET,
-                    SO_ERROR,
-                    &opt,
-                    &sz
-                )
-            );
+            opt = get<int>(options::error);
         } catch (...) {
             ret = -1;
         }
@@ -235,19 +210,6 @@ sys::socket::create_socket_if_necessary(const socket_address& e) {
         this->_fd = safe_socket(e.sa_family(), type | default_flags, 0);
     }
 }
-
-#if defined(UNISTDX_HAVE_SO_PEERCRED)
-sys::user_credentials
-sys::socket::credentials() const {
-    user_credentials uc {};
-    socklen_type n = sizeof(uc);
-    UNISTDX_CHECK(
-        ::getsockopt(this->_fd, SOL_SOCKET, SO_PEERCRED, &uc, &n)
-    );
-    return uc;
-}
-
-#endif
 
 #if defined(UNISTDX_HAVE_SCM_RIGHTS)
 namespace {

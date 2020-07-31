@@ -5,7 +5,8 @@ backtrace_symbols_stub = shared_library(
 
 backtrace_symbols_stub_2 = shared_library(
     'backtrace_symbols_stub_2',
-    sources: 'backtrace_symbols_stub_2.cc'
+    sources: 'backtrace_symbols_stub_2.cc',
+    include_directories: srcdir,
 )
 
 setgid_stub = shared_library(

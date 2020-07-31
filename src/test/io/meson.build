@@ -20,7 +20,8 @@ foreach conf : [
             sources: source_name,
             include_directories: srcdir,
             dependencies: conf[1],
-            cpp_args: conf[2]
+            cpp_args: conf[2],
+            implicit_include_directories: false,
         )
     )
 endforeach
@@ -31,6 +32,7 @@ benchmark(
         'memory-mapping-benchmark',
         sources: 'memory_mapping_benchmark.cc',
         include_directories: srcdir,
-        dependencies: [unistdx]
+        dependencies: [unistdx],
+        implicit_include_directories: false,
     )
 )

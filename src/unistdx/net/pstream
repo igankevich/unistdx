@@ -33,9 +33,9 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_PSTREAM
 #define UNISTDX_NET_PSTREAM
 
-#include <cassert>
 #include <stdexcept>
 
+#include <unistdx/base/contracts>
 #include <unistdx/base/packetbuf>
 #include <unistdx/base/types>
 #include <unistdx/bits/no_copy_and_move>
@@ -154,8 +154,8 @@ namespace sys {
         inline void
         append_payload(basic_pstream& rhs) {
             // LCOV_EXCL_START
-            assert(this->rdbuf());
-            assert(rhs.rdbuf());
+            UNISTDX_ASSERTION(this->rdbuf());
+            UNISTDX_ASSERTION(rhs.rdbuf());
             // LCOV_EXCL_STOP
             ::sys::append_payload(*this->rdbuf(), *rhs.rdbuf());
         }
@@ -164,8 +164,8 @@ namespace sys {
         inline void
         append_payload_cur(basic_pstream& src) {
             // LCOV_EXCL_START
-            assert(this->rdbuf());
-            assert(src.rdbuf());
+            UNISTDX_ASSERTION(this->rdbuf());
+            UNISTDX_ASSERTION(src.rdbuf());
             // LCOV_EXCL_STOP
             ::sys::append_payload(
                 *this->rdbuf(),

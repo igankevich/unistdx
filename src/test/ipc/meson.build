@@ -25,7 +25,8 @@ foreach conf : [
                 sources: source_name,
                 include_directories: srcdir,
                 dependencies: conf[1],
-                link_with: libs
+                link_with: libs,
+                implicit_include_directories: false,
             )
         )
     endforeach

@@ -33,12 +33,12 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_BSTREAM
 #define UNISTDX_NET_BSTREAM
 
-#include <cassert>
 #include <limits>
 #include <stdexcept>
 #include <streambuf>
 #include <string>
 
+#include <unistdx/base/contracts>
 #include <unistdx/base/types>
 #include <unistdx/bits/macros>
 #include <unistdx/config>
@@ -138,14 +138,14 @@ namespace sys {
         /// Synchronise both input and output buffers.
         inline void
         sync() {
-            assert(this->_buf); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->_buf); // LCOV_EXCL_LINE
             this->_buf->pubsync();
         }
 
         /// Synchronise both input and output buffers.
         inline void
         flush() {
-            assert(this->_buf); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->_buf); // LCOV_EXCL_LINE
             this->_buf->pubsync();
         }
 
@@ -202,8 +202,8 @@ namespace sys {
         */
         inline basic_bstream&
         write(const char_type* buf, std::streamsize n) {
-            assert(this->_buf); // LCOV_EXCL_LINE
-            assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(n == 0 || (buf && n > 0));
+            UNISTDX_ASSERTION(this->_buf);
             this->_buf->sputn(buf, n);
             return *this;
         }
@@ -214,8 +214,8 @@ namespace sys {
         */
         inline basic_bstream&
         read(char_type* buf, std::streamsize n) {
-            assert(this->_buf); // LCOV_EXCL_LINE
-            assert(n == 0 || (buf && n > 0)); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(n == 0 || (buf && n > 0));
+            UNISTDX_ASSERTION(this->_buf);
             this->_buf->sgetn(buf, n);
             return *this;
         }

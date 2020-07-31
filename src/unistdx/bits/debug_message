@@ -33,9 +33,10 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BITS_DEBUG_MESSAGE
 #define UNISTDX_BITS_DEBUG_MESSAGE
 
-#include <cassert>
 #include <iostream>
 #include <sstream>
+
+#include <unistdx/base/contracts>
 
 namespace sys {
 
@@ -58,8 +59,8 @@ namespace sys {
             const Args& ... tokens
         ):
         _spec(spec) {
-            assert(name); // LCOV_EXCL_LINE
-            assert(fmt); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(name);
+            UNISTDX_PRECONDITION(fmt);
             this->write_name(name);
             this->format_msg(fmt, tokens ...);
         }

@@ -33,10 +33,10 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BASE_PACKETBUF
 #define UNISTDX_BASE_PACKETBUF
 
-#include <cassert>
 #include <stdexcept>
 #include <streambuf>
 
+#include <unistdx/base/contracts>
 #include <unistdx/bits/macros>
 #include <unistdx/bits/no_copy_and_move>
 
@@ -153,7 +153,7 @@ namespace sys {
             // check if the header size has changed
             // depending on the length of the payload
             const std::streamsize new_hs = this->overwrite_header(ps);
-            assert(new_hs <= hs); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(new_hs <= hs);
             if (new_hs < hs) {
                 const std::streamsize delta = new_hs - hs;
                 char_type* src = this->opacket_begin();
@@ -179,7 +179,7 @@ namespace sys {
             if (!this->_ofinished) {
                 off_type offset = this->pptr() - this->pbase();
                 this->pbump(this->_opacketpos - offset);
-                assert(this->pbase() + this->_opacketpos == this->pptr()); // LCOV_EXCL_LINE
+                UNISTDX_ASSERTION(this->pbase() + this->_opacketpos == this->pptr());
                 this->_opacketpos = 0;
             }
         }
@@ -336,13 +336,9 @@ namespace sys {
         */
         inline void
         seek_ipayloadpos(off_type off) noexcept {
-            assert(this->eback() <= this->ipayload_begin() + off); // LCOV_EXCL_LINE
-            assert(this->ipayload_begin() + off <= this->egptr()); // LCOV_EXCL_LINE
-            this->setg(
-                this->eback(),
-                this->ipayload_begin() + off,
-                this->egptr()
-            );
+            UNISTDX_ASSERTION(this->eback() <= this->ipayload_begin() + off);
+            UNISTDX_ASSERTION(this->ipayload_begin() + off <= this->egptr());
+            this->setg(this->eback(), this->ipayload_begin() + off, this->egptr());
         }
 
     protected:
@@ -464,11 +460,11 @@ namespace sys {
         */
         inline void
         set_ipacket(off_type pos1, off_type pos2, std::streamsize n) noexcept {
+            UNISTDX_PRECONDITION(pos1 <= pos2);
+            UNISTDX_PRECONDITION(pos2 <= pos1 + n);
             this->_ipacketpos = pos1;
             this->_ipayloadpos = pos2;
             this->_ipacketsize = n;
-            assert(this->_ipacketpos <= this->_ipayloadpos); // LCOV_EXCL_LINE
-            assert(this->_ipayloadpos <= this->_ipacketpos + n); // LCOV_EXCL_LINE
         }
 
         /**
@@ -615,8 +611,8 @@ namespace sys {
 
         void
         setgptr(const streamptr<Ch>& rhs) {
-            assert(this->gptr() <= this->ipayload_end()); // LCOV_EXCL_LINE
-            assert(this->egptr() <= rhs._egptr); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->gptr() <= this->ipayload_end());
+            UNISTDX_ASSERTION(this->egptr() <= rhs._egptr);
             this->setg(this->eback(), this->ipayload_end(), rhs._egptr);
         }
 
@@ -631,7 +627,7 @@ namespace sys {
         /// can be read with a call to \link setg \endlink.
         void
         begin_payload() {
-            assert(this->_state == state_type::payload_is_ready); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->_state == state_type::payload_is_ready);
             this->setg(
                 this->eback(),
                 this->ipayload_begin(),

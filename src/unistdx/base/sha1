@@ -33,9 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BASE_SHA1
 #define UNISTDX_BASE_SHA1
 
-#include <cassert>
-#include <iostream>
-
+#include <unistdx/base/contracts>
 #include <unistdx/base/types>
 #include <unistdx/bits/macros>
 
@@ -101,7 +99,7 @@ namespace sys {
         */
         inline void
         put(const char* first, std::size_t n) {
-            assert(first != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(first);
             this->xput(first, first+n, n);
         }
 
@@ -113,7 +111,7 @@ namespace sys {
         */
         inline void
         put(const char* first, const char* last) {
-            assert(first != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(first && last && first <= last);
             this->xput(first, last, last-first);
         }
 
@@ -133,7 +131,7 @@ namespace sys {
         /// Copy SHA-1 digest to byte array pointed by \p result.
         inline void
         digest(unsigned char* result) noexcept {
-            assert(result != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(result);
             for (int i=0; i<digest_bytes_length(); ++i) {
                 result[i] = this->_bytes[i];
             }
@@ -142,7 +140,7 @@ namespace sys {
         /// Copy SHA-1 digest to character array pointed by \p result.
         inline void
         digest(char* result) noexcept {
-            assert(result != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(result);
             for (int i=0; i<digest_bytes_length(); ++i) {
                 result[i] = this->_bytes[i];
             }
@@ -151,7 +149,7 @@ namespace sys {
         /// Copy SHA-1 digest to unsigned integer array pointed by \p result.
         inline void
         digest(u32* result) noexcept {
-            assert(result != nullptr); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(result);
             for (int i=0; i<digest_length(); ++i) {
                 result[i] = this->_digest[i];
             }

@@ -33,8 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_FS_ODIRTREE
 #define UNISTDX_FS_ODIRTREE
 
-#include <cassert>
-
+#include <unistdx/base/contracts>
 #include <unistdx/fs/idirectory>
 #include <unistdx/fs/idirtree>
 #include <unistdx/fs/odirectory>
@@ -73,8 +72,8 @@ namespace sys {
         _dest(dst)
         {
             // LCOV_EXCL_START
-            assert(!this->_src.empty());
-            assert(!this->_dest.empty());
+            UNISTDX_PRECONDITION(!src.empty());
+            UNISTDX_PRECONDITION(!dst.empty());
             // LCOV_EXCL_STOP
         }
 

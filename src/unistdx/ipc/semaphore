@@ -46,11 +46,11 @@ For more information, please refer to <http://unlicense.org/>
 #include <sys/types.h>
 #endif
 
-#include <cassert>
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
 
+#include <unistdx/base/contracts>
 #include <unistdx/base/unlock_guard>
 #include <unistdx/io/fildes>
 #include <unistdx/ipc/process>
@@ -324,7 +324,7 @@ namespace sys {
 
         inline void
         increment(int how) {
-            assert(how != 0); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(how != 0);
             sembuf_type buf;
             buf.sem_num = 0;
             buf.sem_op = how;
@@ -335,7 +335,7 @@ namespace sys {
         #if defined(UNISTDX_HAVE_SEMTIMEDOP)
         inline std::cv_status
         increment(int how, const timespec_type* t) {
-            assert(how != 0); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(how != 0);
             sembuf_type buf;
             buf.sem_num = 0;
             buf.sem_op = how;

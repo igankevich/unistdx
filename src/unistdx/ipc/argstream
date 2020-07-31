@@ -34,11 +34,11 @@ For more information, please refer to <http://unlicense.org/>
 #define UNISTDX_IPC_ARGSTREAM
 
 #include <algorithm>
-#include <cassert>
 #include <ostream>
 #include <streambuf>
 #include <vector>
 
+#include <unistdx/base/contracts>
 #include <unistdx/it/intersperse_iterator>
 
 namespace sys {
@@ -92,7 +92,7 @@ namespace sys {
         /// Overrides \link std::streambuf::overflow \endlink.
         inline int_type
         overflow(int_type c) override {
-            assert(pptr() == epptr()); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(pptr() == epptr());
             if (not traits_type::eq_int_type(c, traits_type::eof())) {
                 arg_type& arg = this->_args.back();
                 arg.push_back(traits_type::to_char_type(c));

@@ -28,7 +28,8 @@ libunistdx_shared = shared_library(
     sources: libunistdx_src,
     version: meson.project_version(),
     install: true,
-    include_directories: srcdir
+    include_directories: srcdir,
+    implicit_include_directories: false,
 )
 
 unistdx = declare_dependency(

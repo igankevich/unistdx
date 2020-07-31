@@ -33,9 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_IO_FILDESBUF
 #define UNISTDX_IO_FILDESBUF
 
-#include <cassert>
-
 #include <unistdx/base/byte_buffer>
+#include <unistdx/base/contracts>
 #include <unistdx/base/packetbuf>
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/bits/no_copy_and_move>
@@ -144,7 +143,7 @@ namespace sys {
         /// Overrides \link std::streambuf::underflow \endlink.
         int_type
         underflow() override {
-            assert(gptr() == egptr()); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(gptr() == egptr());
             this->reset_gbuf();
             return this->fill() == 0
                    ? traits_type::eof()
@@ -258,7 +257,7 @@ namespace sys {
             const std::streamsize old_egptr_offset = egptr() - eback();
             char_type* first = egptr();
             char_type* last = glast();
-            assert(first != last); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(first != last);
             std::streamsize n = 0;
             while ((n = straits_type::read(_fd, first, last-first)) > 0) {
                 first += n;
@@ -326,8 +325,8 @@ namespace sys {
             #endif
             char_type* base = this->gfirst();
             setg(base, base + gptr_offset, base + egptr_offset);
-            assert(gptr() - eback() == gptr_offset); // LCOV_EXCL_LINE
-            assert(egptr() - eback() == egptr_offset); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(gptr() - eback() == gptr_offset);
+            UNISTDX_ASSERTION(egptr() - eback() == egptr_offset);
         }
 
         inline char_type*
@@ -342,7 +341,7 @@ namespace sys {
 
         inline void
         pgrow(std::streamsize new_size) {
-            assert(new_size > std::streamsize(this->_pbuf.size())); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(new_size > std::streamsize(this->_pbuf.size()));
             #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
             this->log("pgrow size=_", new_size);
             #endif
@@ -351,8 +350,8 @@ namespace sys {
             this->_pbuf.resize(new_size);
             setp(pfirst() + pbase_offset, plast());
             pbump(pptr_offset);
-            assert(pptr() - pbase() == pptr_offset); // LCOV_EXCL_LINE
-            assert(pbase() - pfirst() == pbase_offset); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(pptr() - pbase() == pptr_offset);
+            UNISTDX_ASSERTION(pbase() - pfirst() == pbase_offset);
         }
 
         #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)

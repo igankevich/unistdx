@@ -33,13 +33,13 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/websocketbuf>
 
 #include <algorithm>
-#include <cassert>
 #include <functional>
 #include <ostream>
 #include <random>
 #include <sstream>
 
 #include <unistdx/base/base64>
+#include <unistdx/base/contracts>
 #include <unistdx/base/log_message>
 #include <unistdx/base/sha1>
 #include <unistdx/base/types>
@@ -129,8 +129,8 @@ template<class Ch, class Tr>
 void
 sys::basic_websocketbuf<Ch,Tr>::put_header() {
     // LCOV_EXCL_START
-    assert(this->_valid);
-    assert(
+    UNISTDX_ASSERTION(this->_valid);
+    UNISTDX_ASSERTION(
         (this->_role == role_type::server &&
          this->_sstate == server_state::end) ||
         (this->_role == role_type::client &&
@@ -147,8 +147,8 @@ template<class Ch, class Tr>
 std::streamsize
 sys::basic_websocketbuf<Ch,Tr>::overwrite_header(std::streamsize n) {
     // LCOV_EXCL_START
-    assert(this->_valid);
-    assert(
+    UNISTDX_ASSERTION(this->_valid);
+    UNISTDX_ASSERTION(
         (this->_role == role_type::server &&
          this->_sstate == server_state::end) ||
         (this->_role == role_type::client &&
@@ -179,8 +179,8 @@ sys::basic_websocketbuf<Ch,Tr>::xgetheader(
     std::streamsize& payload_size
 ) {
     // LCOV_EXCL_START
-    assert(this->_valid);
-    assert(
+    UNISTDX_ASSERTION(this->_valid);
+    UNISTDX_ASSERTION(
         (this->_role == role_type::server &&
          this->_sstate == server_state::end) ||
         (this->_role == role_type::client &&
@@ -221,8 +221,8 @@ sys::basic_websocketbuf<Ch,Tr>::xgetheader(
 template<class Ch, class Tr>
 void
 sys::basic_websocketbuf<Ch,Tr>::on_payload() {
-    assert(this->_valid);
-    assert(
+    UNISTDX_ASSERTION(this->_valid);
+    UNISTDX_ASSERTION(
         (this->_role == role_type::server &&
          this->_sstate == server_state::end) ||
         (this->_role == role_type::client &&

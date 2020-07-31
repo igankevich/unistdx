@@ -33,8 +33,9 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_NETLINK_MESSAGE_ITERATOR
 #define UNISTDX_NET_NETLINK_MESSAGE_ITERATOR
 
-#include <cassert>
 #include <iterator>
+
+#include <unistdx/base/contracts>
 
 namespace sys {
 
@@ -72,8 +73,8 @@ namespace sys {
         netlink_message_iterator(message_type* rhs, int len):
         _message(rhs),
         _len(len) {
-            assert(this->_message); // LCOV_EXCL_LINE
-            assert(this->_len >= 0); // LCOV_EXCL_LINE
+            UNISTDX_PRECONDITION(rhs);
+            UNISTDX_PRECONDITION(len >= 0);
         }
 
         netlink_message_iterator() = default;
@@ -158,7 +159,7 @@ namespace sys {
 
         inline void
         do_next() noexcept {
-            assert(this->_message); // LCOV_EXCL_LINE
+            UNISTDX_ASSERTION(this->_message);
             if (this->ok() && !this->done()) {
                 this->_message = this->next();
             } else {
