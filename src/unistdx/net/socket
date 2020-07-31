@@ -38,10 +38,15 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <chrono>
 
+#include <unistdx/bits/macros>
 #include <unistdx/bits/socket>
 #include <unistdx/config>
 #include <unistdx/io/fildes>
 #include <unistdx/net/socket_address>
+
+#if defined(UNISTDX_HAVE_NETINET_TCP_H)
+#include <netinet/tcp.h>
+#endif
 
 namespace sys {
 
@@ -97,9 +102,6 @@ namespace sys {
     */
     class socket: public fildes {
 
-    private:
-        typedef int opt_type;
-
     public:
         #if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
         /// Clock type used in this class.
@@ -110,8 +112,186 @@ namespace sys {
         /// Protocol number type.
         typedef int protocol_type;
 
+        enum class options: int {
+            #if defined(SO_DEBUG)
+            debug=SO_DEBUG,
+            #endif
+            #if defined(SO_REUSEADDR)
+            reuse_address=SO_REUSEADDR,
+            #endif
+            #if defined(SO_TYPE)
+            type=SO_TYPE,
+            #endif
+            #if defined(SO_ERROR)
+            error=SO_ERROR,
+            #endif
+            #if defined(SO_DONTROUTE)
+            do_not_route=SO_DONTROUTE,
+            #endif
+            #if defined(SO_BROADCAST)
+            broadcast=SO_BROADCAST,
+            #endif
+            #if defined(SO_SNDBUF)
+            send_buffer_size=SO_SNDBUF,
+            #endif
+            #if defined(SO_RCVBUF)
+            receive_buffer_size=SO_RCVBUF,
+            #endif
+            #if defined(SO_SNDBUFFORCE)
+            send_buffer_size_force=SO_SNDBUFFORCE,
+            #endif
+            #if defined(SO_RCVBUFFORCE)
+            receive_buffer_size_force=SO_RCVBUFFORCE,
+            #endif
+            #if defined(SO_KEEPALIVE)
+            keep_alive=SO_KEEPALIVE,
+            #endif
+            #if defined(SO_OOBINLINE)
+            inline_out_of_band_data=SO_OOBINLINE,
+            #endif
+            #if defined(SO_NO_CHECK)
+            no_check=SO_NO_CHECK,
+            #endif
+            #if defined(SO_PRIORITY)
+            priority=SO_PRIORITY,
+            #endif
+            #if defined(SO_LINGER)
+            linger=SO_LINGER,
+            #endif
+            #if defined(SO_BSDCOMPAT)
+            bsd_compatibility=SO_BSDCOMPAT,
+            #endif
+            #if defined(SO_REUSEPORT)
+            reuse_port=SO_REUSEPORT,
+            #endif
+            #if defined(SO_PASSCRED)
+            pass_credentials=SO_PASSCRED,
+            #endif
+            #if defined(SO_PEERCRED)
+            peer_credentials=SO_PEERCRED,
+            #endif
+            #if defined(SO_RCVLOWAT)
+            min_receive_bytes=SO_RCVLOWAT,
+            #endif
+            #if defined(SO_SNDLOWAT)
+            min_send_bytes=SO_SNDLOWAT,
+            #endif
+            #if defined(SO_RCVTIMEO)
+            receive_timeout=SO_RCVTIMEO,
+            #endif
+            #if defined(SO_SNDTIMEO)
+            send_timeout=SO_SNDTIMEO,
+            #endif
+        };
+
+        enum class tcp_options: int {
+            #if defined(TCP_NODELAY)
+            no_delay=TCP_NODELAY,
+            #endif
+            #if defined(TCP_MAXSEG)
+            max_segment_size=TCP_MAXSEG,
+            #endif
+            #if defined(TCP_CORK)
+            cork=TCP_CORK,
+            #endif
+            #if defined(TCP_KEEPIDLE)
+            keep_alive_idle_time=TCP_KEEPIDLE,
+            #endif
+            #if defined(TCP_KEEPINTVL)
+            keep_alive_interval=TCP_KEEPINTVL,
+            #endif
+            #if defined(TCP_KEEPCNT)
+            keep_alive_max_probes=TCP_KEEPCNT,
+            #endif
+            #if defined(TCP_SYNCNT)
+            syn_count=TCP_SYNCNT,
+            #endif
+            #if defined(TCP_LINGER2)
+            linger2=TCP_LINGER2,
+            #endif
+            #if defined(TCP_DEFER_ACCEPT)
+            defer_accept=TCP_DEFER_ACCEPT,
+            #endif
+            #if defined(TCP_WINDOW_CLAMP)
+            window_clamp=TCP_WINDOW_CLAMP,
+            #endif
+            #if defined(TCP_INFO)
+            info=TCP_INFO,
+            #endif
+            #if defined(TCP_QUICKACK)
+            quick_ack=TCP_QUICKACK,
+            #endif
+            #if defined(TCP_CONGESTION)
+            congestion=TCP_CONGESTION,
+            #endif
+            #if defined(TCP_MD5SIG)
+            md5_signature=TCP_MD5SIG,
+            #endif
+            #if defined(TCP_COOKIE_TRANSACTIONS)
+            cookie_transactions=TCP_COOKIE_TRANSACTIONS,
+            #endif
+            #if defined(TCP_THIN_LINEAR_TIMEOUTS)
+            thin_linear_timeouts=TCP_THIN_LINEAR_TIMEOUTS,
+            #endif
+            #if defined(TCP_THIN_DUPACK)
+            thin_dupack=TCP_THIN_DUPACK,
+            #endif
+            #if defined(TCP_USER_TIMEOUT)
+            user_timeout=TCP_USER_TIMEOUT,
+            #endif
+            #if defined(TCP_REPAIR)
+            repair=TCP_REPAIR,
+            #endif
+            #if defined(TCP_REPAIR_QUEUE)
+            repair_queue=TCP_REPAIR_QUEUE,
+            #endif
+            #if defined(TCP_QUEUE_SEQ)
+            queue_sequence=TCP_QUEUE_SEQ,
+            #endif
+            #if defined(TCP_REPAIR_OPTIONS)
+            repair_options=TCP_REPAIR_OPTIONS,
+            #endif
+            #if defined(TCP_FASTOPEN)
+            fastopen=TCP_FASTOPEN,
+            #endif
+            #if defined(TCP_TIMESTAMP)
+            timestamp=TCP_TIMESTAMP,
+            #endif
+            #if defined(TCP_NOTSENT_LOWAT)
+            max_unsent_bytes=TCP_NOTSENT_LOWAT,
+            #endif
+            #if defined(TCP_CC_INFO)
+            congestion_control_info=TCP_CC_INFO,
+            #endif
+            #if defined(TCP_SAVE_SYN)
+            save_syn=TCP_SAVE_SYN,
+            #endif
+            #if defined(TCP_SAVED_SYN)
+            saved_syn=TCP_SAVED_SYN,
+            #endif
+            #if defined(TCP_REPAIR_WINDOW)
+            repair_window=TCP_REPAIR_WINDOW,
+            #endif
+            #if defined(TCP_FASTOPEN_CONNECT)
+            fastopen_connect=TCP_FASTOPEN_CONNECT,
+            #endif
+            #if defined(TCP_ULP)
+            ulp=TCP_ULP,
+            #endif
+            #if defined(TCP_MD5SIG_EXT)
+            extended_md5_signature=TCP_MD5SIG_EXT,
+            #endif
+            #if defined(TCP_FASTOPEN_KEY)
+            fastopen_key=TCP_FASTOPEN_KEY,
+            #endif
+            #if defined(TCP_FASTOPEN_NO_COOKIE)
+            fastopen_no_cookie=TCP_FASTOPEN_NO_COOKIE,
+            #endif
+        };
+
         /// Socket options.
-        enum option : opt_type {
+        /// \deprecated Use \em options instead.
+        enum option: int UNISTDX_DEPRECATED {
             reuse_addr = SO_REUSEADDR,
             keep_alive = SO_KEEPALIVE,
             /**
@@ -246,12 +426,166 @@ namespace sys {
         close();
 
         /**
-        \brief Activate socket option.
+        \brief Set boolean option.
         \throws bad_call
         \see \man{setsockopt,2}
+        \deprecated Use \em set instead.
         */
-        void
+        UNISTDX_DEPRECATED void
         setopt(option opt);
+
+        /**
+        \brief Get socket type.
+        \see \man{getsockopt,2}
+        \see \man{socket,7}
+        \throws bad_call
+        */
+        inline socket_type
+        type() const {
+            int value = 0;
+            socklen_type n = sizeof(value);
+            UNISTDX_CHECK(::getsockopt(this->_fd, SOL_SOCKET, SO_TYPE, &value, &n));
+            return socket_type(value);
+        }
+
+        /**
+        \brief Set socket option.
+        \see \man{setsockopt,2}
+        \see \man{socket,7}
+        \throws bad_call
+        */
+        template <class T> inline void
+        set(options name, T value) {
+            set(SOL_SOCKET, int(name), value);
+        }
+
+        /**
+        \brief Get socket option.
+        \see \man{setsockopt,2}
+        \see \man{socket,7}
+        \throws bad_call
+        */
+        template <class T> inline T
+        get(options name) const {
+            T value{};
+            socklen_type size = sizeof(T);
+            UNISTDX_CHECK(::getsockopt(this->_fd, SOL_SOCKET, int(name), &value, &size));
+            return value;
+        }
+
+        /**
+        \brief Set boolean socket option.
+        \see \man{setsockopt,2}
+        \see \man{socket,7}
+        \throws bad_call
+        */
+        inline void
+        set(options name) {
+            int value = 1;
+            set(SOL_SOCKET, int(name), value);
+        }
+
+        /**
+        \brief Set boolean socket option.
+        \see \man{setsockopt,2}
+        \see \man{socket,7}
+        \throws bad_call
+        */
+        inline void
+        unset(options name) {
+            int value = 0;
+            set(SOL_SOCKET, int(name), value);
+        }
+
+        /**
+        \brief Get TCP option.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        */
+        template <class T> inline T
+        get(tcp_options name) const {
+            T value{};
+            socklen_type size = sizeof(T);
+            UNISTDX_CHECK(::getsockopt(this->_fd, IPPROTO_TCP, int(name), &value, &size));
+            return value;
+        }
+
+        /**
+        \brief Get string TCP option.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        */
+        inline void
+        get(tcp_options name, char* value, socklen_type& size) const {
+            UNISTDX_CHECK(::getsockopt(this->_fd, IPPROTO_TCP, int(name), value, &size));
+        }
+
+        /**
+        \brief Set TCP option.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        */
+        template <class T> inline void
+        set(tcp_options name, T value) {
+            set(IPPROTO_TCP, int(name), value);
+        }
+
+        /**
+        \brief Set string TCP option.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        */
+        inline void
+        set(tcp_options name, const char* value, socklen_type size) {
+            UNISTDX_CHECK(::setsockopt(this->_fd, IPPROTO_TCP, int(name), value, size));
+        }
+
+        /**
+        \brief Set boolean TCP option.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        */
+        inline void
+        set(tcp_options name) {
+            int value = 1;
+            set(IPPROTO_TCP, int(name), value);
+        }
+
+        /**
+        \brief Set boolean TCP option.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        */
+        inline void
+        unset(tcp_options name) {
+            int value = 0;
+            set(IPPROTO_TCP, int(name), value);
+        }
+
+        /**
+        \brief Set keep-alive options.
+        \see \man{setsockopt,2}
+        \see \man{tcp,7}
+        \throws bad_call
+        \param[in] max_probes maximum number of keep-alive probes
+        \param[in] idle_time the number of seconds before the first probe is sent
+        \param[in] interval the number of seconds between subsequent probes
+        */
+        inline void
+        set_keep_alive(int max_probes, duration idle_time, duration interval) {
+            using namespace std::chrono;
+            set(tcp_options::keep_alive_max_probes, max_probes);
+            set(tcp_options::keep_alive_idle_time,
+                static_cast<unsigned int>(duration_cast<seconds>(idle_time).count()));
+            set(tcp_options::keep_alive_interval,
+                static_cast<unsigned int>(duration_cast<seconds>(interval).count()));
+        }
 
         #if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
         /**
@@ -260,8 +594,27 @@ namespace sys {
         \see \man{setsockopt,2}
         \see \man{tcp,7}
         */
-        void
-        set_user_timeout(const duration& d);
+        inline void
+        set_user_timeout(duration d) {
+            using namespace std::chrono;
+            const unsigned int ms = duration_cast<milliseconds>(d).count();
+            set(tcp_options::user_timeout, ms);
+        };
+        #endif
+
+        #if defined(UNISTDX_HAVE_SO_PEERCRED)
+        /**
+        \brief
+        Get UID, GID and PID of the process, that is connected
+        to this socket (client).
+        \throws bad_call
+        \see \man{getsockopt,2}
+        \note The method works only for unix domain sockets.
+        */
+        inline user_credentials
+        credentials() const {
+            return get<user_credentials>(options::peer_credentials);
+        }
         #endif
 
         /**
@@ -355,19 +708,6 @@ namespace sys {
             return ret;
         }
 
-        #if defined(UNISTDX_HAVE_SO_PEERCRED)
-        /**
-        \brief
-        Get UID, GID and PID of the process, that is connected
-        to this socket (client).
-        \throws bad_call
-        \see \man{getsockopt,2}
-        \note The method works only for unix domain sockets.
-        */
-        user_credentials
-        credentials() const;
-        #endif
-
         #if defined(UNISTDX_HAVE_SCM_RIGHTS)
         /**
         \brief
@@ -420,6 +760,11 @@ namespace sys {
             return this->error() == 0
                    ? "ok"
                    : std::make_error_code(std::errc(errno)).message();
+        }
+
+        template <class T> inline void
+        set(int level, int name, T value) {
+            UNISTDX_CHECK(::setsockopt(this->_fd, level, name, &value, sizeof(value)));
         }
 
     };

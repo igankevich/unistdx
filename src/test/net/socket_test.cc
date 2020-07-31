@@ -42,11 +42,11 @@ TEST(Socket, GetCredentials) {
     sys::socket_address e(path);
     sys::socket sock;
     sock.bind(e);
-    sock.setopt(sys::socket::pass_credentials);
+    sock.set(sys::socket::options::pass_credentials);
     sock.listen();
     sys::process child([&] () {
         sys::socket s(sys::family_type::unix);
-        s.setopt(sys::socket::pass_credentials);
+        s.set(sys::socket::options::pass_credentials);
         s.connect(e);
         return 0;
     });

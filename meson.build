@@ -9,7 +9,9 @@ project(
 
 cpp = meson.get_compiler('cpp')
 
-if not get_option('buildtype').contains('debug')
+if get_option('buildtype').contains('debug')
+    add_global_arguments('-DUNISTDX_DEBUG', language: 'cpp')
+else
     add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
 
@@ -233,6 +235,7 @@ foreach header : [
     'ifaddrs.h',
     'linux/netlink.h',
     'linux/sockios.h',
+    'netinet/tcp.h',
     'sched.h',
     'semaphore.h',
     'sys/epoll.h',

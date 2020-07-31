@@ -214,6 +214,7 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_IFADDRS_H
 #mesondefine UNISTDX_HAVE_LINUX_NETLINK_H
 #mesondefine UNISTDX_HAVE_LINUX_SOCKIOS_H
+#mesondefine UNISTDX_HAVE_NETINET_TCP_H
 #mesondefine UNISTDX_HAVE_SCHED_H
 #mesondefine UNISTDX_HAVE_SEMAPHORE_H
 #mesondefine UNISTDX_HAVE_SYS_EPOLL_H
