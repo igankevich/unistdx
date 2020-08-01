@@ -21,3 +21,14 @@ install_headers(
     'thread_semaphore',
     subdir: join_paths(meson.project_name(), 'ipc')
 )
+
+libunistdx_tests += [
+    [files('execute_test.cc')],
+    [files('identity_test.cc'), [[], [setgid_stub]]],
+    [files('process_test.cc')],
+    [files('process_group_test.cc')],
+    [files('process_status_test.cc')],
+    [files('semaphore_test.cc')],
+    [files('shared_memory_segment_test.cc')],
+    [files('signal_test.cc')],
+]

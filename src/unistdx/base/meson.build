@@ -34,3 +34,20 @@ install_headers(
     'websocketbuf',
     subdir: join_paths(meson.project_name(), 'base')
 )
+
+libunistdx_tests += [
+    [files('bad_call_test.cc')],
+    [files('byte_buffer_test.cc')],
+    [files('command_line_test.cc')],
+    [files('delete_each_test.cc')],
+    [files('flag_test.cc')],
+    [files('log_message_test.cc')],
+    [files('sha1_test.cc')],
+    [files('spin_mutex_test.cc')],
+    [files('uint128_test.cc')],
+    [files('websocket_test.cc')],
+]
+
+libunistdx_benchmarks += files([
+    'sha1_benchmark.cc',
+])

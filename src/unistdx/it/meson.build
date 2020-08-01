@@ -7,3 +7,8 @@ install_headers(
     'iterator_pair',
     subdir: join_paths(meson.project_name(), 'it')
 )
+
+libunistdx_tests += [
+    [files('cstring_iterator_test.cc')],
+    [files('field_iterator_test.cc')],
+]

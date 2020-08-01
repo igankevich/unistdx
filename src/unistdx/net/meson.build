@@ -35,3 +35,19 @@ install_headers(
     'veth_interface',
     subdir: join_paths(meson.project_name(), 'net')
 )
+
+libunistdx_tests += [
+    [files('base64_test.cc')],
+    [files('bit_count_test.cc')],
+    [files('byte_swap_test.cc')],
+    [files('bytes_test.cc')],
+    [files('ethernet_address_test.cc')],
+    [files('family_test.cc')],
+    [files('interface_address_test.cc')],
+    [files('ipv4_address_test.cc')],
+    [files('netlink_poller_test.cc')],
+    [files('network_interface_test.cc')],
+    [files('socket_test.cc')],
+    [files('socket_address_test.cc')],
+    [files('veth_interface_test.cc')],
+]
