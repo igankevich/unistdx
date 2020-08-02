@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.24.2',
+    version: '0.24.3',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -49,6 +49,25 @@ foreach pair : [
     builtin = 'int main() { @0@(@1@); }'
     all_defines += 'UNISTDX_HAVE_BUILTIN_' + func.to_upper()
     if cpp.compiles(builtin.format('__builtin_' + func, args))
+        config.set(all_defines[-1], true)
+    endif
+endforeach
+foreach flag : [
+    '-Wterminate',
+]
+    builtin = 'int main() { _Pragma("GCC diagnostic ignored \"@0@\""); }'
+    all_defines += 'UNISTDX_HAVE_PRAGMA_IGNORED' + flag.underscorify().to_upper()
+    if cpp.compiles(builtin.format(flag), args: '-Werror')
+        config.set(all_defines[-1], true)
+    endif
+endforeach
+foreach pragma : [
+    'GCC diagnostic push',
+    'GCC diagnostic pop',
+]
+    builtin = 'int main() { _Pragma("@0@"); }'
+    all_defines += 'UNISTDX_HAVE_PRAGMA_' + pragma.underscorify().to_upper()
+    if cpp.compiles(builtin.format(flag), args: '-Werror')
         config.set(all_defines[-1], true)
     endif
 endforeach
