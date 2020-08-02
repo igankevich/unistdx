@@ -1,3 +1,4 @@
 option('with_tests', type: 'boolean', value: true, description: 'Build unit tests')
 option('with_rpm', type: 'boolean', value: false, description: 'Generate RPM spec file')
 option('with_site', type: 'boolean', value: false, description: 'Generate web pages')
+option('with_debug', type: 'boolean', value: false, description: 'Enable additional debugging')

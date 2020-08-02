@@ -1,18 +1,22 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.24.3',
+    version: '0.24.4',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
 )
 
+with_tests = get_option('with_tests')
+with_rpm = get_option('with_rpm')
+with_site = get_option('with_site')
+with_rpm = get_option('with_rpm')
+with_debug = get_option('with_debug')
+
 cpp = meson.get_compiler('cpp')
 
-if get_option('buildtype').contains('debug')
+if with_debug
     add_global_arguments('-DUNISTDX_DEBUG', language: 'cpp')
-else
-    add_global_arguments('-DNDEBUG', language: 'cpp')
 endif
 
 foreach arg : [
@@ -23,11 +27,6 @@ foreach arg : [
         add_global_arguments(arg, language: 'cpp')
     endif
 endforeach
-
-with_tests = get_option('with_tests')
-with_rpm = get_option('with_rpm')
-with_site = get_option('with_site')
-with_rpm = get_option('with_rpm')
 
 # compile-time configuration {{{
 all_defines = []
