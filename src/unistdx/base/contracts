@@ -33,7 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BASE_CONTRACTS
 #define UNISTDX_BASE_CONTRACTS
 
-#if defined(UNISTDX_DEBUG)
+#if !defined(UNISTDX_DEBUG)
 
 #define UNISTDX_PRECONDITION(cond)
 #define UNISTDX_POSTCONDITION(cond)
