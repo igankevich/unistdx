@@ -242,14 +242,14 @@ namespace sys {
             return a < b ? b-a : a-b;
         }
 
-        inline constexpr u128
+        static inline constexpr u128
         increment(const u128& rhs) {
             return (rhs._b == std::numeric_limits<u64>::max())
                 ? u128(rhs._a+1, 0)
                 : u128(rhs._a, rhs._b+1);
         }
 
-        inline constexpr u128
+        static inline constexpr u128
         decrement(const u128& rhs) {
             return (rhs._b == 0)
                 ? u128(rhs._a-1, std::numeric_limits<u64>::max())

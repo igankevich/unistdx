@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -52,9 +52,7 @@ backtrace_symbols(void *const *, int n) throw () {
     char* buf = static_cast<char*>(
         std::malloc((sizeof(Bytes)*n + sizeof(char)*entry_size*n) | sizeof(Bytes))
     );
-    if (!buf) {
-        throw std::bad_alloc();
-    }
+    if (!buf) { std::terminate(); }
     // skip pointers area
     char* pbuf = buf + sizeof(Bytes)*n;
     UNISTDX_ASSERTION(size_t(pbuf) % sizeof(Bytes) == 0);

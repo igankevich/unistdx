@@ -69,8 +69,15 @@ namespace sys {
 #define UNISTDX_STRINGIFY(x) UNISTDX_XSTRINGIFY(x)
 #define UNISTDX_XCOMBINE(x,y) x##y
 #define UNISTDX_COMBINE(x,y) UNISTDX_XCOMBINE(x,y)
+#if defined(__GNUC__)
+#define UNISTDX_GCC_PRAGMA(x) _Pragma(x)
+#else
+#define UNISTDX_GCC_PRAGMA(x)
+#endif
 
 #define UNISTDX_PRECONDITION(cond) \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic push") \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic ignored \"-Wterminate\"") \
     if (cond) {} else { \
         ::sys::backtrace(2); \
         ::std::string s; \
@@ -78,9 +85,12 @@ namespace sys {
         s += __func__; \
         s += " Precondition \"" #cond "\" failed"; \
         throw ::sys::precondition_failure(s); \
-    }
+    } \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic pop")
 
 #define UNISTDX_POSTCONDITION(cond) \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic push") \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic ignored \"-Wterminate\"") \
     struct UNISTDX_COMBINE(unistdx_postcondition_, __LINE__) { \
         inline UNISTDX_COMBINE(~unistdx_postcondition_, __LINE__)() { \
             if (cond) {} else { \
@@ -92,9 +102,12 @@ namespace sys {
                 throw ::sys::postcondition_failure(s); \
             } \
         } \
-    } UNISTDX_COMBINE(unistdx_postcondition_instance_, __LINE__);
+    } UNISTDX_COMBINE(unistdx_postcondition_instance_, __LINE__); \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic pop")
 
 #define UNISTDX_ASSERTION(cond) \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic push") \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic ignored \"-Wterminate\"") \
     if (cond) {} else { \
         ::sys::backtrace(2); \
         ::std::string s; \
@@ -102,7 +115,8 @@ namespace sys {
         s += __func__; \
         s += " Assertion \"" #cond "\" failed"; \
         throw ::sys::assertion_failure(s); \
-    }
+    } \
+    UNISTDX_GCC_PRAGMA("GCC diagnostic pop")
 
 #endif
 

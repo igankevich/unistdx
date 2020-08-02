@@ -256,19 +256,19 @@ namespace std {
         public hash<sys::ethernet_address::value_type> {
 
     private:
-        typedef hash<sys::ethernet_address::value_type> base_type;
-        typedef ::sys::ethernet_address::size_type size_type;
+        using base_type = hash<sys::ethernet_address::value_type>;
+        using size_type = ::sys::ethernet_address::size_type;
 
     public:
         /// Hash function return value type.
-        using typename base_type::result_type;
+        using result_type = size_t;
         /// Hash function argument type.
-        typedef ::sys::ethernet_address argument_type;
+        using argument_type = ::sys::ethernet_address;
 
         /// Compute hash by XOR-ing hashes of each octet.
         inline result_type
         operator()(const argument_type& rhs) const noexcept {
-            result_type result = this->base_type::operator()(rhs.front());
+            auto result = this->base_type::operator()(rhs.front());
             for (size_type i=1; i<rhs.size(); ++i) {
                 result ^= this->base_type::operator()(rhs[i] << i);
             }
