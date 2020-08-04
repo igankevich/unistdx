@@ -104,14 +104,15 @@
       (format (current-error-port) "Building the project\n")
       (setenv "UNISTDX_MANIFEST" "ci,site")
       (exit (gitbucket-run
-              (append-map (lambda (system)
-                            (map (lambda (job)
-                                   (job-transform job
-                                                  (make <guix-environment>
-                                                    #:channels "ci/channels.scm"
-                                                    #:manifest "ci/manifest.scm"
-                                                    #:system system)))
-                                 (all-jobs system))
-                            '("x86_64-linux" "i686-linux" "aarch64-linux"))))))))
+              (append-map
+                (lambda (system)
+                  (map (lambda (job)
+                         (job-transform job
+                                        (make <guix-environment>
+                                          #:channels "ci/channels.scm"
+                                          #:manifest "ci/manifest.scm"
+                                          #:system system)))
+                       (all-jobs system)))
+                '("x86_64-linux" "i686-linux" "aarch64-linux")))))))
 
 ;; vim:filetype=scheme
