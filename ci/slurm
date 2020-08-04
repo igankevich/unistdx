@@ -20,7 +20,11 @@
 
 (define (job-transform job)
   (set! (job-name job)
-    (string-join (list "unistdx" (getenv "CI_BUILD_NUMBER") (job-name job)) "-"))
+    (string-join (list "unistdx"
+                       (getenv "CI_BUILD_NUMBER")
+                       (guix-environment-system env)
+                       (job-name job))
+                 "-"))
   (set! (job-partitions job) '("ci"))
   (guix-environment-wrap! job env))
 
@@ -74,11 +78,11 @@
                   "\n")
                 #:name name))
             `(("sanitize-none" "-Db_sanitize=none")
-              ,(if (not (string=? system "i686-linux"))
-                  '("sanitize-address" "-Db_sanitize=address")
+              ,@(if (not (string=? system "i686-linux"))
+                  '(("sanitize-address" "-Db_sanitize=address"))
                   '())
-              ,(if (not (string=? system "aarch64-linux"))
-                  '("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native")
+              ,@(if (not (string=? system "aarch64-linux"))
+                  '(("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native"))
                   '())))
           (list
             (make <job>
