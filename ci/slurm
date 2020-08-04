@@ -74,10 +74,10 @@
                   "\n")
                 #:name name))
             `(("sanitize-none" "-Db_sanitize=none")
-              ,@(if (not (string=? system "i686-linux"))
+              ,(if (not (string=? system "i686-linux"))
                   '("sanitize-address" "-Db_sanitize=address")
                   '())
-              ,@(if (not (string=? system "aarch64-linux"))
+              ,(if (not (string=? system "aarch64-linux"))
                   '("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native")
                   '())))
           (list
