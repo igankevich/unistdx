@@ -97,7 +97,7 @@
                   "meson -Db_coverage=true . $d"
                   "cd $d"
                   "ninja -v test-lcov"
-                  "mv -v lcov $outdir/$(arch)-coverage"
+                  (format #f "mv -v lcov $outdir/~a-coverage" system)
                   "rm -rf --one-file-system --preserve-root $d")
                 "\n")
               #:name "coverage"))))
