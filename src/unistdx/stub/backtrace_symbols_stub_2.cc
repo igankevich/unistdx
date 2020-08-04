@@ -33,6 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <execinfo.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cstdlib>
 #include <new>
 #include <vector>
@@ -55,7 +56,7 @@ backtrace_symbols(void *const *, int n) throw () {
     if (!buf) { std::terminate(); }
     // skip pointers area
     char* pbuf = buf + sizeof(Bytes)*n;
-    UNISTDX_ASSERTION(size_t(pbuf) % sizeof(Bytes) == 0);
+    assert(size_t(pbuf) % sizeof(Bytes) == 0);
     // put all entries to the buffer and record their pointers
     std::vector<char*> ptrs(n);
     for (int i=0; i<n; ++i) {

@@ -4,9 +4,9 @@
       (name 'stables)
       (url "https://git.cmmshq.ru/git/igankevich/guix.git"))
     (channel
-      (name 'cmmshq-nonguix)
+      (name 'nonguix)
       (url "https://git.cmmshq.ru/git/infrastructure/nonguix.git")
-      (commit "de98abc49c2fbad337e45abdb20994ce45bd3295"))
+      (commit "42fa1c0fdc28eb8fe38ecc1288a541db5161faf4"))
     (channel
       (name 'guix)
       (url "https://git.cmmshq.ru/git/infrastructure/guix.git")

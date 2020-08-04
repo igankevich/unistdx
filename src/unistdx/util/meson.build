@@ -17,7 +17,7 @@ install_headers(
 
 libunistdx_tests += [
     [files('system_test.cc')],
-    [files('users_test.cc'), [[], [sysconf_stub]]],
+    #[files('users_test.cc'), [[], [sysconf_stub]]],
 ]
 
 if config.get('UNISTDX_HAVE_BACKTRACE', false)

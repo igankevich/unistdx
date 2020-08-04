@@ -1,75 +1,119 @@
-#!/bin/sh
+#!/bin/guile2.2
+!#
 
-if test "$CI_PULL_REQUEST" != "false"
-then
-    echo "Skipping pull requests"
-    exit 0
-fi
+(use-modules
+  (oop goops)
+  (ice-9 format)
+  (ice-9 ftw)
+  (ice-9 popen)
+  (ice-9 textual-ports)
+  (srfi srfi-1)
+  (slurm)
+  (slurm-ci))
 
-export GUIX_MANIFEST=ci/manifest.scm
-export GUIX_CHANNELS=ci/channels.scm
-export GUIX_SYSTEMS="x86_64-linux i686-linux aarch64-linux"
+(define default-env
+  (make <guix-environment>
+    #:channels "ci/channels.scm"
+    #:manifest "ci/manifest.scm"))
 
-echo
-echo "Environment:"
-env | grep -E '^(CI_|HOME|GUIX)' | sort | column -t -s= -R 1
-echo
+(define branch (getenv "CI_BUILD_BRANCH"))
 
-if test "$CI_BUILD_BRANCH" = "site"
-then
-    export GUIX_SYSTEMS="x86_64-linux"
-    echo "Building the site"
-    echo
-/usr/libexec/gitbucket-ci << 'EOF'
-export UNISTDX_MANIFEST=ci,site
-slurm_job "site" sh -c '
-    set -ex
-    dst=cmmshq.ru:/srv/unistdx
-    export PYTHONUNBUFFERED=1
-    d=$(mktemp --directory /tmp/unistdx-XXXXXXXX)
-    meson . $d
-    cd $d
-    ninja -v doxygen-std-tagfile
-    ninja -v site
-    rsync -e 'ssh -p 22222' -acv --delete src/unistdx/site/ $dst/
-    rm -rf $d
-'
-EOF
-else
-/usr/libexec/gitbucket-ci << EOF
-export UNISTDX_MANIFEST=ci,site
+(define (job-transform job env)
+  (set! (job-name job)
+    (string-join (list "unistdx"
+                       (getenv "CI_BUILD_NUMBER")
+                       (guix-environment-system env)
+                       (job-name job))
+                 "-"))
+  (set! (job-partitions job) '("ci"))
+  (guix-environment-wrap! job env))
 
-test_flags() {
-    flags="\$@"
-    d=/tmp/gitbucket-ci-\$(uuidgen)
-    echo "
-        set -ex
-        meson \$flags . \$d
-        cd \$d
-        meson test --verbose
-        rm -rf \$d"
-}
+(cond
+  ;; build site
+  ((and branch (string=? branch "site"))
+   (let ((prefix "/var/lib/gitbucket/repositories"))
+     (format (current-error-port) "Building the site\n")
+     (setenv "UNISTDX_MANIFEST" "ci,site")
+     (exit
+       (gitbucket-run
+         (list
+           (job-transform
+             (make <job>
+               #:name "site"
+               #:script
+               (string-join
+                 (list
+                   "#!/bin/sh"
+                   "set -ex"
+                   "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+                   "export LANG=en_US.utf-8"
+                   "meson . $d"
+                   "cd $d"
+                   "ninja -v doxygen-std-tagfile"
+                   "ninja -v site"
+                   "rsync -e 'ssh -p 22222' -acv --delete src/unistdx/site/ cmmshq.ru:/srv/unistdx/"
+                   "rm -rf $d")
+                 "\n")
+               )
+             default-env))))))
+  ;; default build
+  (else
+    (let ()
+      (define (all-jobs system)
+        (append
+          (map
+            (lambda (lst)
+              (define name (car lst))
+              (define meson-arguments (cdr lst))
+              (make <job>
+                #:script
+                (string-join
+                  (list
+                    "#!/bin/sh"
+                    "set -ex"
+                    "d=$(mktemp -d /tmp/gitbucket-$SLURM_JOB_ID-XXXXXX)"
+                    (format #f "meson ~a -Dwith_debug=true . $d"
+                            (string-join meson-arguments " "))
+                    "cd $d"
+                    "meson test --verbose --timeout-multiplier 2"
+                    "rm -rf --one-file-system --preserve-root $d")
+                  "\n")
+                #:name name))
+            `(("sanitize-none" "-Db_sanitize=none")
+              ,@(if (not (string=? system "i686-linux"))
+                  '(("sanitize-address" "-Db_sanitize=address"))
+                  '())
+              ,@(if (not (string=? system "aarch64-linux"))
+                  '(("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native"))
+                  '())))
+          (list
+            (make <job>
+              #:script
+              (string-join
+                (list
+                  "#!/bin/sh"
+                  "set -ex"
+                  "outdir=$(pwd)"
+                  "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+                  "meson -Db_coverage=true . $d"
+                  "cd $d"
+                  "ninja -v test-lcov"
+                  (format #f "mv -v lcov $outdir/~a-coverage" system)
+                  "rm -rf --one-file-system --preserve-root $d")
+                "\n")
+              #:name "coverage"))))
+      (format (current-error-port) "Building the project\n")
+      (setenv "UNISTDX_MANIFEST" "ci")
+      (exit (gitbucket-run
+              (append-map
+                (lambda (system)
+                  (map (lambda (job)
+                         (job-transform job
+                                        (make <guix-environment>
+                                          #:channels "ci/channels.scm"
+                                          #:manifest "ci/manifest.scm"
+                                          #:system system)))
+                       (all-jobs system)))
+                '("x86_64-linux" "i686-linux" "aarch64-linux")))))))
 
-slurm_job "sanitize-none" sh -c "\$(test_flags -Db_sanitize=none)"
-
-if ! test "\$GUIX_SYSTEM" = "i686-linux"
-then
-    slurm_job "sanitize-address" sh -c "\$(test_flags -Db_sanitize=address)"
-fi
-
-if ! test "\$GUIX_SYSTEM" = "aarch64-linux"
-then
-    slurm_job "arch-native" sh -c "\$(test_flags -Dbuildtype=release -Dcpp_args=-march=native)"
-fi
-
-d=/tmp/gitbucket-ci-\$(uuidgen)
-slurm_job "coverage" sh -c "
-    set -ex
-    meson -Db_coverage=true . \$d
-    cd \$d
-    ninja -v test-lcov
-    rsync -a lcov/ \$OUTDIR/\$GUIX_SYSTEM-coverage/
-"
-
-EOF
-fi
+;; vim:filetype=scheme
