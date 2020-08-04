@@ -72,7 +72,8 @@
                     "#!/bin/sh"
                     "set -ex"
                     "d=$(mktemp -d /tmp/gitbucket-$SLURM_JOB_ID-XXXXXX)"
-                    (format #f "meson ~a . $d" (string-join meson-arguments " "))
+                    (format #f "meson ~a -Dwith_debug=true . $d"
+                            (string-join meson-arguments " "))
                     "cd $d"
                     "meson test --verbose --timeout-multiplier 2"
                     "rm -rf --one-file-system --preserve-root $d")
@@ -102,7 +103,7 @@
                 "\n")
               #:name "coverage"))))
       (format (current-error-port) "Building the project\n")
-      (setenv "UNISTDX_MANIFEST" "ci,site")
+      (setenv "UNISTDX_MANIFEST" "ci")
       (exit (gitbucket-run
               (append-map
                 (lambda (system)
