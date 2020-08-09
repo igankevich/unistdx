@@ -86,9 +86,7 @@ namespace sys {
         read_write = SHUT_RDWR
     };
 
-    template <>
-    struct is_flag<shutdown_flag>: public std::true_type {};
-
+    UNISTDX_FLAGS(shutdown_flag);
 
     /**
     \brief Socket wrapper.
@@ -300,6 +298,75 @@ namespace sys {
             \see \man{unix,7}
             */
             pass_credentials = SO_PASSCRED,
+        };
+
+        enum class message_flags: int {
+            #if defined(MSG_OOB)
+            out_of_band=MSG_OOB,
+            #endif
+            #if defined(MSG_PEEK)
+            peek=MSG_PEEK,
+            #endif
+            #if defined(MSG_DONTROUTE)
+            do_not_route=MSG_DONTROUTE,
+            #endif
+            #if defined(MSG_CTRUNC)
+            control_truncated=MSG_CTRUNC,
+            #endif
+            #if defined(MSG_PROXY)
+            proxy=MSG_PROXY,
+            #endif
+            #if defined(MSG_TRUNC)
+            truncate=MSG_TRUNC,
+            #endif
+            #if defined(MSG_TRUNC)
+            truncated=MSG_TRUNC,
+            #endif
+            #if defined(MSG_DONTWAIT)
+            do_not_wait=MSG_DONTWAIT,
+            #endif
+            #if defined(MSG_EOR)
+            end_of_record=MSG_EOR,
+            #endif
+            #if defined(MSG_WAITALL)
+            wait_all=MSG_WAITALL,
+            #endif
+            #if defined(MSG_FIN)
+            fin=MSG_FIN,
+            #endif
+            #if defined(MSG_SYN)
+            syn=MSG_SYN,
+            #endif
+            #if defined(MSG_CONFIRM)
+            confirm=MSG_CONFIRM,
+            #endif
+            #if defined(MSG_RST)
+            rst=MSG_RST,
+            #endif
+            #if defined(MSG_ERRQUEUE)
+            error_queue=MSG_ERRQUEUE,
+            #endif
+            #if defined(MSG_NOSIGNAL)
+            no_signal=MSG_NOSIGNAL,
+            #endif
+            #if defined(MSG_MORE)
+            more=MSG_MORE,
+            #endif
+            #if defined(MSG_WAITFORONE)
+            wait_for_one=MSG_WAITFORONE,
+            #endif
+            #if defined(MSG_BATCH)
+            batch=MSG_BATCH,
+            #endif
+            #if defined(MSG_ZEROCOPY)
+            zero_copy=MSG_ZEROCOPY,
+            #endif
+            #if defined(MSG_FASTOPEN)
+            fast_open=MSG_FASTOPEN,
+            #endif
+            #if defined(MSG_CMSG_CLOEXEC)
+            control_message_close_on_exec=MSG_CMSG_CLOEXEC,
+            #endif
         };
 
         socket() = default;
@@ -663,10 +730,16 @@ namespace sys {
         \see \man{sendmsg,2}
         */
         inline ssize_t
-        send(const message_header& hdr, int flags=0) const {
-            ssize_t ret = ::sendmsg(this->_fd, &hdr, flags);
+        send(const message_header& hdr, message_flags flags=message_flags{}) const {
+            ssize_t ret = ::sendmsg(this->_fd, &hdr, int(flags));
             UNISTDX_CHECK_IO(ret);
             return ret;
+        }
+
+        /// \deprecated Use send with \em sys::message_flags.
+        inline ssize_t
+        send(const message_header& hdr, int flags) const {
+            return this->send(hdr, message_flags(flags));
         }
 
         /**
@@ -675,10 +748,16 @@ namespace sys {
         \see \man{recvmsg,2}
         */
         inline ssize_t
-        receive(message_header& hdr, int flags=0) const {
-            ssize_t ret = ::recvmsg(this->_fd, &hdr, flags);
+        receive(message_header& hdr, message_flags flags=message_flags{}) const {
+            ssize_t ret = ::recvmsg(this->_fd, &hdr, int(flags));
             UNISTDX_CHECK_IO(ret);
             return ret;
+        }
+
+        /// \deprecated Use receive with \em sys::message_flags.
+        inline ssize_t
+        receive(message_header& hdr, int flags) const {
+            return this->receive(hdr, message_flags(flags));
         }
 
         /**
@@ -808,6 +887,8 @@ namespace sys {
         }
 
     };
+
+    UNISTDX_FLAGS(socket::message_flags);
 
 }
 
