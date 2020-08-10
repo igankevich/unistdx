@@ -72,11 +72,11 @@ if with_tests
                 implicit_include_directories: false,
             )
             foreach args : arguments
-                test(
-                    test_name + suffix + '--' + '_'.join(args),
-                    exe,
-                    args: args,
-                )
+                tmp = test_name + suffix
+                if args.length() != 0
+                    tmp += '--' + '_'.join(args)
+                endif
+                test(tmp, exe, args: args)
             endforeach
         endforeach
     endforeach
