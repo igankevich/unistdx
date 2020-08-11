@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -50,10 +50,65 @@ digest_to_string(const T* first, std::size_t n) {
     return digest_to_string(first, first+n);
 }
 
-TEST(sha2, _) {
-    sys::sha2 s;
+TEST(sha2_224, empty) {
+    sys::sha2_224 s;
+    s.insert("", 0);
+    s.finish();
+    EXPECT_EQ("d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f",
+              s.to_string());
+}
+
+TEST(sha2_256, empty) {
+    sys::sha2_256 s;
     s.insert("", 0);
     s.finish();
     EXPECT_EQ("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
               s.to_string());
+}
+
+TEST(sha2_512, empty) {
+    sys::sha2_512 s;
+    s.insert("", 0);
+    s.finish();
+    EXPECT_EQ("cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+              s.to_string());
+}
+
+TEST(sha2_512, abc) {
+    sys::sha2_512 s;
+    s.insert("abc", 3);
+    s.finish();
+    EXPECT_EQ("ddaf35a193617abacc417349ae20413112e6fa4e89a97ea20a9eeee64b55d39a2192992a274fc1a836ba3c23a3feebbd454d4423643ce80e2a9ac94fa54ca49f",
+              s.to_string());
+}
+
+TEST(sha2_512, two_blocks) {
+    std::string message = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
+    sys::sha2_512 s;
+    s.insert(message.data(), message.size());
+    s.finish();
+    EXPECT_EQ("8e959b75dae313da8cf4f72814fc143f8f7779c6eb9f7fa17299aeadb6889018501d289e4900f7e4331b99dec4b5433ac7d329eeb6dd26545e96e55b874be909",
+              s.to_string());
+}
+
+TEST(sha2_384, empty) {
+    sys::sha2_384 s;
+    s.insert("", 0);
+    s.finish();
+    EXPECT_EQ("38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b", s.to_string());
+}
+
+TEST(sha2_512_224, empty) {
+    sys::sha2_512_224 s;
+    s.insert("", 0);
+    s.finish();
+    EXPECT_EQ("6ed0dd02806fa89e25de060c19d3ac86cabb87d6a0ddd05c333b84f4",
+              s.to_string());
+}
+
+TEST(sha2_512_256, empty) {
+    sys::sha2_512_256 s;
+    s.insert("", 0);
+    s.finish();
+    EXPECT_EQ("c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a", s.to_string());
 }

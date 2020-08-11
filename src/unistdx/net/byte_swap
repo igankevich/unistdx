@@ -120,6 +120,21 @@ namespace sys {
         return tmp.n;
     }
 
+    #if defined(UNISTDX_HAVE_INT128)
+    /// \brief Specialisation for built-in 16-byte unsigned integer.
+    /// \ingroup net
+    template<>
+    inline unsigned __int128
+    byte_swap(unsigned __int128 x) noexcept {
+        union { unsigned __int128 n{}; u64 words[2]; } tmp;
+        tmp.n = x;
+        tmp.words[0] = byte_swap<u64>(tmp.words[0]);
+        tmp.words[1] = byte_swap<u64>(tmp.words[1]);
+        std::swap(tmp.words[0], tmp.words[1]);
+        return tmp.n;
+    }
+    #endif
+
 }
 
 #endif // vim:filetype=cpp
