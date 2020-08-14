@@ -6,6 +6,8 @@ libunistdx_src += files([
     'file_type.cc',
     'mkdirs.cc',
     'odirtree.cc',
+    'path.cc',
+    'temporary_file.cc',
 ])
 
 install_headers(
@@ -14,6 +16,7 @@ install_headers(
     'directory',
     'directory_entry',
     'dirstream',
+    'file_attributes',
     'file_mode',
     'file_mutex',
     'file_status',
@@ -25,6 +28,7 @@ install_headers(
     'odirtree',
     'path',
     'path_flag',
+    'temporary_file',
     subdir: join_paths(meson.project_name(), 'fs')
 )
 
@@ -33,6 +37,7 @@ libunistdx_tests += [
      [[],
       [copy_file_range_stub],
       [copy_file_range_stub, sendfile_stub]]],
+    [files('file_attributes_test.cc')],
     [files('file_mode_test.cc')],
     [files('file_mutex_test.cc')],
     [files('file_status_test.cc')],

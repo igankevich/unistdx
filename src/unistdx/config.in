@@ -129,6 +129,8 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_MAP_POPULATE
 #mesondefine UNISTDX_HAVE_MAP_STACK
 #mesondefine UNISTDX_HAVE_MAP_UNINITIALIZED
+#mesondefine UNISTDX_HAVE_MKOSTEMP
+#mesondefine UNISTDX_HAVE_MKSTEMP
 #mesondefine UNISTDX_HAVE_MMAP
 #mesondefine UNISTDX_HAVE_O_CLOEXEC
 #mesondefine UNISTDX_HAVE_O_DIRECT
@@ -226,6 +228,7 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_SYS_EPOLL_H
 #mesondefine UNISTDX_HAVE_SYS_IOCTL_H
 #mesondefine UNISTDX_HAVE_SYS_SEM_H
+#mesondefine UNISTDX_HAVE_SYS_XATTR_H
 // }}}
 
 // old definitions {{{

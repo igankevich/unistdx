@@ -115,13 +115,13 @@ namespace sys {
         /// Access object by pointer.
         inline const_pointer
         operator->() const noexcept {
-            return this->ptr;
+            return this->_ptr;
         }
 
         /// Access object by pointer.
         inline pointer
         operator->() noexcept {
-            return this->ptr;
+            return this->_ptr;
         }
 
         /// Increment.

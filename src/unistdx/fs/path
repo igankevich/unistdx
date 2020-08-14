@@ -33,6 +33,11 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_FS_PATH
 #define UNISTDX_FS_PATH
 
+#include <unistdx/base/flag>
+#include <unistdx/base/string>
+#include <unistdx/config>
+#include <unistdx/fs/file_attributes>
+
 #include <memory>
 #include <string>
 
@@ -242,6 +247,17 @@ namespace sys {
         MAKE_OPERATOR_REL(char*, basic_path&, char*, string_type&);
         /// \endnowarn
 
+        #if defined(UNISTDX_HAVE_SYS_XATTR_H)
+        string_type attribute(c_string name,
+                              file_attribute_options f=file_attribute_options{}) const;
+        void attribute(c_string name, const_string value,
+                       file_attribute_flags f1=file_attribute_flags{},
+                       file_attribute_options f=file_attribute_options{});
+        void remove_attribute(c_string name,
+                              file_attribute_options f=file_attribute_options{});
+        file_attributes attributes(file_attribute_options f=file_attribute_options{}) const;
+        #endif
+
     private:
 
         inline explicit
@@ -296,6 +312,5 @@ namespace std {
     };
 
 }
-
 
 #endif // vim:filetype=cpp

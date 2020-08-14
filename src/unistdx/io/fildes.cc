@@ -44,3 +44,47 @@ sys::fildes::operator=(const fildes& rhs) {
     UNISTDX_CHECK(this->_fd);
     return *this;
 }
+
+#if defined(UNISTDX_HAVE_SYS_XATTR_H)
+std::string
+sys::fildes::attribute(c_string name) const {
+    std::string value;
+    auto size = ::fgetxattr(fd(), name, nullptr, 0);
+    UNISTDX_CHECK(size);
+    if (size == 0) { return std::string(); }
+    while (true) {
+        value.resize(size);
+        auto new_size = ::fgetxattr(fd(), name, &value[0], size);
+        UNISTDX_CHECK(new_size);
+        if (new_size == size) { break; }
+        size = new_size;
+    }
+    return value;
+}
+
+void
+sys::fildes::attribute(c_string name, const_string value, file_attribute_flags f1) {
+    UNISTDX_CHECK(::fsetxattr(fd(), name, value.data(), value.size(), int(f1)));
+}
+
+void
+sys::fildes::remove_attribute(c_string name) {
+    UNISTDX_CHECK(::fremovexattr(fd(), name));
+}
+
+sys::file_attributes
+sys::fildes::attributes() const {
+    std::unique_ptr<char[]> names;
+    auto size = ::flistxattr(fd(), nullptr, 0);
+    if (size == 0) { return file_attributes(); }
+    UNISTDX_CHECK(size);
+    while (true) {
+        names.reset(new char[size]);
+        auto new_size = ::flistxattr(fd(), names.get(), size);
+        UNISTDX_CHECK(new_size);
+        if (new_size == size) { break; }
+        size = new_size;
+    }
+    return file_attributes(std::move(names), size);
+}
+#endif

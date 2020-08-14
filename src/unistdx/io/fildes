@@ -48,6 +48,8 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/base/check>
 #include <unistdx/base/streambuf_traits>
+#include <unistdx/base/string>
+#include <unistdx/fs/file_attributes>
 #include <unistdx/fs/file_status>
 #include <unistdx/io/fd_type>
 #include <unistdx/io/open_flag>
@@ -596,6 +598,14 @@ namespace sys {
         inline void call(operation op) {
             UNISTDX_CHECK(::ioctl(this->_fd, static_cast<int>(op)));
         }
+        #endif
+
+        #if defined(UNISTDX_HAVE_SYS_XATTR_H)
+        std::string attribute(c_string name) const;
+        void attribute(c_string name, const_string value,
+                       file_attribute_flags f1=file_attribute_flags{});
+        void remove_attribute(c_string name);
+        file_attributes attributes() const;
         #endif
 
     private:

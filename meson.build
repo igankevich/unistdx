@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.27.0',
+    version: '0.28.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -157,6 +157,8 @@ foreach pair : [
     ['signal.h', 'SIGPWR'],
     ['signal.h', 'SIGSTKFLT'],
     ['signal.h', 'SIGWINCH'],
+    ['stdlib.h', 'mkstemp'],
+    ['stdlib.h', 'mkostemp'],
     ['sys/ioctl.h', 'FIONREAD'],
     ['sys/ioctl.h', 'ioctl'],
     ['sys/ioctl.h', 'SIOCADDMULTI'],
@@ -259,6 +261,7 @@ foreach header : [
     'sys/epoll.h',
     'sys/ioctl.h',
     'sys/sem.h',
+    'sys/xattr.h',
 ]
     all_defines += 'UNISTDX_HAVE_' + header.underscorify().to_upper()
     if cpp.has_header(header)
