@@ -29,6 +29,7 @@ install_headers(
     'simple_lock',
     'spin_mutex',
     'streambuf_traits',
+    'string',
     'types',
     'uint128',
     'unlock_guard',
