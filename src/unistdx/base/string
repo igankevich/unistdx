@@ -1,6 +1,7 @@
 #ifndef UNISTDX_BASE_STRING
 #define UNISTDX_BASE_STRING
 
+#include <ostream>
 #include <string>
 
 namespace sys {
@@ -17,6 +18,7 @@ namespace sys {
         const_pointer _data{};
 
     public:
+        c_string() noexcept = default;
 
         inline
         c_string(const_pointer data) noexcept:
@@ -48,6 +50,7 @@ namespace sys {
         size_type _size{};
 
     public:
+        const_string() noexcept = default;
 
         inline
         const_string(const_pointer data, size_type size) noexcept:
@@ -68,6 +71,56 @@ namespace sys {
         inline const_pointer end() const noexcept { return data()+size(); }
 
     };
+
+    /// \brief Mutable string with known size. Uses realloc for resize and does not fill contents with noughts.
+    class string {
+
+    public:
+        using pointer = char*;
+        using const_pointer = const char*;
+        using reference = char&;
+        using const_reference = const char&;
+        using size_type = size_t;
+
+    private:
+        pointer _data{};
+        size_type _capacity{};
+
+    public:
+        string() noexcept = default;
+        inline ~string() noexcept { deallocate(); }
+        inline explicit string(size_type size): _data(allocate(size)), _capacity(size) {}
+
+        inline void capacity(size_type size) {
+            this->_capacity = size;
+            this->_data = static_cast<pointer>(::realloc(this->_data, this->_capacity));
+        }
+
+        inline const_pointer data() const noexcept { return this->_data; }
+        inline operator const_pointer() const noexcept { return this->_data; }
+        inline operator pointer() noexcept { return this->_data; }
+        inline size_type capacity() const noexcept { return this->_capacity; }
+        inline const_pointer begin() const noexcept { return data(); }
+        inline const_pointer end() const noexcept { return data()+capacity(); }
+        inline const_reference operator[](size_type i) const noexcept { return this->_data[i]; }
+        inline pointer data() noexcept { return this->_data; }
+        inline pointer begin() noexcept { return data(); }
+        inline pointer end() noexcept { return data()+capacity(); }
+        inline reference operator[](size_type i) noexcept { return this->_data[i]; }
+        inline size_type size() const noexcept { return std::char_traits<char>::length(data()); }
+
+    private:
+        inline static pointer allocate(size_type n) {
+            auto ret = ::malloc(n);
+            if (!ret) { throw std::bad_alloc(); }
+            return static_cast<pointer>(ret);
+        }
+
+        inline void deallocate() { ::free(this->_data); }
+
+    };
+
+    inline std::ostream& operator<<(std::ostream& out, const string& rhs) { return out << rhs.data(); }
 
 }
 

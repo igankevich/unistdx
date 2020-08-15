@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.28.1',
+    version: '0.29.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -262,6 +262,7 @@ foreach header : [
     'sys/ioctl.h',
     'sys/sem.h',
     'sys/xattr.h',
+    'netdb.h',
 ]
     all_defines += 'UNISTDX_HAVE_' + header.underscorify().to_upper()
     if cpp.has_header(header)
