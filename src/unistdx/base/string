@@ -1,6 +1,39 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
 #ifndef UNISTDX_BASE_STRING
 #define UNISTDX_BASE_STRING
 
+#include <cstring>
 #include <ostream>
 #include <string>
 
@@ -12,6 +45,8 @@ namespace sys {
     public:
         using pointer = char*;
         using const_pointer = const char*;
+        using reference = char&;
+        using const_reference = const char&;
         using size_type = size_t;
 
     private:
@@ -19,6 +54,9 @@ namespace sys {
 
     public:
         c_string() noexcept = default;
+        ~c_string() noexcept = default;
+        c_string(const c_string&) = default;
+        c_string& operator=(const c_string&) = default;
 
         inline
         c_string(const_pointer data) noexcept:
@@ -28,14 +66,65 @@ namespace sys {
         c_string(const std::basic_string<char,Tr,Alloc>& str) noexcept:
         _data(str.data()) {}
 
+        inline c_string(c_string&& rhs) noexcept: _data(rhs._data) { rhs._data = nullptr; }
+
+        inline c_string& operator=(c_string&& rhs) noexcept {
+            this->_data = rhs._data;
+            rhs._data = nullptr;
+            return *this;
+        }
+
         inline const_pointer data() const noexcept { return this->_data; }
         inline operator const_pointer() const noexcept { return this->_data; }
+        inline const_reference front() const noexcept { return *this->_data; }
 
         inline size_type size() const noexcept {
             return std::char_traits<char>::length(data());
         }
 
+        inline const_pointer find(char ch) const {
+            return std::strchr(this->_data, ch);
+        }
+
+        inline const_pointer find_last(char ch) const {
+            return std::strrchr(this->_data, ch);
+        }
+
+        inline void trim_left() noexcept {
+            while (std::isspace(*this->_data)) { ++this->_data; }
+        }
+
+        inline bool operator==(const c_string& rhs) const noexcept {
+            return std::strcmp(data(), rhs.data()) == 0;
+        }
+
+        inline bool operator!=(const c_string& rhs) const noexcept {
+            return !this->operator==(rhs);
+        }
+
+        inline bool operator<(const c_string& rhs) const noexcept {
+            return std::strcmp(data(), rhs.data()) < 0;
+        }
+
+        inline bool operator<=(const c_string& rhs) const noexcept {
+            return std::strcmp(data(), rhs.data()) <= 0;
+        }
+
+        inline bool operator>(const c_string& rhs) const noexcept {
+            return std::strcmp(data(), rhs.data()) > 0;
+        }
+
+        inline bool operator>=(const c_string& rhs) const noexcept {
+            return std::strcmp(data(), rhs.data()) >= 0;
+        }
+
+        inline const_reference operator[](size_type i) const noexcept { return this->_data[i]; }
+
     };
+
+    inline std::ostream& operator<<(std::ostream& out, const c_string& rhs) {
+        return out << rhs.data();
+    }
 
     /// \brief Immutable string with known size.
     class const_string {
@@ -72,7 +161,8 @@ namespace sys {
 
     };
 
-    /// \brief Mutable string with known size. Uses realloc for resize and does not fill contents with noughts.
+    /// \brief Mutable string with known capacity.
+    // Uses realloc for resize and does not fill contents with noughts.
     class string {
 
     public:
@@ -90,6 +180,27 @@ namespace sys {
         string() noexcept = default;
         inline ~string() noexcept { deallocate(); }
         inline explicit string(size_type size): _data(allocate(size)), _capacity(size) {}
+
+        inline string(string&& rhs) noexcept: _data(rhs._data), _capacity(rhs._capacity) {
+            rhs._data = nullptr;
+        }
+
+        inline string& operator=(string&& rhs) noexcept { swap(rhs); return *this; }
+
+        inline void swap(string& rhs) noexcept {
+            std::swap(this->_data, rhs._data);
+            std::swap(this->_capacity, rhs._capacity);
+        }
+
+        inline string(const string& rhs): string(rhs._capacity) {
+            std::strncpy(this->_data, rhs, this->_capacity);
+        }
+
+        inline string& operator=(const string& rhs) {
+            string tmp(rhs);
+            swap(tmp);
+            return *this;
+        }
 
         inline void capacity(size_type size) {
             this->_capacity = size;

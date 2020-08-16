@@ -30,31 +30,34 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
+#ifndef UNISTDX_FS_CONST_PATH
+#define UNISTDX_FS_CONST_PATH
 
-#include <unistdx/fs/path>
-#include <unistdx/fs/temporary_file>
+#include <unistdx/base/string>
+#include <unistdx/fs/file_attributes>
 
-TEST(file_attributes, _) {
-    sys::temporary_file file("file_attributes");
-    sys::path path(file.name());
-    auto attrs = path.attributes();
-    EXPECT_THROW(path.attribute("user.unistdx.x"), sys::bad_call);
-    EXPECT_EQ(0, std::distance(attrs.begin(), attrs.end()));
-    EXPECT_EQ(nullptr, attrs.data());
-    EXPECT_EQ(0, attrs.size());
-    path.attribute("user.unistdx.x", "1");
-    attrs = path.attributes();
-    EXPECT_NE(nullptr, attrs.data());
-    EXPECT_NE(0, attrs.size());
-    EXPECT_STREQ("1", path.attribute("user.unistdx.x").data());
-    EXPECT_STREQ("user.unistdx.x", attrs.front());
-    EXPECT_EQ(1, std::distance(attrs.begin(), attrs.end()));
-    file.attribute("user.unistdx.x", "2");
-    attrs = file.attributes();
-    EXPECT_NE(nullptr, attrs.data());
-    EXPECT_NE(0, attrs.size());
-    EXPECT_STREQ("2", file.attribute("user.unistdx.x").data());
-    EXPECT_STREQ("user.unistdx.x", attrs.front());
-    EXPECT_EQ(1, std::distance(attrs.begin(), attrs.end()));
+namespace sys {
+
+    class const_path: public c_string {
+
+    public:
+        using c_string::c_string;
+
+        inline operator const_pointer() const noexcept { return this->data(); }
+
+        #if defined(UNISTDX_HAVE_SYS_XATTR_H)
+        string attribute(c_string name,
+                         file_attribute_options f=file_attribute_options{}) const;
+        void attribute(c_string name, const_string value,
+                       file_attribute_flags f1=file_attribute_flags{},
+                       file_attribute_options f=file_attribute_options{});
+        void remove_attribute(c_string name,
+                              file_attribute_options f=file_attribute_options{});
+        file_attributes attributes(file_attribute_options f=file_attribute_options{}) const;
+        #endif
+
+    };
+
 }
+
+#endif // vim:filetype=cpp

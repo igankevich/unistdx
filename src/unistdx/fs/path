@@ -36,7 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/flag>
 #include <unistdx/base/string>
 #include <unistdx/config>
-#include <unistdx/fs/file_attributes>
+#include <unistdx/fs/const_path>
 
 #include <memory>
 #include <string>
@@ -248,14 +248,23 @@ namespace sys {
         /// \endnowarn
 
         #if defined(UNISTDX_HAVE_SYS_XATTR_H)
-        string_type attribute(c_string name,
-                              file_attribute_options f=file_attribute_options{}) const;
-        void attribute(c_string name, const_string value,
-                       file_attribute_flags f1=file_attribute_flags{},
-                       file_attribute_options f=file_attribute_options{});
-        void remove_attribute(c_string name,
-                              file_attribute_options f=file_attribute_options{});
-        file_attributes attributes(file_attribute_options f=file_attribute_options{}) const;
+        inline string attribute(c_string name,
+                                file_attribute_options f=file_attribute_options{}) const {
+            return const_path(this->data()).attribute(name,f);
+        }
+        inline void attribute(c_string name, const_string value,
+                              file_attribute_flags f1=file_attribute_flags{},
+                              file_attribute_options f=file_attribute_options{}) {
+            return const_path(this->data()).attribute(name,value,f1,f);
+        }
+        inline void remove_attribute(c_string name,
+                                     file_attribute_options f=file_attribute_options{}) {
+            return const_path(this->data()).remove_attribute(name,f);
+        }
+        inline file_attributes
+        attributes(file_attribute_options f=file_attribute_options{}) const {
+            return const_path(this->data()).attributes(f);
+        }
         #endif
 
     private:
