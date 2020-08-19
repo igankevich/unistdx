@@ -32,29 +32,47 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
+#include <unistdx/config>
 #include <unistdx/fs/path>
 #include <unistdx/fs/temporary_file>
 
+#if defined(UNISTDX_HAVE_SYS_XATTR_H)
 TEST(file_attributes, _) {
-    sys::temporary_file file("file_attributes");
-    sys::path path(file.name());
-    auto attrs = path.attributes();
-    EXPECT_THROW(path.attribute("user.unistdx.x"), sys::bad_call);
-    EXPECT_EQ(0, std::distance(attrs.begin(), attrs.end()));
-    EXPECT_EQ(nullptr, attrs.data());
-    EXPECT_EQ(0, attrs.size());
-    path.attribute("user.unistdx.x", "1");
-    attrs = path.attributes();
-    EXPECT_NE(nullptr, attrs.data());
-    EXPECT_NE(0, attrs.size());
-    EXPECT_STREQ("1", path.attribute("user.unistdx.x").data());
-    EXPECT_STREQ("user.unistdx.x", attrs.front());
-    EXPECT_EQ(1, std::distance(attrs.begin(), attrs.end()));
-    file.attribute("user.unistdx.x", "2");
-    attrs = file.attributes();
-    EXPECT_NE(nullptr, attrs.data());
-    EXPECT_NE(0, attrs.size());
-    EXPECT_STREQ("2", file.attribute("user.unistdx.x").data());
-    EXPECT_STREQ("user.unistdx.x", attrs.front());
-    EXPECT_EQ(1, std::distance(attrs.begin(), attrs.end()));
+    try {
+        sys::temporary_file file("/dev/shm/file_attributes");
+        sys::path path(file.name());
+        auto attrs = path.attributes();
+        EXPECT_THROW(path.attribute("user.unistdx.x"), sys::bad_call);
+        EXPECT_EQ(0, std::distance(attrs.begin(), attrs.end()));
+        EXPECT_EQ(nullptr, attrs.data());
+        EXPECT_EQ(0, attrs.size());
+        path.attribute("user.unistdx.x", "1");
+        attrs = path.attributes();
+        EXPECT_NE(nullptr, attrs.data());
+        EXPECT_NE(0, attrs.size());
+        EXPECT_STREQ("1", path.attribute("user.unistdx.x").data());
+        EXPECT_STREQ("user.unistdx.x", attrs.front());
+        EXPECT_EQ(1, std::distance(attrs.begin(), attrs.end()));
+        file.attribute("user.unistdx.x", "2");
+        attrs = file.attributes();
+        EXPECT_NE(nullptr, attrs.data());
+        EXPECT_NE(0, attrs.size());
+        EXPECT_STREQ("2", file.attribute("user.unistdx.x").data());
+        EXPECT_STREQ("user.unistdx.x", attrs.front());
+        EXPECT_EQ(1, std::distance(attrs.begin(), attrs.end()));
+    } catch (const std::system_error& err) {
+        if (std::errc(err.code().value()) == std::errc::not_supported) {
+            std::exit(77);
+        }
+        throw;
+    }
+}
+#endif
+
+int main(int argc, char* argv[]) {
+    #if !defined(UNISTDX_HAVE_SYS_XATTR_H)
+    std::exit(77);
+    #endif
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
