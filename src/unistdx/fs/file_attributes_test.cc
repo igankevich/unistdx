@@ -39,7 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 #if defined(UNISTDX_HAVE_SYS_XATTR_H)
 TEST(file_attributes, _) {
     try {
-        sys::temporary_file file("/dev/shm/file_attributes");
+        sys::temporary_file file("file_attributes");
         sys::path path(file.name());
         auto attrs = path.attributes();
         EXPECT_THROW(path.attribute("user.unistdx.x"), sys::bad_call);
