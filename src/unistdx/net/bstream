@@ -182,14 +182,14 @@ namespace sys {
         UNISTDX_MAKE_PUT_GET_OPERATOR(string_type)
         /// \}
 
-        /// Insert operator for \link bytes \endlink.
+        /// Insert operator for \link sys::bytes \endlink.
         template<class T>
         inline basic_bstream&
         operator<<(const sys::bytes<T,Ch>& rhs) {
             return this->write(rhs.begin(), rhs.size());
         }
 
-        /// Get operator for \link bytes \endlink.
+        /// Get operator for \link sys::bytes \endlink.
         template<class T>
         inline basic_bstream&
         operator>>(sys::bytes<T,Ch>& rhs) {

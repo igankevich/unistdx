@@ -40,12 +40,6 @@ doxyfile.set('EXCLUDE_PATTERNS', ' '.join(['*.css', '*.scm', '*_test.cc', 'meson
 doxyfile.set('EXCLUDE_SYMBOLS', ' '.join(['bits']))
 input_files = [join_paths(meson.source_root(), 'src', 'unistdx')]
 doxyfile.set('INPUT', ' '.join(input_files))
-perl = find_program('perl', required: false)
-if perl.found()
-    doxyfile.set('PERL_PATH', perl.path())
-else
-    doxyfile.set('PERL_PATH', '')
-endif
 dot = find_program('dot', required: false)
 if dot.found()
     doxyfile.set('DOT_PATH', dot.path())

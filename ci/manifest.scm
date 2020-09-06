@@ -24,7 +24,7 @@
                     (@ (gnu packages documentation) doxygen)
                     (@ (gnu packages perl) perl)
                     (@ (gnu packages tex) texlive-bin)
-                    (@ (gnu packages guile) guile-2.2)
+                    (@ (gnu packages guile) guile-3.0)
                     (@ (gnu packages guile-xyz) haunt)
                     (@ (gnu packages guile-xyz) guile-syntax-highlight)
                     (@ (gnu packages groff) groff)
