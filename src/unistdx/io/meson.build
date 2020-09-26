@@ -27,10 +27,11 @@ libunistdx_tests += [
     [files('epoll_event_test.cc')],
     [files('fildes_test.cc')],
     [files('fildesbuf_test.cc')],
+    [files('memory_mapping_test.cc')],
+    [files('pipe_test.cc')],
     [files('poll_event_test.cc')],
     [files('poller_test.cc')],
     [files('two_way_pipe_test.cc')],
-    [files('memory_mapping_test.cc')],
 ]
 
 libunistdx_benchmarks += files([

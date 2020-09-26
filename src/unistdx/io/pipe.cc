@@ -63,7 +63,8 @@ namespace {
 void
 sys::pipe::open() {
     this->close();
-    safe_pipe(this->_rawfds);
+    static_assert(sizeof(_fds) == 2*sizeof(fd_type), "bad sys::fildes size");
+    safe_pipe(reinterpret_cast<fd_type*>(this->_fds));
 }
 
 void

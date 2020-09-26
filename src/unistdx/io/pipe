@@ -43,11 +43,10 @@ namespace sys {
     \ingroup io wrapper
     \see \man{pipe2,2}
     */
-    union pipe {
+    class pipe {
 
     private:
         fildes _fds[2] = {};
-        fd_type _rawfds[2];
 
     public:
 
@@ -59,10 +58,7 @@ namespace sys {
         Both file descriptors are in non-blocking mode
         and have close-on-exec flag set.
         */
-        inline
-        pipe(): _fds {} { // LCOV_EXCL_LINE
-            this->open();
-        }
+        inline pipe() { this->open(); }
 
         /// Move-constructor.
         inline
@@ -77,9 +73,7 @@ namespace sys {
         {}
 
         pipe(const pipe&) = delete;
-
-        pipe&
-        operator=(const pipe&) = delete;
+        pipe& operator=(const pipe&) = delete;
 
         /// Move-assignment.
         inline pipe&
@@ -88,32 +82,19 @@ namespace sys {
             return *this;
         }
 
-        inline
-        ~pipe() {}
+        ~pipe() noexcept = default;
 
         /// Input file descriptor.
-        inline fildes&
-        in() noexcept {
-            return this->_fds[0];
-        }
+        inline fildes& in() noexcept { return this->_fds[0]; }
 
         /// Output file descriptor.
-        inline fildes&
-        out() noexcept {
-            return this->_fds[1];
-        }
+        inline fildes& out() noexcept { return this->_fds[1]; }
 
         /// Input file descriptor.
-        inline const fildes&
-        in() const noexcept {
-            return this->_fds[0];
-        }
+        inline const fildes& in() const noexcept { return this->_fds[0]; }
 
         /// Output file descriptor.
-        inline const fildes&
-        out() const noexcept {
-            return this->_fds[1];
-        }
+        inline const fildes& out() const noexcept { return this->_fds[1]; }
 
         /**
         \brief Create pipe with \man{pipe,2} system call.
@@ -139,7 +120,6 @@ namespace sys {
         friend std::ostream&
         operator<<(std::ostream& out, const pipe& rhs);
 
-        static_assert(sizeof(_fds) == sizeof(_rawfds), "bad sys::fildes size");
     };
 
     /// Overload of \link std::swap \endlink for \link pipe \endlink.

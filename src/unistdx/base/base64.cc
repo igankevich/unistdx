@@ -80,11 +80,11 @@ namespace {
     inline unsigned char
     char_to_index(unsigned char ch) {
         if (ch >= 128) {
-            throw std::invalid_argument("bad base64 string"); // LCOV_EXCL_LINE
+            throw std::invalid_argument("bad base64 string");
         }
         unsigned char result = base64_table[ch];
         if (result == 77) {
-            throw std::invalid_argument("bad base64 string"); // LCOV_EXCL_LINE
+            throw std::invalid_argument("bad base64 string");
         }
         return result;
     }
@@ -132,7 +132,7 @@ sys::base64_decode(
 ) {
     const char* old = result;
     if (n%4) {
-        throw std::invalid_argument("bad base64 string"); // LCOV_EXCL_LINE
+        throw std::invalid_argument("bad base64 string");
     }
     if (n == 0) {
         return 0;
