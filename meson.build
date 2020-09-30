@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.30.3',
+    version: '0.30.4',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -22,7 +22,8 @@ endif
 foreach arg : [
     '-Werror=return-type',
     '-Werror=return-local-addr',
-    '-Werror=cast-align']
+    '-Werror=cast-align',
+    '-Wcast-align=strict']
     if cpp.has_argument(arg)
         add_global_arguments(arg, language: 'cpp')
     endif
@@ -345,7 +346,7 @@ clang_tidy = find_program('clang-tidy', required: false)
 if clang_tidy.found()
     run_target(
         'clang-tidy',
-        command: [clang_check] + libunistdx_src + [
+        command: [clang_tidy] + libunistdx_src + [
             '--',
             '-I' + join_paths(meson.source_root(), 'src'),
             '-I' + join_paths(meson.build_root(), 'src'),
