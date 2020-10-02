@@ -289,7 +289,7 @@ namespace sys {
 
         /// Socket options.
         /// \deprecated Use \em options instead.
-        enum option: int UNISTDX_DEPRECATED {
+        enum UNISTDX_DEPRECATED option: int {
             reuse_addr = SO_REUSEADDR,
             keep_alive = SO_KEEPALIVE,
             /**

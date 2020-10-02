@@ -1,0 +1,28 @@
+#!/bin/sh
+
+args=
+
+# add include paths from environment variables
+OLD_IFS="$IFS"
+IFS=:
+for i in $CPLUS_INCLUDE_PATH:$C_INCLUDE_PATH
+do
+   args="$args -I$i"
+done
+IFS="$OLD_IFS"
+
+# add GCC built-in headers to include path
+manifest=$(mktemp)
+cat > $manifest << 'EOF'
+(packages->manifest
+  (list
+    (list (@ (gnu packages gcc) gcc) "lib")))
+EOF
+for i in $(guix build -m $manifest | grep 'lib$')
+do
+    args="$args -isystem $(dirname $(find $i -name stddef.h))"
+    args="$args -isystem $(dirname $(find $i -name limits.h))"
+done
+rm -f $manifest
+
+"$@" $args

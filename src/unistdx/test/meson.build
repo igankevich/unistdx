@@ -55,25 +55,27 @@ configure_file(
     configuration: coverage
 )
 gcov = find_program('gcov', required: false)
-gcov_tool = configuration_data()
-gcov_tool_cmd = gcov.path()
-if cpp.get_id() == 'clang'
-    llvm_cov = find_program('llvm-cov', required: false)
-    if llvm_cov.found()
-        gcov_tool_cmd = llvm_cov.path() + ' gcov'
+if gcov.found()
+    gcov_tool = configuration_data()
+    gcov_tool_cmd = gcov.path()
+    if cpp.get_id() == 'clang'
+        llvm_cov = find_program('llvm-cov', required: false)
+        if llvm_cov.found()
+            gcov_tool_cmd = llvm_cov.path() + ' gcov'
+        endif
     endif
-endif
-gcov_tool.set('gcov_tool_cmd', gcov_tool_cmd)
-configure_file(
-    input: 'gcov-tool.in',
-    output: 'gcov-tool',
-    configuration: gcov_tool
-)
-if lcov.found() and genhtml.found()
-    run_target(
-        'test-lcov',
-        command: join_paths(meson.current_build_dir(), 'coverage')
+    gcov_tool.set('gcov_tool_cmd', gcov_tool_cmd)
+    configure_file(
+        input: 'gcov-tool.in',
+        output: 'gcov-tool',
+        configuration: gcov_tool
     )
+    if lcov.found() and genhtml.found()
+        run_target(
+            'test-lcov',
+            command: join_paths(meson.current_build_dir(), 'coverage')
+        )
+    endif
 endif
 # }}}
 # gcovr {{{

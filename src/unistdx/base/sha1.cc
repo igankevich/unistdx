@@ -86,7 +86,7 @@ namespace {
 }
 
 #define MAKE_LOOP(from, to) \
-    for (int i=from; i<=to; ++i) { \
+    for (int i=from; i<=(to); ++i) { \
         temp = cls(5, a) + f_ ## from ## _ ## to(b, c, d) + e + w[i] \
                + k_ ## from ## _ ## to; \
         e = d; \

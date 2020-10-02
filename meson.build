@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.30.4',
+    version: '0.30.5',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -344,9 +344,28 @@ endif
 # clang-tidy {{{
 clang_tidy = find_program('clang-tidy', required: false)
 if clang_tidy.found()
+    clang_tidy_checks = [
+        '-*',
+        'bugprone-*',
+        '-bugprone-unused-raii',
+        '-bugprone-narrowing-conversions',
+        'cppcoreguidelines-avoid-goto',
+        'cppcoreguidelines-slicing',
+        'cppcoreguidelines-special-member-functions',
+        'misc-*',
+        '-misc-non-private-member-variables-in-classes',
+        'performance-*',
+        '-performance-unnecessary-value-param',
+    ]
     run_target(
         'clang-tidy',
-        command: [clang_tidy] + libunistdx_src + [
+        command: [
+            join_paths(meson.source_root(), 'ci', 'clang-tidy'),
+            clang_tidy.path(),
+            '-p=' + meson.build_root(),
+            '--checks=' + ','.join(clang_tidy_checks),
+            '--warnings-as-errors=*',
+        ] + libunistdx_src + [
             '--',
             '-I' + join_paths(meson.source_root(), 'src'),
             '-I' + join_paths(meson.build_root(), 'src'),

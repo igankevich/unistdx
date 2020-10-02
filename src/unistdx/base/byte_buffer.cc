@@ -82,6 +82,7 @@ _size(rhs._size), _position(rhs._position), _limit(rhs._limit), _order(rhs._orde
 }
 
 sys::byte_buffer& sys::byte_buffer::operator=(const byte_buffer& rhs) {
+    if (this == &rhs) { return *this; }
     resize(rhs.size());
     std::memcpy(data(), rhs.data(), size());
     this->_position = rhs._position;
@@ -98,8 +99,11 @@ _size(size), _limit(size) {
     }
 }
 
-sys::byte_buffer::~byte_buffer() {
-    do_unmap(this->_data, this->_size);
+sys::byte_buffer::~byte_buffer() noexcept {
+    if (this->_data) {
+        int ret = ::munmap(this->_data, this->_size);
+        if (ret == -1) { std::terminate(); }
+    }
 }
 
 void

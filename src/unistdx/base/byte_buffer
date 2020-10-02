@@ -128,7 +128,7 @@ namespace sys {
         */
         explicit byte_buffer(size_type size);
 
-        ~byte_buffer();
+        ~byte_buffer() noexcept;
 
         /// Get pointer to raw data.
         inline iterator data() noexcept { return this->_data; }

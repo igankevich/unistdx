@@ -33,8 +33,14 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/netlink_poller>
 #include <unistdx/net/veth_interface>
 
-sys::veth_interface::~veth_interface() {
-    if (*this) { down(); destroy(); }
+sys::veth_interface::~veth_interface() noexcept {
+    if (*this) {
+        try {
+            down(); destroy();
+        } catch (...) {
+            std::terminate();
+        }
+    }
 }
 
 void sys::veth_interface::destroy() {

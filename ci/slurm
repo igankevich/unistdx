@@ -101,7 +101,21 @@
                   (format #f "mv -v lcov $outdir/~a-coverage" system)
                   "rm -rf --one-file-system --preserve-root $d")
                 "\n")
-              #:name "coverage"))))
+              #:name "coverage")
+            (make <job>
+              #:script
+              (string-join
+                (list
+                  "#!/bin/sh"
+                  "set -ex"
+                  "outdir=$(pwd)"
+                  "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+                  "meson . $d"
+                  "cd $d"
+                  "ninja -v clang-tidy"
+                  "rm -rf --one-file-system --preserve-root $d")
+                "\n")
+              #:name "static-checks"))))
       (format (current-error-port) "Building the project\n")
       (setenv "UNISTDX_MANIFEST" "ci")
       (exit (gitbucket-run

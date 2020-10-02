@@ -49,7 +49,7 @@ namespace sys {
         veth_interface(const std::string& name, const std::string& peer):
         network_interface(name), _peer(peer) { this->init(); }
 
-        ~veth_interface();
+        ~veth_interface() noexcept;
         veth_interface() = default;
         veth_interface(veth_interface&&) = default;
         veth_interface& operator=(veth_interface&&) = default;
