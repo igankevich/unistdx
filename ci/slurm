@@ -13,8 +13,8 @@
 
 (define branch (getenv "CI_BUILD_BRANCH"))
 
-(define* (make-job system #:allow-other-keys #:rest r)
-  (define job (apply make (cons <job> r)))
+(define* (make-job system . rest)
+  (define job (apply make (cons <job> rest)))
   (set! (job-partitions job) '("ci"))
   (gitbucket-wrap!
     job (make <gitbucket-build>))
