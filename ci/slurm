@@ -16,13 +16,13 @@
 (define* (make-job system . rest)
   (define job (apply make (cons <job> rest)))
   (set! (job-partitions job) '("ci"))
-  (gitbucket-wrap!
-    job (make <gitbucket-build>))
   (guix-environment-wrap!
     job (make <guix-environment>
           #:channels "ci/channels.scm"
           #:manifest "ci/manifest.scm"
-          #:system system)))
+          #:system system))
+  (gitbucket-wrap!
+    job (make <gitbucket-build>)))
 
 (cond
   ;; build site

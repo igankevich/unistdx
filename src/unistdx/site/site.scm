@@ -943,37 +943,39 @@
 (define (post-process-locations)
   (define prefix-length
     (cdr (reduce
-          (lambda (a b)
-            (let* ((str-a (car a)) (str-b (car b)) (len-a (cdr a)) (len-b (cdr b)))
-              (cons str-a (min (string-prefix-length str-a str-b) len-a len-b))))
-          0
-          (map
-           (lambda (str) (cons str (string-length str)))
-           (filter
-            (lambda (file)
-              (and (string? file)
-                   (not (string-null? file))
-                   (not (member file (map car (doxyfile-tag-files))))))
-            (hash-map->list
-             (lambda (key value) (location-file (definition-location value)))
-             definitions))))))
+           (lambda (a b)
+             (let* ((str-a (car a)) (str-b (car b)) (len-a (cdr a)) (len-b (cdr b)))
+               (cons str-a (min (string-prefix-length str-a str-b) len-a len-b))))
+           0
+           (map
+             (lambda (str) (cons str (string-length str)))
+             (filter
+               (lambda (file)
+                 (and (string? file)
+                      (not (string-null? file))
+                      (not (member file (map car (doxyfile-tag-files))))))
+               (hash-map->list
+                 (lambda (key value) (location-file (definition-location value)))
+                 definitions))))))
   (hash-for-each
-   (lambda (key value)
-     (let ((old-file (location-file (definition-location value))))
-       (set! (definition-output-path value)
-             (cond
-              ((string= (definition-kind value) "group")
-               (string-append "modules/" (definition-name value) ".html"))
-              ((string= (definition-kind value) "page")
-               (if (string= (definition-id value) "indexpage")
-                   "index.html"
-                   (string-append "pages/" (definition-name value) ".html")))
-              ((and (string? old-file) (not (string-null? old-file)))
-               (if (string= (definition-kind value) "dir")
-                   (string-append "files/" (substring old-file prefix-length) "index.html")
-                   (string-append "files/" (substring old-file prefix-length) ".html")))
-              (else "")))))
-   definitions)
+    (lambda (key value)
+      (let ((old-file (location-file (definition-location value))))
+        (set! (definition-output-path value)
+          (cond
+            ((member old-file (map car (doxyfile-tag-files)))
+             "")
+            ((string= (definition-kind value) "group")
+             (string-append "modules/" (definition-name value) ".html"))
+            ((string= (definition-kind value) "page")
+             (if (string= (definition-id value) "indexpage")
+               "index.html"
+               (string-append "pages/" (definition-name value) ".html")))
+            ((and (string? old-file) (not (string-null? old-file)))
+             (if (string= (definition-kind value) "dir")
+               (string-append "files/" (substring old-file prefix-length) "index.html")
+               (string-append "files/" (substring old-file prefix-length) ".html")))
+            (else "")))))
+    definitions)
   (format #t "LCP: ~a\n" prefix-length))
 
 (define (index-file-definitions)
