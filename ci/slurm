@@ -1,4 +1,4 @@
-#!/bin/guile2.2
+#!/bin/guile3.0
 !#
 
 (use-modules
@@ -11,22 +11,18 @@
   (slurm)
   (slurm-ci))
 
-(define default-env
-  (make <guix-environment>
-    #:channels "ci/channels.scm"
-    #:manifest "ci/manifest.scm"))
-
 (define branch (getenv "CI_BUILD_BRANCH"))
 
-(define (job-transform job env)
-  (set! (job-name job)
-    (string-join (list "unistdx"
-                       (getenv "CI_BUILD_NUMBER")
-                       (guix-environment-system env)
-                       (job-name job))
-                 "-"))
+(define* (make-job system #:allow-other-keys #:rest r)
+  (define job (apply make (cons <job> r)))
   (set! (job-partitions job) '("ci"))
-  (guix-environment-wrap! job env))
+  (gitbucket-wrap!
+    job (make <gitbucket-build>))
+  (guix-environment-wrap!
+    job (make <guix-environment>
+          #:channels "ci/channels.scm"
+          #:manifest "ci/manifest.scm"
+          #:system system)))
 
 (cond
   ;; build site
@@ -37,47 +33,44 @@
      (exit
        (gitbucket-run
          (list
-           (job-transform
-             (make <job>
-               #:name "site"
-               #:script
-               (string-join
-                 (list
-                   "#!/bin/sh"
-                   "set -ex"
-                   "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
-                   "export LANG=en_US.utf-8"
-                   "meson . $d"
-                   "cd $d"
-                   "ninja -v doxygen-std-tagfile"
-                   "ninja -v site"
-                   "rsync -e 'ssh -p 22222' -acv --delete src/unistdx/site/ cmmshq.ru:/srv/unistdx/"
-                   "rm -rf $d")
-                 "\n")
-               )
-             default-env))))))
+           (make-job
+             "x86_64-linux"
+             #:name "site"
+             #:script (string-join
+                        (list
+                          "#!/bin/sh"
+                          "set -ex"
+                          "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+                          "export LANG=en_US.utf-8"
+                          "meson -Dwith_site=true . $d"
+                          "cd $d"
+                          "ninja -v doxygen-std-tagfile"
+                          "ninja -v site"
+                          "rsync -e 'ssh -p 22222' -acv --delete src/unistdx/site/ cmmshq.ru:/srv/unistdx/"
+                          "rm -rf $d")
+                        "\n")))))))
   ;; default build
   (else
     (let ()
-      (define (all-jobs system)
+      (define (make-jobs system)
         (append
           (map
             (lambda (lst)
               (define name (car lst))
               (define meson-arguments (cdr lst))
-              (make <job>
-                #:script
-                (string-join
-                  (list
-                    "#!/bin/sh"
-                    "set -ex"
-                    "d=$(mktemp -d /tmp/gitbucket-$SLURM_JOB_ID-XXXXXX)"
-                    (format #f "meson ~a -Dwith_debug=true . $d"
-                            (string-join meson-arguments " "))
-                    "cd $d"
-                    "meson test --verbose --timeout-multiplier 2"
-                    "rm -rf --one-file-system --preserve-root $d")
-                  "\n")
+              (make-job
+                system
+                #:script (string-join
+                           (list
+                             "#!/bin/sh"
+                             "set -ex"
+                             "d=$(mktemp -d /tmp/gitbucket-$SLURM_JOB_ID-XXXXXX)"
+                             (format #f "meson ~a -Dwith_debug=true . $d"
+                                     (string-join meson-arguments " "))
+                             "cd $d"
+                             "meson test --verbose --timeout-multiplier 2"
+                             "rm -rf --one-file-system --preserve-root $d")
+                           "\n")
                 #:name name))
             `(("sanitize-none" "-Db_sanitize=none")
               ,@(if (string=? system "x86_64-linux")
@@ -87,7 +80,8 @@
                   '(("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native"))
                   '())))
           (list
-            (make <job>
+            (make-job
+              system
               #:script
               (string-join
                 (list
@@ -102,7 +96,8 @@
                   "rm -rf --one-file-system --preserve-root $d")
                 "\n")
               #:name "coverage")
-            (make <job>
+            (make-job
+              system
               #:script
               (string-join
                 (list
@@ -119,15 +114,6 @@
       (format (current-error-port) "Building the project\n")
       (setenv "UNISTDX_MANIFEST" "ci")
       (exit (gitbucket-run
-              (append-map
-                (lambda (system)
-                  (map (lambda (job)
-                         (job-transform job
-                                        (make <guix-environment>
-                                          #:channels "ci/channels.scm"
-                                          #:manifest "ci/manifest.scm"
-                                          #:system system)))
-                       (all-jobs system)))
-                '("x86_64-linux" "i686-linux" "aarch64-linux")))))))
+              (append-map make-jobs '("x86_64-linux" "i686-linux" "aarch64-linux")))))))
 
 ;; vim:filetype=scheme
