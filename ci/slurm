@@ -80,7 +80,7 @@
                   "\n")
                 #:name name))
             `(("sanitize-none" "-Db_sanitize=none")
-              ,@(if (not (string=? system "i686-linux"))
+              ,@(if (string=? system "x86_64-linux")
                   '(("sanitize-address" "-Db_sanitize=address"))
                   '())
               ,@(if (not (string=? system "aarch64-linux"))

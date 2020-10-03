@@ -45,12 +45,13 @@ sys::const_path::attribute(c_string name, file_attribute_options f) const {
     UNISTDX_CHECK(size);
     if (size == 0) { return string(); }
     while (true) {
-        value.capacity(size);
+        value.capacity(size+1);
         auto new_size = get(data(), name, value.data(), size);
         UNISTDX_CHECK(new_size);
         if (new_size == size) { break; }
         size = new_size;
     }
+    value[size] = 0;
     return value;
 }
 

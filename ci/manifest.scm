@@ -18,22 +18,26 @@
       (@ (gnu packages python-xyz) python-chardet)
       (@ (gnu packages code) lcov)
       (@ (gnu packages gcovr) python-gcovr)
-      (list (@ (gnu packages llvm) clang-10) "extra"))
+      (list (@ (gnu packages llvm) clang-10) "extra") ;; clang-tidy
+      )
     (if-enabled "site"
-                (list (@ (gnu packages curl) curl)
-                      (@ (gnu packages graphviz) graphviz)
-                      (@ (gnu packages documentation) doxygen)
-                      (@ (gnu packages perl) perl)
-                      (@ (gnu packages tex) texlive-bin)
-                      (@ (gnu packages guile) guile-3.0)
-                      (@ (gnu packages guile-xyz) haunt)
-                      (@ (gnu packages guile-xyz) guile-syntax-highlight)
-                      (@ (gnu packages groff) groff)
-                      (@ (gnu packages xml) libxslt)
-                      ))
+      (list (@ (gnu packages curl) curl)
+            (@ (gnu packages graphviz) graphviz)
+            (@ (gnu packages documentation) doxygen)
+            (@ (gnu packages perl) perl)
+            (@ (gnu packages tex) texlive-bin)
+            (@ (gnu packages guile) guile-3.0)
+            (@ (gnu packages guile-xyz) haunt)
+            (@ (gnu packages guile-xyz) guile-syntax-highlight)
+            (@ (gnu packages groff) groff)
+            (@ (gnu packages xml) libxslt)))
     (if-enabled "ci"
-                (list (@ (gnu packages rsync) rsync)
-                      (@ (gnu packages ssh) openssh)
-                      (@ (gnu packages base) coreutils)
-                      (@ (gnu packages base) findutils) ;; lcov needs find
-                      (@ (gnu packages bash) bash)))))
+      (list (@ (gnu packages rsync) rsync)
+            (@ (gnu packages ssh) openssh)
+            (@ (gnu packages base) coreutils)
+            (@ (gnu packages base) findutils) ;; lcov needs find
+            (@ (gnu packages bash) bash)
+            (@ (gnu packages package-management) guix) ;; clang-tidy runs from guix repl
+            ))))
+
+;; vim:lispwords+=if-enabled

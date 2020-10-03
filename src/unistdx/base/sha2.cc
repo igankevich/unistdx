@@ -235,7 +235,7 @@ std::string sys::sha2_base::to_string(int n) const {
 
 void sys::sha2_512_base::insert(const char* data, std::size_t n) {
     if (n >= std::numeric_limits<size_t>::max()/8 ||
-        n >= std::numeric_limits<size_t>::max()/8 - this->_length/8) {
+        n >= std::numeric_limits<size_t>::max()/8 - this->_length.b/8) {
         throw std::length_error("sha2_512_base input is too large");
     }
     auto first = this->_blockptr, last = this->_block + sizeof(this->_block);
@@ -250,7 +250,7 @@ void sys::sha2_512_base::insert(const char* data, std::size_t n) {
         }
     }
     this->_blockptr = first;
-    this->_length += n*8;
+    this->_length.b += n*8;
 }
 
 void sys::sha2_512_base::finish() noexcept {
@@ -312,7 +312,13 @@ void sys::sha2_512_base::pad_message() noexcept {
     std::fill(this->_blockptr, this->_block + sizeof(this->_block) - sizeof(u64)*2, '\0');
     // store the size of the original message
     // in the last double word
-    this->_dwords[7] = to_network_format(orig_length);
+    #if defined(UNISTDX_BIG_ENDIAN)
+    this->_dwords[7].a = orig_length.a;
+    this->_dwords[7].b = orig_length.b;
+    #else
+    this->_dwords[7].a = to_network_format(orig_length.a);
+    this->_dwords[7].b = to_network_format(orig_length.b);
+    #endif
     this->process_block();
 }
 

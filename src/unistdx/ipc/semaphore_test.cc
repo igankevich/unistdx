@@ -139,40 +139,35 @@ private:
 TYPED_TEST(SemaphoreTest, Semaphore) {
     typedef std::mutex Mutex;
     typedef TypeParam Semaphore;
-    this->run([&] (unsigned nthreads, u64 max) {
-        typedef u64 I;
-        typedef Thread_pool<I, Mutex, Semaphore> Pool;
-        std::vector<Pool*> thread_pool(nthreads);
-        std::for_each(thread_pool.begin(), thread_pool.end(), [] (Pool*& ptr) {
-            ptr = new Pool;
-        });
-        I expected_sum = (max + I(1))*max/I(2);
-        for (I i=1; i<=max; ++i) {
-            thread_pool[i%thread_pool.size()]->submit(i);
-        }
-        for (Pool* pool : thread_pool) {
-            pool->submit(Pool::sval);
-        }
-        std::for_each(
-            thread_pool.begin(),
-            thread_pool.end(),
-            std::mem_fn(&Pool::wait)
-        );
-        I sum = std::accumulate(
-            thread_pool.begin(),
-            thread_pool.end(),
-            I(0),
-            [] (I sum, Pool* ptr) {
-                return sum + ptr->result();
+    try {
+        this->run([&] (unsigned nthreads, u64 max) {
+            typedef u64 I;
+            typedef Thread_pool<I, Mutex, Semaphore> Pool;
+            std::vector<std::unique_ptr<Pool>> thread_pool;
+            thread_pool.reserve(nthreads);
+            for (unsigned i=0; i<nthreads; ++i) {
+                thread_pool.emplace_back(new Pool);
             }
-        );
-    //	for (Pool* pool : thread_pool) {
-    //		std::cout << pool->result() << std::endl;
-    //	}
-    //	std::cout << max << ": " << sum << std::endl;
-        sys::delete_each(thread_pool.begin(), thread_pool.end());
-        EXPECT_EQ(expected_sum, sum);
-    });
+            I expected_sum = (max + I(1))*max/I(2);
+            for (I i=1; i<=max; ++i) {
+                thread_pool[i%thread_pool.size()]->submit(i);
+            }
+            for (auto& pool : thread_pool) { pool->submit(Pool::sval); }
+            for (auto& pool : thread_pool) { pool->wait(); }
+            I sum = 0;
+            for (const auto& pool : thread_pool) { sum += pool->result(); }
+        //	for (Pool* pool : thread_pool) {
+        //		std::cout << pool->result() << std::endl;
+        //	}
+        //	std::cout << max << ": " << sum << std::endl;
+            EXPECT_EQ(expected_sum, sum);
+        });
+    } catch (const sys::bad_call& err) {
+        if (err.errc() != std::errc::function_not_supported) {
+            throw;
+        }
+        std::exit(77);
+    }
 }
 
 TYPED_TEST_CASE(
@@ -195,6 +190,7 @@ TYPED_TEST(SemaphoreWaitTest, WaitUntil) {
         if (err.errc() != std::errc::function_not_supported) {
             throw;
         }
+        std::exit(77);
     }
 }
 
@@ -212,6 +208,13 @@ TYPED_TEST_CASE(
 );
 
 TYPED_TEST(SemaphoreProcessTest, ProducerConsumer) {
-    this->test_producer_consumer_process();
+    try {
+        this->test_producer_consumer_process();
+    } catch (const sys::bad_call& err) {
+        if (err.errc() != std::errc::function_not_supported) {
+            throw;
+        }
+        std::exit(77);
+    }
 }
 #endif

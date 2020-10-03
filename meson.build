@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.30.5',
+    version: '0.30.6',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -343,7 +343,8 @@ endif
 # }}}
 # clang-tidy {{{
 clang_tidy = find_program('clang-tidy', required: false)
-if clang_tidy.found()
+guix = find_program('guix', required: false)
+if clang_tidy.found() and guix.found()
     clang_tidy_checks = [
         '-*',
         'bugprone-*',
@@ -360,11 +361,15 @@ if clang_tidy.found()
     run_target(
         'clang-tidy',
         command: [
-            join_paths(meson.source_root(), 'ci', 'clang-tidy'),
+            guix,
+            'repl',
+            '--',
+            join_paths(meson.source_root(), 'ci', 'clang-tidy.scm'),
             clang_tidy.path(),
             '-p=' + meson.build_root(),
             '--checks=' + ','.join(clang_tidy_checks),
             '--warnings-as-errors=*',
+            '--quiet',
         ] + libunistdx_src + [
             '--',
             '-I' + join_paths(meson.source_root(), 'src'),

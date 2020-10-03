@@ -38,10 +38,6 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/types>
 #include <unistdx/config>
 
-#if !defined(UNISTDX_HAVE_INT128)
-#include <unistdx/base/uint128>
-#endif
-
 namespace sys {
 
     class sha2_base {
@@ -127,21 +123,14 @@ namespace sys {
     class sha2_512_base {
 
     private:
-        #if defined(UNISTDX_HAVE_INT128)
-        using u128 = unsigned __int128;
-        #else
-        using u128 = ::sys::u128;
-        #endif
-
-    private:
         u64 _digest[8] {};
         union {
             u64 _words[80] {};
-            u128 _dwords[sizeof(u128)*8];
+            struct { u64 a{}, b{}; } _dwords[8];
             char _block[sizeof(u64)*16];
         };
         char* _blockptr = _block;
-        u128 _length = 0;
+        struct { u64 a{}, b{}; } _length;
 
     public:
 
