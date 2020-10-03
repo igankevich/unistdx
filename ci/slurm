@@ -24,96 +24,90 @@
   (gitbucket-wrap!
     job (make <gitbucket-build>)))
 
-(cond
-  ;; build site
-  ((and branch (string=? branch "site"))
-   (format (current-error-port) "Building the site\n")
-   (setenv "UNISTDX_MANIFEST" "ci,site")
-   (exit
-     (gitbucket-run
-       (list
-         (make-job
-           "x86_64-linux"
-           #:name "site"
-           #:script (string-join
-                      (list
-                        "#!/bin/sh"
-                        "set -ex"
-                        "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
-                        "export LANG=en_US.utf-8"
-                        "meson -Dwith_site=true . $d"
-                        "cd $d"
-                        "ninja -v doxygen-std-tagfile"
-                        "ninja -v site"
-                        "mkdir -p /fennec/home/gitbucket/.sites"
-                        "rsync -acv --delete src/unistdx/site/ /fennec/home/gitbucket/.sites/unistdx/"
-                        "rm -rf $d")
-                      "\n"))))))
-  ;; default build
-  (else
-    (let ()
-      (define (make-jobs system)
-        (append
-          (map
-            (lambda (lst)
-              (define name (car lst))
-              (define meson-arguments (cdr lst))
-              (make-job
-                system
-                #:script (string-join
-                           (list
-                             "#!/bin/sh"
-                             "set -ex"
-                             "d=$(mktemp -d /tmp/gitbucket-$SLURM_JOB_ID-XXXXXX)"
-                             (format #f "meson ~a -Dwith_debug=true . $d"
-                                     (string-join meson-arguments " "))
-                             "cd $d"
-                             "meson test --verbose --timeout-multiplier 2"
-                             "rm -rf --one-file-system --preserve-root $d")
-                           "\n")
-                #:name name))
-            `(("sanitize-none" "-Db_sanitize=none")
-              ,@(if (string=? system "x86_64-linux")
-                  '(("sanitize-address" "-Db_sanitize=address"))
-                  '())
-              ,@(if (not (string=? system "aarch64-linux"))
-                  '(("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native"))
-                  '())))
+(define (make-jobs system)
+  (append
+    (map
+      (lambda (lst)
+        (define name (car lst))
+        (define meson-arguments (cdr lst))
+        (make-job
+          system
+          #:script (string-join
+                     (list
+                       "#!/bin/sh"
+                       "set -ex"
+                       "d=$(mktemp -d /tmp/gitbucket-$SLURM_JOB_ID-XXXXXX)"
+                       (format #f "meson ~a -Dwith_debug=true . $d"
+                               (string-join meson-arguments " "))
+                       "cd $d"
+                       "meson test --verbose --timeout-multiplier 2"
+                       "rm -rf --one-file-system --preserve-root $d")
+                     "\n")
+          #:name name))
+      `(("sanitize-none" "-Db_sanitize=none")
+        ,@(if (string=? system "x86_64-linux")
+            '(("sanitize-address" "-Db_sanitize=address"))
+            '())
+        ,@(if (not (string=? system "aarch64-linux"))
+            '(("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native"))
+            '())))
+    (list
+      (make-job
+        system
+        #:script
+        (string-join
           (list
-            (make-job
-              system
-              #:script
-              (string-join
-                (list
-                  "#!/bin/sh"
-                  "set -ex"
-                  "outdir=$(pwd)"
-                  "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
-                  "meson -Db_coverage=true . $d"
-                  "cd $d"
-                  "ninja -v test-lcov"
-                  (format #f "mv -v lcov $outdir/~a-coverage" system)
-                  "rm -rf --one-file-system --preserve-root $d")
-                "\n")
-              #:name "coverage")
-            (make-job
-              system
-              #:script
-              (string-join
-                (list
-                  "#!/bin/sh"
-                  "set -ex"
-                  "outdir=$(pwd)"
-                  "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
-                  "meson . $d"
-                  "cd $d"
-                  "ninja -v clang-tidy"
-                  "rm -rf --one-file-system --preserve-root $d")
-                "\n")
-              #:name "static-checks"))))
-      (format (current-error-port) "Building the project\n")
-      (setenv "UNISTDX_MANIFEST" "ci")
-      (exit (gitbucket-run
-              (append-map make-jobs '("x86_64-linux" "i686-linux" "aarch64-linux")))))))
+            "#!/bin/sh"
+            "set -ex"
+            "outdir=$(pwd)"
+            "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+            "meson -Db_coverage=true . $d"
+            "cd $d"
+            "ninja -v test-lcov"
+            (format #f "mv -v lcov $outdir/~a-coverage" system)
+            "rm -rf --one-file-system --preserve-root $d")
+          "\n")
+        #:name "coverage")
+      (make-job
+        system
+        #:script
+        (string-join
+          (list
+            "#!/bin/sh"
+            "set -ex"
+            "outdir=$(pwd)"
+            "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+            "meson . $d"
+            "cd $d"
+            "ninja -v clang-tidy"
+            "rm -rf --one-file-system --preserve-root $d")
+          "\n")
+        #:name "static-checks"))
+    (if (and branch
+             (string=? branch "master")
+             (string=? system "x86_64-linux"))
+      (list
+        (make-job
+          "x86_64-linux"
+          #:name "site"
+          #:script (string-join
+                     (list
+                       "#!/bin/sh"
+                       "set -ex"
+                       "d=$(mktemp -d /tmp/gitbucket-XXXXXX)"
+                       "export LANG=en_US.utf-8"
+                       "meson -Dwith_site=true . $d"
+                       "cd $d"
+                       "ninja -v doxygen-std-tagfile"
+                       "ninja -v site"
+                       "mkdir -p /fennec/home/gitbucket/.sites"
+                       "rsync -acv --delete src/unistdx/site/ /fennec/home/gitbucket/.sites/unistdx/"
+                       "rm -rf $d")
+                     "\n")))
+      '())))
+
+(setenv "UNISTDX_MANIFEST" "ci,site")
+(exit (gitbucket-run
+          (append-map make-jobs '("x86_64-linux" "i686-linux" "aarch64-linux"))))
 
 ;; vim:filetype=scheme
