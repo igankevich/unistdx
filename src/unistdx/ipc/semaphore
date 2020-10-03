@@ -126,7 +126,7 @@ namespace sys {
         \see \man{semctl,2}
         */
         inline
-        ~sysv_semaphore() {
+        ~sysv_semaphore() noexcept {
             if (this->_owner) {
                 this->remove();
             }

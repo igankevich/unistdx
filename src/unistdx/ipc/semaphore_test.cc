@@ -30,8 +30,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/base/make_object>
-
 #include <algorithm>
 #include <cmath>
 #include <condition_variable>
@@ -41,17 +39,15 @@ For more information, please refer to <http://unlicense.org/>
 #include <thread>
 #include <vector>
 
-#include <unistdx/base/delete_each>
 #include <unistdx/ipc/semaphore>
 
 #include <gtest/gtest.h>
 
 #include <unistdx/test/basic_mutex_test>
 #include <unistdx/test/make_types>
+#include <unistdx/test/semaphore_base>
 #include <unistdx/test/semaphore_wait_test>
 #include <unistdx/test/thread_mutex_test>
-
-using sys::u64;
 
 struct posix_process_semaphore: public sys::posix_semaphore {
     inline
@@ -74,100 +70,15 @@ TYPED_TEST_CASE(
     SemaphoreTest,
     MAKE_TYPES(
         std::condition_variable
-        #if defined(UNISTDX_HAVE_SYS_SEM_H)
-        , sys::sysv_semaphore
-        #endif
         #if defined(UNISTDX_HAVE_SEMAPHORE_H)
         , posix_process_semaphore
         #endif
     )
 );
 
-template<class Q, class Mutex, class Semaphore=std::condition_variable, class Thread=std::thread>
-struct Thread_pool {
-
-    static constexpr const Q sval = std::numeric_limits<Q>::max();
-
-    Thread_pool():
-        queue(),
-        cv(),
-        mtx(),
-        thread([this] () {
-        while (!stopped) {
-            Q val;
-            {
-                std::unique_lock<Mutex> lock(mtx);
-                cv.wait(lock, [this] () { return stopped || !queue.empty(); });
-                if (stopped) break;
-                val = queue.front();
-                queue.pop();
-            }
-            if (val == sval) {
-//				std::clog << "Stopping thread pool" << std::endl;
-                stopped = true;
-            } else {
-                sum += val;
-            }
-        }
-    }) {}
-
-    void submit(Q q) {
-        {
-            std::lock_guard<Mutex> lock(mtx);
-            queue.push(q);
-        }
-        cv.notify_one();
-    }
-
-    void wait() {
-        if (thread.joinable()) {
-            thread.join();
-        }
-    }
-
-    Q result() const { return sum; }
-
-private:
-    std::queue<Q> queue;
-    Semaphore cv;
-    Mutex mtx;
-    volatile bool stopped = false;
-    Thread thread;
-    Q sum = 0;
-};
-
 TYPED_TEST(SemaphoreTest, Semaphore) {
-    typedef std::mutex Mutex;
-    typedef TypeParam Semaphore;
-    try {
-        this->run([&] (unsigned nthreads, u64 max) {
-            typedef u64 I;
-            typedef Thread_pool<I, Mutex, Semaphore> Pool;
-            std::vector<std::unique_ptr<Pool>> thread_pool;
-            thread_pool.reserve(nthreads);
-            for (unsigned i=0; i<nthreads; ++i) {
-                thread_pool.emplace_back(new Pool);
-            }
-            I expected_sum = (max + I(1))*max/I(2);
-            for (I i=1; i<=max; ++i) {
-                thread_pool[i%thread_pool.size()]->submit(i);
-            }
-            for (auto& pool : thread_pool) { pool->submit(Pool::sval); }
-            for (auto& pool : thread_pool) { pool->wait(); }
-            I sum = 0;
-            for (const auto& pool : thread_pool) { sum += pool->result(); }
-        //	for (Pool* pool : thread_pool) {
-        //		std::cout << pool->result() << std::endl;
-        //	}
-        //	std::cout << max << ": " << sum << std::endl;
-            EXPECT_EQ(expected_sum, sum);
-        });
-    } catch (const sys::bad_call& err) {
-        if (err.errc() != std::errc::function_not_supported) {
-            throw;
-        }
-        std::exit(77);
-    }
+    using Semaphore = TypeParam;
+    test_semaphore<Semaphore>();
 }
 
 TYPED_TEST_CASE(
@@ -177,44 +88,20 @@ TYPED_TEST_CASE(
         #if defined(UNISTDX_HAVE_SEMAPHORE_H)
         , posix_thread_semaphore
         #endif
-        #if defined(UNISTDX_HAVE_SYS_SEM_H)
-        , sys::sysv_semaphore
-        #endif
     )
 );
 
 TYPED_TEST(SemaphoreWaitTest, WaitUntil) {
-    try {
-        this->test_wait_until();
-    } catch (const sys::bad_call& err) {
-        if (err.errc() != std::errc::function_not_supported) {
-            throw;
-        }
-        std::exit(77);
-    }
+    this->test_wait_until();
 }
 
 TYPED_TEST(SemaphoreWaitTest, ProducerConsumer) {
     this->test_producer_consumer_thread();
 }
 
-#if defined(UNISTDX_HAVE_SYS_SEM_H)
-template <class T>
-using SemaphoreProcessTest = SemaphoreWaitTest<T>;
-
-TYPED_TEST_CASE(
-    SemaphoreProcessTest,
-    MAKE_TYPES(sys::sysv_semaphore)
-);
-
-TYPED_TEST(SemaphoreProcessTest, ProducerConsumer) {
-    try {
-        this->test_producer_consumer_process();
-    } catch (const sys::bad_call& err) {
-        if (err.errc() != std::errc::function_not_supported) {
-            throw;
-        }
-        std::exit(77);
-    }
+int main(int argc, char* argv[]) {
+    test_semaphore_is_available<posix_thread_semaphore>();
+    test_semaphore_is_available<posix_process_semaphore>();
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }
-#endif

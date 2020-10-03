@@ -29,6 +29,7 @@ libunistdx_tests += [
     [files('process_group_test.cc')],
     [files('process_status_test.cc')],
     [files('semaphore_test.cc')],
+    [files('sysv_semaphore_test.cc')],
     [files('shared_memory_segment_test.cc')],
     [files('signal_test.cc')],
 ]
