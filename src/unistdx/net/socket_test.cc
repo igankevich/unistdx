@@ -42,10 +42,12 @@ TEST(Socket, GetCredentials) {
     sys::socket_address e(path);
     sys::socket sock;
     sock.bind(e);
+    sock.unsetf(sys::open_flag::non_blocking);
     sock.set(sys::socket::options::pass_credentials);
     sock.listen();
     sys::process child([&] () {
         sys::socket s(sys::family_type::unix);
+        s.unsetf(sys::open_flag::non_blocking);
         s.set(sys::socket::options::pass_credentials);
         s.connect(e);
         return 0;
@@ -54,6 +56,7 @@ TEST(Socket, GetCredentials) {
     sys::socket_address client_end;
     sys::socket client;
     sock.accept(client, client_end);
+    client.unsetf(sys::open_flag::non_blocking);
     EXPECT_NO_THROW(client.peer_name());
     sys::user_credentials creds = client.credentials();
     EXPECT_EQ(child.id(), creds.pid);
