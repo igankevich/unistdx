@@ -2,8 +2,8 @@
   (let ((v (getenv "UNISTDX_MANIFEST")))
     (if v (string-split v #\,) '())))
 
-(define (if-enabled name lst)
-  (if (member name unistdx-manifest) lst '()))
+(define* (if-enabled name lst #:optional (other '()))
+  (if (member name unistdx-manifest) lst other))
 
 (packages->manifest
   (append
@@ -11,8 +11,6 @@
       (@ (gnu packages build-tools) meson)
       (@ (stables packages ninja) ninja/lfs)
       (@ (gnu packages check) googletest)
-      (list (@ (gnu packages gcc) gcc) "lib")
-      (@ (gnu packages commencement) gcc-toolchain)
       (@ (gnu packages pkg-config) pkg-config)
       (@ (gnu packages pre-commit) python-pre-commit)
       (@ (gnu packages python-xyz) python-chardet)
@@ -20,6 +18,13 @@
       (@ (gnu packages gcovr) python-gcovr)
       (list (@ (gnu packages llvm) clang-10) "extra") ;; clang-tidy
       )
+    (if-enabled "clang"
+      (list
+        (@ (gnu packages llvm) libcxx)
+        (@ (gnu packages llvm) clang-toolchain))
+      (list
+        (list (@ (gnu packages gcc) gcc) "lib")
+        (@ (gnu packages commencement) gcc-toolchain)))
     (if-enabled "site"
       (list (@ (gnu packages curl) curl)
             (@ (gnu packages graphviz) graphviz)
