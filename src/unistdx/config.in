@@ -144,6 +144,8 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_PIPE2
 #mesondefine UNISTDX_HAVE_POLLRDHUP
 #mesondefine UNISTDX_HAVE_PRCTL
+#mesondefine UNISTDX_HAVE_PR_GET_NO_NEW_PRIVS
+#mesondefine UNISTDX_HAVE_PR_SET_NO_NEW_PRIVS
 #mesondefine UNISTDX_HAVE_SCM_CREDENTIALS
 #mesondefine UNISTDX_HAVE_SCM_RIGHTS
 #mesondefine UNISTDX_HAVE_SEEK_DATA

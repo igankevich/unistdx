@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.31.0',
+    version: '0.32.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -226,6 +226,8 @@ foreach pair : [
     ['sys/mman.h', 'MAP_UNINITIALIZED'],
     ['sys/mman.h', 'mmap'],
     ['sys/prctl.h', 'prctl'],
+    ['sys/prctl.h', 'PR_GET_NO_NEW_PRIVS'],
+    ['sys/prctl.h', 'PR_SET_NO_NEW_PRIVS'],
     ['sys/sem.h', 'semtimedop'],
     ['sys/sendfile.h', 'sendfile'],
     ['sys/shm.h', 'SHM_HUGE_1GB'],
