@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.30.9',
+    version: '0.31.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -256,14 +256,16 @@ foreach header : [
     'ifaddrs.h',
     'linux/netlink.h',
     'linux/sockios.h',
+    'netdb.h',
     'netinet/tcp.h',
     'sched.h',
     'semaphore.h',
     'sys/epoll.h',
     'sys/ioctl.h',
+    'sys/resource.h',
     'sys/sem.h',
+    'sys/time.h',
     'sys/xattr.h',
-    'netdb.h',
 ]
     all_defines += 'UNISTDX_HAVE_' + header.underscorify().to_upper()
     if cpp.has_header(header)

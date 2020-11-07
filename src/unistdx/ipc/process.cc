@@ -36,9 +36,15 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
 
-sys::fildes sys::get_namespace(const char* suffix, pid_type p) {
+sys::fildes sys::this_process::get_namespace(const char* suffix) {
     char path[100];
-    std::sprintf(path, "/proc/%d/ns/%s", p, suffix);
+    std::sprintf(path, "/proc/self/ns/%s", suffix);
+    return sys::fildes(path);
+}
+
+sys::fildes sys::process_view::get_namespace(const char* suffix) {
+    char path[100];
+    std::sprintf(path, "/proc/%d/ns/%s", id(), suffix);
     return sys::fildes(path);
 }
 
@@ -51,7 +57,7 @@ std::string sys::this_process::hostname() {
     return name;
 }
 
-void sys::process::init_user_namespace() {
+void sys::process_view::init_user_namespace() {
     char buf[100];
     fildes out;
     int n;

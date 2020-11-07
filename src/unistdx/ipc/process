@@ -44,6 +44,12 @@ For more information, please refer to <http://unlicense.org/>
 #if defined(UNISTDX_HAVE_PRCTL)
 #include <sys/prctl.h>
 #endif
+#if defined(UNISTDX_HAVE_SYS_TIME_H)
+#include <sys/time.h>
+#endif
+#if defined(UNISTDX_HAVE_SYS_RESOURCE_H)
+#include <sys/resource.h>
+#endif
 
 #include <unistdx/base/check>
 #include <unistdx/base/flag>
@@ -56,20 +62,7 @@ For more information, please refer to <http://unlicense.org/>
 namespace sys {
 
     typedef ::pid_t pid_type;
-
-    /**
-    \brief
-    Send signal \p s to process \p p.
-    \date 2018-05-21
-    \throw bad_call
-    \see \man{kill,2}
-    */
-    inline void
-    send(signal s, pid_type p) {
-        UNISTDX_CHECK(::kill(p, signal_type(s)));
-    }
-
-    fildes get_namespace(const char* proc_suffix, pid_type p);
+    typedef ::id_t id_type;
 
     enum class unshare_flag: int {
         #if defined(UNISTDX_HAVE_CLONE_FILES)
@@ -132,6 +125,189 @@ namespace sys {
         #endif
     };
 
+    enum class scheduling_policies {
+        #if defined(SCHED_OTHER)
+        other=SCHED_OTHER,
+        #endif
+        #if defined(SCHED_FIFO)
+        first_in_first_out=SCHED_FIFO,
+        #endif
+        #if defined(SCHED_RR)
+        round_robin=SCHED_RR,
+        #endif
+        #if defined(SCHED_BATCH)
+        batch=SCHED_BATCH,
+        #endif
+        #if defined(SCHED_ISO)
+        iso=SCHED_ISO,
+        #endif
+        #if defined(SCHED_IDLE)
+        idle=SCHED_IDLE,
+        #endif
+        #if defined(SCHED_DEADLINE)
+        deadline=SCHED_DEADLINE,
+        #endif
+        #if defined(SCHED_RESET_ON_FORK)
+        reset_on_fork=SCHED_RESET_ON_FORK,
+        #endif
+    };
+
+    inline int min_priority(scheduling_policies policy) {
+        int ret = ::sched_get_priority_min(int(policy));
+        UNISTDX_CHECK(ret);
+        return ret;
+    }
+
+    inline int max_priority(scheduling_policies policy) {
+        int ret = ::sched_get_priority_max(int(policy));
+        UNISTDX_CHECK(ret);
+        return ret;
+    }
+
+    using scheduling_policy_parameter = ::sched_param;
+    //using scheduling_attributes = ::sched_attr;
+
+    inline void user_priority(uid_type user, int value) {
+        UNISTDX_CHECK(::setpriority(PRIO_USER, user, value));
+    }
+
+    inline int user_priority(uid_type uid) {
+        errno = 0;
+        int ret = ::getpriority(PRIO_USER, uid);
+        if (errno != 0) { UNISTDX_CHECK(ret); }
+        return ret;
+    }
+
+    inline void process_group_priority(id_type pgrp, int value) {
+        UNISTDX_CHECK(::setpriority(PRIO_PGRP, pgrp, value));
+    }
+
+    inline int process_group_priority(id_type pgrp) {
+        errno = 0;
+        int ret = ::getpriority(PRIO_PGRP, pgrp);
+        if (errno != 0) { UNISTDX_CHECK(ret); }
+        return ret;
+    }
+
+    class cpu_set: public ::cpu_set_t {
+
+    public:
+        inline cpu_set() noexcept { clear(); }
+        ~cpu_set() = default;
+        cpu_set(const cpu_set&) = default;
+        cpu_set& operator=(const cpu_set&) = default;
+        cpu_set(cpu_set&&) = default;
+        cpu_set& operator=(cpu_set&&) = default;
+
+        inline size_t size() const noexcept { return CPU_COUNT(this); }
+        inline void set(int cpu) noexcept { CPU_SET(cpu, this); }
+        inline void unset(int cpu) noexcept { CPU_CLR(cpu, this); }
+        inline bool isset(int cpu) const noexcept { return CPU_ISSET(cpu, this); }
+        inline void clear() noexcept { CPU_ZERO(this); }
+
+        inline bool operator==(const cpu_set& rhs) const noexcept {
+            return CPU_EQUAL(this, &rhs) == 0;
+        }
+
+        inline bool operator!=(const cpu_set& rhs) const noexcept {
+            return !this->operator==(rhs);
+        }
+
+    };
+
+    inline cpu_set operator&(const cpu_set& a, const cpu_set& b) noexcept {
+        cpu_set result;
+        CPU_AND(&result, &a, &b);
+        return result;
+    }
+
+    inline cpu_set operator|(const cpu_set& a, const cpu_set& b) noexcept {
+        cpu_set result;
+        CPU_OR(&result, &a, &b);
+        return result;
+    }
+
+    inline cpu_set operator^(const cpu_set& a, const cpu_set& b) noexcept {
+        cpu_set result;
+        CPU_XOR(&result, &a, &b);
+        return result;
+    }
+
+    class dynamic_cpu_set {
+
+    private:
+        struct cpu_set_deleter {
+            void operator()(void* ptr) { CPU_FREE(reinterpret_cast<cpu_set*>(ptr)); }
+        };
+
+    private:
+        std::unique_ptr<cpu_set,cpu_set_deleter> _ptr;
+        size_t _size = 0;
+
+    public:
+        inline explicit dynamic_cpu_set(size_t size) noexcept:
+        _ptr(reinterpret_cast<cpu_set*>(CPU_ALLOC(size))),
+        _size(CPU_ALLOC_SIZE(size)) {}
+
+        dynamic_cpu_set() = default;
+        ~dynamic_cpu_set() = default;
+        dynamic_cpu_set(const dynamic_cpu_set&) = default;
+        dynamic_cpu_set& operator=(const dynamic_cpu_set&) = default;
+        dynamic_cpu_set(dynamic_cpu_set&&) = default;
+        dynamic_cpu_set& operator=(dynamic_cpu_set&&) = default;
+
+        inline void resize(size_t new_size) {
+            this->_ptr.reset(reinterpret_cast<cpu_set*>(CPU_ALLOC(new_size)));
+            this->_size = CPU_ALLOC_SIZE(new_size);
+        }
+
+        inline size_t size() const noexcept {
+            return CPU_COUNT_S(this->_size, this->_ptr.get());
+        }
+
+        inline void set(int cpu) noexcept { CPU_SET_S(cpu, this->_size, this->_ptr.get()); }
+        inline void unset(int cpu) noexcept { CPU_CLR_S(cpu, this->_size, this->_ptr.get()); }
+
+        inline bool isset(int cpu) const noexcept {
+            return CPU_ISSET_S(cpu, this->_size, this->_ptr.get());
+        }
+
+        inline void clear() noexcept { CPU_ZERO_S(this->_size, this->_ptr.get()); }
+
+        inline bool operator==(const dynamic_cpu_set& rhs) const noexcept {
+            return CPU_EQUAL_S(this->_size, this->_ptr.get(), rhs._ptr.get()) == 0;
+        }
+
+        inline bool operator!=(const dynamic_cpu_set& rhs) const noexcept {
+            return !this->operator==(rhs);
+        }
+
+        inline cpu_set* get() noexcept { return this->_ptr.get(); }
+        inline const cpu_set* get() const noexcept { return this->_ptr.get(); }
+
+    };
+
+    inline dynamic_cpu_set
+    operator&(const dynamic_cpu_set& a, const dynamic_cpu_set& b) noexcept {
+        dynamic_cpu_set result(a.size());
+        CPU_AND_S(a.size(), result.get(), a.get(), b.get());
+        return result;
+    }
+
+    inline dynamic_cpu_set
+    operator|(const dynamic_cpu_set& a, const dynamic_cpu_set& b) noexcept {
+        dynamic_cpu_set result(a.size());
+        CPU_OR_S(a.size(), result.get(), a.get(), b.get());
+        return result;
+    }
+
+    inline dynamic_cpu_set
+    operator^(const dynamic_cpu_set& a, const dynamic_cpu_set& b) noexcept {
+        dynamic_cpu_set result(a.size());
+        CPU_XOR_S(a.size(), result.get(), a.get(), b.get());
+        return result;
+    }
+
     namespace this_process {
 
         /**
@@ -168,18 +344,6 @@ namespace sys {
         }
 
         /**
-        \brief
-        Send signal \p s to the current process.
-        \date 2018-05-21
-        \throws bad_call
-        \see \man{kill,2}
-        */
-        inline void
-        send(signal s) {
-            UNISTDX_CHECK(::kill(::sys::this_process::id(), signal_type(s)));
-        }
-
-        /**
         \brief Set current process' working directory.
         \date 2018-05-21
         \throws bad_call
@@ -195,13 +359,6 @@ namespace sys {
         \see \man{getpgrp,2}
         */
         inline pid_type group_id() { return ::getpgrp(); }
-
-        /**
-        \brief Set calling process group ID.
-        \throws bad_call
-        \see \man{setpgid,2}
-        */
-        inline void group_id(pid_type rhs) { UNISTDX_CHECK(::setpgid(id(), rhs)); }
 
         #if defined(UNISTDX_HAVE_PRCTL)
         /**
@@ -236,15 +393,15 @@ namespace sys {
         }
         #endif
 
-        inline fildes get_namespace(const char* proc_suffix) {
-            return ::sys::get_namespace(proc_suffix, id());
-        }
+        fildes get_namespace(const char* proc_suffix);
 
         inline void hostname(const std::string& name) {
             UNISTDX_CHECK(::sethostname(name.data(), name.size()));
         }
 
         std::string hostname();
+
+        inline void yield() noexcept { ::sched_yield(); }
 
     }
 
@@ -317,69 +474,19 @@ namespace sys {
     template <>
     struct is_flag<process_flag>: public std::true_type {};
 
-    /**
-    \brief
-    System process with \link std::thread \endlink interface.
-    \date 2018-05-21
-    \ingroup ipc
-    */
-    class process {
+    class process_view {
 
-    public:
-        using stack_ptr = std::unique_ptr<char[]>;
-
-    private:
+    protected:
         pid_type _pid = 0;
-        stack_ptr _stack;
 
     public:
-
-        /**
-        \brief Construct new process by forking a child with \p f as main function.
-        \throws bad_call
-        \see \man{clone,2}
-        \see \man{fork,2}
-        */
-        template<class F>
-        inline explicit
-        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*4) {
-            typedef bits::call_traits<decltype(f())> traits_type;
-            if (flags == process_flag::fork) {
-                this->_pid = this_process::fork();
-                if (this->_pid == 0) {
-                    std::exit(traits_type::call(f));
-                }
-            #if defined(UNISTDX_HAVE_CLONE)
-            } else {
-                this->_stack.reset(new char[stack_size]);
-                this->_pid = ::clone(
-                    &traits_type::template child_main<F>,
-                    this->_stack.get() + stack_size,
-                    static_cast<int>(flags),
-                    &f
-                );
-                // do not delete the stack for threads
-                if (!(flags & process_flag::share_memory)) { this->_stack.reset(); }
-                UNISTDX_CHECK(this->_pid);
-            #endif
-            }
-        }
-
-        /// Construct process by its ID.
-        inline explicit process(pid_type rhs): _pid(rhs) {}
-
-        inline process() = default;
-        process(const process&) = delete;
-
-        /// Move-constructor.
-        inline process(process&& rhs): _pid(rhs._pid), _stack(std::move(rhs._stack))
-        { rhs._pid = 0; }
-
-        /// Terminates the process, if any.
-        inline ~process() { if (this->_pid > 0) { this->do_kill(sys::signal::terminate); } }
-
-        /// Move-assignment.
-        inline process& operator=(process&& rhs) { this->swap(rhs); return *this; }
+        inline explicit process_view(pid_type pid): _pid(pid) {}
+        process_view() = default;
+        ~process_view() = default;
+        process_view(const process_view&) = default;
+        process_view& operator=(const process_view&) = default;
+        process_view(process_view&&) = default;
+        process_view& operator=(process_view&&) = default;
 
         /**
         Gracefully terminate the process by sending \link signal::terminate \endlink
@@ -436,35 +543,6 @@ namespace sys {
         */
         inline void send(sys::signal s) { UNISTDX_CHECK(this->do_kill(s)); }
 
-        /**
-        \brief Wait until process changes its state or terminates.
-        \throws bad_call if system error occurs, except
-        \c std::errc::interrupted
-        \see std::errc
-        \see \man{waitpid,2}
-        */
-        inline sys::process_status
-        wait(wait_flags flags = wait_flags::exited) {
-            sys::siginfo_type info;
-            UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
-            sys::process_status status(info);
-            if (status.exited()) { this->_pid = 0; this->_stack.reset(); }
-            return status;
-        }
-
-        /// Check if process is alive by sending nought signal to it.
-        inline explicit
-        operator bool() const { return this->_pid > 0 && do_kill(sys::signal{}) != -1; }
-
-        /// Check if process is alive by sending nought signal to it.
-        inline bool operator !() const { return !this->operator bool(); }
-
-        /// Swap with \p rhs.
-        inline void swap(process& rhs) {
-            std::swap(this->_pid, rhs._pid);
-            std::swap(this->_stack, rhs._stack);
-        }
-
         /// Get process ID.
         inline pid_type id() const { return this->_pid; }
 
@@ -484,22 +562,198 @@ namespace sys {
             UNISTDX_CHECK(::setpgid(this->_pid, rhs));
         }
 
+        /**
+        \brief Wait until process changes its state or terminates.
+        \throws bad_call if system error occurs, except
+        \c std::errc::interrupted
+        \see std::errc
+        \see \man{waitpid,2}
+        */
+        inline sys::process_status
+        wait(wait_flags flags = wait_flags::exited) {
+            sys::siginfo_type info;
+            UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
+            sys::process_status status(info);
+            if (status.exited()) { this->_pid = 0; }
+            return status;
+        }
+
+        /// Check if process is alive by sending nought signal to it.
+        inline explicit
+        operator bool() const { return this->_pid > 0 && do_kill(sys::signal{}) != -1; }
+
+        /// Check if process is alive by sending nought signal to it.
+        inline bool operator !() const { return !this->operator bool(); }
+
         /// Always returns true to be compatible with \link std::thread \endlink.
         inline bool joinable() const { return true; }
 
         /// \copydoc wait
         inline void join() { this->wait(); }
 
-        inline fildes get_namespace(const char* proc_suffix) {
-            return ::sys::get_namespace(proc_suffix, id());
-        }
+        fildes get_namespace(const char* proc_suffix);
 
         void init_user_namespace();
 
-    private:
+        inline void priority(int value) {
+            UNISTDX_CHECK(::setpriority(PRIO_PROCESS, this->_pid, value));
+        }
+
+        inline int priority() {
+            errno = 0;
+            int ret = ::getpriority(PRIO_PROCESS, this->_pid);
+            if (errno != 0) { UNISTDX_CHECK(ret); }
+            return ret;
+        }
+
+        inline scheduling_policies scheduling_policy() const {
+            int ret = ::sched_getscheduler(this->_pid);
+            UNISTDX_CHECK(ret);
+            return scheduling_policies(ret);
+        }
+
+        inline void scheduling_policy(scheduling_policies value,
+                                      const scheduling_policy_parameter& param) {
+            UNISTDX_CHECK(::sched_setscheduler(this->_pid, int(value), &param));
+        }
+
+        inline scheduling_policy_parameter scheduling_parameters() const {
+            scheduling_policy_parameter params;
+            UNISTDX_CHECK(::sched_getparam(this->_pid, &params));
+            return params;
+        }
+
+        inline void scheduling_parameters(const scheduling_policy_parameter& params) {
+            UNISTDX_CHECK(::sched_setparam(this->_pid, &params));
+        }
+
+        /*
+        inline void scheduler(const scheduling_attributes& attrs) {
+            UNISTDX_CHECK(::sched_setattr(this->_pid, &attrs, 0));
+        }
+
+        inline scheduling_attributes scheduler() const {
+            scheduling_attributes attrs;
+            UNISTDX_CHECK(::sched_getattr(this->_pid, &attrs,
+                                          sizeof(scheduling_attributes), 0));
+            return attrs;
+        }
+        */
+
+        inline dynamic_cpu_set cpu_affinity() const {
+            size_t size = 1024;
+            dynamic_cpu_set mask(size);
+            int ret;
+            do {
+                ret = ::sched_getaffinity(this->_pid, mask.size(), mask.get());
+                if (ret == EINVAL) {
+                    size *= 2;
+                    mask.resize(size);
+                }
+            } while (ret == EINVAL);
+            UNISTDX_CHECK(ret);
+            return mask;
+        }
+
+        inline void cpu_affinity(const dynamic_cpu_set& mask) {
+            UNISTDX_CHECK(::sched_setaffinity(this->_pid, mask.size(), mask.get()));
+        }
+
+        inline void cpu_affinity(const cpu_set& mask) {
+            UNISTDX_CHECK(::sched_setaffinity(this->_pid, mask.size(), &mask));
+        }
+
+    protected:
 
         inline int do_kill(sys::signal sig) const noexcept {
             return ::kill(this->_pid, signal_type(sig));
+        }
+
+    };
+
+    /**
+    \brief
+    System process with \link std::thread \endlink interface.
+    \date 2018-05-21
+    \ingroup ipc
+    */
+    class process: public process_view {
+
+    public:
+        using stack_ptr = std::unique_ptr<char[]>;
+
+    private:
+        stack_ptr _stack;
+
+    public:
+
+        /**
+        \brief Construct new process by forking a child with \p f as main function.
+        \throws bad_call
+        \see \man{clone,2}
+        \see \man{fork,2}
+        */
+        template<class F>
+        inline explicit
+        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*4) {
+            typedef bits::call_traits<decltype(f())> traits_type;
+            if (flags == process_flag::fork) {
+                this->_pid = this_process::fork();
+                if (this->_pid == 0) {
+                    std::exit(traits_type::call(f));
+                }
+            #if defined(UNISTDX_HAVE_CLONE)
+            } else {
+                this->_stack.reset(new char[stack_size]);
+                this->_pid = ::clone(
+                    &traits_type::template child_main<F>,
+                    this->_stack.get() + stack_size,
+                    static_cast<int>(flags),
+                    &f
+                );
+                // do not delete the stack for threads
+                if (!(flags & process_flag::share_memory)) { this->_stack.reset(); }
+                UNISTDX_CHECK(this->_pid);
+            #endif
+            }
+        }
+
+        /// Construct process by its ID.
+        inline explicit process(pid_type rhs): process_view(rhs) {}
+
+        inline process() = default;
+        process(const process&) = delete;
+
+        /// Move-constructor.
+        inline process(process&& rhs): process_view(rhs._pid), _stack(std::move(rhs._stack))
+        { rhs._pid = 0; }
+
+        /// Terminates the process, if any.
+        inline ~process() { if (this->_pid > 0) { this->do_kill(sys::signal::terminate); } }
+
+        /// Move-assignment.
+        inline process& operator=(process&& rhs) { this->swap(rhs); return *this; }
+
+        /// Swap with \p rhs.
+        inline void swap(process& rhs) {
+            std::swap(this->_pid, rhs._pid);
+            std::swap(this->_stack, rhs._stack);
+        }
+
+        /**
+        \brief Wait until process changes its state or terminates.
+        \throws bad_call if system error occurs, except
+        \c std::errc::interrupted
+        \see std::errc
+        \see \man{waitpid,2}
+        */
+        inline sys::process_status
+        wait(wait_flags flags = wait_flags::exited) {
+            sys::siginfo_type info;
+            UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
+            sys::process_status status(info);
+            if (status.exited()) { this->_pid = 0; this->_stack.reset(); }
+            return status;
         }
 
     };
@@ -513,6 +767,68 @@ namespace sys {
     /// Output process ID and process group ID.
     std::ostream&
     operator<<(std::ostream& out, const process& rhs);
+
+
+    namespace this_process {
+
+        inline void priority(int value) { process_view(0).priority(value); }
+        inline int priority() { return process_view(0).priority(); }
+        inline int user_priority() { return ::sys::user_priority(0); }
+
+        inline scheduling_policies scheduling_policy() {
+            return process_view(0).scheduling_policy();
+        }
+
+        inline void scheduling_policy(scheduling_policies value,
+                                      const scheduling_policy_parameter& param) {
+            process_view(0).scheduling_policy(value, param);
+        }
+
+        inline scheduling_policy_parameter scheduling_parameters() {
+            return process_view(0).scheduling_parameters();
+        }
+
+        inline void scheduling_parameters(const scheduling_policy_parameter& params) {
+            process_view(0).scheduling_parameters(params);
+        }
+
+        inline dynamic_cpu_set cpu_affinity() {
+            return process_view(0).cpu_affinity();
+        }
+
+        inline void cpu_affinity(const dynamic_cpu_set& mask) {
+            process_view(0).cpu_affinity(mask);
+        }
+
+        inline void cpu_affinity(const cpu_set& mask) { process_view(0).cpu_affinity(mask); }
+
+        /**
+        \brief
+        Send signal \p s to the current process.
+        \date 2018-05-21
+        \throws bad_call
+        \see \man{kill,2}
+        */
+        inline void send(signal s) { process_view(::sys::this_process::id()).send(s); }
+
+        /**
+        \brief Set calling process group ID.
+        \throws bad_call
+        \see \man{setpgid,2}
+        */
+        inline void group_id(pid_type rhs) { process_view(0).group_id(rhs); }
+
+    }
+
+    /**
+    \brief
+    Send signal \p s to process \p p.
+    \date 2018-05-21
+    \throw bad_call
+    \see \man{kill,2}
+    \deprecated use process_view(p).send(s) instead.
+    */
+    inline void send(signal s, pid_type p) { process_view(p).send(s); }
 
 }
 
