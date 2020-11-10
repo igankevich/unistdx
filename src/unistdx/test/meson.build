@@ -6,6 +6,10 @@ status = cpp.run(files('unshare_test.cc'))
 if status.compiled() and status.returncode() == 0
     test_config.set('UNISTDX_TEST_HAVE_UNSHARE', true)
 endif
+valgrind_dep = dependency('valgrind', required: false)
+if valgrind_dep.found()
+    test_config.set('UNISTDX_TEST_HAVE_VALGRIND_H', true)
+endif
 configure_file(
     input: 'config.in',
     output: 'config',

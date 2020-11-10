@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
+#include <unistdx/test/config>
 #include <unistdx/util/backtrace>
 
 #include <chrono>
@@ -48,6 +49,10 @@ For more information, please refer to <http://unlicense.org/>
 #define NO_INLINE [[gnu::noinline]]
 #else
 #define NO_INLINE
+#endif
+
+#if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
+#include <valgrind.h>
 #endif
 
 enum struct Test_type {
@@ -136,6 +141,9 @@ func1(Test_type type) {
 }
 
 int main(int argc, char* argv[]) {
+    #if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
+    if (RUNNING_ON_VALGRIND) { std::exit(77); }
+    #endif
     if (argc != 2) {
         throw std::invalid_argument("bad command line arguments");
     }

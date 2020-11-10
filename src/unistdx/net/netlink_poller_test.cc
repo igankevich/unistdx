@@ -88,7 +88,7 @@ TEST(netlink, get_address) {
             sys::ifaddr_message payload;
         };
         char bytes[NLMSG_LENGTH(sizeof(sys::ifaddr_message))];
-    } req;
+    } req{};
     req.hdr.flags(
         sys::netlink_message_flags::request |
         sys::netlink_message_flags::dump

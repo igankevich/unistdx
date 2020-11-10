@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -36,6 +36,10 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/config>
 #include <unistdx/test/operator>
 
+#if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
+#include <valgrind.h>
+#endif
+
 using f = sys::process_flag;
 
 TEST(process_group, wait_async) {
@@ -65,4 +69,12 @@ TEST(process_group, wait_sync) {
     g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     int ret = g.wait();
     EXPECT_EQ(0, ret);
+}
+
+int main(int argc, char* argv[]) {
+    #if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
+    if (RUNNING_ON_VALGRIND) { std::exit(77); }
+    #endif
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

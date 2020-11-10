@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -136,6 +136,10 @@ TEST(GetFileType, PathEntry) {
 struct idirtree_test_param {
     std::string src;
 };
+
+std::ostream& operator<<(std::ostream& out, const idirtree_test_param& rhs) {
+    return out << rhs.src;
+}
 
 struct idirtree_test: public ::testing::TestWithParam<idirtree_test_param> {};
 

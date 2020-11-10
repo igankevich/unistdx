@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -43,6 +43,10 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/ipc/process>
 #include <unistdx/test/config>
 
+#if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
+#include <valgrind.h>
+#endif
+
 TEST(process, basic) {
     sys::pid_type pid = sys::this_process::id();
     sys::process child {
@@ -65,6 +69,13 @@ struct process_exec_params {
     std::string cmd;
     bool success;
 };
+
+std::ostream& operator<<(std::ostream& out, const process_exec_params& rhs) {
+    out << "Flags: \"" << int(rhs.flags) << "\"\n";
+    out << "Cmd: \"" << rhs.cmd << "\"\n";
+    out << "Success: \"" << rhs.success << "\"\n";
+    return out;
+}
 
 struct process_exec_test:
     public ::testing::TestWithParam<process_exec_params> {};
@@ -226,3 +237,11 @@ TEST(Process, LogMessage) {
     EXPECT_EQ(0, status.exit_code());
 }
 */
+
+int main(int argc, char* argv[]) {
+    #if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
+    if (RUNNING_ON_VALGRIND) { std::exit(77); }
+    #endif
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

@@ -67,7 +67,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx,gtest,threads],
+                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []),
                 link_with: libs,
                 implicit_include_directories: false,
             )

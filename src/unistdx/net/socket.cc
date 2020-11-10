@@ -218,14 +218,14 @@ sys::socket::send_fds(const sys::fd_type* data, size_t n) {
     }
     char dummy[1] = {0};
     const size_t size = n*sizeof(sys::fd_type);
-    fds_message m;
+    fds_message m{};
     m.h.cmsg_len = CMSG_LEN(size);
     m.h.cmsg_level = SOL_SOCKET;
     m.h.cmsg_type = SCM_RIGHTS;
-    message_header h;
+    message_header h{};
     h.msg_control = m.bytes;
     h.msg_controllen = CMSG_SPACE(size);
-    io_vector v {dummy, 1};
+    io_vector v{dummy, 1};
     h.msg_iov = &v;
     h.msg_iovlen = 1;
     h.msg_name = nullptr;

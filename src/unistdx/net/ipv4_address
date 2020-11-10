@@ -90,7 +90,7 @@ namespace sys {
         union {
             addr4_type _integer;
             inet4_type _address;
-            value_type _octets[4];
+            value_type _octets[4] {};
             char _bytes[4];
         };
 

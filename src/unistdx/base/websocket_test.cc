@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -128,6 +128,13 @@ struct websocket_test_params {
     std::string header;
     std::string status;
 };
+
+std::ostream& operator<<(std::ostream& out, const websocket_test_params& rhs) {
+    out << "Method: \"" << rhs.method << "\"\n";
+    out << "Header: \"" << rhs.header << "\"\n";
+    out << "Status: \"" << rhs.status << "\"\n";
+    return out;
+}
 
 struct websocketbuf_test:
     public ::testing::TestWithParam<websocket_test_params> {};

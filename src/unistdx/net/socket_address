@@ -33,8 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_SOCKET_ADDRESS
 #define UNISTDX_NET_SOCKET_ADDRESS
 
-#include <sys/types.h>
 #include <netinet/in.h>
+#include <sys/types.h>
 #include <sys/un.h>
 
 #include <functional>
@@ -93,7 +93,7 @@ namespace sys {
     \arg This is variant class, type of which is encoded in address
     family.
     */
-    class socket_address {
+    class alignas(ipv6_socket_address) socket_address {
 
     private:
         using traits_type = std::char_traits<char>;

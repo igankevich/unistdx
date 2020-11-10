@@ -17,7 +17,7 @@
       (@ (gnu packages code) lcov)
       (@ (gnu packages gcovr) python-gcovr)
       (list (@ (gnu packages llvm) clang-10) "extra") ;; clang-tidy
-      )
+      (@ (gnu packages valgrind) valgrind))
     (if-enabled "clang"
       (list
         (@ (gnu packages llvm) libcxx)

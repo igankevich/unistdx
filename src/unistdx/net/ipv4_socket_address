@@ -80,7 +80,7 @@ namespace sys {
                                          size());
         }
 
-        inline ipv4_socket_address() noexcept {
+        inline ipv4_socket_address() noexcept: _address{} {
             this->_address.sin_family = sa_family_type(family_type::ipv4);
         }
 
