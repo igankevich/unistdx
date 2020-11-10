@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd "$MESON_BUILD_ROOT/html"
-mv modules.html concepts-and-abstractions.html
-mv annotated.html classes.html
-mv namespacemembers_func.html functions.html
-mv namespacemembers_vars.html variables.html
-mv namespacemembers_enum.html enumerations.html
-mv namespacemembers_type.html typedefs.html

@@ -41,9 +41,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <semaphore.h>
 #endif
 #if defined(UNISTDX_HAVE_SYS_SEM_H)
+#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-#include <sys/types.h>
 #endif
 
 #include <chrono>
@@ -80,13 +80,6 @@ namespace sys {
     private:
         typedef struct ::sembuf sembuf_type;
         typedef struct ::timespec timespec_type;
-
-        union argument_type {
-            int val;
-            struct semid_ds* buf = nullptr;
-            unsigned short int *array;
-            struct seminfo* info;
-        };
 
     public:
         /// Alias to system semaphore type (int).

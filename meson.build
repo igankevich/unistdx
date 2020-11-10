@@ -8,9 +8,7 @@ project(
 )
 
 with_tests = get_option('with_tests')
-with_rpm = get_option('with_rpm')
 with_site = get_option('with_site')
-with_rpm = get_option('with_rpm')
 with_debug = get_option('with_debug')
 
 cpp = meson.get_compiler('cpp')
@@ -297,9 +295,6 @@ if with_tests
 endif
 
 subdir('src')
-if with_rpm
-    subdir('rpm')
-endif
 
 # pkgconfig {{{
 pkgconfig = import('pkgconfig')

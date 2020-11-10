@@ -1,9 +1,0 @@
-#!/bin/sh
-
-cd $MESON_BUILD_ROOT
-targets="doc-doxygen doc-rename doc-copy-examples"
-if ! test -f "std.tag.xml"
-then
-    targets="doc-std-tagfile $targets"
-fi
-ninja $targets
