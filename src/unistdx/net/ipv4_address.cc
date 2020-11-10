@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <istream>
 #include <ostream>
+#include <sstream>
 
 #include <unistdx/base/types>
 #include <unistdx/bits/addr_parse>
@@ -98,4 +99,12 @@ sys::operator>>(std::istream& in, ipv4_address& rhs) {
         rhs.clear();
     }
     return in;
+}
+
+sys::ipv4_address::ipv4_address(const char* rhs) {
+    std::stringstream tmp(rhs);
+    tmp >> *this;
+    if (tmp.fail()) {
+        throw std::invalid_argument("bad ipv4_address");
+    }
 }

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -31,6 +31,7 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/net/ipv4_address>
+#include <unistdx/net/ipv6_address>
 #include <unistdx/test/operator>
 
 TEST(IPv4Addr, Calculus) {
@@ -62,4 +63,24 @@ test_print(
 TEST(ipv4_address, print_padding) {
     test_print(" 127.0.0.1", sys::ipv4_address{127,0,0,1}, std::right, 10);
     test_print("127.0.0.1 ", sys::ipv4_address{127,0,0,1}, std::left, 10);
+}
+
+TEST(ipv4_address, identities) {
+    EXPECT_EQ(sys::ipv4_address{}, sys::ipv4_address{"0.0.0.0"});
+    EXPECT_EQ(sys::ipv4_address(0,0,0,0), sys::ipv4_address{"0.0.0.0"});
+}
+
+TEST(ipv4_address, ordering) {
+    EXPECT_LT(sys::ipv4_address("10.0.0.1"), sys::ipv4_address("10.0.0.2"));
+    EXPECT_GE(sys::ipv4_address("10.0.0.2"), sys::ipv4_address("10.0.0.1"));
+}
+
+TEST(ipv6_address, identities) {
+    EXPECT_EQ(sys::ipv6_address{}, sys::ipv6_address{"::"});
+    EXPECT_EQ(sys::ipv6_address(0,0,0,0, 0,0,0,0), sys::ipv6_address{"0:0:0:0:0:0:0:0"});
+}
+
+TEST(ipv6_address, ordering) {
+    EXPECT_LT(sys::ipv6_address("10::1"), sys::ipv6_address("10::2"));
+    EXPECT_GE(sys::ipv6_address("10::2"), sys::ipv6_address("10::1"));
 }

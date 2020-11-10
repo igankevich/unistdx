@@ -70,7 +70,8 @@ namespace sys {
         interface_socket_address& operator=(interface_socket_address&&) = default;
 
         inline ::sys::socket_address socket_address() const {
-            return ::sys::socket_address(this->address(), port());
+            using sa = typename traits_type::socket_address_type;
+            return sa{this->address(), port()};
         }
 
         inline port_type port() const noexcept { return this->_port; }

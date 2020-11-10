@@ -66,11 +66,11 @@ namespace {
         #if defined(UNISTDX_HAVE_ACCEPT4) && \
             defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
             defined(UNISTDX_HAVE_SOCK_CLOEXEC)
-        fd = ::accept4(server_fd, client_address.sockaddr(), &len,
+        fd = ::accept4(server_fd, client_address.get(), &len,
                        UNISTDX_SOCK_NONBLOCK | UNISTDX_SOCK_CLOEXEC);
         #else
         global_lock_type lock(fork_mutex);
-        fd = ::accept(server_fd, client_address.sockaddr(), &len);
+        fd = ::accept(server_fd, client_address.get(), &len);
         set_mandatory_flags(fd);
         #endif
         return fd;
@@ -78,12 +78,12 @@ namespace {
 
 }
 
-sys::socket::socket(const socket_address& bind_addr) {
+sys::socket::socket(const socket_address_view& bind_addr) {
     this->bind(bind_addr);
     this->listen();
 }
 
-sys::socket::socket(const socket_address& bind_addr, const socket_address& conn_addr) {
+sys::socket::socket(const socket_address_view& bind_addr, const socket_address_view& conn_addr) {
     this->bind(bind_addr);
     this->connect(conn_addr);
 }
@@ -92,14 +92,10 @@ sys::socket::socket(family_type family, socket_type type, protocol_type proto):
 sys::fildes(safe_socket(int (family), int(type)|default_flags, proto))
 {}
 
-void
-sys::socket::bind(const socket_address& e) {
+void sys::socket::bind(const socket_address_view& e) {
     create_socket_if_necessary(e);
     set(options::reuse_address);
-    #ifndef NDEBUG
-    log_message("sys", "binding to _", e);
-    #endif
-    UNISTDX_CHECK(::bind(this->_fd, e.sockaddr(), e.sockaddrlen()));
+    UNISTDX_CHECK(::bind(this->_fd, e.data(), e.size()));
 }
 
 void
@@ -111,12 +107,9 @@ sys::socket::listen() {
 }
 
 void
-sys::socket::connect(const socket_address& e) {
+sys::socket::connect(const socket_address_view& e) {
     this->create_socket_if_necessary(e);
-    #ifndef NDEBUG
-    log_message("sys", "connect to _", e);
-    #endif
-    int ret = ::connect(this->_fd, e.sockaddr(), e.sockaddrlen());
+    int ret = ::connect(this->_fd, e.data(), e.size());
     if (ret == -1 && errno != EINPROGRESS) {
         throw bad_call(__FILE__, __LINE__, __func__);
     }
@@ -199,15 +192,14 @@ sys::operator<<(std::ostream& out, const socket& rhs) {
            << make_object("fd", rhs._fd, "status", rhs.status_message());
 }
 
-void
-sys::socket::create_socket_if_necessary(const socket_address& e) {
+void sys::socket::create_socket_if_necessary(const socket_address_view& e) {
     if (!*this) {
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         int type = e.family() == family_type::netlink ? SOCK_RAW : SOCK_STREAM;
         #else
         int type = SOCK_STREAM;
         #endif
-        this->_fd = safe_socket(e.sa_family(), type | default_flags, 0);
+        this->_fd = safe_socket(sa_family_type(e.family()), type | default_flags, 0);
     }
 }
 
@@ -240,7 +232,7 @@ sys::socket::send_fds(const sys::fd_type* data, size_t n) {
     h.msg_namelen = 0;
     sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
     std::copy_n(data, n, fds);
-    this->send(h, 0);
+    this->send(h);
 }
 
 void

@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <istream>
 #include <ostream>
+#include <sstream>
 
 #include <unistdx/base/ios_guard>
 #include <unistdx/base/types>
@@ -85,8 +86,7 @@ sys::operator>>(std::istream& in, ipv6_address& rhs) {
         if (in >> Hextet{field}) {
             char ch = in.peek();
             // if prefixed with ::ffff:
-            if (field_no >= 1 && rhs._hextets[0] == 0xffff && zeros_field ==
-                0) {
+            if (field_no >= 1 && rhs._hextets[0] == 0xffff && zeros_field == 0) {
                 in >> bits::Dot();
             } else {
                 in >> bits::Colon();
@@ -119,4 +119,12 @@ sys::operator>>(std::istream& in, ipv6_address& rhs) {
 void
 sys::ipv6_address::clear() {
     std::fill_n(this->begin(), this->size(), value_type{0});
+}
+
+sys::ipv6_address::ipv6_address(const char* rhs) {
+    std::stringstream tmp(rhs);
+    tmp >> *this;
+    if (tmp.fail()) {
+        throw std::invalid_argument("bad ipv6_address");
+    }
 }

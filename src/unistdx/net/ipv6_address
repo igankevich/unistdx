@@ -58,6 +58,7 @@ namespace sys {
     typedef ::sa_family_t sa_family_type;
     typedef unsigned int prefix_type;
 
+    class ipv6_socket_address;
     class socket_address;
 
     /**
@@ -133,6 +134,8 @@ namespace sys {
             hex_type h8
         ): _hextets{h1, h2, h3, h4, h5, h6, h7, h8} {}
 
+        explicit ipv6_address(const char* rhs);
+
         /// Automatically cast to \c in6_addr system type.
         inline constexpr
         operator const inet6_type&() const {
@@ -157,6 +160,18 @@ namespace sys {
         inline bool
         operator<(const ipv6_address& rhs) const {
             return this->_integer < rhs._integer;
+        }
+
+        inline bool operator<=(const ipv6_address& rhs) const noexcept {
+            return this->operator<(rhs) || this->operator==(rhs);
+        }
+
+        inline bool operator>(const ipv6_address& rhs) const noexcept {
+            return !this->operator<(rhs) && !this->operator==(rhs);
+        }
+
+        inline bool operator>=(const ipv6_address& rhs) const noexcept {
+            return !this->operator<(rhs);
         }
 
         /// \copydoc operator<
@@ -331,6 +346,9 @@ namespace sys {
 
         /// Octet type.
         typedef ipv6_address::value_type value_type;
+
+        /// Socket address type.
+        using socket_address_type = ipv6_socket_address;
 
         /// First octet of loopback address.
         static constexpr const value_type loopback_first_octet = 0;

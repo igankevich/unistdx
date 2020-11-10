@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -32,6 +32,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
+#include <unistdx/net/ipv4_socket_address>
 #include <unistdx/net/socket>
 #include <unistdx/net/socket_address>
 
@@ -39,7 +40,7 @@ For more information, please refer to <http://unlicense.org/>
 
 TEST(Socket, GetCredentials) {
     const char* path = "\0test_socket";
-    sys::socket_address e(path);
+    sys::unix_socket_address e(path);
     sys::socket sock;
     sock.bind(e);
     sock.unsetf(sys::open_flag::non_blocking);
@@ -68,7 +69,7 @@ TEST(Socket, GetCredentials) {
 
 TEST(Socket, SendFDs) {
     const char* path = "\0testsendfds";
-    sys::socket_address e(path);
+    sys::unix_socket_address e(path);
     sys::socket sock(e);
     sock.unsetf(sys::open_flag::non_blocking);
     EXPECT_NE("", test::stream_insert(sock));
@@ -106,14 +107,15 @@ TEST(Socket, SendFDs) {
 #if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
 TEST(socket, user_timeout) {
     sys::socket sock;
-    sock.bind({{127,0,0,1}, 0});
+    sock.bind(sys::ipv4_socket_address{{127,0,0,1}, 0});
     EXPECT_NO_THROW(sock.set_user_timeout(std::chrono::seconds(7)));
 }
 #endif
 
 TEST(socket, bind_connect) {
     try {
-        sys::socket sock({{127,0,0,1}, 0}, {{127,0,0,1},0});
+        sys::socket sock(sys::ipv4_socket_address{{127,0,0,1},0},
+                         sys::ipv4_socket_address{{127,0,0,1},0});
     } catch (const sys::bad_call& err) {
         EXPECT_EQ(std::errc::operation_in_progress, err.errc());
     }

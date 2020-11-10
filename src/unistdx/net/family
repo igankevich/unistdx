@@ -54,7 +54,11 @@ namespace sys {
         /// IPv4 socket address family.
         inet = AF_INET,
         /// IPv4 socket address family.
+        ipv4 = AF_INET,
+        /// IPv6 socket address family.
         inet6 = AF_INET6,
+        /// IPv6 socket address family.
+        ipv6 = AF_INET6,
         /// UNIX domain socket address family.
         /// \see \man{unix,7}
         unix = AF_UNIX

@@ -397,7 +397,7 @@ namespace sys {
         \see \man{socket,2}
         */
         explicit
-        socket(const socket_address& bind_addr);
+        socket(const socket_address_view& bind_addr);
 
         /**
         \brief
@@ -406,7 +406,7 @@ namespace sys {
         \throws bad_call
         \see \man{socket,2}
         */
-        socket(const socket_address& bind_addr, const socket_address& conn_addr);
+        socket(const socket_address_view& bind_addr, const socket_address_view& conn_addr);
 
         /**
         \brief
@@ -439,8 +439,7 @@ namespace sys {
         \throws bad_call
         \see \man{bind,2}
         */
-        void
-        bind(const socket_address& e);
+        void bind(const socket_address_view& e);
 
         /**
         \brief Connect to socket address \p e.
@@ -449,16 +448,14 @@ namespace sys {
         \see \man{connect,2}
         \see std::errc
         */
-        void
-        connect(const socket_address& e);
+        void connect(const socket_address_view& e);
 
         /**
         \brief Listen on previously binded socket address.
         \throws bad_call
         \see \man{listen,2}
         */
-        void
-        listen();
+        void listen();
 
         /**
         \brief Accept socket connection.
@@ -470,8 +467,7 @@ namespace sys {
         \return true if the connection was accepted and more connections might be
         accepted, false if there are no more connections to be accepted
         */
-        bool
-        accept(socket& client_socket, socket_address& client_address);
+        bool accept(socket& client_socket, socket_address& client_address);
 
         /**
         \brief Shutdown communication on the socket, but do not close it.
@@ -480,8 +476,7 @@ namespace sys {
         \see \man{shutdown,2}
         \see std::errc
         */
-        void
-        shutdown(shutdown_flag how);
+        void shutdown(shutdown_flag how);
 
         /**
         \brief Shutdown and close the socket.
@@ -694,7 +689,7 @@ namespace sys {
         bind_addr() const noexcept {
             socket_address addr;
             socklen_type len = sizeof(socket_address);
-            ::getsockname(this->_fd, addr.sockaddr(), &len);
+            ::getsockname(this->_fd, addr.get(), &len);
             return addr;
         }
 
@@ -707,7 +702,7 @@ namespace sys {
         name() const {
             socket_address addr;
             socklen_type len = sizeof(socket_address);
-            UNISTDX_CHECK(::getsockname(this->_fd, addr.sockaddr(), &len));
+            UNISTDX_CHECK(::getsockname(this->_fd, addr.get(), &len));
             return addr;
         }
 
@@ -720,7 +715,7 @@ namespace sys {
         peer_name() const {
             socket_address addr;
             socklen_type len = sizeof(socket_address);
-            UNISTDX_CHECK(::getpeername(this->_fd, addr.sockaddr(), &len));
+            UNISTDX_CHECK(::getpeername(this->_fd, addr.get(), &len));
             return addr;
         }
 
@@ -737,7 +732,7 @@ namespace sys {
         }
 
         /// \deprecated Use send with \em sys::message_flags.
-        inline ssize_t
+        UNISTDX_DEPRECATED inline ssize_t
         send(const message_header& hdr, int flags) const {
             return this->send(hdr, message_flags(flags));
         }
@@ -755,7 +750,7 @@ namespace sys {
         }
 
         /// \deprecated Use receive with \em sys::message_flags.
-        inline ssize_t
+        UNISTDX_DEPRECATED inline ssize_t
         receive(message_header& hdr, int flags) const {
             return this->receive(hdr, message_flags(flags));
         }
@@ -828,8 +823,7 @@ namespace sys {
         sys::fildes(sock) {}
 
     private:
-        void
-        create_socket_if_necessary(const socket_address& e);
+        void create_socket_if_necessary(const socket_address_view& e);
 
         int
         error() const noexcept;

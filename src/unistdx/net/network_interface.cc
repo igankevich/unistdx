@@ -91,19 +91,19 @@ auto sys::network_interface::address() const -> interface_address_type {
     traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
     socket s{family_type::inet,socket_type::datagram};
     s.call(fildes::operation::interface_get_address, req);
-    socket_address addr(req.ifr_addr);
+    ipv4_socket_address addr(req.ifr_addr);
     s.call(fildes::operation::interface_get_network_mask, req);
-    socket_address netmask(req.ifr_netmask);
-    return interface_address_type(addr.addr4(), netmask.addr4());
+    ipv4_socket_address netmask(req.ifr_netmask);
+    return interface_address_type(addr.address(), netmask.address());
 }
 
 void sys::network_interface::address(const interface_address_type& addr) {
     network_interface_request req{};
     traits_type::copy(req.ifr_name, this->_name.data(), this->_name.size());
-    req.ifr_addr = *socket_address{addr.address(),0}.sockaddr();
+    req.ifr_addr = *ipv4_socket_address{addr.address(),0}.get();
     socket s{family_type::inet,socket_type::datagram};
     s.call(fildes::operation::interface_set_address, req);
-    req.ifr_netmask = *socket_address{addr.netmask(),0}.sockaddr();
+    req.ifr_netmask = *ipv4_socket_address{addr.netmask(),0}.get();
     s.call(fildes::operation::interface_set_network_mask, req);
 }
 

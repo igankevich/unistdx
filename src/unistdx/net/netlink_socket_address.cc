@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,19 +30,39 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/net/interface_socket_address>
-#include <unistdx/test/bstream_insert_extract>
-#include <unistdx/test/operator>
+#include <istream>
+#include <ostream>
 
-TEST(interface_socket_address, _) {
-    sys::interface_socket_address<sys::ipv4_address> isa{{127,0,0,1},24,33333};
-    EXPECT_EQ((sys::ipv4_address{127,0,0,1}), isa.address());
-    EXPECT_EQ(33333, isa.port());
-    EXPECT_EQ(
-        (sys::socket_address{sys::ipv4_socket_address{{127,0,0,1},33333}}),
-        isa.socket_address()
-    );
-    test::bstream_insert_extract(isa);
-    test::stream_insert_equals("127.0.0.1/24:33333", isa);
-    test::io_operators(isa);
+#include <unistdx/net/netlink_socket_address>
+
+#if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
+std::ostream&
+sys::operator<<(std::ostream& out, const netlink_socket_address& rhs) {
+    return out << rhs.id();
 }
+
+std::istream&
+sys::operator>>(std::istream& in, netlink_socket_address& rhs) {
+    pid_type id{};
+    in >> id;
+    rhs.id(id);
+    return in;
+}
+
+sys::bstream&
+sys::operator<<(bstream& out, const netlink_socket_address& rhs) {
+    out << sys::u32(rhs.id());
+    out << rhs.groups();
+    return out;
+}
+
+sys::bstream&
+sys::operator>>(bstream& in, netlink_socket_address& rhs) {
+    sys::u32 id{}, groups{};
+    in >> id;
+    rhs.id(id);
+    in >> groups;
+    rhs.groups(groups);
+    return in;
+}
+#endif

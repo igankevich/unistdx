@@ -56,6 +56,7 @@ namespace sys {
     /// Network prefix type.
     typedef unsigned int prefix_type;
 
+    class ipv4_socket_address;
     class socket_address;
 
     /**
@@ -120,8 +121,11 @@ namespace sys {
         _octets{o1,o2,o3,o4} {}
 
         /// Construct IPv4 address from \c sockaddr system type.
-        inline
-        ipv4_address(const sa_type &rhs) noexcept;
+        inline ipv4_address(const sa_type &rhs) noexcept:
+        _address(reinterpret_cast<const sockinet4_type&>(rhs).sin_addr)
+        {}
+
+        explicit ipv4_address(const char* rhs);
 
         friend std::ostream&
         operator<<(std::ostream& out, ipv4_address rhs);
@@ -157,6 +161,18 @@ namespace sys {
         inline constexpr bool
         operator<(const ipv4_address& rhs) const noexcept {
             return this->_integer < rhs._integer;
+        }
+
+        inline constexpr bool operator<=(const ipv4_address& rhs) const noexcept {
+            return this->operator<(rhs) || this->operator==(rhs);
+        }
+
+        inline constexpr bool operator>(const ipv4_address& rhs) const noexcept {
+            return !this->operator<(rhs) && !this->operator==(rhs);
+        }
+
+        inline constexpr bool operator>=(const ipv4_address& rhs) const noexcept {
+            return !this->operator<(rhs);
         }
 
         /// \copydoc operator<
@@ -317,7 +333,10 @@ namespace sys {
     struct ipaddr_traits<ipv4_address> {
 
         /// Octet type.
-        typedef ipv4_address::value_type value_type;
+        using value_type = ipv4_address::value_type;
+
+        /// Socket address type.
+        using socket_address_type = ipv4_socket_address;
 
         /// First octet of loopback address.
         static constexpr const value_type loopback_first_octet = 127;

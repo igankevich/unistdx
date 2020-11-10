@@ -53,6 +53,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/base/check>
 #include <unistdx/base/flag>
+#include <unistdx/bits/macros>
 #include <unistdx/bits/process>
 #include <unistdx/bits/safe_calls>
 #include <unistdx/io/fildes>
@@ -842,7 +843,7 @@ namespace sys {
     \see \man{kill,2}
     \deprecated use process_view(p).send(s) instead.
     */
-    inline void send(signal s, pid_type p) { process_view(p).send(s); }
+    UNISTDX_DEPRECATED inline void send(signal s, pid_type p) { process_view(p).send(s); }
 
 }
 

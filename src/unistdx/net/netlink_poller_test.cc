@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/net/netlink_poller>
 #include <unistdx/net/netlink_socket>
+#include <unistdx/net/netlink_socket_address>
 #include <unistdx/net/network_interface>
 #include <unistdx/net/veth_interface>
 #include <unistdx/test/operator>
