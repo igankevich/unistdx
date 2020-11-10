@@ -403,6 +403,106 @@ namespace sys {
     };
     #endif
 
+    /**
+    \brief IPv4 socket address wrapper.
+    \date 2020-11-10
+    \ingroup wrapper net
+    */
+    class ipv4_socket_address {
+
+    private:
+        sockinet4_type _address{};
+
+    public:
+        inline
+        ipv4_socket_address(ipv4_address address, port_type port) noexcept {
+            this->_address.sin_family = sa_family_type(family_type::inet);
+            this->_address.sin_addr = address;
+            this->_address.sin_port = to_network_format<port_type>(port);
+        }
+
+        ipv4_socket_address(const char* host, port_type port);
+
+        inline ipv4_socket_address() noexcept {
+            this->_address.sin_family = sa_family_type(family_type::inet);
+        }
+
+        ~ipv4_socket_address() = default;
+        ipv4_socket_address(const ipv4_socket_address&) = default;
+        ipv4_socket_address& operator=(const ipv4_socket_address&) = default;
+        ipv4_socket_address(ipv4_socket_address&&) = default;
+        ipv4_socket_address& operator=(ipv4_socket_address&&) = default;
+
+        static constexpr inline family_type family() noexcept { return family_type::inet; }
+        static constexpr inline sa_family_type sa_family() noexcept { return sa_family_type(family()); }
+        inline ipv4_address address() const noexcept { return ipv4_address(this->_address.sin_addr); }
+        inline void address(ipv4_address rhs) noexcept { this->_address.sin_addr = rhs; }
+        inline port_type port() const noexcept { return this->_address.sin_port; }
+        inline void port(port_type rhs) noexcept { this->_address.sin_port = rhs; }
+        inline void clear() { this->_address = {}; }
+
+        static constexpr inline socklen_type length() noexcept { return sizeof(sockinet4_type); }
+        inline sa_type* get() noexcept { return reinterpret_cast<sa_type*>(&this->_address); }
+        inline sa_type* get() const noexcept { return const_cast<sa_type*>(reinterpret_cast<const sa_type*>(&this->_address)); }
+
+        inline bool operator<(const ipv4_socket_address& rhs) const noexcept {
+            return std::make_tuple(sa_family(), address(), port()) <
+                   std::make_tuple(rhs.sa_family(), rhs.address(), rhs.port());
+        }
+
+        inline bool operator<=(const ipv4_socket_address& rhs) const noexcept {
+            return this->operator<(rhs) || this->operator==(rhs);
+        }
+
+        inline bool operator>(const ipv4_socket_address& rhs) const noexcept {
+            return !this->operator<(rhs) && !this->operator==(rhs);
+        }
+
+        inline bool operator>=(const ipv4_socket_address& rhs) const noexcept {
+            return !this->operator<(rhs);
+        }
+
+        inline bool operator==(const ipv4_socket_address& rhs) const noexcept {
+            return family() == rhs.family() &&
+                address() == rhs.address() &&
+                port() == rhs.port();
+        }
+
+        inline bool operator!=(const ipv4_socket_address& rhs) const noexcept {
+            return !this->operator==(rhs);
+        }
+
+        inline explicit operator bool() const noexcept { return bool(address()); }
+        inline bool operator!() const noexcept { return !this->operator bool(); }
+
+        friend std::ostream&
+        operator<<(std::ostream& out, const ipv4_socket_address& rhs);
+
+        friend std::istream&
+        operator>>(std::istream& in, ipv4_socket_address& rhs);
+
+        friend bstream&
+        operator<<(bstream& out, const ipv4_socket_address& rhs);
+
+        friend bstream&
+        operator>>(bstream& in, ipv4_socket_address& rhs);
+
+        friend struct std::hash<sys::ipv4_socket_address>;
+
+    };
+
+    std::ostream&
+    operator<<(std::ostream& out, const ipv4_socket_address& rhs);
+
+    std::istream&
+    operator>>(std::istream& in, ipv4_socket_address& rhs);
+
+    bstream&
+    operator<<(bstream& out, const ipv4_socket_address& rhs);
+
+    bstream&
+    operator>>(bstream& in, ipv4_socket_address& rhs);
+
 }
 
 namespace std {
@@ -427,6 +527,22 @@ namespace std {
                              ? std::hash<sys::ipv4_address>()(rhs.addr4())
                              : std::hash<sys::ipv6_address>()(rhs.addr6());
             return rhs.port() ^ a;
+        }
+
+    };
+
+    /// Specialisation of \link std::hash \endlink for \link sys::ipv4_socket_address \endlink.
+    template<>
+    struct hash<sys::ipv4_socket_address>: public hash<sys::ipv4_address> {
+
+        /**
+        \brief Computes hash by XOR-ing hash of the address with port number.
+        \details
+        Depending on the address family, uses hash of either ipv4_address or ipv6_address.
+        */
+        inline size_t
+        operator()(const sys::ipv4_socket_address& rhs) const noexcept {
+            return rhs.port() ^ this->hash<sys::ipv4_address>::operator()(rhs.address());
         }
 
     };

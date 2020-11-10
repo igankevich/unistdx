@@ -297,3 +297,53 @@ sys::socket_address::operator bool() const noexcept {
         default: return false;
     }
 }
+
+std::ostream&
+sys::operator<<(std::ostream& out, const ipv4_socket_address& rhs) {
+    return out << rhs.address() << ':' << to_host_format<port_type>(rhs.port());
+}
+
+std::istream&
+sys::operator>>(std::istream& in, ipv4_socket_address& rhs) {
+    using bits::Colon;
+    std::istream::sentry s(in);
+    if (s) {
+        ipv4_address host;
+        port_type port = 0;
+        ios_guard g(in);
+        in.unsetf(std::ios_base::skipws);
+        if (in >> host >> Colon() >> port) {
+            init_addr(rhs._address, host, port);
+        }
+    }
+    return in;
+}
+
+sys::bstream&
+sys::operator<<(bstream& out, const ipv4_socket_address& rhs) {
+    out << rhs.family();
+    out << rhs.address();
+    out << make_bytes(rhs.port());
+    return out;
+}
+
+sys::bstream&
+sys::operator>>(bstream& in, ipv4_socket_address& rhs) {
+    family_type fam;
+    in >> fam;
+    rhs._address.sin_family = static_cast<sa_family_type>(fam);
+    bytes<port_type> port;
+    ipv4_address addr;
+    in >> addr >> port;
+    rhs._address.sin_addr = addr;
+    rhs._address.sin_port = port;
+    return in;
+}
+
+sys::ipv4_socket_address::ipv4_socket_address(const char* host, port_type port) {
+    ipv4_address a4;
+    std::stringstream tmp(host);
+    if (tmp >> a4) {
+        init_addr(this->_address, a4, port);
+    }
+}
