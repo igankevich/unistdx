@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2019, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -32,9 +32,18 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
-#include <unistdx/system/log>
-#include <unistdx/util/backtrace>
+#define UNISTDX_ENABLE_BACKTRACE
 
-TEST(log, compilation) {
-    sys::log log;
+#include <unistdx/system/error>
+
+void func() {
+    throw sys::error("xyz");
+}
+
+TEST(error, try_catch) {
+    try {
+        func();
+    } catch (const sys::error& err) {
+        std::cerr << err.what() << std::endl;
+    }
 }

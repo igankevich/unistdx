@@ -214,6 +214,14 @@ namespace sys {
             std::strncpy(this->_data, rhs, this->_capacity);
         }
 
+        inline explicit string(const_pointer s, size_type n):
+        _data(allocate(n)), _capacity(n) {
+            std::strncpy(this->_data, s, this->_capacity);
+        }
+
+        inline explicit string(const_pointer s):
+        string(s, std::char_traits<char>::length(s)) {}
+
         inline string& operator=(const string& rhs) {
             string tmp(rhs);
             swap(tmp);

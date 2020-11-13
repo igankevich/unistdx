@@ -1,0 +1,198 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
+#ifndef UNISTDX_SYSTEM_ERROR
+#define UNISTDX_SYSTEM_ERROR
+
+#include <exception>
+#include <iosfwd>
+#include <string>
+#include <vector>
+
+#include <unistdx/base/string>
+
+#if defined(UNISTDX_ENABLE_BACKTRACE)
+#define UNW_LOCAL_ONLY
+#include <elfutils/libdwfl.h>
+#include <libunwind.h>
+#include <unistd.h>
+#endif
+
+namespace sys {
+
+    const char* demangle(const char* symbol, string& buf);
+
+    #if defined(UNISTDX_ENABLE_BACKTRACE)
+    namespace dw {
+
+        class dwarf {
+
+        private:
+            ::Dwfl_Callbacks _callbacks{};
+            ::Dwfl* _ptr{};
+
+        public:
+            inline dwarf() noexcept {
+                this->_callbacks.find_elf = ::dwfl_linux_proc_find_elf;
+                this->_callbacks.find_debuginfo = ::dwfl_standard_find_debuginfo;
+                this->_ptr = ::dwfl_begin(&this->_callbacks);
+            }
+            inline ~dwarf() noexcept {
+                if (this->_ptr) { ::dwfl_end(this->_ptr); this->_ptr = nullptr; }
+            }
+            inline ::Dwfl* get() noexcept { return this->_ptr; }
+            inline const ::Dwfl* get() const noexcept { return this->_ptr; }
+            inline explicit operator bool() const noexcept { return this->_ptr != nullptr; }
+            inline bool operator!() const noexcept { return !operator bool(); }
+
+            inline bool report() noexcept {
+                if (::dwfl_linux_proc_report(get(), ::getpid()) != 0) { return false; }
+                if (::dwfl_report_end(get(), nullptr, nullptr) != 0) { return false; }
+                return true;
+            }
+        };
+
+    }
+    #endif
+
+    struct backtrace_symbol {
+
+        std::string object;
+        std::string filename;
+        std::string name;
+        int line{};
+        uintptr_t address{};
+
+        inline backtrace_symbol(std::string&& filename, std::string&& name, int line):
+        filename(filename), name(name), line(line) {}
+
+        #if defined(UNISTDX_ENABLE_BACKTRACE)
+        inline backtrace_symbol(std::string&& name, uintptr_t ip):
+        name(std::move(name)), address(ip) {
+            using namespace ::sys::dw;
+            dwarf dwfl;
+            if (!dwfl) { return; }
+            if (!dwfl.report()) { return; }
+            ::Dwarf_Addr addr = ip;
+            ::Dwfl_Module* module = ::dwfl_addrmodule(dwfl.get(), addr);
+            if (module) {
+                const char* name =
+                    ::dwfl_module_info(module, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
+                if (name) {
+                    this->object = name;
+                }
+            }
+            //const char* function_name = ::dwfl_module_addrname(module, addr);
+            ::Dwfl_Line* line = ::dwfl_getsrc(dwfl.get(), addr);
+            if (line != nullptr) {
+                int nline{};
+                ::Dwarf_Addr addr{};
+                const char* filename =
+                    ::dwfl_lineinfo(line, &addr, &nline, nullptr, nullptr, nullptr);
+                if (filename && *filename) {
+                    this->filename = filename;
+                    this->line = nline;
+                }
+            }
+        }
+        #endif
+
+    };
+
+    std::ostream& operator<<(std::ostream& out, const backtrace_symbol& rhs);
+
+    #if defined(UNISTDX_ENABLE_BACKTRACE)
+    std::vector<backtrace_symbol> unwind_symbols() {
+        char symbol[4096];
+        ::unw_cursor_t cursor;
+        ::unw_context_t context;
+        ::unw_getcontext(&context);
+        ::unw_init_local(&cursor, &context);
+        std::vector<backtrace_symbol> symbols;
+        string buf(4096);
+        while (::unw_step(&cursor) > 0) {
+            ::unw_word_t ip = 0;
+            ::unw_get_reg(&cursor, UNW_REG_IP, &ip);
+            if (ip == 0) { break; }
+            ::unw_word_t offset = 0;
+            for (auto& ch : symbol) { ch = 0; }
+            if (::unw_get_proc_name(&cursor, symbol, sizeof(symbol), &offset) == 0) {
+                int length = 0;
+                while (length != sizeof(symbol) && symbol[length] != 0) { ++length; }
+                symbols.emplace_back(std::string(demangle(symbol, buf)), ip-4);
+            }
+        }
+        return symbols;
+    }
+    #endif
+
+    std::vector<backtrace_symbol> backtrace_symbols();
+
+    class error: public std::exception {
+
+    private:
+        std::string _message;
+        std::vector<backtrace_symbol> _symbols;
+
+    public:
+        #if defined(UNISTDX_ENABLE_BACKTRACE)
+        inline explicit error(const std::string& message) {
+            this->_symbols = unwind_symbols();
+            init(message);
+        }
+        #else
+        inline explicit error(const std::string& message) {
+            this->_symbols = backtrace_symbols();
+            init(message);
+        }
+        #endif
+        error() = default;
+        ~error() = default;
+        error(const error&) = default;
+        error& operator=(const error&) = default;
+        error(error&&) = default;
+        error& operator=(error&&) = default;
+
+        const char* what() const noexcept override;
+
+        inline const std::vector<backtrace_symbol>& symbols() const noexcept {
+            return this->_symbols;
+        }
+
+    private:
+        void init(const std::string& message);
+
+    };
+
+}
+
+#endif // vim:filetype=cpp

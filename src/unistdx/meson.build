@@ -34,6 +34,7 @@ libunistdx_shared = shared_library(
     install: true,
     include_directories: src,
     implicit_include_directories: false,
+    dependencies: libunwind + libdw,
 )
 
 unistdx = declare_dependency(
@@ -68,7 +69,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []),
+                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + libunwind + libdw,
                 link_with: libs,
                 implicit_include_directories: false,
             )
