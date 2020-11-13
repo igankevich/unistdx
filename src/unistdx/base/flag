@@ -123,6 +123,10 @@ namespace sys {
             return a = ENUM(type(a) ^ type(b)); \
         }
 
+    template <class T>
+    constexpr inline typename std::underlying_type<T>::type
+    downcast(T x) { return static_cast<typename std::underlying_type<T>::type>(x); }
+
 }
 
 #endif // vim:filetype=cpp

@@ -23,6 +23,7 @@ subdir('net')
 subdir('io')
 subdir('ipc')
 subdir('util')
+subdir('system')
 subdir('bits')
 subdir('test')
 

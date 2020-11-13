@@ -228,6 +228,7 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_NETINET_TCP_H
 #mesondefine UNISTDX_HAVE_SCHED_H
 #mesondefine UNISTDX_HAVE_SEMAPHORE_H
+#mesondefine UNISTDX_HAVE_SYSLOG_H
 #mesondefine UNISTDX_HAVE_SYS_EPOLL_H
 #mesondefine UNISTDX_HAVE_SYS_IOCTL_H
 #mesondefine UNISTDX_HAVE_SYS_RESOURCE_H
