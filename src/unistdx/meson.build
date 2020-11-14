@@ -49,6 +49,7 @@ unistdx_lib = library(
 
 pkgconfig.generate(
     libraries: unistdx_lib,
+    requires: unistdx_deps,
     version: meson.project_version(),
     name: meson.project_name() + suffix,
     description: 'C++ wrappers for libc',
