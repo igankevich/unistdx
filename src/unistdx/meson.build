@@ -58,6 +58,7 @@ if libunwind.found() and libdw.found()
     )
     pkgconfig.generate(
         libunistdx_debug_shared,
+        requires: [libunwind, libdw],
         description: 'C++ wrappers for libc',
         extra_cflags: more_cpp_args,
     )
