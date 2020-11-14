@@ -41,7 +41,6 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/string>
 
 #if defined(UNISTDX_ENABLE_BACKTRACE)
-#define UNW_LOCAL_ONLY
 #include <elfutils/libdwfl.h>
 #include <libunwind.h>
 #include <unistd.h>

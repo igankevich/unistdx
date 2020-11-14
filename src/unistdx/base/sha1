@@ -130,7 +130,7 @@ namespace sys {
 
         /// Copy SHA-1 digest to byte array pointed by \p result.
         inline void
-        digest(unsigned char* result) noexcept {
+        digest(unsigned char* result) UNISTDX_NOEXCEPT {
             UNISTDX_PRECONDITION(result);
             for (int i=0; i<digest_bytes_length(); ++i) {
                 result[i] = this->_bytes[i];
@@ -139,7 +139,7 @@ namespace sys {
 
         /// Copy SHA-1 digest to character array pointed by \p result.
         inline void
-        digest(char* result) noexcept {
+        digest(char* result) UNISTDX_NOEXCEPT {
             UNISTDX_PRECONDITION(result);
             for (int i=0; i<digest_bytes_length(); ++i) {
                 result[i] = this->_bytes[i];
@@ -148,7 +148,7 @@ namespace sys {
 
         /// Copy SHA-1 digest to unsigned integer array pointed by \p result.
         inline void
-        digest(u32* result) noexcept {
+        digest(u32* result) UNISTDX_NOEXCEPT {
             UNISTDX_PRECONDITION(result);
             for (int i=0; i<digest_length(); ++i) {
                 result[i] = this->_digest[i];

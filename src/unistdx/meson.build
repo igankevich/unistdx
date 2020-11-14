@@ -27,45 +27,36 @@ subdir('system')
 subdir('bits')
 subdir('test')
 
-libunistdx_shared = shared_library(
-    'unistdx',
+unistdx_deps = []
+if with_debug
+    libunwind = dependency('libunwind')
+    libdw = dependency('libdw')
+    unistdx_deps += libunwind
+    unistdx_deps += libdw
+endif
+
+unistdx_lib = library(
+    'unistdx' + suffix,
     sources: libunistdx_src,
     version: meson.project_version(),
     install: true,
     include_directories: src,
     implicit_include_directories: false,
+    dependencies: unistdx_deps,
+    cpp_args: cpp_args,
+    link_args: cpp_linker_args,
 )
 
 pkgconfig.generate(
-    libraries: libunistdx_shared,
+    libraries: unistdx_lib,
     version: meson.project_version(),
-    name: meson.project_name(),
+    name: meson.project_name() + suffix,
     description: 'C++ wrappers for libc',
-    filebase: meson.project_name()
+    extra_cflags: cpp_args,
 )
 
-if libunwind.found() and libdw.found()
-    more_cpp_args = ['-DUNISTDX_ENABLE_BACKTRACE', '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE']
-    libunistdx_debug_shared = shared_library(
-        'unistdx-debug',
-        sources: libunistdx_src,
-        version: meson.project_version(),
-        install: true,
-        include_directories: src,
-        implicit_include_directories: false,
-        dependencies: [libunwind, libdw],
-        cpp_args: more_cpp_args,
-    )
-    pkgconfig.generate(
-        libunistdx_debug_shared,
-        requires: [libunwind, libdw],
-        description: 'C++ wrappers for libc',
-        extra_cflags: more_cpp_args,
-    )
-endif
-
 unistdx = declare_dependency(
-    link_with: libunistdx_shared,
+    link_with: unistdx_lib,
     include_directories: src
 )
 
@@ -96,7 +87,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + (libunwind.found() ? [libunwind] : []) + (libdw.found() ? [libdw] : []),
+                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + (with_debug ? [libunwind,libdw] : []),
                 link_with: libs,
                 implicit_include_directories: false,
             )
@@ -130,7 +121,7 @@ foreach file : libunistdx_benchmarks
             '_'.join(words) + '_benchmark',
             sources: source_name,
             include_directories: src,
-            dependencies: [unistdx],
+            dependencies: [unistdx] + (with_debug ? [libunwind,libdw] : []),
             implicit_include_directories: false,
         )
     )

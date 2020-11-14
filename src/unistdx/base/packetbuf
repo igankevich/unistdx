@@ -459,7 +459,7 @@ namespace sys {
         and size to \p n.
         */
         inline void
-        set_ipacket(off_type pos1, off_type pos2, std::streamsize n) noexcept {
+        set_ipacket(off_type pos1, off_type pos2, std::streamsize n) UNISTDX_NOEXCEPT {
             UNISTDX_PRECONDITION(pos1 <= pos2);
             UNISTDX_PRECONDITION(pos2 <= pos1 + n);
             this->_ipacketpos = pos1;

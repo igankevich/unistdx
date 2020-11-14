@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.37.2',
+    version: '0.38.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -12,10 +12,17 @@ with_site = get_option('with_site')
 with_debug = get_option('with_debug')
 
 cpp = meson.get_compiler('cpp')
+cpp_args = []
+cpp_linker_args = []
 pkgconfig = import('pkgconfig')
+suffix = ''
 
 if with_debug
-    add_global_arguments('-DUNISTDX_DEBUG', language: 'cpp')
+    cpp_args += '-DUNISTDX_DEBUG'
+    cpp_args += '-DUNISTDX_ENABLE_BACKTRACE'
+    cpp_args += '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE'
+    cpp_args += '-DUNW_LOCAL_ONLY'
+    suffix = '-debug'
 endif
 
 foreach arg : [
@@ -28,8 +35,7 @@ foreach arg : [
     endif
 endforeach
 
-libunwind = dependency('libunwind', required: false)
-libdw = dependency('libdw', required: false)
+add_global_arguments(cpp_args, language: 'cpp')
 
 # compile-time configuration {{{
 all_defines = []

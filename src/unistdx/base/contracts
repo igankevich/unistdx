@@ -38,8 +38,11 @@ For more information, please refer to <http://unlicense.org/>
 #define UNISTDX_PRECONDITION(cond)
 #define UNISTDX_POSTCONDITION(cond)
 #define UNISTDX_ASSERTION(cond)
+#define UNISTDX_NOEXCEPT noexcept
 
 #else
+
+#define UNISTDX_NOEXCEPT
 
 #include <stdexcept>
 #include <string>

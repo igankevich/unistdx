@@ -32,8 +32,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
-#define UNISTDX_ENABLE_BAD_CALL_BACKTRACE
-#define UNISTDX_ENABLE_BACKTRACE
+#if defined(UNISTDX_ENABLE_BACKTRACE) && defined(UNISTDX_ENABLE_BAD_CALL_BACKTRACE)
 
 #include <unistdx/base/bad_call>
 #include <unistdx/system/error>
@@ -50,3 +49,8 @@ TEST(error, try_catch) {
         std::cerr << err.what() << std::endl;
     }
 }
+#else
+TEST(error, try_catch) {
+    std::exit(77);
+}
+#endif

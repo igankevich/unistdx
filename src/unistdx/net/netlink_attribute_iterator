@@ -130,14 +130,14 @@ namespace sys {
 
         /// Increment.
         inline netlink_attribute_iterator&
-        operator++() noexcept {
+        operator++() UNISTDX_NOEXCEPT {
             this->do_next();
             return *this;
         }
 
         /// Post-increment.
         inline netlink_attribute_iterator
-        operator++(int) noexcept {
+        operator++(int) UNISTDX_NOEXCEPT {
             netlink_attribute_iterator tmp(*this);
             this->do_next();
             return tmp;
@@ -161,7 +161,7 @@ namespace sys {
         }
 
         inline void
-        do_next() noexcept {
+        do_next() UNISTDX_NOEXCEPT {
             UNISTDX_ASSERTION(this->_attr);
             this->_attr = this->next();
             if (!this->ok()) {

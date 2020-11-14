@@ -210,7 +210,7 @@ namespace sys {
     private:
 
         inline pointer
-        read_direntry() noexcept {
+        read_direntry() UNISTDX_NOEXCEPT {
             UNISTDX_ASSERTION(this->is_open()); // LCOV_EXCL_LINE
             return static_cast<pointer>(::readdir(this->_dir));
         }
