@@ -51,18 +51,18 @@ sys::mkdirs(sys::path dir, file_mode m, path::size_type offset) {
             int ret = ::mkdir(dir, m);
             dir[i] = ch;
             if (ret == -1 && errno != EEXIST) {
-                UNISTDX_THROW_BAD_CALL();
+                throw bad_call();
             }
         }
     }
     int ret = ::mkdir(dir, m);
     if (ret == -1) {
         if (errno != EEXIST) {
-            UNISTDX_THROW_BAD_CALL();
+            throw bad_call();
         }
         file_status st(dir, path_flag::no_follow);
         if (!st.is_directory()) {
-            throw bad_call(std::errc::not_a_directory, __FILE__, __LINE__, __func__);
+            throw bad_call(std::errc::not_a_directory);
         }
     }
 }

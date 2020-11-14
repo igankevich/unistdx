@@ -40,9 +40,9 @@ For more information, please refer to <http://unlicense.org/>
 Uncoditionally throw \link sys::bad_call \endlink
 with error code and error location.
 \ingroup macros
+\deprecated use throw \p sys::bad_call() instead
 */
-#define UNISTDX_THROW_BAD_CALL() \
-    throw ::sys::bad_call(__FILE__, __LINE__, __func__)
+#define UNISTDX_THROW_BAD_CALL() throw ::sys::bad_call()
 
 /**
 \brief
@@ -53,7 +53,7 @@ with error code and error location.
 #define UNISTDX_CHECK(func) \
 { \
     if ((func) == -1) { \
-        throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+        throw ::sys::bad_call(); \
     } \
 }
 
@@ -66,7 +66,7 @@ with error code and error location.
 #define UNISTDX_CHECK2(func, ret) \
 { \
     if ((func) == (ret)) { \
-        throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+        throw ::sys::bad_call(); \
     } \
 }
 
@@ -81,7 +81,7 @@ or \c EINPROGRESS. In that case set \p func to 0.
 { \
     if (func == -1) { \
         if (errno != EAGAIN && errno != EINPROGRESS) { \
-            throw ::sys::bad_call(__FILE__, __LINE__, __func__); \
+            throw ::sys::bad_call(); \
         } \
         func = 0; \
     } \

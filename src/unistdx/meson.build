@@ -37,6 +37,33 @@ libunistdx_shared = shared_library(
     dependencies: libunwind + libdw,
 )
 
+pkgconfig.generate(
+    libraries: libunistdx_shared,
+    version: meson.project_version(),
+    name: meson.project_name(),
+    description: 'C++ wrappers for libc',
+    filebase: meson.project_name()
+)
+
+if libunwind.length() == 1 and libdw.length() == 1
+    more_cpp_args = ['-DUNISTDX_ENABLE_BACKTRACE', '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE']
+    libunistdx_debug_shared = shared_library(
+        'unistdx-debug',
+        sources: libunistdx_src,
+        version: meson.project_version(),
+        install: true,
+        include_directories: src,
+        implicit_include_directories: false,
+        dependencies: libunwind + libdw,
+        cpp_args: more_cpp_args,
+    )
+    pkgconfig.generate(
+        libunistdx_debug_shared,
+        description: 'C++ wrappers for libc',
+        extra_cflags: more_cpp_args,
+    )
+endif
+
 unistdx = declare_dependency(
     link_with: libunistdx_shared,
     include_directories: src

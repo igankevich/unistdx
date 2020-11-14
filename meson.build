@@ -12,6 +12,7 @@ with_site = get_option('with_site')
 with_debug = get_option('with_debug')
 
 cpp = meson.get_compiler('cpp')
+pkgconfig = import('pkgconfig')
 
 if with_debug
     add_global_arguments('-DUNISTDX_DEBUG', language: 'cpp')
@@ -299,17 +300,8 @@ if with_tests
 endif
 
 subdir('src')
+subdir('ci')
 
-# pkgconfig {{{
-pkgconfig = import('pkgconfig')
-pkgconfig.generate(
-    libraries: libunistdx_shared,
-    version: meson.project_version(),
-    name: meson.project_name(),
-    description: 'C++ wrappers for libc',
-    filebase: meson.project_name()
-)
-# }}}
 # cppcheck {{{
 cppcheck = find_program('cppcheck', required: false)
 if cppcheck.found()
@@ -344,4 +336,3 @@ if clang_check.found()
     )
 endif
 # }}}
-subdir('ci')

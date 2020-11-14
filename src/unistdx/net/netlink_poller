@@ -601,7 +601,7 @@ namespace sys {
         write(socket& sock) {
             header().increment_sequence();
             auto nbytes = sock.write(this->_buffer.data(), header().length());
-            if (nbytes != header().length()) { UNISTDX_THROW_BAD_CALL(); }
+            if (nbytes != header().length()) { throw bad_call(); }
         }
 
         inline void

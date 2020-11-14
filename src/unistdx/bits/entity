@@ -305,7 +305,7 @@ namespace {
         result_type* res = traits_type::get(field);
         if (!res) {
             if (errno) {
-                UNISTDX_THROW_BAD_CALL();
+                throw ::sys::bad_call();
             } else {
                 found = false;
             }
@@ -345,12 +345,7 @@ namespace {
                     buf.resize(buf.size()*2);
                 } else {
                     // LCOV_EXCL_START
-                    throw sys::bad_call(
-                        std::errc(ret),
-                        __FILE__,
-                        __LINE__,
-                        __func__
-                    );
+                    throw sys::bad_call(std::errc(ret));
                     // LCOV_EXCL_STOP
                 }
             } else {

@@ -80,7 +80,7 @@ namespace {
         }
         if (size != 0) {
             if (errno != EINVAL && errno != ENOSYS) {
-                UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
+                throw sys::bad_call(); // LCOV_EXCL_LINE
             }
             do_simple_copy(in, out, size);
         }
@@ -102,7 +102,7 @@ namespace {
         }
         if (size != 0) {
             if (errno != EXDEV && errno != EBADF && errno != ENOSYS) {
-                UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
+                throw sys::bad_call(); // LCOV_EXCL_LINE
             }
             #if defined(UNISTDX_HAVE_SENDFILE)
             do_sendfile(in, out, size);

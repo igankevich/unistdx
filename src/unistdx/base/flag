@@ -125,7 +125,7 @@ namespace sys {
 
     template <class T>
     constexpr inline typename std::underlying_type<T>::type
-    downcast(T x) { return static_cast<typename std::underlying_type<T>::type>(x); }
+    downcast(T x) noexcept { return static_cast<typename std::underlying_type<T>::type>(x); }
 
 }
 

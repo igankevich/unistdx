@@ -127,12 +127,7 @@ namespace sys {
             const char_type* last = first + n;
             while (first != last) {
                 if (this->epptr() == this->pptr()) {
-                    throw bad_call(
-                        std::errc::not_enough_memory,
-                        __FILE__,
-                        __LINE__,
-                        __func__
-                    );
+                    throw bad_call(std::errc::not_enough_memory);
                 }
                 const std::streamsize
                     m = std::min(last-first, this->epptr() - this->pptr());

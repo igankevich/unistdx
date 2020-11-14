@@ -38,7 +38,12 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/bits/macros>
 
+#if defined(UNISTDX_ENABLE_BAD_CALL_BACKTRACE)
+#include <unistdx/system/error>
+#endif
+
 namespace sys {
+
 
     /**
     \brief
@@ -48,47 +53,31 @@ namespace sys {
     */
     class bad_call: public std::system_error {
 
+    #if defined(UNISTDX_ENABLE_BAD_CALL_BACKTRACE)
     private:
-        const char* _file;
-        const int _line;
-        const char* _function;
+        error _error;
+    #endif
 
     public:
 
-        /// Construct the error with precise location where it was thrown.
-        inline
-        bad_call(
-            std::errc errcond,
-            const char* file,
-            const int line,
-            const char* function
-        ) noexcept:
+        #if defined(UNISTDX_ENABLE_BAD_CALL_BACKTRACE)
+        inline explicit bad_call(std::errc errcond):
         std::system_error(int(errcond), std::generic_category()),
-        _file(file), _line(line), _function(function) {}
+        _error(std::system_error::what()) {}
+        inline const char* what() const noexcept override { return this->_error.what(); }
+        #else
+        /// Construct the error from \p std::errc.
+        inline explicit bad_call(std::errc errcond) noexcept:
+        std::system_error(int(errcond), std::generic_category()) {}
+        #endif
 
-        /// Construct the error with precise location where it was thrown.
-        inline
-        bad_call(
-            const char* file,
-            const int line,
-            const char* function
-        ) noexcept:
-        bad_call(std::errc(errno), file, line, function) {}
-
-        friend std::ostream&
-        operator<<(std::ostream& out, const bad_call& rhs);
+        /// Construct the error from \p errno.
+        inline bad_call() noexcept: bad_call(std::errc(errno)) {}
 
         /// Get error condition.
-        inline std::errc
-        errc() const noexcept {
-            return std::errc(this->code().value());
-        }
+        inline std::errc errc() const noexcept { return std::errc(this->code().value()); }
 
     };
-
-    /// Output error message prefixed by the location where it was thrown.
-    std::ostream&
-    operator<<(std::ostream& out, const bad_call& rhs);
 
 }
 

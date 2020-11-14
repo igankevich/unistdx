@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -57,7 +57,7 @@ TEST(mkdirs, directory_permissions) {
         sys::mkdirs(sys::path(root, "z"));
         FAIL();
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::permission_denied, err.errc()) << "err=" << err;
+        EXPECT_EQ(std::errc::permission_denied, err.errc()) << "err=" << err.what();
     }
     UNISTDX_CHECK(::chmod(root, 0755));
 }
@@ -69,18 +69,18 @@ TEST(mkdirs, file_in_path) {
         sys::mkdirs(sys::path(root, "x"));
         FAIL();
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err;
+        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err.what();
     }
     try {
         sys::mkdirs(sys::path(root, "x", "y"));
         FAIL();
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err;
+        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err.what();
     }
     try {
         sys::mkdirs(sys::path(root));
         FAIL();
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err;
+        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err.what();
     }
 }

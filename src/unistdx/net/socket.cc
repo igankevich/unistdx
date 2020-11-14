@@ -111,7 +111,7 @@ sys::socket::connect(const socket_address_view& e) {
     this->create_socket_if_necessary(e);
     int ret = ::connect(this->_fd, e.data(), e.size());
     if (ret == -1 && errno != EINPROGRESS) {
-        throw bad_call(__FILE__, __LINE__, __func__);
+        throw bad_call();
     }
 }
 
@@ -120,7 +120,7 @@ sys::socket::accept(socket& sock, socket_address& addr) {
     auto client_fd = safe_accept(this->_fd, addr);
     if (client_fd == -1) {
         if (errno == EAGAIN || errno == EWOULDBLOCK) { return false; }
-        UNISTDX_THROW_BAD_CALL();
+        throw bad_call();
     }
     sock.close();
     sock._fd = client_fd;
@@ -132,7 +132,7 @@ sys::socket::shutdown(shutdown_flag how) {
     if (*this) {
         int ret = ::shutdown(this->_fd, int(how));
         if (ret == -1 && errno != ENOTCONN && errno != ENOTSUP) {
-            UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
+            throw bad_call(); // LCOV_EXCL_LINE
         }
     }
 }

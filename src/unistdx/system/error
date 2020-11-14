@@ -131,7 +131,7 @@ namespace sys {
     std::ostream& operator<<(std::ostream& out, const backtrace_symbol& rhs);
 
     #if defined(UNISTDX_ENABLE_BACKTRACE)
-    std::vector<backtrace_symbol> unwind_symbols() {
+    inline std::vector<backtrace_symbol> unwind_symbols() {
         char symbol[4096];
         ::unw_cursor_t cursor;
         ::unw_context_t context;

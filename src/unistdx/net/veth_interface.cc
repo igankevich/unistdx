@@ -60,7 +60,7 @@ void sys::veth_interface::destroy() {
         auto m = hdr.netlink_header::message<nlmsgerr>();
         if (hdr.error() && m->error != 0) {
             errno = -m->error;
-            UNISTDX_THROW_BAD_CALL();
+            throw bad_call();
         }
     }
     this->_name.clear();
@@ -91,7 +91,7 @@ void sys::veth_interface::init() {
         auto m = hdr.netlink_header::message<nlmsgerr>();
         if (hdr.error() && m->error != 0) {
             errno = -m->error;
-            UNISTDX_THROW_BAD_CALL();
+            throw bad_call();
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -32,18 +32,21 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
+#define UNISTDX_ENABLE_BAD_CALL_BACKTRACE
 #define UNISTDX_ENABLE_BACKTRACE
 
+#include <unistdx/base/bad_call>
 #include <unistdx/system/error>
 
 void func() {
-    throw sys::error("xyz");
+    //throw sys::error("xyz");
+    throw sys::bad_call(std::errc::permission_denied);
 }
 
 TEST(error, try_catch) {
     try {
         func();
-    } catch (const sys::error& err) {
+    } catch (const std::exception& err) {
         std::cerr << err.what() << std::endl;
     }
 }

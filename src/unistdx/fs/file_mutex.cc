@@ -42,7 +42,7 @@ sys::file_mutex::try_lock(file_lock_type tp) {
         if (errno == EWOULDBLOCK) {
             result = false;
         } else {
-            UNISTDX_THROW_BAD_CALL();
+            throw bad_call();
         }
     }
     return result;

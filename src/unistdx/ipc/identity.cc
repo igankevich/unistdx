@@ -41,6 +41,6 @@ sys::this_process::set_identity(uid_type uid, gid_type gid) {
     if (old_gid != gid) { group(gid); }
     if (old_uid != uid && ::setuid(uid) == -1) {
         if (old_gid != gid) { setgid(old_gid); }
-        UNISTDX_THROW_BAD_CALL();
+        throw bad_call();
     }
 }

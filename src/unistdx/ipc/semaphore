@@ -41,9 +41,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <semaphore.h>
 #endif
 #if defined(UNISTDX_HAVE_SYS_SEM_H)
-#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
+#include <sys/types.h>
 #endif
 
 #include <chrono>
@@ -339,7 +339,7 @@ namespace sys {
                 if (errno == EAGAIN) {
                     st = std::cv_status::timeout;
                 } else {
-                    UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
+                    throw bad_call();
                 }
             }
             return st;
@@ -455,7 +455,7 @@ namespace sys {
                 if (errno == ETIMEDOUT) {
                     st = std::cv_status::timeout;
                 } else {
-                    UNISTDX_THROW_BAD_CALL(); // LCOV_EXCL_LINE
+                    throw bad_call();
                 }
             }
             return st;

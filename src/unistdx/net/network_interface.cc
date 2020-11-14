@@ -127,7 +127,7 @@ sys::network_interface::set_namespace(fd_type ns) {
         auto m = hdr.sys::netlink_header::message<nlmsgerr>();
         if (hdr.error() && m->error != 0) {
             errno = -m->error;
-            UNISTDX_THROW_BAD_CALL();
+            throw bad_call();
         }
     }
     */
