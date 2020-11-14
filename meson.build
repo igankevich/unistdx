@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.37.0',
+    version: '0.37.1',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -28,8 +28,8 @@ foreach arg : [
     endif
 endforeach
 
-libunwind = with_debug ? [dependency('libunwind', required: false)] : []
-libdw = with_debug ? [dependency('libdw', required: false)] : []
+libunwind = dependency('libunwind', required: false)
+libdw = dependency('libdw', required: false)
 
 # compile-time configuration {{{
 all_defines = []

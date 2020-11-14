@@ -34,7 +34,6 @@ libunistdx_shared = shared_library(
     install: true,
     include_directories: src,
     implicit_include_directories: false,
-    dependencies: libunwind + libdw,
 )
 
 pkgconfig.generate(
@@ -45,7 +44,7 @@ pkgconfig.generate(
     filebase: meson.project_name()
 )
 
-if libunwind.length() == 1 and libdw.length() == 1
+if libunwind.found() and libdw.found()
     more_cpp_args = ['-DUNISTDX_ENABLE_BACKTRACE', '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE']
     libunistdx_debug_shared = shared_library(
         'unistdx-debug',
@@ -54,7 +53,7 @@ if libunwind.length() == 1 and libdw.length() == 1
         install: true,
         include_directories: src,
         implicit_include_directories: false,
-        dependencies: libunwind + libdw,
+        dependencies: [libunwind, libdw],
         cpp_args: more_cpp_args,
     )
     pkgconfig.generate(
@@ -96,7 +95,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + libunwind + libdw,
+                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + (libunwind.found() ? [libunwind] : []) + (libdw.found() ? [libdw] : []),
                 link_with: libs,
                 implicit_include_directories: false,
             )
