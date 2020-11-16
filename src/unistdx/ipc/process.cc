@@ -32,7 +32,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <limits.h>
 
-#include <unistdx/base/make_object>
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
 

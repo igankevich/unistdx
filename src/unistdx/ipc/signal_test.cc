@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -32,7 +32,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
-#include <unistdx/base/make_object>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
 

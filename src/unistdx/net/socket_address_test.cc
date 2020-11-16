@@ -60,7 +60,7 @@ For more information, please refer to <http://unlicense.org/>
     std::stringstream s; \
     s << str; \
     s >> addr; \
-    EXPECT_EQ(sys::family_type::unix, addr.family()); \
+    EXPECT_EQ(sys::socket_address_family::unix, addr.family()); \
 }
 
 template <class T>
@@ -269,7 +269,7 @@ TEST(Endpoint, Literals) {
 }
 
 TEST(socket_address, unix_domain) {
-    EXPECT_EQ(sys::family_type::unix, sys::socket_address("/path").family());
+    EXPECT_EQ(sys::socket_address_family::unix, sys::socket_address("/path").family());
     std::clog << sys::socket_address("/path/to/socket") << std::endl;
     std::clog << sys::socket_address("\0/path/to/socket") << std::endl;
     EXPECT_EQ(sys::socket_address("/path"), sys::socket_address("/path"));
@@ -305,7 +305,7 @@ INSTANTIATE_TEST_CASE_P(
 #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
 TEST(socket_address, netlink) {
     EXPECT_EQ(
-        sys::family_type::netlink,
+        sys::socket_address_family::netlink,
         sys::netlink_socket_address(RTMGRP_IPV4_IFADDR).family()
     );
     EXPECT_EQ(

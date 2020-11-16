@@ -51,11 +51,11 @@ namespace sys {
 
         inline explicit
         netlink_socket(socket_type type, netlink_protocol protocol):
-        socket{sys::family_type::netlink,type,static_cast<int>(protocol)} {}
+        socket{sys::socket_address_family::netlink,type,static_cast<int>(protocol)} {}
 
         inline explicit
         netlink_socket(netlink_protocol protocol):
-        socket{sys::family_type::netlink,socket_type::raw,static_cast<int>(protocol)} {}
+        socket{sys::socket_address_family::netlink,socket_type::raw,static_cast<int>(protocol)} {}
 
     };
 

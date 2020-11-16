@@ -33,9 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_SOCKET_ADDRESS
 #define UNISTDX_NET_SOCKET_ADDRESS
 
-#include <netinet/in.h>
 #include <sys/types.h>
-#include <sys/un.h>
+#include <netinet/in.h>
 
 #include <functional>
 #include <iosfwd>
@@ -57,25 +56,11 @@ For more information, please refer to <http://unlicense.org/>
 namespace sys {
 
     /// Socket address type.
-    typedef struct ::sockaddr sa_type;
+    using socket_address_type = ::sockaddr;
     /// Socket address length type.
-    typedef ::socklen_t socklen_type;
+    using socket_length_type = ::socklen_t;
     /// Socket port type.
-    typedef ::in_port_t port_type;
-    /// Unix socket address type.
-    typedef struct ::sockaddr_un sockunix_type;
-    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-    /// Netlink socket address type.
-    typedef struct ::sockaddr_nl netlink_sa_type;
-    #endif
-    typedef ::pid_t pid_type;
-
-    class unix_socket_address;
-    class ipv4_socket_address;
-    class ipv6_socket_address;
-    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-    class netlink_socket_address;
-    #endif
+    using port_type = ::in_port_t;
 
     template <class T> T& socket_address_reinterpret_cast(socket_address& rhs) noexcept;
     template <class T> const T& socket_address_reinterpret_cast(const socket_address& rhs) noexcept;
@@ -93,7 +78,12 @@ namespace sys {
     \arg This is variant class, type of which is encoded in address
     family.
     */
-    class alignas(ipv6_socket_address) socket_address {
+    class alignas(std::aligned_union<0,
+                                     ipv4_socket_address,
+                                     ipv6_socket_address,
+                                     unix_socket_address,
+                                     netlink_socket_address>::type)
+    socket_address {
 
     private:
         using traits_type = std::char_traits<char>;
@@ -134,9 +124,9 @@ namespace sys {
 
         /// Construct socket_address from \c sockaddr system type.
         inline
-        socket_address(const sa_type& rhs) noexcept {
+        socket_address(const socket_address_type& rhs) noexcept {
             traits_type::copy(this->_bytes, reinterpret_cast<const char*>(&rhs),
-                              sizeof(sa_type));
+                              sizeof(socket_address_type));
         }
 
         /// Construct socket_address from another one and a new port.
@@ -144,8 +134,8 @@ namespace sys {
         socket_address(const socket_address &rhs, port_type newport) noexcept {
             traits_type::copy(this->_bytes, rhs._bytes, sizeof(socket_address));
             switch (this->family()) {
-                case family_type::ipv4: ref<ipv4_socket_address>().port(newport); break;
-                case family_type::ipv6: ref<ipv6_socket_address>().port(newport); break;
+                case socket_address_family::ipv4: ref<ipv4_socket_address>().port(newport); break;
+                case socket_address_family::ipv6: ref<ipv6_socket_address>().port(newport); break;
                 default: break;
             }
         }
@@ -194,18 +184,18 @@ namespace sys {
         port() const noexcept {
             port_type p = 0;
             switch (family()) {
-                case family_type::ipv4: p = this->ref<ipv4_socket_address>().port(); break;
-                case family_type::ipv6: p = this->ref<ipv6_socket_address>().port(); break;
+                case socket_address_family::ipv4: p = this->ref<ipv4_socket_address>().port(); break;
+                case socket_address_family::ipv6: p = this->ref<ipv6_socket_address>().port(); break;
                 default: break;
             }
             return to_host_format<port_type>(p);
         }
 
         /// Get socket_address address family.
-        inline sa_family_type sa_family() const noexcept { return this->ptr<sa_type>()->sa_family; }
+        inline sa_family_type sa_family() const noexcept { return this->ptr<socket_address_type>()->sa_family; }
 
         /// Get socket_address address family.
-        inline family_type family() const noexcept { return family_type(sa_family()); }
+        inline socket_address_family family() const noexcept { return socket_address_family(sa_family()); }
 
         /// Reset socket_address value to nought.
         /// \deprecated use clear() instead
@@ -233,25 +223,25 @@ namespace sys {
 
         /// Get socket address suitable for passing as an argument to system calls.
         /// \deprecated use get() instead
-        UNISTDX_DEPRECATED inline sa_type* sockaddr() noexcept { return ptr<sa_type>(); }
+        UNISTDX_DEPRECATED inline socket_address_type* sockaddr() noexcept { return ptr<socket_address_type>(); }
 
         /// Get socket address suitable for passing as an argument to system calls.
         /// \deprecated use get() instead
-        UNISTDX_DEPRECATED inline sa_type* sockaddr() const noexcept { return const_cast<sa_type*>(ptr<sa_type>()); }
+        UNISTDX_DEPRECATED inline socket_address_type* sockaddr() const noexcept { return const_cast<socket_address_type*>(ptr<socket_address_type>()); }
 
         /// Get socket address suitable for passing as an argument to system calls.
-        inline sa_type* get() noexcept { return ptr<sa_type>(); }
+        inline socket_address_type* get() noexcept { return ptr<socket_address_type>(); }
 
         /// Get socket address suitable for passing as an argument to system calls.
-        inline sa_type* get() const noexcept { return const_cast<sa_type*>(ptr<sa_type>()); }
+        inline socket_address_type* get() const noexcept { return const_cast<socket_address_type*>(ptr<socket_address_type>()); }
 
         /**
         \brief Get socket address length,
         suitable for passing as an argument to system calls.
         \deprecated use size() instead
         */
-        UNISTDX_DEPRECATED inline socklen_type sockaddrlen() const noexcept { return size(); }
-        socklen_type size() const noexcept;
+        UNISTDX_DEPRECATED inline socket_length_type sockaddrlen() const noexcept { return size(); }
+        socket_length_type size() const noexcept;
 
         friend struct std::hash<sys::socket_address>;
         template <class T> friend T& socket_address_cast(socket_address& rhs);
@@ -281,23 +271,23 @@ namespace sys {
     template <class T>
     T& socket_address_cast(socket_address& rhs) {
         if (std::is_same<T,ipv4_socket_address>::value) {
-            if (rhs.family() != family_type::ipv4) {
+            if (rhs.family() != socket_address_family::ipv4) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
         if (std::is_same<T,ipv6_socket_address>::value) {
-            if (rhs.family() != family_type::ipv6) {
+            if (rhs.family() != socket_address_family::ipv6) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
         if (std::is_same<T,unix_socket_address>::value) {
-            if (rhs.family() != family_type::unix) {
+            if (rhs.family() != socket_address_family::unix) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         if (std::is_same<T,netlink_socket_address>::value) {
-            if (rhs.family() != family_type::netlink) {
+            if (rhs.family() != socket_address_family::netlink) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
@@ -308,23 +298,23 @@ namespace sys {
     template <class T>
     const T& socket_address_cast(const socket_address& rhs) {
         if (std::is_same<T,ipv4_socket_address>::value) {
-            if (rhs.family() != family_type::ipv4) {
+            if (rhs.family() != socket_address_family::ipv4) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
         if (std::is_same<T,ipv6_socket_address>::value) {
-            if (rhs.family() != family_type::ipv6) {
+            if (rhs.family() != socket_address_family::ipv6) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
         if (std::is_same<T,unix_socket_address>::value) {
-            if (rhs.family() != family_type::unix) {
+            if (rhs.family() != socket_address_family::unix) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
         if (std::is_same<T,netlink_socket_address>::value) {
-            if (rhs.family() != family_type::netlink) {
+            if (rhs.family() != socket_address_family::netlink) {
                 throw std::invalid_argument("socket_address_cast");
             }
         }
@@ -373,9 +363,9 @@ namespace sys {
     class socket_address_view {
 
     private:
-        sa_type* _data{};
-        socklen_type _size{};
-        family_type _family{};
+        socket_address_type* _data{};
+        socket_length_type _size{};
+        socket_address_family _family{};
 
     public:
 
@@ -383,9 +373,9 @@ namespace sys {
         inline socket_address_view(const T& rhs):
         _data(rhs.get()), _size(rhs.size()), _family(rhs.family()) {}
 
-        inline sa_type* data() const noexcept { return this->_data; }
-        inline socklen_type size() const noexcept { return this->_size; }
-        inline family_type family() const noexcept { return this->_family; }
+        inline socket_address_type* data() const noexcept { return this->_data; }
+        inline socket_length_type size() const noexcept { return this->_size; }
+        inline socket_address_family family() const noexcept { return this->_family; }
 
     };
 

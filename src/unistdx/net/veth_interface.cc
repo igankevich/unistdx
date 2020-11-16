@@ -49,7 +49,7 @@ void sys::veth_interface::destroy() {
     using f = netlink_message_flags;
     request.header().type(ifinfo_message_type::delete_link);
     request.header().flags(f::request | f::acknowledge);
-    request.message().family(family_type::netlink);
+    request.message().family(socket_address_family::netlink);
     using a = ifinfo_attribute;
     request.add(a::interface_name, this->_name);
     netlink_socket sock(netlink_protocol::route);
@@ -71,7 +71,7 @@ void sys::veth_interface::init() {
     using f = netlink_message_flags;
     request.header().type(ifinfo_message_type::new_link);
     request.header().flags(f::request | f::create | f::exclude | f::acknowledge);
-    request.message().family(family_type::netlink);
+    request.message().family(socket_address_family::netlink);
     using a = ifinfo_attribute;
     request.add(a::interface_name, this->_name);
     auto link_info = request.begin(a::link_info);

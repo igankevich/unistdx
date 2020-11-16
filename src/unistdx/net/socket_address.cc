@@ -45,11 +45,11 @@ For more information, please refer to <http://unlicense.org/>
 std::ostream&
 sys::operator<<(std::ostream& out, const socket_address& rhs) {
     switch (rhs.family()) {
-        case family_type::ipv6: out << rhs.ref<ipv6_socket_address>(); break;
-        case family_type::ipv4: out << rhs.ref<ipv4_socket_address>(); break;
-        case family_type::unix: out << rhs.ref<unix_socket_address>(); break;
+        case socket_address_family::ipv6: out << rhs.ref<ipv6_socket_address>(); break;
+        case socket_address_family::ipv4: out << rhs.ref<ipv4_socket_address>(); break;
+        case socket_address_family::unix: out << rhs.ref<unix_socket_address>(); break;
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink: out << rhs.ref<netlink_socket_address>(); break;
+        case socket_address_family::netlink: out << rhs.ref<netlink_socket_address>(); break;
         #endif
         default: break;
     }
@@ -86,7 +86,7 @@ sys::operator>>(std::istream& in, socket_address& rhs) {
                     if (in >> netlink) {
                         rhs.ref<netlink_socket_address>() = netlink;
                     } else {
-                        rhs.ref<family_type>() = family_type{};
+                        rhs.ref<socket_address_family>() = socket_address_family{};
                     }
                 }
             }
@@ -99,11 +99,11 @@ sys::bstream&
 sys::operator<<(bstream& out, const socket_address& rhs) {
     out << rhs.family();
     switch (rhs.family()) {
-        case family_type::ipv6: out << rhs.ref<ipv6_socket_address>(); break;
-        case family_type::ipv4: out << rhs.ref<ipv4_socket_address>(); break;
-        case family_type::unix: out << rhs.ref<unix_socket_address>(); break;
+        case socket_address_family::ipv6: out << rhs.ref<ipv6_socket_address>(); break;
+        case socket_address_family::ipv4: out << rhs.ref<ipv4_socket_address>(); break;
+        case socket_address_family::unix: out << rhs.ref<unix_socket_address>(); break;
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink: out << rhs.ref<netlink_socket_address>(); break;
+        case socket_address_family::netlink: out << rhs.ref<netlink_socket_address>(); break;
         #endif
         default: break;
     }
@@ -112,29 +112,29 @@ sys::operator<<(bstream& out, const socket_address& rhs) {
 
 sys::bstream&
 sys::operator>>(bstream& in, socket_address& rhs) {
-    family_type fam;
+    socket_address_family fam;
     in >> fam;
-    rhs.ref<family_type>() = fam;
+    rhs.ref<socket_address_family>() = fam;
     switch (rhs.family()) {
-        case family_type::ipv6: in >> rhs.ref<ipv6_socket_address>(); break;
-        case family_type::ipv4: in >> rhs.ref<ipv4_socket_address>(); break;
-        case family_type::unix: in >> rhs.ref<unix_socket_address>(); break;
+        case socket_address_family::ipv6: in >> rhs.ref<ipv6_socket_address>(); break;
+        case socket_address_family::ipv4: in >> rhs.ref<ipv4_socket_address>(); break;
+        case socket_address_family::unix: in >> rhs.ref<unix_socket_address>(); break;
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink: in >> rhs.ref<netlink_socket_address>(); break;
+        case socket_address_family::netlink: in >> rhs.ref<netlink_socket_address>(); break;
         #endif
         default: break;
     }
     return in;
 }
 
-sys::socklen_type
+sys::socket_length_type
 sys::socket_address::size() const noexcept {
     switch (this->family()) {
-        case family_type::ipv4: return ipv4_socket_address::size();
-        case family_type::ipv6: return ipv6_socket_address::size();
-        case family_type::unix: return ref<unix_socket_address>().size();
+        case socket_address_family::ipv4: return ipv4_socket_address::size();
+        case socket_address_family::ipv6: return ipv6_socket_address::size();
+        case socket_address_family::unix: return ref<unix_socket_address>().size();
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink: return netlink_socket_address::size();
+        case socket_address_family::netlink: return netlink_socket_address::size();
         #endif
         default: return 0;
     }
@@ -144,14 +144,14 @@ bool
 sys::socket_address::operator<(const socket_address& rhs) const noexcept {
     if (this->family() == rhs.family()) {
         switch (this->family()) {
-            case family_type::unix:
+            case socket_address_family::unix:
                 return ref<unix_socket_address>() < rhs.ref<unix_socket_address>();
-            case family_type::ipv4:
+            case socket_address_family::ipv4:
                 return ref<ipv4_socket_address>() < rhs.ref<ipv4_socket_address>();
-            case family_type::ipv6:
+            case socket_address_family::ipv6:
                 return ref<ipv6_socket_address>() < rhs.ref<ipv6_socket_address>();
             #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-            case family_type::netlink:
+            case socket_address_family::netlink:
                 return ref<netlink_socket_address>() < rhs.ref<netlink_socket_address>();
             #endif
             default:
@@ -169,14 +169,14 @@ sys::socket_address::operator==(const socket_address& rhs) const noexcept {
         return false;
     }
     switch (this->family()) {
-        case family_type::unix:
+        case socket_address_family::unix:
             return ref<unix_socket_address>() == rhs.ref<unix_socket_address>();
-        case family_type::ipv4:
+        case socket_address_family::ipv4:
             return ref<ipv4_socket_address>() == rhs.ref<ipv4_socket_address>();
-        case family_type::ipv6:
+        case socket_address_family::ipv6:
             return ref<ipv6_socket_address>() == rhs.ref<ipv6_socket_address>();
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink:
+        case socket_address_family::netlink:
             return ref<netlink_socket_address>() == rhs.ref<netlink_socket_address>();
         #endif
         default:
@@ -186,11 +186,11 @@ sys::socket_address::operator==(const socket_address& rhs) const noexcept {
 
 sys::socket_address::operator bool() const noexcept {
     switch (this->family()) {
-        case family_type::unix: return bool(ref<unix_socket_address>());
-        case family_type::ipv4: return bool(ref<ipv4_socket_address>());
-        case family_type::ipv6: return bool(ref<ipv6_socket_address>());
+        case socket_address_family::unix: return bool(ref<unix_socket_address>());
+        case socket_address_family::ipv4: return bool(ref<ipv4_socket_address>());
+        case socket_address_family::ipv6: return bool(ref<ipv6_socket_address>());
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink: return bool(ref<netlink_socket_address>());
+        case socket_address_family::netlink: return bool(ref<netlink_socket_address>());
         #endif
         default: return false;
     }
@@ -208,14 +208,14 @@ sys::socket_address::socket_address(const char* s) noexcept {
 size_t std::hash<sys::socket_address>::operator()(const sys::socket_address& rhs) const noexcept {
     using namespace sys;
     switch (rhs.family()) {
-        case family_type::unix:
+        case socket_address_family::unix:
             return hash<unix_socket_address>()(rhs.ref<unix_socket_address>());
-        case family_type::ipv4:
+        case socket_address_family::ipv4:
             return hash<ipv4_socket_address>()(rhs.ref<ipv4_socket_address>());
-        case family_type::ipv6:
+        case socket_address_family::ipv6:
             return hash<ipv6_socket_address>()(rhs.ref<ipv6_socket_address>());
         #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        case family_type::netlink:
+        case socket_address_family::netlink:
             return hash<netlink_socket_address>()(rhs.ref<netlink_socket_address>());
         #endif
         default: return 0;

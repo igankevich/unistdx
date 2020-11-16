@@ -32,7 +32,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <algorithm>
 #include <set>
-#include <unistdx/base/make_object>
 
 #include <unistdx/fs/canonical_path>
 #include <unistdx/fs/idirectory>

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -35,15 +35,15 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/operator>
 
-struct family_test: public ::testing::TestWithParam<sys::family_type> {};
+struct family_test: public ::testing::TestWithParam<sys::socket_address_family> {};
 
-std::vector<sys::family_type> all_families{
-    sys::family_type::unspecified,
-    sys::family_type::inet,
-    sys::family_type::inet6,
-    sys::family_type::unix,
+std::vector<sys::socket_address_family> all_families{
+    sys::socket_address_family::unspecified,
+    sys::socket_address_family::inet,
+    sys::socket_address_family::inet6,
+    sys::socket_address_family::unix,
     #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-    sys::family_type::netlink
+    sys::socket_address_family::netlink
     #endif
 };
 
@@ -58,10 +58,10 @@ INSTANTIATE_TEST_CASE_P(
 );
 
 TEST(family, print) {
-    test::stream_insert_equals("inet", sys::family_type::inet);
-    test::stream_insert_equals("unknown", sys::family_type(1000));
+    test::stream_insert_equals("inet", sys::socket_address_family::inet);
+    test::stream_insert_equals("unknown", sys::socket_address_family(1000));
 }
 
 TEST(family, bstream_insert_extract_fails) {
-    test::bstream_insert_extract_fails(sys::family_type(1000));
+    test::bstream_insert_extract_fails(sys::socket_address_family(1000));
 }

@@ -39,7 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 namespace sys {
 
     /// Socket address length type.
-    using socklen_type = ::socklen_t;
+    using socket_length_type = ::socklen_t;
 
     /**
     \brief IPv4 socket address wrapper.
@@ -56,7 +56,7 @@ namespace sys {
         /// Construct socket address with IPv4 address and port.
         inline
         ipv4_socket_address(ipv4_address address, port_type port) noexcept {
-            this->_address.sin_family = sa_family_type(family_type::ipv4);
+            this->_address.sin_family = sa_family_type(socket_address_family::ipv4);
             this->_address.sin_addr = address;
             this->_address.sin_port = to_network_format<port_type>(port);
         }
@@ -73,7 +73,7 @@ namespace sys {
         /// Construct socket address from \c sockaddr_in4 system type.
         inline ipv4_socket_address(const sockinet4_type& rhs) noexcept: _address(rhs) {}
 
-        inline ipv4_socket_address(const sa_type& rhs) {
+        inline ipv4_socket_address(const socket_address_type& rhs) {
             if (rhs.sa_family != sa_family()) { throw std::invalid_argument("bad sockaddr"); }
             std::char_traits<char>::copy(reinterpret_cast<char*>(this),
                                          reinterpret_cast<const char*>(&rhs),
@@ -81,7 +81,7 @@ namespace sys {
         }
 
         inline ipv4_socket_address() noexcept: _address{} {
-            this->_address.sin_family = sa_family_type(family_type::ipv4);
+            this->_address.sin_family = sa_family_type(socket_address_family::ipv4);
         }
 
         ~ipv4_socket_address() = default;
@@ -90,7 +90,7 @@ namespace sys {
         ipv4_socket_address(ipv4_socket_address&&) = default;
         ipv4_socket_address& operator=(ipv4_socket_address&&) = default;
 
-        static constexpr inline family_type family() noexcept { return family_type::ipv4; }
+        static constexpr inline socket_address_family family() noexcept { return socket_address_family::ipv4; }
         static constexpr inline sa_family_type sa_family() noexcept { return sa_family_type(family()); }
         inline ipv4_address address() const noexcept { return ipv4_address(this->_address.sin_addr); }
         inline void address(ipv4_address rhs) noexcept { this->_address.sin_addr = rhs; }
@@ -98,9 +98,9 @@ namespace sys {
         inline void port(port_type rhs) noexcept { this->_address.sin_port = to_network_format<port_type>(rhs); }
         inline void clear() { this->_address = {}; }
 
-        static constexpr inline socklen_type size() noexcept { return sizeof(sockinet4_type); }
-        inline sa_type* get() noexcept { return reinterpret_cast<sa_type*>(&this->_address); }
-        inline sa_type* get() const noexcept { return const_cast<sa_type*>(reinterpret_cast<const sa_type*>(&this->_address)); }
+        static constexpr inline socket_length_type size() noexcept { return sizeof(sockinet4_type); }
+        inline socket_address_type* get() noexcept { return reinterpret_cast<socket_address_type*>(&this->_address); }
+        inline socket_address_type* get() const noexcept { return const_cast<socket_address_type*>(reinterpret_cast<const socket_address_type*>(&this->_address)); }
 
         inline bool operator<(const ipv4_socket_address& rhs) const noexcept {
             return std::make_tuple(sa_family(), address(), port()) <

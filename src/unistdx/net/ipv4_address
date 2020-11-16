@@ -44,7 +44,7 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace sys {
 
-    typedef struct ::sockaddr sa_type;
+    typedef struct ::sockaddr socket_address_type;
     /// IPv4 socket address type.
     typedef struct ::sockaddr_in sockinet4_type;
     /// IPv4 Internet address type.
@@ -121,7 +121,7 @@ namespace sys {
         _octets{o1,o2,o3,o4} {}
 
         /// Construct IPv4 address from \c sockaddr system type.
-        inline ipv4_address(const sa_type &rhs) noexcept:
+        inline ipv4_address(const socket_address_type &rhs) noexcept:
         _address(reinterpret_cast<const sockinet4_type&>(rhs).sin_addr)
         {}
 

@@ -46,12 +46,6 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_BUILTIN_UNREACHABLE
 // }}}
 
-// pragmas {{{
-#mesondefine UNISTDX_HAVE_PRAGMA_IGNORED_WTERMINATE
-#mesondefine UNISTDX_HAVE_PRAGMA_GCC_DIAGNOSTIC_PUSH
-#mesondefine UNISTDX_HAVE_PRAGMA_GCC_DIAGNOSTIC_POP
-// }}}
-
 // types {{{
 #mesondefine UNISTDX_HAVE_INT128
 #mesondefine UNISTDX_HAVE_LONG_DOUBLE

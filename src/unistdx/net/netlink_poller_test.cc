@@ -77,7 +77,7 @@ TEST(NetlinkPoller, First) {
 
 TEST(netlink, get_address) {
     sys::socket sock(
-        sys::family_type::netlink,
+        sys::socket_address_family::netlink,
         sys::socket_type::raw,
         NETLINK_ROUTE
     );
@@ -95,7 +95,7 @@ TEST(netlink, get_address) {
     );
     req.hdr.type(sys::ifaddr_message_type::get_address);
     req.hdr.length(sizeof(req));
-    req.payload.family(sys::family_type::inet);
+    req.payload.family(sys::socket_address_family::inet);
     ssize_t n = sock.send(&req, sizeof(req));
     std::clog << "n=" << n << std::endl;
     std::clog << "sizeof(req)=" << sizeof(req) << std::endl;

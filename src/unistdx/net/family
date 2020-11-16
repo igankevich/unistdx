@@ -44,11 +44,11 @@ For more information, please refer to <http://unlicense.org/>
 namespace sys {
 
     /// Socket address family type.
-    typedef ::sa_family_t sa_family_type;
+    using sa_family_type = ::sa_family_t;
 
     /// \brief Socket address families.
     /// \ingroup net
-    enum struct family_type: sa_family_type {
+    enum struct socket_address_family: sa_family_type {
         /// Unspecified socket address family.
         unspecified = AF_UNSPEC,
         /// IPv4 socket address family.
@@ -70,21 +70,23 @@ namespace sys {
         #endif
     };
 
+    using family_type = socket_address_family;
+
     /// Put socket address family in a portable way.
     bstream&
-    operator<<(bstream& out, family_type rhs);
+    operator<<(bstream& out, socket_address_family rhs);
 
     /// Get socket address family in a portable way.
     bstream&
-    operator>>(bstream& in, family_type& rhs);
+    operator>>(bstream& in, socket_address_family& rhs);
 
     /// Get family name.
     const char*
-    to_string(family_type rhs);
+    to_string(socket_address_family rhs);
 
     /// Print family name for debugging.
     std::ostream&
-    operator<<(std::ostream& out, const family_type& rhs);
+    operator<<(std::ostream& out, const socket_address_family& rhs);
 
 }
 

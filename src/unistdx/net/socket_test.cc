@@ -41,13 +41,14 @@ For more information, please refer to <http://unlicense.org/>
 TEST(Socket, GetCredentials) {
     const char* path = "\0test_socket";
     sys::unix_socket_address e(path);
-    sys::socket sock;
+    sys::socket sock(sys::socket_address_family::unix);
+    sock.set(sys::socket::options::reuse_address);
     sock.bind(e);
     sock.unsetf(sys::open_flag::non_blocking);
     sock.set(sys::socket::options::pass_credentials);
     sock.listen();
     sys::process child([&] () {
-        sys::socket s(sys::family_type::unix);
+        sys::socket s(sys::socket_address_family::unix);
         s.unsetf(sys::open_flag::non_blocking);
         s.set(sys::socket::options::pass_credentials);
         s.connect(e);
@@ -70,11 +71,13 @@ TEST(Socket, GetCredentials) {
 TEST(Socket, SendFDs) {
     const char* path = "\0testsendfds";
     sys::unix_socket_address e(path);
-    sys::socket sock(e);
+    sys::socket sock(sys::socket_address_family::unix);
+    sock.bind(e);
     sock.unsetf(sys::open_flag::non_blocking);
+    sock.listen();
     EXPECT_NE("", test::stream_insert(sock));
     sys::process child([&] () {
-        sys::socket s(sys::family_type::unix);
+        sys::socket s(sys::socket_address_family::unix);
         s.unsetf(sys::open_flag::non_blocking);
         s.connect(e);
         std::clog << "sending fds: 0 1 2" << std::endl;
@@ -106,7 +109,8 @@ TEST(Socket, SendFDs) {
 
 #if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
 TEST(socket, user_timeout) {
-    sys::socket sock;
+    sys::socket sock(sys::socket_address_family::ipv4);
+    sock.set(sys::socket::options::reuse_address);
     sock.bind(sys::ipv4_socket_address{{127,0,0,1}, 0});
     EXPECT_NO_THROW(sock.set_user_timeout(std::chrono::seconds(7)));
 }
@@ -114,8 +118,9 @@ TEST(socket, user_timeout) {
 
 TEST(socket, bind_connect) {
     try {
-        sys::socket sock(sys::ipv4_socket_address{{127,0,0,1},0},
-                         sys::ipv4_socket_address{{127,0,0,1},0});
+        sys::socket sock(sys::socket_address_family::ipv4);
+        sock.bind(sys::ipv4_socket_address{{127,0,0,1},0});
+        sock.connect(sys::ipv4_socket_address{{127,0,0,1},0});
     } catch (const sys::bad_call& err) {
         EXPECT_EQ(std::errc::operation_in_progress, err.errc());
     }

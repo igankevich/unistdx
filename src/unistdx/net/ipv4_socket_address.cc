@@ -40,7 +40,7 @@ namespace {
     inline void
     init_addr(sys::sockinet4_type& addr4, sys::ipv4_address a, sys::port_type p) {
         using namespace sys;
-        addr4.sin_family = static_cast<sa_family_type>(family_type::ipv4);
+        addr4.sin_family = static_cast<sa_family_type>(socket_address_family::ipv4);
         addr4.sin_addr = a;
         addr4.sin_port = to_network_format<port_type>(p);
     }
@@ -77,7 +77,7 @@ sys::operator<<(bstream& out, const ipv4_socket_address& rhs) {
 
 sys::bstream&
 sys::operator>>(bstream& in, ipv4_socket_address& rhs) {
-    rhs._address.sin_family = sa_family_type(family_type::ipv4);
+    rhs._address.sin_family = sa_family_type(socket_address_family::ipv4);
     bytes<port_type> port;
     ipv4_address addr;
     in >> addr >> port;

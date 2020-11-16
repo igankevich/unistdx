@@ -61,7 +61,7 @@ namespace {
     inline int
     safe_accept(int server_fd, sys::socket_address& client_address) {
         using namespace sys::bits;
-        sys::socklen_type len = sizeof(sys::socket_address);
+        sys::socket_length_type len = sizeof(sys::socket_address);
         int fd = -1;
         #if defined(UNISTDX_HAVE_ACCEPT4) && \
             defined(UNISTDX_HAVE_SOCK_NONBLOCK) && \
@@ -78,42 +78,9 @@ namespace {
 
 }
 
-sys::socket::socket(const socket_address_view& bind_addr) {
-    this->bind(bind_addr);
-    this->listen();
-}
-
-sys::socket::socket(const socket_address_view& bind_addr, const socket_address_view& conn_addr) {
-    this->bind(bind_addr);
-    this->connect(conn_addr);
-}
-
-sys::socket::socket(family_type family, socket_type type, protocol_type proto):
-sys::fildes(safe_socket(int (family), int(type)|default_flags, proto))
+sys::socket::socket(socket_address_family family, socket_type type, protocol_type proto):
+sys::fildes(safe_socket(int(family), int(type)|default_flags, proto))
 {}
-
-void sys::socket::bind(const socket_address_view& e) {
-    create_socket_if_necessary(e);
-    set(options::reuse_address);
-    UNISTDX_CHECK(::bind(this->_fd, e.data(), e.size()));
-}
-
-void
-sys::socket::listen() {
-    #ifndef NDEBUG
-    log_message("sys", "listen on _", this->name());
-    #endif
-    UNISTDX_CHECK(::listen(this->_fd, SOMAXCONN));
-}
-
-void
-sys::socket::connect(const socket_address_view& e) {
-    this->create_socket_if_necessary(e);
-    int ret = ::connect(this->_fd, e.data(), e.size());
-    if (ret == -1 && errno != EINPROGRESS) {
-        throw bad_call();
-    }
-}
 
 bool
 sys::socket::accept(socket& sock, socket_address& addr) {
@@ -127,80 +94,11 @@ sys::socket::accept(socket& sock, socket_address& addr) {
     return true;
 }
 
-void
-sys::socket::shutdown(shutdown_flag how) {
-    if (*this) {
-        int ret = ::shutdown(this->_fd, int(how));
-        if (ret == -1 && errno != ENOTCONN && errno != ENOTSUP) {
-            throw bad_call(); // LCOV_EXCL_LINE
-        }
-    }
-}
-
-void
-sys::socket::close() {
-    this->shutdown(shutdown_flag::read_write);
-    this->sys::fildes::close();
-}
-
-void
-sys::socket::setopt(option opt) {
-    int one = 1;
-    set(SOL_SOCKET, opt, one);
-}
-
-// LCOV_EXCL_START
-int
-sys::socket::error() const noexcept {
-    int ret = 0;
-    int opt = 0;
-    if (!*this) {
-        ret = -1;
-    } else {
-        try {
-            opt = get<int>(options::error);
-        } catch (...) {
-            ret = -1;
-        }
-    }
-    // ignore EAGAIN since it is common 'error' in asynchronous programming
-    if (opt == EAGAIN || opt == EINPROGRESS) {
-        ret = 0;
-    } else {
-        /*
-           If one connects to localhost to a different port and the service is
-           offline then socket's local port can be chosen to be the same as the
-           port of the service. If this happens the socket connects to itself
-           and sends and replies to its own messages (at least on Linux). This
-           conditional solves the issue.
-         */
-        try {
-            if (ret == 0 && this->name() == this->peer_name()) {
-                ret = -1;
-            }
-        } catch (...) {
-            ret = -1;
-        }
-    }
-    return ret;
-}
-// LCOV_EXCL_STOP
-
 std::ostream&
 sys::operator<<(std::ostream& out, const socket& rhs) {
-    return out
-           << make_object("fd", rhs._fd, "status", rhs.status_message());
-}
-
-void sys::socket::create_socket_if_necessary(const socket_address_view& e) {
-    if (!*this) {
-        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-        int type = e.family() == family_type::netlink ? SOCK_RAW : SOCK_STREAM;
-        #else
-        int type = SOCK_STREAM;
-        #endif
-        this->_fd = safe_socket(sa_family_type(e.family()), type | default_flags, 0);
-    }
+    auto error = rhs.get<int>(socket::options::error);
+    return out << make_object("fd", rhs._fd,
+                              "status", std::make_error_code(std::errc(error)).message());
 }
 
 #if defined(UNISTDX_HAVE_SCM_RIGHTS)

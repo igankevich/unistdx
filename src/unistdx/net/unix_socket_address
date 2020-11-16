@@ -33,13 +33,18 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_UNIX_SOCKET_ADDRESS
 #define UNISTDX_NET_UNIX_SOCKET_ADDRESS
 
+#include <sys/un.h>
+
 #include <unistdx/net/family>
 #include <unistdx/net/ipv6_address>
 
 namespace sys {
 
     /// Socket address length type.
-    using socklen_type = ::socklen_t;
+    using socket_length_type = ::socklen_t;
+
+    /// Unix socket address type.
+    using unix_socket_address_type = ::sockaddr_un;
 
     /**
     \brief IPv4 socket address wrapper.
@@ -56,7 +61,7 @@ namespace sys {
         inline explicit unix_socket_address(const char* rhs) noexcept { path(rhs); }
 
         inline unix_socket_address() noexcept {
-            this->_address.sin6_family = sa_family_type(family_type::unix);
+            this->_address.sin6_family = sa_family_type(socket_address_family::unix);
         }
 
         ~unix_socket_address() = default;
@@ -65,13 +70,13 @@ namespace sys {
         unix_socket_address(unix_socket_address&&) = default;
         unix_socket_address& operator=(unix_socket_address&&) = default;
 
-        static constexpr inline family_type family() noexcept { return family_type::unix; }
+        static constexpr inline socket_address_family family() noexcept { return socket_address_family::unix; }
         static constexpr inline sa_family_type sa_family() noexcept { return sa_family_type(family()); }
         inline void clear() { this->_address = {}; }
 
-        socklen_type size() const noexcept;
-        inline sa_type* get() noexcept { return reinterpret_cast<sa_type*>(&this->_address); }
-        inline sa_type* get() const noexcept { return const_cast<sa_type*>(reinterpret_cast<const sa_type*>(&this->_address)); }
+        socket_length_type size() const noexcept;
+        inline socket_address_type* get() noexcept { return reinterpret_cast<socket_address_type*>(&this->_address); }
+        inline socket_address_type* get() const noexcept { return const_cast<socket_address_type*>(reinterpret_cast<const socket_address_type*>(&this->_address)); }
 
         inline bool operator<(const unix_socket_address& rhs) const noexcept {
             using traits_type = std::char_traits<char>;
@@ -146,9 +151,9 @@ namespace sys {
 
         void path(const char* rhs) noexcept;
 
-        socklen_type path_length() const noexcept;
+        socket_length_type path_length() const noexcept;
 
-        inline static constexpr socklen_type max_length() noexcept {
+        inline static constexpr socket_length_type max_length() noexcept {
             return sizeof(sockinet6_type) - sizeof(sa_family_t) - 1;
         }
 
@@ -172,14 +177,14 @@ namespace std {
 
     /// Specialisation of \link std::hash \endlink for \link sys::unix_socket_address \endlink.
     template<>
-    struct hash<sys::unix_socket_address>: public hash<sys::socklen_type> {
+    struct hash<sys::unix_socket_address>: public hash<sys::socket_length_type> {
 
         /**
         \brief Computes hash of the address length.
         */
         inline size_t
         operator()(const sys::unix_socket_address& rhs) const noexcept {
-            return this->hash<sys::socklen_type>::operator()(rhs.size());
+            return this->hash<sys::socket_length_type>::operator()(rhs.size());
         }
 
     };

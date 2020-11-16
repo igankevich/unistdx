@@ -395,9 +395,13 @@ namespace sys {
         \brief Construct the socket and bind on \p bind_addr and listen.
         \throws bad_call
         \see \man{socket,2}
+        \deprecated use bind(), listen() instead
         */
-        explicit
-        socket(const socket_address_view& bind_addr);
+        UNISTDX_DEPRECATED inline explicit
+        socket(const socket_address_view& bind_addr) {
+            this->bind(bind_addr);
+            this->listen();
+        }
 
         /**
         \brief
@@ -405,8 +409,13 @@ namespace sys {
         to a process listening on \p conn_addr.
         \throws bad_call
         \see \man{socket,2}
+        \deprecated use bind(), connect() instead
         */
-        socket(const socket_address_view& bind_addr, const socket_address_view& conn_addr);
+        UNISTDX_DEPRECATED inline
+        socket(const socket_address_view& bind_addr, const socket_address_view& conn_addr) {
+            this->bind(bind_addr);
+            this->connect(conn_addr);
+        }
 
         /**
         \brief
@@ -415,17 +424,14 @@ namespace sys {
         \throws bad_call
         \see \man{socket,2}
         */
-        socket(
-            family_type family,
+        explicit socket(
+            socket_address_family family,
             socket_type type=socket_type::stream,
             protocol_type proto=0
         );
 
         /// Close the socket.
-        inline
-        ~socket() {
-            this->close();
-        }
+        inline ~socket() noexcept = default;
 
         /// Move-assignment.
         inline socket&
@@ -439,7 +445,9 @@ namespace sys {
         \throws bad_call
         \see \man{bind,2}
         */
-        void bind(const socket_address_view& e);
+        inline void bind(const socket_address_view& e) {
+            UNISTDX_CHECK(::bind(this->_fd, e.data(), e.size()));
+        }
 
         /**
         \brief Connect to socket address \p e.
@@ -448,14 +456,19 @@ namespace sys {
         \see \man{connect,2}
         \see std::errc
         */
-        void connect(const socket_address_view& e);
+        inline void connect(const socket_address_view& e) {
+            int ret = ::connect(this->_fd, e.data(), e.size());
+            if (ret == -1 && errno != EINPROGRESS) { throw bad_call(); }
+        }
 
         /**
         \brief Listen on previously binded socket address.
         \throws bad_call
         \see \man{listen,2}
         */
-        void listen();
+        inline void listen(int max_pending_connections=SOMAXCONN) {
+            UNISTDX_CHECK(::listen(this->_fd, max_pending_connections));
+        }
 
         /**
         \brief Accept socket connection.
@@ -476,16 +489,9 @@ namespace sys {
         \see \man{shutdown,2}
         \see std::errc
         */
-        void shutdown(shutdown_flag how);
-
-        /**
-        \brief Shutdown and close the socket.
-        \throws bad_call
-        \see \man{shutdown,2}
-        \see \man{close,2}
-        */
-        void
-        close();
+        inline void shutdown(shutdown_flag how=shutdown_flag::read_write) {
+            UNISTDX_CHECK(::shutdown(this->_fd, int(how)));
+        }
 
         /**
         \brief Set boolean option.
@@ -493,8 +499,8 @@ namespace sys {
         \see \man{setsockopt,2}
         \deprecated Use \em set instead.
         */
-        UNISTDX_DEPRECATED void
-        setopt(option opt);
+        UNISTDX_DEPRECATED inline void
+        setopt(option opt) { int one = 1; set(SOL_SOCKET, opt, one); }
 
         /**
         \brief Get socket type.
@@ -505,7 +511,7 @@ namespace sys {
         inline socket_type
         type() const {
             int value = 0;
-            socklen_type n = sizeof(value);
+            socket_length_type n = sizeof(value);
             UNISTDX_CHECK(::getsockopt(this->_fd, SOL_SOCKET, SO_TYPE, &value, &n));
             return socket_type(value);
         }
@@ -530,7 +536,7 @@ namespace sys {
         template <class T> inline T
         get(options name) const {
             T value{};
-            socklen_type size = sizeof(T);
+            socket_length_type size = sizeof(T);
             UNISTDX_CHECK(::getsockopt(this->_fd, SOL_SOCKET, int(name), &value, &size));
             return value;
         }
@@ -568,7 +574,7 @@ namespace sys {
         template <class T> inline T
         get(tcp_options name) const {
             T value{};
-            socklen_type size = sizeof(T);
+            socket_length_type size = sizeof(T);
             UNISTDX_CHECK(::getsockopt(this->_fd, IPPROTO_TCP, int(name), &value, &size));
             return value;
         }
@@ -580,7 +586,7 @@ namespace sys {
         \throws bad_call
         */
         inline void
-        get(tcp_options name, char* value, socklen_type& size) const {
+        get(tcp_options name, char* value, socket_length_type& size) const {
             UNISTDX_CHECK(::getsockopt(this->_fd, IPPROTO_TCP, int(name), value, &size));
         }
 
@@ -602,7 +608,7 @@ namespace sys {
         \throws bad_call
         */
         inline void
-        set(tcp_options name, const char* value, socklen_type size) {
+        set(tcp_options name, const char* value, socket_length_type size) {
             UNISTDX_CHECK(::setsockopt(this->_fd, IPPROTO_TCP, int(name), value, size));
         }
 
@@ -688,7 +694,7 @@ namespace sys {
         inline socket_address
         bind_addr() const noexcept {
             socket_address addr;
-            socklen_type len = sizeof(socket_address);
+            socket_length_type len = sizeof(socket_address);
             ::getsockname(this->_fd, addr.get(), &len);
             return addr;
         }
@@ -701,7 +707,7 @@ namespace sys {
         inline socket_address
         name() const {
             socket_address addr;
-            socklen_type len = sizeof(socket_address);
+            socket_length_type len = sizeof(socket_address);
             UNISTDX_CHECK(::getsockname(this->_fd, addr.get(), &len));
             return addr;
         }
@@ -714,7 +720,7 @@ namespace sys {
         inline socket_address
         peer_name() const {
             socket_address addr;
-            socklen_type len = sizeof(socket_address);
+            socket_length_type len = sizeof(socket_address);
             UNISTDX_CHECK(::getpeername(this->_fd, addr.get(), &len));
             return addr;
         }
@@ -823,17 +829,6 @@ namespace sys {
         sys::fildes(sock) {}
 
     private:
-        void create_socket_if_necessary(const socket_address_view& e);
-
-        int
-        error() const noexcept;
-
-        inline std::string
-        status_message() const noexcept {
-            return this->error() == 0
-                   ? "ok"
-                   : std::make_error_code(std::errc(errno)).message();
-        }
 
         template <class T> inline void
         set(int level, int name, T value) {

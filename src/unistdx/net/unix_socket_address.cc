@@ -35,9 +35,9 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace {
 
-    sys::socklen_type path_length(const char* p) noexcept {
+    sys::socket_length_type path_length(const char* p) noexcept {
         using traits_type = std::char_traits<char>;
-        sys::socklen_type n = 0;
+        sys::socket_length_type n = 0;
         if (!*p) { ++p; ++n; }
         n += traits_type::length(p);
         return n;
@@ -45,18 +45,18 @@ namespace {
 
 }
 
-sys::socklen_type sys::unix_socket_address::size() const noexcept {
+sys::socket_length_type sys::unix_socket_address::size() const noexcept {
     return sizeof(sa_family_t) + path_length();
 }
 
-sys::socklen_type sys::unix_socket_address::path_length() const noexcept {
+sys::socket_length_type sys::unix_socket_address::path_length() const noexcept {
     return ::path_length(path());
 }
 
 void sys::unix_socket_address::path(const char* rhs) noexcept {
     using traits_type = std::char_traits<char>;
-    this->_address.sin6_family = sa_family_type(family_type::unix);
-    sys::socklen_type n = ::path_length(rhs);
+    this->_address.sin6_family = sa_family_type(socket_address_family::unix);
+    sys::socket_length_type n = ::path_length(rhs);
     n = std::min(max_length(), n);
     auto dst = path();
     traits_type::copy(dst, rhs, n);
@@ -98,7 +98,7 @@ sys::operator<<(bstream& out, const unix_socket_address& rhs) {
 
 sys::bstream&
 sys::operator>>(bstream& in, unix_socket_address& rhs) {
-    rhs._address.sin6_family = sa_family_type(family_type::unix);
+    rhs._address.sin6_family = sa_family_type(socket_address_family::unix);
     u32 n = 0;
     in >> n;
     n = std::min(unix_socket_address::max_length(), n);

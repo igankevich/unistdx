@@ -47,7 +47,7 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace sys {
 
-    typedef struct ::sockaddr sa_type;
+    typedef struct ::sockaddr socket_address_type;
     /// IPv6 socket address type.
     typedef struct ::sockaddr_in6 sockinet6_type;
     /// IPv6 Internet address type.

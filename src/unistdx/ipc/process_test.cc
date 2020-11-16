@@ -35,7 +35,6 @@ For more information, please refer to <http://unlicense.org/>
 #include <thread>
 
 #include <unistdx/base/log_message>
-#include <unistdx/base/make_object>
 #include <unistdx/io/pipe>
 #include <unistdx/ipc/argstream>
 #include <unistdx/ipc/execute>

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,7 +30,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/base/make_object>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/shared_memory_segment>
 #include <unistdx/ipc/shmembuf>

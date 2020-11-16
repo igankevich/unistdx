@@ -43,7 +43,7 @@ namespace {
     inline void
     init_addr(sys::sockinet6_type& addr6, const sys::ipv6_address& a, sys::port_type p) {
         using namespace sys;
-        addr6.sin6_family = static_cast<sa_family_type>(family_type::ipv6);
+        addr6.sin6_family = static_cast<sa_family_type>(socket_address_family::ipv6);
         addr6.sin6_addr = a;
         addr6.sin6_port = to_network_format<port_type>(p);
     }
@@ -82,7 +82,7 @@ sys::operator<<(bstream& out, const ipv6_socket_address& rhs) {
 
 sys::bstream&
 sys::operator>>(bstream& in, ipv6_socket_address& rhs) {
-    rhs._address.sin6_family = sa_family_type(family_type::ipv6);
+    rhs._address.sin6_family = sa_family_type(socket_address_family::ipv6);
     bytes<port_type> port;
     ipv6_address addr;
     in >> addr >> port;

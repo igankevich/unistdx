@@ -47,17 +47,18 @@ namespace sys {
 
     using pid_type = ::pid_t;
     /// Socket address type.
-    using sa_type = ::sockaddr;
+    using socket_address_type = ::sockaddr;
     /// Socket address length type.
-    using socklen_type = ::socklen_t;
+    using socket_length_type = ::socklen_t;
 
     #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-    using netlink_sa_type = ::sockaddr_nl;
+    /// Netlink socket address type.
+    using netlink_socket_address_type = ::sockaddr_nl;
 
     class netlink_socket_address {
 
     private:
-        netlink_sa_type _address;
+        netlink_socket_address_type _address;
 
     public:
         /// Construct socket address by specifying process id and netlink groups.
@@ -71,15 +72,15 @@ namespace sys {
         netlink_socket_address& operator=(const netlink_socket_address&) = default;
         netlink_socket_address(netlink_socket_address&&) = default;
         netlink_socket_address& operator=(netlink_socket_address&&) = default;
-        inline constexpr static family_type family() noexcept { return family_type::netlink; }
+        inline constexpr static socket_address_family family() noexcept { return socket_address_family::netlink; }
         inline constexpr static sa_family_type sa_family() noexcept { return sa_family_type(family()); }
         inline pid_type id() const noexcept { return this->_address.nl_pid; }
         inline void id(pid_type rhs) noexcept { this->_address.nl_pid = rhs; }
         inline u32 groups() const noexcept { return this->_address.nl_groups; }
         inline void groups(u32 rhs) noexcept { this->_address.nl_groups = rhs; }
-        inline sa_type* get() noexcept { return reinterpret_cast<sa_type*>(&this->_address); }
-        inline sa_type* get() const noexcept { return const_cast<sa_type*>(reinterpret_cast<const sa_type*>(&this->_address)); }
-        static constexpr inline socklen_type size() noexcept { return sizeof(netlink_sa_type); }
+        inline socket_address_type* get() noexcept { return reinterpret_cast<socket_address_type*>(&this->_address); }
+        inline socket_address_type* get() const noexcept { return const_cast<socket_address_type*>(reinterpret_cast<const socket_address_type*>(&this->_address)); }
+        static constexpr inline socket_length_type size() noexcept { return sizeof(netlink_socket_address_type); }
         inline bool operator<(const netlink_socket_address& rhs) const noexcept {
             return id() < rhs.id();
         }

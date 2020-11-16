@@ -346,14 +346,14 @@ namespace sys {
         typedef rtattributes<ifaddr_attribute> attr_type;
 
         /// Get address family.
-        inline family_type
+        inline socket_address_family
         family() const noexcept {
-            return static_cast<family_type>(this->ifa_family);
+            return static_cast<socket_address_family>(this->ifa_family);
         }
 
         /// Set address family.
         inline void
-        family(family_type rhs) noexcept {
+        family(socket_address_family rhs) noexcept {
             this->ifa_family = static_cast<u8>(rhs);
         }
 
@@ -507,12 +507,12 @@ namespace sys {
         using attr_type = rtattributes<ifinfo_attribute>;
         using message_type = ifinfo_message_type;
 
-        inline family_type family() const { return family_type(this->ifi_family); }
+        inline socket_address_family family() const { return socket_address_family(this->ifi_family); }
         inline message_type type() const { return message_type(this->ifi_type); }
         inline int index() const { return this->ifi_index; }
         inline u8 flags() const { return this->ifi_flags; }
         inline u32 change_mask() const { return this->ifi_change; }
-        inline void family(family_type rhs) { this->ifi_family = static_cast<u8>(rhs); }
+        inline void family(socket_address_family rhs) { this->ifi_family = static_cast<u8>(rhs); }
         inline void type(message_type rhs) { this->ifi_type = u16(rhs); }
         inline void index(int rhs) noexcept { this->ifi_index = rhs; }
         inline void flags(u8 rhs) { this->ifi_flags = rhs; }

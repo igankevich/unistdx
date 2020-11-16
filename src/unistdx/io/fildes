@@ -290,7 +290,7 @@ namespace sys {
         The method ignores errors reported by \man{close,2} system call.
         */
         inline
-        ~fildes() {
+        ~fildes() noexcept {
             this->close();
         }
 
