@@ -43,18 +43,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/fs/file_type>
 #include <unistdx/fs/path_flag>
 #include <unistdx/io/fd_type>
+#include <unistdx/system/time>
 
 namespace sys {
-
-    namespace bits {
-        template <class T>
-        inline T
-        timespec_to_time_point(const ::timespec& ts) {
-            using std::chrono::seconds;
-            using std::chrono::nanoseconds;
-            return T(seconds(ts.tv_sec) + nanoseconds(ts.tv_nsec));
-        }
-    }
 
     /// Alias to \c stat system type.
     typedef struct ::stat stat_type;
@@ -286,19 +277,19 @@ namespace sys {
         /// Get time of last access.
         inline time_point
         last_accessed() const noexcept {
-            return bits::timespec_to_time_point<time_point>(this->st_atim);
+            return time_point{time_spec{this->st_atim}.duration()};
         }
 
         /// Get time of last modification.
         inline time_point
         last_modified() const noexcept {
-            return bits::timespec_to_time_point<time_point>(this->st_mtim);
+            return time_point{time_spec{this->st_mtim}.duration()};
         }
 
         /// Get time of last status change.
         inline time_point
         last_status_changed() const noexcept {
-            return bits::timespec_to_time_point<time_point>(this->st_ctim);
+            return time_point{time_spec{this->st_ctim}.duration()};
         }
 
         friend std::ostream&

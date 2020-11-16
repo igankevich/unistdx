@@ -54,6 +54,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/unlock_guard>
 #include <unistdx/io/fildes>
 #include <unistdx/ipc/process>
+#include <unistdx/system/time>
 
 namespace sys {
 
@@ -79,7 +80,6 @@ namespace sys {
 
     private:
         typedef struct ::sembuf sembuf_type;
-        typedef struct ::timespec timespec_type;
 
     public:
         /// Alias to system semaphore type (int).
@@ -212,9 +212,7 @@ namespace sys {
         wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
             using namespace std::chrono;
             const auto d = std::max(duration<Rep,Period>::zero(), dur);
-            const auto s = duration_cast<seconds>(d);
-            const auto ns = duration_cast<nanoseconds>(d - s);
-            const timespec_type timeout{static_cast<std::time_t>(s.count()), ns.count()};
+            const time_spec timeout{d};
             unlock_guard<Lock> unlock(lock);
             return this->increment(-1, &timeout);
         }
@@ -327,7 +325,7 @@ namespace sys {
 
         #if defined(UNISTDX_HAVE_SEMTIMEDOP)
         inline std::cv_status
-        increment(int how, const timespec_type* t) {
+        increment(int how, const time_spec* t) {
             UNISTDX_PRECONDITION(how != 0);
             sembuf_type buf;
             buf.sem_num = 0;
@@ -362,7 +360,6 @@ namespace sys {
 
     private:
         typedef ::sem_t sem_type;
-        typedef struct ::timespec timespec_type;
 
     public:
         /// Clock type used in this class.
@@ -444,10 +441,7 @@ namespace sys {
         std::cv_status
         wait_until(Lock& lock, const std::chrono::time_point<clock_type,Duration>& tp) {
             using namespace std::chrono;
-            const auto s = time_point_cast<seconds>(tp);
-            const auto ns = duration_cast<nanoseconds>(tp - s);
-            const timespec_type
-                timeout{static_cast<std::time_t>(s.time_since_epoch().count()), ns.count()};
+            const time_spec timeout{tp};
             unlock_guard<Lock> unlock(lock);
             std::cv_status st = std::cv_status::no_timeout;
             int ret = ::sem_timedwait(&this->_sem, &timeout);

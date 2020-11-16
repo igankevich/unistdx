@@ -37,6 +37,21 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <cstdint>
 
+#include <unistdx/base/check>
+#include <unistdx/config>
+#include <unistdx/system/time>
+
+#if defined(UNISTDX_HAVE_SYSINFO)
+#include <chrono>
+#include <sys/sysinfo.h>
+#endif
+
+#if defined(UNISTDX_HAVE_GETRUSAGE)
+#include <chrono>
+#include <sys/resource.h>
+#include <unistdx/system/clock>
+#endif
+
 /// POSIX and Linux system call wrappers.
 namespace sys {
 
@@ -188,6 +203,86 @@ namespace sys {
         }
 
     };
+
+    #if defined(UNISTDX_HAVE_SYSINFO)
+    class information: public ::sysinfo {
+    public:
+        inline information(): ::sysinfo{} { UNISTDX_CHECK(::sysinfo(this)); }
+        ~information() = default;
+        information(const information&) = default;
+        information& operator=(const information&) = default;
+        information(information&&) = default;
+        information& operator=(information&&) = default;
+        inline unsigned long load_average_1min() const noexcept { return this->loads[0]; }
+        inline unsigned long load_average_5min() const noexcept { return this->loads[1]; }
+        inline unsigned long load_average_15min() const noexcept { return this->loads[2]; }
+        inline const unsigned long* load_average() const noexcept { return this->loads; }
+        inline unsigned long total_memory() const noexcept { return this->totalram; }
+        inline unsigned long unused_memory() const noexcept { return this->freeram; }
+        inline unsigned long shared_memory() const noexcept { return this->sharedram; }
+        inline unsigned long buffers_memory() const noexcept { return this->bufferram; }
+        inline unsigned long total_swap() const noexcept { return this->totalswap; }
+        inline unsigned long unused_swap() const noexcept { return this->freeswap; }
+        inline unsigned long total_high_memory() const noexcept { return this->totalhigh; }
+        inline unsigned long unused_high_memory() const noexcept { return this->freehigh; }
+        inline int memory_unit() const noexcept { return this->mem_unit; }
+        inline unsigned short total_processes() const noexcept { return this->procs; }
+        inline std::chrono::seconds uptime() const noexcept {
+            return std::chrono::seconds(this->::sysinfo::uptime);
+        }
+    };
+    #endif
+
+    #if defined(UNISTDX_HAVE_GETRUSAGE)
+
+    class resource_usage: public ::rusage {
+    public:
+        enum class who: int {
+            #if defined(RUSAGE_SELF)
+            self=RUSAGE_SELF,
+            #endif
+            #if defined(RUSAGE_CHILDREN)
+            children=RUSAGE_CHILDREN,
+            #endif
+            #if defined(RUSAGE_THREAD)
+            thread=RUSAGE_THREAD,
+            #endif
+        };
+    public:
+        inline explicit resource_usage(who w=who::self): ::rusage{} {
+            UNISTDX_CHECK(::getrusage(int(w), this));
+        }
+        ~resource_usage() = default;
+        resource_usage(const resource_usage&) = default;
+        resource_usage& operator=(const resource_usage&) = default;
+        resource_usage(resource_usage&&) = default;
+        resource_usage& operator=(resource_usage&&) = default;
+
+        inline std::chrono::microseconds user_cpu_time() const noexcept {
+            return time_value{this->ru_utime}.duration();
+        }
+
+        inline std::chrono::microseconds system_cpu_time() const noexcept {
+            return time_value{this->ru_utime}.duration();
+        }
+
+        inline long maximum_resident_set_size() const noexcept { return this->ru_maxrss; }
+        inline long integral_shared_memory_size() const noexcept { return this->ru_ixrss; }
+        inline long integral_unshared_data_size() const noexcept { return this->ru_idrss; }
+        inline long integral_unshared_stack_size() const noexcept { return this->ru_isrss; }
+        inline long page_reclaims() const noexcept { return this->ru_minflt; }
+        inline long page_faults() const noexcept { return this->ru_majflt; }
+        inline long num_swaps() const noexcept { return this->ru_nswap; }
+        inline long block_input_operations() const noexcept { return this->ru_inblock; }
+        inline long block_output_operations() const noexcept { return this->ru_oublock; }
+        inline long ipc_messages_sent() const noexcept { return this->ru_msgsnd; }
+        inline long ipc_messages_received() const noexcept { return this->ru_msgrcv; }
+        inline long signals_received() const noexcept { return this->ru_nsignals; }
+        inline long voluntary_context_switches() const noexcept { return this->ru_nvcsw; }
+        inline long involuntary_context_switches() const noexcept { return this->ru_nivcsw; }
+
+    };
+    #endif
 
 }
 
