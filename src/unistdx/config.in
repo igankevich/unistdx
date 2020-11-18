@@ -74,8 +74,8 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_CLONE_SYSVSEM
 #mesondefine UNISTDX_HAVE_COPY_FILE_RANGE
 #mesondefine UNISTDX_HAVE_DTTOIF
-#mesondefine UNISTDX_HAVE_F_GETPIPE_SZ
 #mesondefine UNISTDX_HAVE_FIONREAD
+#mesondefine UNISTDX_HAVE_F_GETPIPE_SZ
 #mesondefine UNISTDX_HAVE_F_SETNOSIGPIPE
 #mesondefine UNISTDX_HAVE_F_SETPIPE_SZ
 #mesondefine UNISTDX_HAVE_GETGRGID_R
@@ -115,9 +115,9 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_MAP_32BIT
 #mesondefine UNISTDX_HAVE_MAP_ANONYMOUS
 #mesondefine UNISTDX_HAVE_MAP_GROWSDOWN
+#mesondefine UNISTDX_HAVE_MAP_HUGETLB
 #mesondefine UNISTDX_HAVE_MAP_HUGE_1GB
 #mesondefine UNISTDX_HAVE_MAP_HUGE_2MB
-#mesondefine UNISTDX_HAVE_MAP_HUGETLB
 #mesondefine UNISTDX_HAVE_MAP_LOCKED
 #mesondefine UNISTDX_HAVE_MAP_NONBLOCK
 #mesondefine UNISTDX_HAVE_MAP_NORESERVE
@@ -149,10 +149,10 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_SEM_TIMEDWAIT
 #mesondefine UNISTDX_HAVE_SENDFILE
 #mesondefine UNISTDX_HAVE_SETNS
+#mesondefine UNISTDX_HAVE_SHM_HUGETLB
 #mesondefine UNISTDX_HAVE_SHM_HUGE_1GB
 #mesondefine UNISTDX_HAVE_SHM_HUGE_2MB
 #mesondefine UNISTDX_HAVE_SHM_HUGE_SHIFT
-#mesondefine UNISTDX_HAVE_SHM_HUGETLB
 #mesondefine UNISTDX_HAVE_SHM_NORESERVE
 #mesondefine UNISTDX_HAVE_SIGPOLL
 #mesondefine UNISTDX_HAVE_SIGPWR
@@ -204,6 +204,8 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_SPLICE_F_MORE
 #mesondefine UNISTDX_HAVE_SPLICE_F_MOVE
 #mesondefine UNISTDX_HAVE_SPLICE_F_NONBLOCK
+#mesondefine UNISTDX_HAVE_STATFS
+#mesondefine UNISTDX_HAVE_STATVFS
 #mesondefine UNISTDX_HAVE_SYSINFO
 #mesondefine UNISTDX_HAVE_TCP_USER_TIMEOUT
 #mesondefine UNISTDX_HAVE_UNSHARE

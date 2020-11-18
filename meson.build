@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.40.0',
+    version: '0.40.1',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -232,6 +232,8 @@ foreach pair : [
     ['sys/socket.h', 'SOCK_NONBLOCK'],
     ['sys/socket.h', 'SO_PEERCRED'],
     ['sys/socket.h', 'accept4'],
+    ['sys/statfs.h', 'statfs'],
+    ['sys/statvfs.h', 'statvfs'],
     ['sys/sysinfo.h', 'sysinfo'],
     ['unistd.h', 'SEEK_DATA'],
     ['unistd.h', 'SEEK_HOLE'],

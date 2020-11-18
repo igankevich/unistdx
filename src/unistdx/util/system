@@ -205,9 +205,10 @@ namespace sys {
     };
 
     #if defined(UNISTDX_HAVE_SYSINFO)
-    class information: public ::sysinfo {
+    typedef struct ::sysinfo information_type;
+    class information: public information_type {
     public:
-        inline information(): ::sysinfo{} { UNISTDX_CHECK(::sysinfo(this)); }
+        inline information(): information_type{} { UNISTDX_CHECK(::sysinfo(this)); }
         ~information() = default;
         information(const information&) = default;
         information& operator=(const information&) = default;
@@ -234,8 +235,8 @@ namespace sys {
     #endif
 
     #if defined(UNISTDX_HAVE_GETRUSAGE)
-
-    class resource_usage: public ::rusage {
+    typedef struct ::rusage resource_usage_type;
+    class resource_usage: public resource_usage_type {
     public:
         enum class who: int {
             #if defined(RUSAGE_SELF)
@@ -249,7 +250,7 @@ namespace sys {
             #endif
         };
     public:
-        inline explicit resource_usage(who w=who::self): ::rusage{} {
+        inline explicit resource_usage(who w=who::self): resource_usage_type{} {
             UNISTDX_CHECK(::getrusage(int(w), this));
         }
         ~resource_usage() = default;
