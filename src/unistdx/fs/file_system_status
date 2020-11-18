@@ -33,12 +33,13 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_FS_FILE_SYSTEM_STATUS
 #define UNISTDX_FS_FILE_SYSTEM_STATUS
 
+#include <unistdx/base/string>
 #include <unistdx/config>
 #include <unistdx/io/fd_type>
 
-//#if defined(UNISTDX_HAVE_STATVFS)
+#if defined(UNISTDX_HAVE_STATVFS)
 #include <sys/statvfs.h>
-//#endif
+#endif
 
 namespace sys {
 

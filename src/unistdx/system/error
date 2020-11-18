@@ -46,6 +46,62 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistd.h>
 #endif
 
+#if defined(UNISTDX_ENABLE_BACKTRACE)
+namespace unwind {
+
+    using word_type = ::unw_word_t;
+
+    class context {
+    public:
+        using type = ::unw_context_t;
+    private:
+        type _context{};
+    public:
+        inline context() noexcept { unw_getcontext(&this->_context); }
+        inline type* get() noexcept { return &this->_context; }
+        inline const type* get() const noexcept { return &this->_context; }
+        ~context() = default;
+        context(const context&) = default;
+        context& operator=(const context&) = default;
+        context(context&&) = default;
+        context& operator=(context&&) = default;
+    };
+
+    class cursor {
+    public:
+        using type = ::unw_cursor_t;
+        using register_type = ::unw_regnum_t;
+    private:
+        type _cursor{};
+    public:
+        inline cursor(context& c) noexcept { unw_init_local(get(), c.get()); }
+        inline type* get() noexcept { return &this->_cursor; }
+        inline const type* get() const noexcept { return &this->_cursor; }
+        inline bool step() noexcept { return unw_step(get()) > 0; }
+
+        inline word_type read_int_register(int reg) noexcept {
+            word_type value = 0;
+            unw_get_reg(&this->_cursor, reg, &value);
+            return value;
+        }
+
+        inline bool procedure_name(char* name, size_t size) noexcept {
+            word_type offset = 0;
+            return unw_get_proc_name(get(), name, size, &offset) == 0;
+        }
+
+        cursor() = default;
+        ~cursor() = default;
+        cursor(const cursor&) = default;
+        cursor& operator=(const cursor&) = default;
+        cursor(cursor&&) = default;
+        cursor& operator=(cursor&&) = default;
+
+    };
+
+}
+#endif
+
 namespace sys {
 
     const char* demangle(const char* symbol, string& buf);
@@ -132,21 +188,18 @@ namespace sys {
     #if defined(UNISTDX_ENABLE_BACKTRACE)
     inline std::vector<backtrace_symbol> unwind_symbols() {
         char symbol[4096];
-        ::unw_cursor_t cursor;
-        ::unw_context_t context;
-        ::unw_getcontext(&context);
-        ::unw_init_local(&cursor, &context);
+        using namespace unwind;
+        context ctx;
+        cursor cur(ctx);
         std::vector<backtrace_symbol> symbols;
         string buf(4096);
-        while (::unw_step(&cursor) > 0) {
-            ::unw_word_t ip = 0;
-            ::unw_get_reg(&cursor, UNW_REG_IP, &ip);
+        while (cur.step()) {
+            auto ip = cur.read_int_register(UNW_REG_IP);
             if (ip == 0) { break; }
-            ::unw_word_t offset = 0;
             for (auto& ch : symbol) { ch = 0; }
-            if (::unw_get_proc_name(&cursor, symbol, sizeof(symbol), &offset) == 0) {
-                int length = 0;
-                while (length != sizeof(symbol) && symbol[length] != 0) { ++length; }
+            if (cur.procedure_name(symbol, sizeof(symbol))) {
+                //int length = 0;
+                //while (length != sizeof(symbol) && symbol[length] != 0) { ++length; }
                 symbols.emplace_back(std::string(demangle(symbol, buf)), ip-4);
             }
         }
