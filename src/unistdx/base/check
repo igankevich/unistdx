@@ -35,6 +35,22 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/base/bad_call>
 
+namespace sys {
+
+    template <class T>
+    inline T check(T ret) {
+        if (ret == T(-1)) { throw bad_call(); }
+        return ret;
+    }
+
+    template <class T>
+    inline T* check(T* ret) {
+        if (!ret) { throw bad_call(); }
+        return ret;
+    }
+
+}
+
 /**
 \brief
 Uncoditionally throw \link sys::bad_call \endlink

@@ -98,8 +98,8 @@ namespace unw {
         inline cursor(context& c) { call(unw_init_local(get(), c.get())); }
         inline cursor_type* get() noexcept { return &this->_cursor; }
         inline const cursor_type* get() const noexcept { return &this->_cursor; }
-        inline int step() noexcept { return call(unw_step(get())); }
-        inline void resume() noexcept { call(unw_resume(get())); }
+        inline int step() { return call(unw_step(get())); }
+        inline void resume() { call(unw_resume(get())); }
 
         inline word_type read_int_register(int reg) {
             word_type value = 0;

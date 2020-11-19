@@ -79,9 +79,9 @@ namespace sys {
         #if defined(UNISTDX_ENABLE_BACKTRACE)
         inline backtrace_symbol(std::string&& name, dw::context& context, dw::address addr):
         name(std::move(name)), address(addr) {
-            dw::module mod(context, addr);
-            this->object = mod.name();
             try {
+                dw::module mod(context, addr);
+                this->object = mod.name();
                 dw::line line(context, addr);
                 std::tie(this->filename, this->line) = line.location();
             } catch (...) {

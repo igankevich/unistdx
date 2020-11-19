@@ -41,14 +41,15 @@ For more information, please refer to <http://unlicense.org/>
 #include <semaphore.h>
 #endif
 #if defined(UNISTDX_HAVE_SYS_SEM_H)
+#include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
-#include <sys/types.h>
 #endif
 
 #include <chrono>
 #include <cmath>
 #include <condition_variable>
+#include <iostream>
 
 #include <unistdx/base/contracts>
 #include <unistdx/base/unlock_guard>
@@ -83,9 +84,15 @@ namespace sys {
 
     public:
         /// Alias to system semaphore type (int).
-        typedef int sem_type;
+        using sem_type = int;
         /// Clock type used in this class.
-        typedef std::chrono::system_clock clock_type;
+        using clock_type = std::chrono::system_clock;
+
+    private:
+        sem_type _sem{};
+        bool _owner{};
+
+    public:
 
         /**
         \brief
@@ -96,8 +103,7 @@ namespace sys {
         */
         inline explicit
         sysv_semaphore(mode_type mode=0600):
-        _owner(true)
-        {
+        _owner(true) {
             UNISTDX_CHECK(
                 this->_sem = ::semget(IPC_PRIVATE, 1, IPC_CREAT|mode)
             );
@@ -109,10 +115,8 @@ namespace sys {
         \details The semaphore is not owned by the calling process/thread.
         */
         inline explicit
-        sysv_semaphore(sem_type sem):
-        _sem(sem),
-        _owner(false)
-        {}
+        sysv_semaphore(sem_type sem) noexcept:
+        _sem(sem), _owner(false) {}
 
         /**
         \brief Remove semaphore (if owner). Terminates on system error.
@@ -126,16 +130,10 @@ namespace sys {
         }
 
         /// Get semaphore ID.
-        inline sem_type
-        id() const noexcept {
-            return this->_sem;
-        }
+        inline sem_type id() const noexcept { return this->_sem; }
 
         /// Check if this semaphore is owned by this process.
-        inline bool
-        owner() const noexcept {
-            return this->_owner;
-        }
+        inline bool owner() const noexcept { return this->_owner; }
 
         /**
         \brief
@@ -316,7 +314,7 @@ namespace sys {
         inline void
         increment(int how) {
             UNISTDX_PRECONDITION(how != 0);
-            sembuf_type buf;
+            sembuf_type buf{};
             buf.sem_num = 0;
             buf.sem_op = how;
             buf.sem_flg = SEM_UNDO;
@@ -327,7 +325,7 @@ namespace sys {
         inline std::cv_status
         increment(int how, const time_spec* t) {
             UNISTDX_PRECONDITION(how != 0);
-            sembuf_type buf;
+            sembuf_type buf{};
             buf.sem_num = 0;
             buf.sem_op = how;
             buf.sem_flg = SEM_UNDO;
@@ -344,8 +342,6 @@ namespace sys {
         }
         #endif
 
-        sem_type _sem;
-        bool _owner;
     };
     #endif
 
