@@ -47,7 +47,8 @@ unistdx_lib = library(
 )
 
 pkgconfig.generate(
-    libraries: [unistdx_lib] + unistdx_libs,
+    unistdx_lib,
+    libraries: unistdx_libs,
     requires: unistdx_deps,
     version: meson.project_version(),
     name: meson.project_name() + suffix,

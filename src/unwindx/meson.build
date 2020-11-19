@@ -18,7 +18,7 @@ pkgconfig.generate(
     unwindx_lib,
     requires: unwindx_deps,
     version: meson.project_version(),
-    name: meson.project_name(),
+    name: 'unwindx',
     description: 'C++ wrapper for libunwind',
     extra_cflags: unwindx_cpp_args,
 )

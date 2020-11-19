@@ -18,7 +18,7 @@ pkgconfig.generate(
     dwx_lib,
     requires: dwx_deps,
     version: meson.project_version(),
-    name: meson.project_name(),
+    name: 'dwx',
     description: 'C++ wrapper for libunwind',
     extra_cflags: dwx_cpp_args,
 )
