@@ -39,7 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/bits/no_copy_and_move>
 #include <unistdx/io/fildes>
-#include <unistdx/util/system>
+#include <unistdx/system/resource>
 
 #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_FILDESBUF)
 #include <unistdx/bits/debug_message>

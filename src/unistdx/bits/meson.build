@@ -5,7 +5,6 @@ libunistdx_src += files([
 install_headers(
     'addr_parse',
     'byte_swap_chooser',
-    'entity',
     'for_each_file_descriptor',
     'interface_addresses',
     'macros',

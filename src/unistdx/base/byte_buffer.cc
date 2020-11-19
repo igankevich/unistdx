@@ -36,7 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/byte_buffer>
 #include <unistdx/base/check>
 #include <unistdx/bits/mman>
-#include <unistdx/util/system>
+#include <unistdx/system/resource>
 
 namespace {
 

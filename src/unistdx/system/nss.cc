@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,21 +30,15 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#ifndef UNISTDX_BITS_ENTITY
-#define UNISTDX_BITS_ENTITY
-
-#include <grp.h>
-#include <pwd.h>
-#include <unistd.h>
-
 #include <algorithm>
+#include <ostream>
 #include <stdexcept>
 #include <vector>
 
 #include <unistdx/base/check>
 #include <unistdx/config>
-#include <unistdx/util/group>
-#include <unistdx/util/user>
+#include <unistdx/it/intersperse_iterator>
+#include <unistdx/system/nss>
 
 #if defined(UNISTDX_ENTITY_MUTEX)
 #include <mutex>
@@ -359,4 +353,64 @@ namespace {
 
 }
 
-#endif // vim:filetype=cpp
+std::ostream&
+sys::operator<<(std::ostream& out, const user& rhs) {
+    return out
+           << rhs.name() << ':'
+           << rhs.password() << ':'
+           << rhs.id() << ':'
+           << rhs.group_id() << ':'
+           << (rhs.real_name() ? rhs.real_name() : "") << ':'
+           << rhs.home() << ':'
+           << rhs.shell();
+}
+
+bool
+sys::find_user(uid_type uid, user& u) {
+    #if defined(UNISTDX_HAVE_GETPWUID_R)
+    return find_entity_r<uid_type>(uid, u, u._buf);
+    #else
+    return find_entity_nr<uid_type>(uid, u, u._buf);
+    #endif
+}
+
+bool
+sys::find_user(const char* name, user& u) {
+    #if defined(UNISTDX_HAVE_GETPWNAM_R)
+    return find_entity_r<uid_type>(name, u, u._buf);
+    #else
+    return find_entity_nr<uid_type>(name, u, u._buf);
+    #endif
+}
+
+std::ostream&
+sys::operator<<(std::ostream& out, const group& rhs) {
+    out << rhs.name() << ':'
+        << rhs.password() << ':'
+        << rhs.id() << ':';
+    std::copy(
+        rhs.begin(),
+        rhs.end(),
+        intersperse_iterator<const char*,char>(out, ',')
+    );
+    return out;
+}
+
+
+bool
+sys::find_group(gid_type gid, group& u) {
+    #if defined(UNISTDX_HAVE_GETGRGID_R)
+    return find_entity_r<gid_type>(gid, u, u._buf);
+    #else
+    return find_entity_nr<gid_type>(gid, u, u._buf);
+    #endif
+}
+
+bool
+sys::find_group(const char* name, group& u) {
+    #if defined(UNISTDX_HAVE_GETGRNAM_R)
+    return find_entity_r<gid_type>(name, u, u._buf);
+    #else
+    return find_entity_nr<gid_type>(name, u, u._buf);
+    #endif
+}

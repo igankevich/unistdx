@@ -33,20 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_UTIL_BACKTRACE
 #define UNISTDX_UTIL_BACKTRACE
 
-namespace sys {
+#pragma message "Header unistdx/util/backtrace is deprecated. Use unistdx/system/error instead."
 
-    /**
-    \brief Print calling process function call trace (if supported).
-    \date 2018-05-25
-    \see \man{backtrace,3}
-    \details
-    \arg Does not throw exceptions.
-    \arg Handles memory allocation errors, degrading output
-    to mangled function names.
-    */
-    void
-    backtrace(int fd) noexcept;
-
-}
+#include <unistdx/system/error>
 
 #endif // vim:filetype=cpp

@@ -36,10 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <iterator>
 
 #include <unistdx/ipc/identity>
-#include <unistdx/util/groupstream>
-#include <unistdx/util/user>
-#include <unistdx/util/userstream>
-
+#include <unistdx/system/nss>
 #include <unistdx/test/operator>
 
 TEST(User, Enumerate) {

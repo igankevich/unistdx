@@ -46,7 +46,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/netlink_attribute_iterator>
 #include <unistdx/net/netlink_message_iterator>
 #include <unistdx/net/socket>
-#include <unistdx/util/system>
+#include <unistdx/system/resource>
 
 #if !defined(UNISTDX_HAVE_LINUX_NETLINK_H)
 #error netlink.h is required to use netlink

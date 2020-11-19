@@ -33,7 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/shared_memory_segment>
 #include <unistdx/ipc/shmembuf>
-#include <unistdx/util/system>
+#include <unistdx/system/resource>
 
 #include <functional>
 #include <gtest/gtest.h>

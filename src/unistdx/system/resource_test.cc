@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,43 +30,40 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/util/group>
+#include <unistdx/io/terminal>
+#include <unistdx/system/resource>
 
-#include <algorithm>
-#include <ostream>
+#include <gtest/gtest.h>
 
-#include <unistdx/bits/entity>
-#include <unistdx/config>
-#include <unistdx/it/intersperse_iterator>
+#include <stdlib.h>
 
-std::ostream&
-sys::operator<<(std::ostream& out, const group& rhs) {
-    out << rhs.name() << ':'
-        << rhs.password() << ':'
-        << rhs.id() << ':';
-    std::copy(
-        rhs.begin(),
-        rhs.end(),
-        intersperse_iterator<const char*,char>(out, ',')
-    );
-    return out;
+TEST(System, ThreadConcurrency) {
+    ::setenv("UNISTDX_CONCURRENCY", "123", 1);
+    EXPECT_EQ(123u, sys::thread_concurrency());
+    ::setenv("UNISTDX_CONCURRENCY", "1", 1);
+    EXPECT_EQ(1u, sys::thread_concurrency());
+    ::setenv("UNISTDX_CONCURRENCY", "0", 1);
+    EXPECT_NE(0u, sys::thread_concurrency());
+    ::setenv("UNISTDX_CONCURRENCY", "-123", 1);
+    EXPECT_NE(unsigned(-123), sys::thread_concurrency());
+    ::unsetenv("UNISTDX_CONCURRENCY");
 }
 
-
-bool
-sys::find_group(gid_type gid, group& u) {
-    #if defined(UNISTDX_HAVE_GETGRGID_R)
-    return find_entity_r<gid_type>(gid, u, u._buf);
-    #else
-    return find_entity_nr<gid_type>(gid, u, u._buf);
-    #endif
+TEST(System, IOConcurrency) {
+    EXPECT_GT(sys::io_concurrency(), 0u);
 }
 
-bool
-sys::find_group(const char* name, group& u) {
-    #if defined(UNISTDX_HAVE_GETGRNAM_R)
-    return find_entity_r<gid_type>(name, u, u._buf);
-    #else
-    return find_entity_nr<gid_type>(name, u, u._buf);
-    #endif
+TEST(System, PageSize) {
+    EXPECT_GT(sys::page_size(), 0u);
+}
+
+TEST(System, Cache) {
+    sys::cache cache;
+    for (const auto& c : cache) {
+        std::clog << "Cache level=" << c.level()
+            << ",size=" << c.size()
+            << ",line_size=" << c.line_size()
+            << ",assoc=" << c.associativity()
+            << std::endl;
+    }
 }

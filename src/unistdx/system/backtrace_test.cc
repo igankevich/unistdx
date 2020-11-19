@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,8 +34,8 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
+#include <unistdx/system/error>
 #include <unistdx/test/config>
-#include <unistdx/util/backtrace>
 
 #include <chrono>
 #include <iostream>

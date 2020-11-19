@@ -33,67 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_UTIL_GROUPSTREAM
 #define UNISTDX_UTIL_GROUPSTREAM
 
-#include <unistdx/bits/no_copy_and_move>
-#include <unistdx/it/basic_istream_iterator>
-#include <unistdx/util/group>
+#pragma message "Header unistdx/util/groupstream is deprecated. Use unistdx/system/nss instead."
 
-namespace sys {
-
-    /**
-    \brief Input stream of system groups.
-    \date 2018-05-25
-    \ingroup stream
-    \see group
-    \see group_iterator
-    \details
-    Useful to traverse all system groups in conjunction with
-    \link group_iterator \endlink.
-    */
-    class groupstream {
-
-    public:
-        using iterator = basic_istream_iterator<groupstream,group>;
-        using value_type = group;
-        using reference = value_type&;
-        using const_reference = const value_type&;
-        using pointer = value_type*;
-        using const_pointer = const value_type*;
-
-    private:
-        bool _end = false;
-
-    public:
-
-        inline groupstream() { this->open(); }
-        inline ~groupstream() { this->close(); }
-
-        UNISTDX_NO_COPY_AND_MOVE(groupstream)
-
-        /// Returns true if the end of stream is not reached.
-        inline explicit operator bool() const noexcept { return !this->_end; }
-
-        /// Returns true if the end of stream is reached.
-        inline bool operator!() const noexcept { return !this->operator bool(); }
-
-        /// Read the next group from the stream.
-        inline groupstream& operator>>(reference rhs) {
-            if (*this) {
-                if (auto g = ::getgrent()) { rhs = *g; }
-                else { this->_end = true; }
-            }
-            return *this;
-        }
-
-        inline iterator begin() { return iterator(*this); }
-        inline iterator end() { return iterator(); }
-        inline void open() { ::setgrent(); }
-        inline void close() { ::endgrent(); }
-
-    };
-
-    /// Iterator for \link groupstream \endlink.
-    using group_iterator = groupstream::iterator;
-
-}
+#include <unistdx/system/nss>
 
 #endif // vim:filetype=cpp

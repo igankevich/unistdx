@@ -48,23 +48,23 @@ For more information, please refer to <http://unlicense.org/>
 #include <string>
 
 #include <unistdx/config>
-#include <unistdx/util/backtrace>
+#include <unistdx/system/error>
 
 namespace sys {
 
-    class precondition_failure: public std::runtime_error {
+    class precondition_failure: public error {
     public:
-        using std::runtime_error::runtime_error;
+        using error::error;
     };
 
-    class postcondition_failure: public std::runtime_error {
+    class postcondition_failure: public error {
     public:
-        using std::runtime_error::runtime_error;
+        using error::error;
     };
 
-    class assertion_failure: public std::runtime_error {
+    class assertion_failure: public error {
     public:
-        using std::runtime_error::runtime_error;
+        using error::error;
     };
 
 }

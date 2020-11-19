@@ -32,8 +32,8 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
+#include <unistdx/system/error>
 #include <unistdx/system/log>
-#include <unistdx/util/backtrace>
 
 TEST(log, compilation) {
     sys::log log;
