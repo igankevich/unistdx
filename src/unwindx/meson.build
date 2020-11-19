@@ -29,4 +29,4 @@ unwindx = declare_dependency(
     dependencies: unwindx_deps,
 )
 
-install_headers('unwind', subdir: 'unwind')
+install_headers('unwind', subdir: 'unwindx')
