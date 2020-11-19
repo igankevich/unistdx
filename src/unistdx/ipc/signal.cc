@@ -34,69 +34,49 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <ostream>
 
-namespace {
-
-    constexpr const int nsignals = 32;
-
-    struct init_signal_names {
-
-        const char* signal_names[nsignals] = {0};
-
-        init_signal_names() {
-            signal_names[SIGHUP] = "hang_up";
-            signal_names[SIGINT] = "keyboard_interrupt";
-            signal_names[SIGQUIT] = "quit";
-            signal_names[SIGILL] = "illegal_instruction";
-            signal_names[SIGABRT] = "abort";
-            signal_names[SIGFPE] = "floating_point_exception";
-            signal_names[SIGKILL] = "kill";
-            signal_names[SIGSEGV] = "segmentation_fault";
-            signal_names[SIGPIPE] = "broken_pipe";
-            signal_names[SIGALRM] = "alarm";
-            signal_names[SIGTERM] = "terminate";
-            signal_names[SIGUSR1] = "user_defined_1";
-            signal_names[SIGUSR2] = "user_defined_2";
-            signal_names[SIGCHLD] = "child";
-            signal_names[SIGCONT] = "resume";
-            signal_names[SIGSTOP] = "stop";
-            signal_names[SIGTSTP] = "terminal_stop";
-            signal_names[SIGTTIN] = "terminal_input";
-            signal_names[SIGTTOU] = "terminal_output";
-            signal_names[SIGBUS] = "bad_memory_access";
-            #if defined(UNISTDX_HAVE_SIGPOLL)
-            signal_names[SIGPOLL] = "poll";
-            #endif
-            signal_names[SIGPROF] = "profile";
-            signal_names[SIGSYS] = "bad_argument";
-            signal_names[SIGTRAP] = "breakpoint";
-            signal_names[SIGURG] = "urgent";
-            signal_names[SIGVTALRM] = "virtual_alarm";
-            signal_names[SIGXCPU] = "cpu_time_limit_exceeded";
-            signal_names[SIGXFSZ] ="file_size_limit_exceeded";
-            #if defined(UNISTDX_HAVE_SIGSTKFLT)
-            signal_names[SIGSTKFLT] = "coprocessor_stack_fault";
-            #endif
-            #if defined(UNISTDX_HAVE_SIGPWR)
-            signal_names[SIGPWR] = "power_failure";
-            #endif
-            #if defined(UNISTDX_HAVE_SIGWINCH)
-            signal_names[SIGWINCH] ="terminal_window_resize";
-            #endif
-        }
-
-        inline const char*
-        operator[](sys::signal_type s) {
-            return this->signal_names[s];
-        }
-
-    } signal_names;
-
-}
-
 const char* sys::to_string(signal rhs) noexcept {
-    auto s = signal_type(rhs);
-    if (s >= 0 && s < nsignals) { return signal_names[s]; }
-    return "unknown";
+    switch (rhs) {
+        case signal::hang_up: return "hang_up";
+        case signal::keyboard_interrupt: return "keyboard_interrupt";
+        case signal::quit: return "quit";
+        case signal::illegal_instruction: return "illegal_instruction";
+        case signal::abort: return "abort";
+        case signal::floating_point_exception: return "floating_point_exception";
+        case signal::kill: return "kill";
+        case signal::segmentation_fault: return "segmentation_fault";
+        case signal::broken_pipe: return "broken_pipe";
+        case signal::alarm: return "alarm";
+        case signal::terminate: return "terminate";
+        case signal::user_defined_1: return "user_defined_1";
+        case signal::user_defined_2: return "user_defined_2";
+        case signal::child: return "child";
+        case signal::resume: return "resume";
+        case signal::stop: return "stop";
+        case signal::terminal_stop: return "terminal_stop";
+        case signal::terminal_input: return "terminal_input";
+        case signal::terminal_output: return "terminal_output";
+        case signal::bad_memory_access: return "bad_memory_access";
+        #if defined(UNISTDX_HAVE_SIGPOLL)
+        case signal::poll: return "poll";
+        #endif
+        case signal::profile: return "profile";
+        case signal::bad_argument: return "bad_argument";
+        case signal::breakpoint: return "breakpoint";
+        case signal::urgent: return "urgent";
+        case signal::virtual_alarm: return "virtual_alarm";
+        case signal::cpu_time_limit_exceeded: return "cpu_time_limit_exceeded";
+        case signal::file_size_limit_exceeded: return "file_size_limit_exceeded";
+        #if defined(UNISTDX_HAVE_SIGSTKFLT)
+        case signal::coprocessor_stack_fault: return "coprocessor_stack_fault";
+        #endif
+        #if defined(UNISTDX_HAVE_SIGPWR)
+        case signal::power_failure: return "power_failure";
+        #endif
+        #if defined(UNISTDX_HAVE_SIGWINCH)
+        case signal::terminal_window_resize: return "terminal_window_resize";
+        #endif
+        default: return "unknown";
+    }
 }
 
 std::ostream&

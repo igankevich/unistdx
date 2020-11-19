@@ -79,10 +79,9 @@ namespace test {
     inline void
     stream_insert_starts_with(const char* s, const T& obj) {
         typedef std::string::traits_type traits_type;
-        EXPECT_EQ(
-            0,
-            stream_insert<T>(obj).compare(0, traits_type::length(s), s)
-        );
+        auto actual = stream_insert<T>(obj);
+        EXPECT_EQ(0, actual.compare(0, traits_type::length(s), s))
+            << "expected " << s << "\nactual " << actual;
     }
 
 }
