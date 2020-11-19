@@ -47,60 +47,70 @@ For more information, please refer to <http://unlicense.org/>
 #include <string>
 #endif
 
-std::vector<sys::backtrace_symbol> sys::backtrace_symbols() {
+std::vector<sys::backtrace_symbol> sys::backtrace_symbols() noexcept {
     #if defined(UNISTDX_HAVE_BACKTRACE)
-    const size_t size = 4096 / sizeof(void*);
-    void* buffer[size];
-    const int nptrs = ::backtrace(buffer, size);
-    std::vector<backtrace_symbol> symb;
-    symb.reserve(nptrs);
-    string buf(4096);
-    if (char** symbols = ::backtrace_symbols(buffer, nptrs)) {
-        for (int i=0; i<nptrs; ++i) {
-            const char* name = symbols[i];
-            if (!name) {
-                name = "<null>";
-            }
-            try {
-                // parse trace string
-                std::string line(name);
-                std::string::size_type pos0, pos1;
-                pos0 = line.find_first_of('(');
-                pos1 = line.find_last_of(')');
-                pos1 = line.find_last_of('+', pos1);
-                if (pos0 == std::string::npos || pos1 == std::string::npos) {
-                    throw 1;
+    try {
+        const size_t size = 4096 / sizeof(void*);
+        void* buffer[size];
+        const int nptrs = ::backtrace(buffer, size);
+        std::vector<backtrace_symbol> symb;
+        symb.reserve(nptrs);
+        string buf(4096);
+        if (char** symbols = ::backtrace_symbols(buffer, nptrs)) {
+            for (int i=0; i<nptrs; ++i) {
+                const char* name = symbols[i];
+                if (!name) {
+                    name = "<null>";
                 }
-                std::string func = line.substr(pos0+1, pos1-pos0-1);
-                auto demangled_name = demangle(func.data(), buf);
-                symb.emplace_back(line.substr(0, pos0), demangled_name, 0);
-            } catch (...) {
-                symb.emplace_back("", name, 0);
+                try {
+                    // parse trace string
+                    std::string line(name);
+                    std::string::size_type pos0, pos1;
+                    pos0 = line.find_first_of('(');
+                    pos1 = line.find_last_of(')');
+                    pos1 = line.find_last_of('+', pos1);
+                    if (pos0 == std::string::npos || pos1 == std::string::npos) {
+                        throw 1;
+                    }
+                    std::string func = line.substr(pos0+1, pos1-pos0-1);
+                    auto demangled_name = demangle(func.data(), buf);
+                    symb.emplace_back(line.substr(0, pos0), demangled_name, 0);
+                } catch (...) {
+                    symb.emplace_back("", name, 0);
+                }
             }
+            std::free(symbols);
         }
-        std::free(symbols);
+        return symb;
+    } catch (...) {
+        return {};
     }
+    #else
+    return {};
     #endif
-    return symb;
 }
 
-void sys::error::init(const std::string& message) {
-    std::string nm(16, '\0');
-    #if defined(UNISTDX_HAVE_PRCTL)
-    ::prctl(PR_GET_NAME, nm.data());
-    #endif
-    std::stringstream tmp;
-    tmp << "Exception in process \"";
-    #if defined(UNISTDX_HAVE_PRCTL)
-    tmp << nm.data();
-    #else
-    tmp << std::this_process::id();
-    #endif
-    tmp << "\": " << message;
-    tmp << '\n';
-    int i = 0;
-    for (const auto& s : this->_symbols) { tmp << "    #" << i++ << ' ' << s << '\n'; }
-    this->_message = tmp.str();
+void sys::error::init(const std::string& message) noexcept {
+    try {
+        char process_name[16] {};
+        #if defined(UNISTDX_HAVE_PRCTL)
+        ::prctl(PR_GET_NAME, process_name);
+        #endif
+        std::stringstream tmp;
+        tmp << "Exception in process \"";
+        #if defined(UNISTDX_HAVE_PRCTL)
+        tmp << process_name;
+        #else
+        tmp << std::this_process::id();
+        #endif
+        tmp << "\": " << message;
+        tmp << '\n';
+        int i = 0;
+        for (const auto& s : this->_symbols) { tmp << "    #" << i++ << ' ' << s << '\n'; }
+        this->_message = tmp.str();
+    } catch (...) {
+        // no message
+    }
 }
 
 const char* sys::error::what() const noexcept {
