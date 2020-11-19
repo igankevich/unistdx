@@ -93,10 +93,13 @@ namespace {
 
 }
 
+const char* sys::to_string(signal rhs) noexcept {
+    auto s = signal_type(rhs);
+    if (s >= 0 && s < nsignals) { return signal_names[s]; }
+    return "unknown";
+}
+
 std::ostream&
 sys::operator<<(std::ostream& out, const signal rhs) {
-    const signal_type s = signal_type(rhs);
-    const char* name = (s >= 0 && s < nsignals) ? signal_names[s] : nullptr;
-    out << (name ? name : "unknown") << '(' << s << ')';
-    return out;
+    return out << to_string(rhs) << '(' << signal_type(rhs) << ')';
 }

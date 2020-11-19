@@ -36,108 +36,24 @@ For more information, please refer to <http://unlicense.org/>
 #include <exception>
 #include <iosfwd>
 #include <string>
+#include <tuple>
 #include <vector>
 
 #include <unistdx/base/string>
+#include <unistdx/util/backtrace>
 
 #if defined(UNISTDX_ENABLE_BACKTRACE)
-#include <elfutils/libdwfl.h>
-#include <libunwind.h>
+#include <dwx/dw>
 #include <unistd.h>
+#include <unwindx/unwind>
+#if defined(UNISTDX_HAVE_PRCTL)
+#include <sys/prctl.h>
 #endif
-
-#if defined(UNISTDX_ENABLE_BACKTRACE)
-namespace unwind {
-
-    using word_type = ::unw_word_t;
-
-    class context {
-    public:
-        using type = ::unw_context_t;
-    private:
-        type _context{};
-    public:
-        inline context() noexcept { unw_getcontext(&this->_context); }
-        inline type* get() noexcept { return &this->_context; }
-        inline const type* get() const noexcept { return &this->_context; }
-        ~context() = default;
-        context(const context&) = default;
-        context& operator=(const context&) = default;
-        context(context&&) = default;
-        context& operator=(context&&) = default;
-    };
-
-    class cursor {
-    public:
-        using type = ::unw_cursor_t;
-        using register_type = ::unw_regnum_t;
-    private:
-        type _cursor{};
-    public:
-        inline cursor(context& c) noexcept { unw_init_local(get(), c.get()); }
-        inline type* get() noexcept { return &this->_cursor; }
-        inline const type* get() const noexcept { return &this->_cursor; }
-        inline bool step() noexcept { return unw_step(get()) > 0; }
-
-        inline word_type read_int_register(int reg) noexcept {
-            word_type value = 0;
-            unw_get_reg(&this->_cursor, reg, &value);
-            return value;
-        }
-
-        inline bool procedure_name(char* name, size_t size) noexcept {
-            word_type offset = 0;
-            return unw_get_proc_name(get(), name, size, &offset) == 0;
-        }
-
-        cursor() = default;
-        ~cursor() = default;
-        cursor(const cursor&) = default;
-        cursor& operator=(const cursor&) = default;
-        cursor(cursor&&) = default;
-        cursor& operator=(cursor&&) = default;
-
-    };
-
-}
 #endif
 
 namespace sys {
 
     const char* demangle(const char* symbol, string& buf);
-
-    #if defined(UNISTDX_ENABLE_BACKTRACE)
-    namespace dw {
-
-        class dwarf {
-
-        private:
-            ::Dwfl_Callbacks _callbacks{};
-            ::Dwfl* _ptr{};
-
-        public:
-            inline dwarf() noexcept {
-                this->_callbacks.find_elf = ::dwfl_linux_proc_find_elf;
-                this->_callbacks.find_debuginfo = ::dwfl_standard_find_debuginfo;
-                this->_ptr = ::dwfl_begin(&this->_callbacks);
-            }
-            inline ~dwarf() noexcept {
-                if (this->_ptr) { ::dwfl_end(this->_ptr); this->_ptr = nullptr; }
-            }
-            inline ::Dwfl* get() noexcept { return this->_ptr; }
-            inline const ::Dwfl* get() const noexcept { return this->_ptr; }
-            inline explicit operator bool() const noexcept { return this->_ptr != nullptr; }
-            inline bool operator!() const noexcept { return !operator bool(); }
-
-            inline bool report() noexcept {
-                if (::dwfl_linux_proc_report(get(), ::getpid()) != 0) { return false; }
-                if (::dwfl_report_end(get(), nullptr, nullptr) != 0) { return false; }
-                return true;
-            }
-        };
-
-    }
-    #endif
 
     struct backtrace_symbol {
 
@@ -151,32 +67,15 @@ namespace sys {
         filename(filename), name(name), line(line) {}
 
         #if defined(UNISTDX_ENABLE_BACKTRACE)
-        inline backtrace_symbol(std::string&& name, uintptr_t ip):
-        name(std::move(name)), address(ip) {
-            using namespace ::sys::dw;
-            dwarf dwfl;
-            if (!dwfl) { return; }
-            if (!dwfl.report()) { return; }
-            ::Dwarf_Addr addr = ip;
-            ::Dwfl_Module* module = ::dwfl_addrmodule(dwfl.get(), addr);
-            if (module) {
-                const char* name =
-                    ::dwfl_module_info(module, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr);
-                if (name) {
-                    this->object = name;
-                }
-            }
-            //const char* function_name = ::dwfl_module_addrname(module, addr);
-            ::Dwfl_Line* line = ::dwfl_getsrc(dwfl.get(), addr);
-            if (line != nullptr) {
-                int nline{};
-                ::Dwarf_Addr addr{};
-                const char* filename =
-                    ::dwfl_lineinfo(line, &addr, &nline, nullptr, nullptr, nullptr);
-                if (filename && *filename) {
-                    this->filename = filename;
-                    this->line = nline;
-                }
+        inline backtrace_symbol(std::string&& name, dw::context& context, dw::address addr):
+        name(std::move(name)), address(addr) {
+            dw::module mod(context, addr);
+            this->object = mod.name();
+            try {
+                dw::line line(context, addr);
+                std::tie(this->filename, this->line) = line.location();
+            } catch (...) {
+                // ignore the absense of line information
             }
         }
         #endif
@@ -188,19 +87,22 @@ namespace sys {
     #if defined(UNISTDX_ENABLE_BACKTRACE)
     inline std::vector<backtrace_symbol> unwind_symbols() {
         char symbol[4096];
-        using namespace unwind;
+        using namespace unw;
         context ctx;
         cursor cur(ctx);
         std::vector<backtrace_symbol> symbols;
         string buf(4096);
-        while (cur.step()) {
+        dw::context context;
+        context.report();
+        while (cur.step() > 0) {
             auto ip = cur.read_int_register(UNW_REG_IP);
             if (ip == 0) { break; }
             for (auto& ch : symbol) { ch = 0; }
-            if (cur.procedure_name(symbol, sizeof(symbol))) {
-                //int length = 0;
-                //while (length != sizeof(symbol) && symbol[length] != 0) { ++length; }
-                symbols.emplace_back(std::string(demangle(symbol, buf)), ip-4);
+            cur.procedure_name(symbol, sizeof(symbol));
+            try {
+                symbols.emplace_back(std::string(demangle(symbol, buf)), context, ip-4);
+            } catch (...) {
+                // ignore nested errors
             }
         }
         return symbols;
@@ -244,6 +146,27 @@ namespace sys {
         void init(const std::string& message);
 
     };
+
+    #if defined(UNISTDX_ENABLE_BACKTRACE)
+    enum struct signal: int;
+    const char* to_string(signal s) noexcept;
+    inline void backtrace_on_signal(int sig) noexcept {
+        char name[16] {'\0'};
+        #if defined(UNISTDX_HAVE_PRCTL)
+        ::prctl(PR_GET_NAME, name);
+        #endif
+        auto name_size = std::char_traits<char>::length(name);
+        ::write(STDERR_FILENO, "Caught ", 7);
+        auto signal_name = to_string(sys::signal(sig));
+        auto signal_name_size = std::char_traits<char>::length(signal_name);
+        ::write(STDERR_FILENO, signal_name, signal_name_size);
+        ::write(STDERR_FILENO, " in process \"", 13);
+        ::write(STDERR_FILENO, name, name_size);
+        ::write(STDERR_FILENO, "\"\n", 2);
+        unw::backtrace(STDERR_FILENO);
+        std::exit(sig);
+    }
+    #endif
 
 }
 

@@ -1,3 +1,4 @@
 option('with_tests', type: 'boolean', value: true, description: 'Build unit tests')
 option('with_site', type: 'boolean', value: false, description: 'Generate web pages')
 option('with_debug', type: 'boolean', value: false, description: 'Enable additional debugging')
+option('with_backtrace', type: 'boolean', value: false, description: 'Enable stack trace in every exception')

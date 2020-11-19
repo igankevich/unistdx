@@ -142,6 +142,8 @@ namespace sys {
         #endif
     };
 
+    const char* to_string(signal s) noexcept;
+
     /**
     \brief Output signal name.
     \date 2018-05-21

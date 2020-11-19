@@ -10,6 +10,7 @@ project(
 with_tests = get_option('with_tests')
 with_site = get_option('with_site')
 with_debug = get_option('with_debug')
+with_backtrace = get_option('with_backtrace')
 
 cpp = meson.get_compiler('cpp')
 cpp_args = []
@@ -19,10 +20,13 @@ suffix = ''
 
 if with_debug
     cpp_args += '-DUNISTDX_DEBUG'
+    suffix = '-debug'
+endif
+
+if with_debug or with_backtrace
     cpp_args += '-DUNISTDX_ENABLE_BACKTRACE'
     cpp_args += '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE'
     cpp_args += '-DUNW_LOCAL_ONLY'
-    suffix = '-debug'
 endif
 
 foreach arg : [

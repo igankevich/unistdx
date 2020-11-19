@@ -28,11 +28,10 @@ subdir('bits')
 subdir('test')
 
 unistdx_deps = []
-if with_debug
-    libunwind = dependency('libunwind')
-    libdw = dependency('libdw')
-    unistdx_deps += libunwind
-    unistdx_deps += libdw
+unistdx_libs = []
+if with_debug or with_backtrace
+    unistdx_libs += unwindx
+    unistdx_libs += dwx
 endif
 
 unistdx_lib = library(
@@ -42,13 +41,13 @@ unistdx_lib = library(
     install: true,
     include_directories: src,
     implicit_include_directories: false,
-    dependencies: unistdx_deps,
+    dependencies: unistdx_deps + unistdx_libs,
     cpp_args: cpp_args,
     link_args: cpp_linker_args,
 )
 
 pkgconfig.generate(
-    libraries: unistdx_lib,
+    libraries: [unistdx_lib] + unistdx_libs,
     requires: unistdx_deps,
     version: meson.project_version(),
     name: meson.project_name() + suffix,
@@ -58,7 +57,8 @@ pkgconfig.generate(
 
 unistdx = declare_dependency(
     link_with: unistdx_lib,
-    include_directories: src
+    include_directories: src,
+    dependencies: unistdx_deps + unistdx_libs,
 )
 
 if with_tests
@@ -88,7 +88,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + (with_debug ? [libunwind,libdw] : []),
+                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
                 link_with: libs,
                 implicit_include_directories: false,
             )
@@ -122,7 +122,7 @@ foreach file : libunistdx_benchmarks
             '_'.join(words) + '_benchmark',
             sources: source_name,
             include_directories: src,
-            dependencies: [unistdx] + (with_debug ? [libunwind,libdw] : []),
+            dependencies: [unistdx] + unistdx_deps + unistdx_libs,
             implicit_include_directories: false,
         )
     )
