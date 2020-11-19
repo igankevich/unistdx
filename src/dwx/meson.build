@@ -29,4 +29,4 @@ dwx = declare_dependency(
     dependencies: dwx_deps,
 )
 
-install_headers('dw', subdir: 'dw')
+install_headers('dw', subdir: 'dwx')
