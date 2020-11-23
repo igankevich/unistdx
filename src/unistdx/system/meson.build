@@ -29,6 +29,7 @@ install_headers(
     'clock',
     'error',
     'log',
+    'nss',
     'time',
     'resource',
     subdir: join_paths(meson.project_name(), 'system')
