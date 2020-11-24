@@ -16,7 +16,6 @@
       (@ (gnu packages python-xyz) python-chardet)
       (@ (gnu packages code) lcov)
       (@ (gnu packages gcovr) python-gcovr)
-      (@ (gnu packages libunwind) libunwind)
       (@ (gnu packages elf) elfutils)
       (@ (gnu packages compression) xz)
       (list (@ (gnu packages llvm) clang-10) "extra") ;; clang-tidy
