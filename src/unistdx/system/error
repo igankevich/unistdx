@@ -44,7 +44,6 @@ For more information, please refer to <http://unlicense.org/>
 #if defined(UNISTDX_ENABLE_BACKTRACE)
 #include <dwx/dw>
 #include <unistd.h>
-#include <unwindx/unwind>
 #if defined(UNISTDX_HAVE_PRCTL)
 #include <sys/prctl.h>
 #endif
@@ -94,6 +93,7 @@ namespace sys {
 
     std::ostream& operator<<(std::ostream& out, const backtrace_symbol& rhs);
 
+    /*
     #if defined(UNISTDX_ENABLE_BACKTRACE)
     inline std::vector<backtrace_symbol> unwind_symbols() noexcept {
         try {
@@ -122,6 +122,7 @@ namespace sys {
         }
     }
     #endif
+    */
 
     std::vector<backtrace_symbol> backtrace_symbols() noexcept;
 
@@ -132,17 +133,10 @@ namespace sys {
         std::vector<backtrace_symbol> _symbols;
 
     public:
-        #if defined(UNISTDX_ENABLE_BACKTRACE)
-        inline explicit error(const std::string& message) noexcept {
-            this->_symbols = unwind_symbols();
-            init(message);
-        }
-        #else
         inline explicit error(const std::string& message) noexcept {
             this->_symbols = backtrace_symbols();
             init(message);
         }
-        #endif
         error() = default;
         ~error() = default;
         error(const error&) = default;
@@ -177,7 +171,7 @@ namespace sys {
         ::write(STDERR_FILENO, " in process \"", 13);
         ::write(STDERR_FILENO, name, name_size);
         ::write(STDERR_FILENO, "\"\n", 2);
-        unw::backtrace(STDERR_FILENO);
+        ::sys::backtrace(STDERR_FILENO);
         std::exit(sig);
     }
     #endif

@@ -4,18 +4,21 @@ libunistdx_src += files([
     'resource.cc',
 ])
 
+libdl = cpp.find_library('dl', required: false)
+if libdl.found()
+    libunistdx_src += files(['linker.cc'])
+endif
+
 libunistdx_tests += [
     [files('log_test.cc')],
     [files('resource_test.cc')],
 ]
 
-if with_debug
-    libunistdx_tests += [
-        [files('clock_test.cc')],
-        [files('error_test.cc')],
-        #[files('users_test.cc'), [[], [sysconf_stub]]],
-    ]
-endif
+libunistdx_tests += [
+    [files('clock_test.cc')],
+    [files('error_test.cc')],
+    #[files('users_test.cc'), [[], [sysconf_stub]]],
+]
 
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
     libunistdx_tests += [
@@ -28,9 +31,10 @@ endif
 install_headers(
     'clock',
     'error',
+    'linker',
     'log',
     'nss',
-    'time',
     'resource',
+    'time',
     subdir: join_paths(meson.project_name(), 'system')
 )

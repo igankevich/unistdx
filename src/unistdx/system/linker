@@ -1,0 +1,154 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
+#ifndef UNISTDX_SYSTEM_LINKER
+#define UNISTDX_SYSTEM_LINKER
+
+#include <unistdx/config>
+
+#if defined(UNISTDX_HAVE_DLFCN_H)
+
+#include <dlfcn.h>
+
+#include <system_error>
+
+#include <unistdx/base/flag>
+
+namespace dl {
+
+    enum struct errc: int {
+        // no error codes
+    };
+
+    class error_category: public std::error_category {
+    public:
+        const char* name() const noexcept override;
+        std::string message(int ev) const noexcept override;
+    };
+
+    extern error_category dl_category;
+
+    inline std::error_condition
+    make_error_condition(errc e) noexcept {
+        return std::error_condition(static_cast<int>(e), dl_category);
+    }
+
+    inline int call(int ret) {
+        if (ret < 0) { throw std::system_error(-1, dl_category); }
+        return ret;
+    }
+
+    template <class T>
+    inline T* call(T* ret) {
+        if (!ret) { throw std::system_error(-1, dl_category); }
+        return ret;
+    }
+
+    class symbol: public ::Dl_info {
+
+    public:
+        inline symbol() noexcept: ::Dl_info{} {}
+        inline symbol(const void* address) noexcept: ::Dl_info{} { ::dladdr(address, this); }
+
+        inline const char* filename() const noexcept { return this->dli_fname; }
+        inline void* load_address() const noexcept { return this->dli_fbase; }
+        inline const char* name() const noexcept { return this->dli_sname; }
+        inline void* address() const noexcept { return this->dli_saddr; }
+
+        inline explicit operator bool() const noexcept { return address() != nullptr; }
+        inline bool operator !() const noexcept { return !this->operator bool(); }
+
+        ~symbol() = default;
+        symbol(const symbol&) = default;
+        symbol& operator=(const symbol&) = default;
+        symbol(symbol&&) = default;
+        symbol& operator=(symbol&&) = default;
+
+    };
+
+    class object {
+
+    public:
+        enum class modes: int {
+            #if defined(RTLD_LAZY)
+            lazy=RTLD_LAZY,
+            #endif
+            #if defined(RTLD_NOW)
+            now=RTLD_NOW,
+            #endif
+            #if defined(RTLD_NOLOAD)
+            no_load=RTLD_NOLOAD,
+            #endif
+            #if defined(RTLD_DEEPBIND)
+            deep_bind=RTLD_DEEPBIND,
+            #endif
+            #if defined(RTLD_GLOBAL)
+            global=RTLD_GLOBAL,
+            #endif
+            #if defined(RTLD_LOCAL)
+            local=RTLD_LOCAL,
+            #endif
+            #if defined(RTLD_NODELETE)
+            no_delete=RTLD_NODELETE,
+            #endif
+        };
+
+    private:
+        void* _ptr{};
+
+    public:
+        inline explicit object(const char* path, modes mode):
+        _ptr(call(::dlopen(path, int(mode)))) {}
+
+        inline ~object() noexcept { close(); }
+
+        inline void close() { call(::dlclose(this->_ptr)); this->_ptr = nullptr; }
+
+        inline void* symbol_address(const char* name) const {
+            return call(::dlsym(this->_ptr, name));
+        }
+
+        object() = default;
+        object(const object&) = default;
+        object& operator=(const object&) = default;
+        object(object&&) = default;
+        object& operator=(object&&) = default;
+
+    };
+
+    UNISTDX_FLAGS(object::modes);
+
+}
+
+#endif
+
+#endif // vim:filetype=cpp

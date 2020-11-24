@@ -92,6 +92,7 @@ foreach pair : [
 endforeach
 foreach pair : [
     ['dirent.h', 'DTTOIF'],
+    ['dlfcn.h', 'dladdr'],
     ['execinfo.h', 'backtrace'],
     ['fcntl.h', 'F_GETPIPE_SZ'],
     ['fcntl.h', 'F_SETNOSIGPIPE'],
@@ -253,6 +254,7 @@ foreach pair : [
 endforeach
 foreach header : [
     'cxxabi.h',
+    'dlfcn.h',
     'ifaddrs.h',
     'linux/netlink.h',
     'linux/sockios.h',
