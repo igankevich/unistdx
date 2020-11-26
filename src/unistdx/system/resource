@@ -1230,6 +1230,98 @@ namespace sys {
     };
     #endif
 
+    typedef struct ::rlimit resource_limit_type;
+
+    class resource_limit: public resource_limit_type {
+
+    public:
+        using value_type = ::rlim_t;
+        static constexpr const value_type infinity = RLIM_INFINITY;
+
+    public:
+        inline resource_limit() noexcept: resource_limit_type{} {}
+        inline resource_limit(value_type soft, value_type hard) noexcept:
+        resource_limit_type{soft,hard} {}
+
+        inline value_type soft() const noexcept { return this->rlim_cur; }
+        inline value_type hard() const noexcept { return this->rlim_max; }
+        inline void soft(value_type rhs) noexcept { this->rlim_cur = rhs; }
+        inline void hard(value_type rhs) noexcept { this->rlim_max = rhs; }
+
+        ~resource_limit() = default;
+        resource_limit(const resource_limit&) = default;
+        resource_limit& operator=(const resource_limit&) = default;
+        resource_limit(resource_limit&&) = default;
+        resource_limit& operator=(resource_limit&&) = default;
+
+
+    };
+
+    enum class resources: int {
+        #if defined(RLIMIT_CPU)
+        cpu=RLIMIT_CPU,
+        #endif
+        #if defined(RLIMIT_FSIZE)
+        file_size=RLIMIT_FSIZE,
+        #endif
+        #if defined(RLIMIT_DATA)
+        data=RLIMIT_DATA,
+        #endif
+        #if defined(RLIMIT_STACK)
+        stack=RLIMIT_STACK,
+        #endif
+        #if defined(RLIMIT_CORE)
+        core_file_size=RLIMIT_CORE,
+        #endif
+        #if defined(RLIMIT_RSS)
+        resident_set_size=RLIMIT_RSS,
+        #endif
+        #if defined(RLIMIT_NOFILE)
+        num_opened_files=RLIMIT_NOFILE,
+        #endif
+        #if defined(RLIMIT_AS)
+        address_space=RLIMIT_AS,
+        #endif
+        #if defined(RLIMIT_NPROC)
+        num_processes=RLIMIT_NPROC,
+        #endif
+        #if defined(RLIMIT_MEMLOCK)
+        locked_address_space=RLIMIT_MEMLOCK,
+        #endif
+        #if defined(RLIMIT_LOCKS)
+        num_file_locks=RLIMIT_LOCKS,
+        #endif
+        #if defined(RLIMIT_SIGPENDING)
+        num_pending_signals=RLIMIT_SIGPENDING,
+        #endif
+        #if defined(RLIMIT_MSGQUEUE)
+        message_queue_size=RLIMIT_MSGQUEUE,
+        #endif
+        #if defined(RLIMIT_NICE)
+        priority=RLIMIT_NICE,
+        #endif
+        #if defined(RLIMIT_RTPRIO)
+        real_time_priority=RLIMIT_RTPRIO,
+        #endif
+        #if defined(RLIMIT_RTTIME)
+        real_time_cpu=RLIMIT_RTTIME,
+        #endif
+    };
+
+    namespace this_process {
+
+        inline resource_limit limit(resources r) {
+            resource_limit result;
+            check(::getrlimit(int(r), &result));
+            return result;
+        }
+
+        inline void limit(resources r, const resource_limit& lim) {
+            check(::setrlimit(int(r), &lim));
+        }
+
+    }
+
 }
 
 #endif // vim:filetype=cpp

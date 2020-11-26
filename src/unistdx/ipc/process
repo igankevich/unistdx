@@ -845,6 +845,8 @@ namespace sys {
     */
     UNISTDX_DEPRECATED inline void send(signal s, pid_type p) { process_view(p).send(s); }
 
+    [[noreturn]] inline void exit(int status) noexcept { ::_exit(status); }
+
 }
 
 #endif // vim:filetype=cpp
