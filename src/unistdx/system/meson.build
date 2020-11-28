@@ -29,6 +29,7 @@ if config.get('UNISTDX_HAVE_BACKTRACE', false)
 endif
 
 install_headers(
+    'call',
     'clock',
     'error',
     'linker',
