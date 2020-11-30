@@ -165,6 +165,8 @@ namespace sys {
             return this->_dirpath;
         }
 
+        inline fd_type fd() const noexcept { return ::dirfd(this->_dir); }
+
         /// Get next directory entry as \link directory_entry \endlink.
         inline basic_idirectory&
         operator>>(reference rhs) {

@@ -14,6 +14,7 @@ install_headers('forward', subdir: meson.project_name())
 libunistdx_src = files()
 libunistdx_tests = files()
 libunistdx_benchmarks = files()
+libunistdx_test_src = files()
 
 subdir('stub')
 subdir('base')
@@ -53,7 +54,7 @@ pkgconfig.generate(
     libraries: unistdx_libs,
     requires: unistdx_deps,
     version: meson.project_version(),
-    name: meson.project_name() + suffix,
+    name: 'unistdx' + suffix,
     description: 'C++ wrappers for libc',
     extra_cflags: cpp_args,
 )
@@ -62,6 +63,37 @@ unistdx = declare_dependency(
     link_with: unistdx_lib,
     include_directories: src,
     dependencies: unistdx_deps + unistdx_libs,
+)
+
+unistdx_test_deps = []
+unistdx_test_libs = [unistdx]
+
+unistdx_test_lib = library(
+    'unistdx-test',
+    sources: libunistdx_test_src,
+    version: meson.project_version(),
+    install: true,
+    include_directories: src,
+    implicit_include_directories: false,
+    dependencies: unistdx_test_deps + unistdx_test_libs,
+    cpp_args: cpp_args,
+    link_args: cpp_linker_args,
+)
+
+pkgconfig.generate(
+    unistdx_test_lib,
+    libraries: unistdx_test_libs,
+    requires: unistdx_test_deps,
+    version: meson.project_version(),
+    name: 'unistdx-test',
+    description: 'Process-based unit tests',
+    extra_cflags: cpp_args,
+)
+
+unistdx_test = declare_dependency(
+    link_with: unistdx_test_lib,
+    include_directories: src,
+    dependencies: unistdx_test_deps + unistdx_test_libs,
 )
 
 if with_tests
@@ -91,7 +123,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
+                dependencies: [unistdx_test,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
                 link_with: libs,
                 implicit_include_directories: false,
             )

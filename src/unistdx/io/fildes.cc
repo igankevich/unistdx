@@ -30,9 +30,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/io/fildes>
-
 #include <unistdx/base/make_object>
+#include <unistdx/fs/file_status>
+#include <unistdx/io/fildes>
+#include <unistdx/net/socket>
 
 sys::fildes&
 sys::fildes::operator=(const fildes& rhs) {
@@ -88,3 +89,16 @@ sys::fildes::attributes() const {
     return file_attributes(std::move(names), size);
 }
 #endif
+
+bool sys::file_descriptor_view::is_socket() const noexcept {
+    file_status status;
+    if (::fstat(get(), &status) != -1) {
+        return status.is_socket();
+    }
+    int value = 0;
+    socket_length_type n = sizeof(value);
+    if (::getsockopt(get(), SOL_SOCKET, SO_TYPE, &value, &n) == 0) {
+        return true;
+    }
+    return false;
+}

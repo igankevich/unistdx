@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -38,6 +38,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/io/fildes>
 #include <unistdx/io/pipe>
 
+#include <unistdx/test/sanitize_file_descriptors>
 #include <unistdx/test/temporary_file>
 
 TEST(ForEachFileDescriptor, Pipe) {
@@ -92,4 +93,10 @@ TEST(fd_type, traits) {
     a.open("/dev/null");
     EXPECT_TRUE(static_cast<bool>(a));
     EXPECT_NO_THROW(traits_type::read(a.fd(), buf, 1024));
+}
+
+int main(int argc, char* argv[]) {
+    std::atexit([] () { sys::test::sanitize_file_descriptors(); });
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

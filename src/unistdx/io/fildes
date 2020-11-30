@@ -96,6 +96,30 @@ namespace sys {
         #endif
     };
 
+    class file_descriptor_view {
+
+    public:
+        /// Invalid file descriptor constant.
+        static constexpr const fd_type bad = -1;
+
+    protected:
+        fd_type _fd = bad;
+
+    public:
+
+        inline explicit file_descriptor_view(fd_type fd) noexcept: _fd{fd} {};
+        inline fd_type get() const noexcept { return this->_fd; }
+        bool is_socket() const noexcept;
+
+        file_descriptor_view() = default;
+        ~file_descriptor_view() = default;
+        file_descriptor_view(const file_descriptor_view&) = default;
+        file_descriptor_view& operator=(const file_descriptor_view&) = default;
+        file_descriptor_view(file_descriptor_view&&) = default;
+        file_descriptor_view& operator=(file_descriptor_view&&) = default;
+
+    };
+
     /**
     \brief File descriptor wrapper.
     \date 2018-05-22

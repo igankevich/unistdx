@@ -30,17 +30,18 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
+#ifndef UNISTDX_TEST_SANITIZE_FILE_DESCRIPTORS
+#define UNISTDX_TEST_SANITIZE_FILE_DESCRIPTORS
 
-#include <unistdx/io/pipe>
-#include <unistdx/test/sanitize_file_descriptors>
+#include <iosfwd>
 
-TEST(mypipe, close_in_destructor) {
-    for (int i=0; i<4096; ++i) { sys::pipe{}; }
+namespace sys {
+    namespace test {
+
+        void print_file_descriptors(std::ostream& out);
+        void sanitize_file_descriptors(bool ignore_standard=true, bool ignore_urandom=true);
+
+    }
 }
 
-int main(int argc, char* argv[]) {
-    std::atexit([] () { sys::test::sanitize_file_descriptors(); });
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}
+#endif // vim:filetype=cpp

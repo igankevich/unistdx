@@ -18,6 +18,7 @@ configure_file(
 
 install_headers(
     'print_flags',
+    'sanitize_file_descriptors',
     subdir: join_paths(meson.project_name(), 'test')
 )
 
@@ -108,3 +109,7 @@ if gcovr.found()
     )
 endif
 # }}}
+
+libunistdx_test_src += files([
+    'sanitize_file_descriptors.cc'
+])
