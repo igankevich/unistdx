@@ -114,7 +114,8 @@ namespace sys {
         }
 
         inline bool operator==(const ipv6_socket_address& rhs) const noexcept {
-            return address() == rhs.address() && port() == rhs.port();
+            return address() == rhs.address() &&
+                this->_address.sin6_port == rhs._address.sin6_port;
         }
 
         inline bool operator!=(const ipv6_socket_address& rhs) const noexcept {

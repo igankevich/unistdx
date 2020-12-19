@@ -53,8 +53,7 @@ namespace {
 std::ostream&
 sys::operator<<(std::ostream& out, const ipv6_socket_address& rhs) {
     using bits::Colon;
-    return out << Left_br() << rhs.address() << Right_br()
-        << Colon() << to_host_format<port_type>(rhs.port());
+    return out << Left_br() << rhs.address() << Right_br() << Colon() << rhs.port();
 }
 
 std::istream&

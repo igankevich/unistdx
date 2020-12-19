@@ -33,8 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_SOCKET_ADDRESS
 #define UNISTDX_NET_SOCKET_ADDRESS
 
-#include <sys/types.h>
 #include <netinet/in.h>
+#include <sys/types.h>
 
 #include <functional>
 #include <iosfwd>
@@ -188,7 +188,7 @@ namespace sys {
                 case socket_address_family::ipv6: p = this->ref<ipv6_socket_address>().port(); break;
                 default: break;
             }
-            return to_host_format<port_type>(p);
+            return p;
         }
 
         /// Get socket_address address family.
@@ -347,7 +347,7 @@ namespace sys {
 
     port_type
     ipaddr_traits<ipv4_address>::port(const socket_address& rhs) noexcept {
-        return to_host_format(socket_address_reinterpret_cast<ipv4_socket_address>(rhs).port());
+        return socket_address_reinterpret_cast<ipv4_socket_address>(rhs).port();
     }
 
     ipv6_address
@@ -357,7 +357,7 @@ namespace sys {
 
     port_type
     ipaddr_traits<ipv6_address>::port(const socket_address& rhs) noexcept {
-        return to_host_format(socket_address_reinterpret_cast<ipv6_socket_address>(rhs).port());
+        return socket_address_reinterpret_cast<ipv6_socket_address>(rhs).port();
     }
 
     class socket_address_view {

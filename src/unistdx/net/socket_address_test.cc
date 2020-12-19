@@ -333,11 +333,15 @@ TEST(socket_address, bad_family) {
 }
 
 TEST(ipv4_socket_address, port) {
+    using t = sys::ipaddr_traits<sys::ipv4_address>;
     sys::ipv4_socket_address sa{{127,0,0,1},1234};
     EXPECT_EQ(1234u, sa.port());
+    EXPECT_EQ(1234u, t::port(sa));
 }
 
 TEST(ipv6_socket_address, port) {
+    using t = sys::ipaddr_traits<sys::ipv6_address>;
     sys::ipv6_socket_address sa{{0,0,0,0,0,0,0,0},1234};
     EXPECT_EQ(1234u, sa.port());
+    EXPECT_EQ(1234u, t::port(sa));
 }

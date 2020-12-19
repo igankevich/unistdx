@@ -49,7 +49,7 @@ namespace {
 
 std::ostream&
 sys::operator<<(std::ostream& out, const ipv4_socket_address& rhs) {
-    return out << rhs.address() << ':' << to_host_format<port_type>(rhs.port());
+    return out << rhs.address() << ':' << rhs.port();
 }
 
 std::istream&
