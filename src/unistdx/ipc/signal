@@ -75,71 +75,68 @@ namespace sys {
         quit = SIGQUIT,
         /// Illegal processor instrucion encountered.
         illegal_instruction = SIGILL,
+        /// Breakpoint reached by the programme being debugged.
+        breakpoint = SIGTRAP,
         /// Abort signal from \man{abort,3}.
         abort = SIGABRT,
         /// Floating-point arithmetic exception.
         floating_point_exception = SIGFPE,
         /// Forcibly terminate.
         kill = SIGKILL,
+        /// Memory bus error.
+        bad_memory_access = SIGBUS,
         /// Invalid memory address was accessed.
         segmentation_fault = SIGSEGV,
+        /// Bad argument to system call.
+        bad_argument = SIGSYS,
         /// Write to a \man{pipe,2} that is closed on the other end.
         broken_pipe = SIGPIPE,
         /// A signal from \man{alarm,2} clock or interval timer \man{setitimer,2}.
         alarm = SIGALRM,
         /// Gracefully terminate.
         terminate = SIGTERM,
-        /// User-defined signal 1.
-        user_defined_1 = SIGUSR1,
-        /// User-defined signal 2.
-        user_defined_2 = SIGUSR2,
-        /// Child process stopped or terminated.
-        child = SIGCHLD,
-        /// Resume process execution.
-        resume = SIGCONT,
+        /// Out-of-band data arrived at a socket.
+        urgent = SIGURG,
+        #if defined(UNISTDX_HAVE_SIGSTKFLT)
+        /// Stack fault on coprocessor (unused signal).
+        coprocessor_stack_fault = SIGSTKFLT,
+        #endif
         /// Pause process execution.
         stop = SIGSTOP,
         /// Stop signal from controlling terminal.
         terminal_stop = SIGTSTP,
+        /// Resume process execution.
+        resume = SIGCONT,
+        /// Child process stopped or terminated.
+        child = SIGCHLD,
         /// Background process tried to read from controlling terminal.
         terminal_input = SIGTTIN,
         /// Background process tried to write to controlling terminal.
         terminal_output = SIGTTOU,
-        /// Memory bus error.
-        bad_memory_access = SIGBUS,
         #if defined(UNISTDX_HAVE_SIGPOLL)
         /// Asyncrhonous input/output event signal.
         poll = SIGPOLL,
         #endif
-        /// A signal from interval timer \man{setitimer,2}.
-        profile = SIGPROF,
-        /// Bad argument to system call.
-        bad_argument = SIGSYS,
-        /// Breakpoint reached by the programme being debugged.
-        breakpoint = SIGTRAP,
-        /// Out-of-band data arrived at a socket.
-        urgent = SIGURG,
-        /// A signal from interval timer \man{setitimer,2}.
-        virtual_alarm = SIGVTALRM,
         /// CPU time soft limit, which is set by \man{setrlimit,2}, exceeded.
         cpu_time_limit_exceeded = SIGXCPU,
         /// Maximum file size limit, which is set by \man{setrlimit,2}, exceeded.
-        file_size_limit_exceeded = SIGXFSZ
-        #if defined(UNISTDX_HAVE_SIGSTKFLT)
-        ,
-        /// Stack fault on coprocessor (unused signal).
-        coprocessor_stack_fault = SIGSTKFLT
-        #endif
-        ,
-        #if defined(UNISTDX_HAVE_SIGPWR)
-        /// Power failure.
-        power_failure = SIGPWR
-        #endif
-        ,
+        file_size_limit_exceeded = SIGXFSZ,
+        /// A signal from interval timer \man{setitimer,2}.
+        virtual_alarm = SIGVTALRM,
+        /// A signal from interval timer \man{setitimer,2}.
+        profile = SIGPROF,
         #if defined(UNISTDX_HAVE_SIGWINCH)
         /// Controlling terminal changed its window size.
-        terminal_window_resize = SIGWINCH
+        terminal_window_resize = SIGWINCH,
         #endif
+        /// User-defined signal 1.
+        user_defined_1 = SIGUSR1,
+        #if defined(UNISTDX_HAVE_SIGPWR)
+        /// Power failure.
+        power_failure = SIGPWR,
+        #endif
+        /// User-defined signal 2.
+        user_defined_2 = SIGUSR2,
     };
 
     const char* to_string(signal s) noexcept;

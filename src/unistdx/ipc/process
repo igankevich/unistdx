@@ -847,6 +847,9 @@ namespace sys {
 
     [[noreturn]] inline void exit(int status) noexcept { ::_exit(status); }
 
+    inline void enable_process_accounting(c_string path) { check(::acct(path.data())); }
+    inline void disable_process_accounting() { check(::acct(nullptr)); }
+
 }
 
 #endif // vim:filetype=cpp

@@ -38,7 +38,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <sys/xattr.h>
 
 sys::string
-sys::const_path::attribute(c_string name, file_attribute_options f) const {
+sys::path_view::attribute(c_string name, file_attribute_options f) const {
     string value;
     auto get = bool(f & file_attribute_options::no_follow) ? ::lgetxattr : ::getxattr;
     auto size = get(data(), name, nullptr, 0);
@@ -56,19 +56,19 @@ sys::const_path::attribute(c_string name, file_attribute_options f) const {
 }
 
 void
-sys::const_path::attribute(c_string name, const_string value, file_attribute_flags f1,
+sys::path_view::attribute(c_string name, const_string value, file_attribute_flags f1,
                      file_attribute_options f) {
     auto set = bool(f & file_attribute_options::no_follow) ? ::lsetxattr : ::setxattr;
     UNISTDX_CHECK(set(data(), name, value.data(), value.size(), int(f1)));
 }
 
 void
-sys::const_path::remove_attribute(c_string name, file_attribute_options f) {
+sys::path_view::remove_attribute(c_string name, file_attribute_options f) {
     auto remove = bool(f & file_attribute_options::no_follow) ? ::lremovexattr : ::removexattr;
     UNISTDX_CHECK(remove(data(), name));
 }
 
-sys::file_attributes sys::const_path::attributes(file_attribute_options f) const {
+sys::file_attributes sys::path_view::attributes(file_attribute_options f) const {
     auto list = bool(f & file_attribute_options::no_follow) ? ::llistxattr : ::listxattr;
     std::unique_ptr<char[]> names;
     auto size = list(data(), nullptr, 0);

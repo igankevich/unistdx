@@ -80,8 +80,12 @@ namespace sys {
         static constexpr inline sa_family_type sa_family() noexcept { return sa_family_type(family()); }
         inline ipv6_address address() const noexcept { return ipv6_address(this->_address.sin6_addr); }
         inline void address(ipv6_address rhs) noexcept { this->_address.sin6_addr = rhs; }
-        inline port_type port() const noexcept { return this->_address.sin6_port; }
-        inline void port(port_type rhs) noexcept { this->_address.sin6_port = to_network_format<port_type>(rhs); }
+        inline port_type port() const noexcept {
+            return to_host_format<port_type>(this->_address.sin6_port);
+        }
+        inline void port(port_type rhs) noexcept {
+            this->_address.sin6_port = to_network_format<port_type>(rhs);
+        }
         inline u32 flow_identifier() const noexcept { return this->_address.sin6_flowinfo; }
         inline void flow_identifier(u32 rhs) noexcept { this->_address.sin6_flowinfo = rhs; }
         inline u32 scope_id() const noexcept { return this->_address.sin6_scope_id; }

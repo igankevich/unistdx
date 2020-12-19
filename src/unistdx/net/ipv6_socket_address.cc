@@ -76,14 +76,14 @@ sys::operator>>(std::istream& in, ipv6_socket_address& rhs) {
 sys::bstream&
 sys::operator<<(bstream& out, const ipv6_socket_address& rhs) {
     out << rhs.address();
-    out << make_bytes(rhs.port());
+    out << port_type(rhs._address.sin6_port);
     return out;
 }
 
 sys::bstream&
 sys::operator>>(bstream& in, ipv6_socket_address& rhs) {
     rhs._address.sin6_family = sa_family_type(socket_address_family::ipv6);
-    bytes<port_type> port;
+    port_type port{};
     ipv6_address addr;
     in >> addr >> port;
     rhs._address.sin6_addr = addr;

@@ -71,14 +71,14 @@ sys::operator>>(std::istream& in, ipv4_socket_address& rhs) {
 sys::bstream&
 sys::operator<<(bstream& out, const ipv4_socket_address& rhs) {
     out << rhs.address();
-    out << make_bytes(rhs.port());
+    out << port_type(rhs._address.sin_port);
     return out;
 }
 
 sys::bstream&
 sys::operator>>(bstream& in, ipv4_socket_address& rhs) {
     rhs._address.sin_family = sa_family_type(socket_address_family::ipv4);
-    bytes<port_type> port;
+    port_type port{};
     ipv4_address addr;
     in >> addr >> port;
     rhs._address.sin_addr = addr;

@@ -331,3 +331,13 @@ TEST(socket_address, bad_family) {
     EXPECT_EQ(0u, a.size());
     EXPECT_EQ(0u, b.size());
 }
+
+TEST(ipv4_socket_address, port) {
+    sys::ipv4_socket_address sa{{127,0,0,1},1234};
+    EXPECT_EQ(1234u, sa.port());
+}
+
+TEST(ipv6_socket_address, port) {
+    sys::ipv6_socket_address sa{{0,0,0,0,0,0,0,0},1234};
+    EXPECT_EQ(1234u, sa.port());
+}

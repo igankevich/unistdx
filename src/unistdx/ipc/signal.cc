@@ -40,41 +40,41 @@ const char* sys::to_string(signal rhs) noexcept {
         case signal::keyboard_interrupt: return "keyboard_interrupt";
         case signal::quit: return "quit";
         case signal::illegal_instruction: return "illegal_instruction";
+        case signal::breakpoint: return "breakpoint";
         case signal::abort: return "abort";
         case signal::floating_point_exception: return "floating_point_exception";
         case signal::kill: return "kill";
+        case signal::bad_memory_access: return "bad_memory_access";
         case signal::segmentation_fault: return "segmentation_fault";
+        case signal::bad_argument: return "bad_argument";
         case signal::broken_pipe: return "broken_pipe";
         case signal::alarm: return "alarm";
         case signal::terminate: return "terminate";
-        case signal::user_defined_1: return "user_defined_1";
-        case signal::user_defined_2: return "user_defined_2";
-        case signal::child: return "child";
-        case signal::resume: return "resume";
-        case signal::stop: return "stop";
-        case signal::terminal_stop: return "terminal_stop";
-        case signal::terminal_input: return "terminal_input";
-        case signal::terminal_output: return "terminal_output";
-        case signal::bad_memory_access: return "bad_memory_access";
-        #if defined(UNISTDX_HAVE_SIGPOLL)
-        case signal::poll: return "poll";
-        #endif
-        case signal::profile: return "profile";
-        case signal::bad_argument: return "bad_argument";
-        case signal::breakpoint: return "breakpoint";
         case signal::urgent: return "urgent";
-        case signal::virtual_alarm: return "virtual_alarm";
-        case signal::cpu_time_limit_exceeded: return "cpu_time_limit_exceeded";
-        case signal::file_size_limit_exceeded: return "file_size_limit_exceeded";
         #if defined(UNISTDX_HAVE_SIGSTKFLT)
         case signal::coprocessor_stack_fault: return "coprocessor_stack_fault";
         #endif
-        #if defined(UNISTDX_HAVE_SIGPWR)
-        case signal::power_failure: return "power_failure";
+        case signal::stop: return "stop";
+        case signal::terminal_stop: return "terminal_stop";
+        case signal::resume: return "resume";
+        case signal::child: return "child";
+        case signal::terminal_input: return "terminal_input";
+        case signal::terminal_output: return "terminal_output";
+        #if defined(UNISTDX_HAVE_SIGPOLL)
+        case signal::poll: return "poll";
         #endif
+        case signal::cpu_time_limit_exceeded: return "cpu_time_limit_exceeded";
+        case signal::file_size_limit_exceeded: return "file_size_limit_exceeded";
+        case signal::virtual_alarm: return "virtual_alarm";
+        case signal::profile: return "profile";
         #if defined(UNISTDX_HAVE_SIGWINCH)
         case signal::terminal_window_resize: return "terminal_window_resize";
         #endif
+        case signal::user_defined_1: return "user_defined_1";
+        #if defined(UNISTDX_HAVE_SIGPWR)
+        case signal::power_failure: return "power_failure";
+        #endif
+        case signal::user_defined_2: return "user_defined_2";
         default: return "unknown";
     }
 }

@@ -94,8 +94,12 @@ namespace sys {
         static constexpr inline sa_family_type sa_family() noexcept { return sa_family_type(family()); }
         inline ipv4_address address() const noexcept { return ipv4_address(this->_address.sin_addr); }
         inline void address(ipv4_address rhs) noexcept { this->_address.sin_addr = rhs; }
-        inline port_type port() const noexcept { return this->_address.sin_port; }
-        inline void port(port_type rhs) noexcept { this->_address.sin_port = to_network_format<port_type>(rhs); }
+        inline port_type port() const noexcept {
+            return to_host_format<port_type>(this->_address.sin_port);
+        }
+        inline void port(port_type rhs) noexcept {
+            this->_address.sin_port = to_network_format<port_type>(rhs);
+        }
         inline void clear() { this->_address = {}; }
 
         static constexpr inline socket_length_type size() noexcept { return sizeof(sockinet4_type); }
@@ -120,7 +124,8 @@ namespace sys {
         }
 
         inline bool operator==(const ipv4_socket_address& rhs) const noexcept {
-            return address() == rhs.address() && port() == rhs.port();
+            return address() == rhs.address() &&
+                this->_address.sin_port == rhs._address.sin_port;
         }
 
         inline bool operator!=(const ipv4_socket_address& rhs) const noexcept {

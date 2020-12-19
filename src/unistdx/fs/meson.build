@@ -12,7 +12,7 @@ libunistdx_src += files([
 
 install_headers(
     'canonical_path',
-    'const_path',
+    'path_view',
     'copy_file',
     'directory',
     'directory_entry',

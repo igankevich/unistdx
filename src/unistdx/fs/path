@@ -36,7 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/flag>
 #include <unistdx/base/string>
 #include <unistdx/config>
-#include <unistdx/fs/const_path>
+#include <unistdx/fs/path_view>
 
 #include <memory>
 #include <string>
@@ -250,20 +250,20 @@ namespace sys {
         #if defined(UNISTDX_HAVE_SYS_XATTR_H)
         inline string attribute(c_string name,
                                 file_attribute_options f=file_attribute_options{}) const {
-            return const_path(this->data()).attribute(name,f);
+            return path_view(this->data()).attribute(name,f);
         }
         inline void attribute(c_string name, const_string value,
                               file_attribute_flags f1=file_attribute_flags{},
                               file_attribute_options f=file_attribute_options{}) {
-            return const_path(this->data()).attribute(name,value,f1,f);
+            return path_view(this->data()).attribute(name,value,f1,f);
         }
         inline void remove_attribute(c_string name,
                                      file_attribute_options f=file_attribute_options{}) {
-            return const_path(this->data()).remove_attribute(name,f);
+            return path_view(this->data()).remove_attribute(name,f);
         }
         inline file_attributes
         attributes(file_attribute_options f=file_attribute_options{}) const {
-            return const_path(this->data()).attributes(f);
+            return path_view(this->data()).attributes(f);
         }
         #endif
 
