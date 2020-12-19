@@ -38,6 +38,6 @@ const char* dl::error_category::name() const noexcept {
     return "dl";
 }
 
-std::string dl::error_category::message(int ev) const noexcept {
+std::string dl::error_category::message(int) const noexcept {
     return ::dlerror();
 }

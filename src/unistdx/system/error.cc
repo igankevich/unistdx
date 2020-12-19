@@ -96,9 +96,9 @@ std::vector<sys::backtrace_symbol> sys::backtrace_symbols() noexcept {
             if (!sym) { continue; }
             auto demangled_name = demangle(sym.name(), buf);
             #if defined(UNISTDX_ENABLE_BACKTRACE)
-            symb.emplace_back(std::move(demangled_name), context, dw::address(addresses[i]));
+            symb.emplace_back(demangled_name, context, dw::address(addresses[i]));
             #else
-            symb.emplace_back(sym.filename(), std::move(demangled_name), 0);
+            symb.emplace_back(sym.filename(), demangled_name, 0);
             #endif
         }
         #else
