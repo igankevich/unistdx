@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.49.2',
+    version: '0.50.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -155,6 +155,7 @@ foreach pair : [
     ['signal.h', 'SIGWINCH'],
     ['stdlib.h', 'mkostemp'],
     ['stdlib.h', 'mkstemp'],
+    ['sys/eventfd.h', 'eventfd'],
     ['sys/ioctl.h', 'FIONREAD'],
     ['sys/ioctl.h', 'SIOCADDMULTI'],
     ['sys/ioctl.h', 'SIOCDELMULTI'],

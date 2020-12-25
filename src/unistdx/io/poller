@@ -41,12 +41,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/unlock_guard>
 #include <unistdx/bits/no_copy_and_move>
 #include <unistdx/io/epoll_event>
+#include <unistdx/io/event_file_descriptor>
 #include <unistdx/io/fildes>
 #include <unistdx/io/pipe>
-
-#if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
-#include <unistdx/base/log_message>
-#endif
 
 namespace sys {
 
@@ -78,8 +75,12 @@ namespace sys {
     private:
         static const int no_timeout = -1;
         fildes _epollfd;
+        #if defined(UNISTDX_HAVE_EVENTFD)
+        event_file_descriptor _event_fd;
+        #else
         /// Notification pipe.
         pipe _pipe;
+        #endif
         container_type _events;
         /// The number of events after the last wait operation.
         int _nevents = 0;
@@ -95,9 +96,8 @@ namespace sys {
         inline explicit
         event_poller(int maxevents=4096/sizeof(epoll_event)):
         _epollfd(::epoll_create1(EPOLL_CLOEXEC)),
-        _pipe(),
         _events(std::max(maxevents, 1)) {
-            this->xadd(epoll_event(this->pipe_in(), event::in));
+            emplace(this->pipe_in(), event::in);
         }
 
         ~event_poller() = default;
@@ -110,7 +110,11 @@ namespace sys {
         */
         inline fd_type
         pipe_in() const noexcept {
+            #if defined(UNISTDX_HAVE_EVENTFD)
+            return this->_event_fd.fd();
+            #else
             return this->_pipe.in().fd();
+            #endif
         }
 
         /**
@@ -118,30 +122,32 @@ namespace sys {
         */
         inline void
         notify_one() noexcept {
-            #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
-            sys::log_message("poller", "notify_one");
-            #endif
+            #if defined(UNISTDX_HAVE_EVENTFD)
+            this->_event_fd.write(1);
+            #else
             char c = '!';
             this->_pipe.out().write(&c, sizeof(char));
+            #endif
         }
 
         /// \copydoc notify_one
-        inline void
-        notify_all() noexcept {
-            this->notify_one();
-        }
+        inline void notify_all() noexcept { this->notify_one(); }
 
         /// Returns iterator to the beginning of array of events.
-        inline const_iterator
-        begin() const noexcept {
-            return this->_events.data();
-        }
+        inline const_iterator begin() const noexcept { return this->_events.data(); }
 
         /// Returns iterator to the end of array of events.
         inline const_iterator
         end() const noexcept {
             return this->_events.data() + this->_nevents;
         }
+
+        /**
+        \brief Add file descriptor-event mask pair to the poller.
+        \throws bad_call
+        \see \man{epoll_ctl,2}
+        */
+        inline void insert(epoll_event ev) { control(EPOLL_CTL_ADD, ev); }
 
         /**
         \brief
@@ -151,38 +157,21 @@ namespace sys {
         \throws bad_call
         \see \man{epoll_ctl,2}
         */
-        inline void
-        emplace(fd_type fd, event ev) {
-            this->xadd(epoll_event(fd, ev));
-        }
-
-        /**
-        \brief Add file descriptor-event mask pair to the poller.
-        \throws bad_call
-        \see \man{epoll_ctl,2}
-        */
-        inline void
-        insert(const epoll_event& ev) {
-            this->xadd(ev);
-        }
+        inline void emplace(fd_type fd, event ev) { insert(epoll_event(fd, ev)); }
 
         /**
         \brief Update event mask for existing file descriptor.
         \see \man{epoll_ctl,2}
         */
-        inline void
-        replace(const epoll_event& ev) {
-            this->xmod(ev);
-        }
+        inline void replace(epoll_event ev) { control(EPOLL_CTL_MOD, ev); }
 
         /**
         \brief Remove file descriptor \p fd from the poller.
         \throws bad_call
         \see \man{epoll_ctl,2}
         */
-        inline void
-        erase(fd_type fd) {
-            this->xdel(fd);
+        inline void erase(fd_type fd) {
+            control(EPOLL_CTL_DEL, fd);
         }
 
         /**
@@ -192,10 +181,7 @@ namespace sys {
         \details
         Equivalent to <code>erase(ev.fd())</code>.
         */
-        inline void
-        erase(const epoll_event& ev) {
-            this->xdel(ev.fd());
-        }
+        inline void erase(const epoll_event& ev) { erase(ev.fd()); }
 
         /**
         Change maximum number of events that the poller handles at a time
@@ -360,65 +346,40 @@ namespace sys {
 
     private:
 
-        void
-        xadd(epoll_event ev) {
-            UNISTDX_CHECK(
-                ::epoll_ctl(this->epoll_fd(), EPOLL_CTL_ADD, ev.fd(), &ev)
-            );
-        }
-
-        void
-        xmod(epoll_event ev) {
-            UNISTDX_CHECK(
-                ::epoll_ctl(this->epoll_fd(), EPOLL_CTL_MOD, ev.fd(), &ev)
-            );
-        }
-
-        void
-        xdel(fd_type fd) {
-            UNISTDX_CHECK(
-                ::epoll_ctl(this->epoll_fd(), EPOLL_CTL_DEL, fd, nullptr)
-            );
-        }
-
         template <class Lock>
         int
         poll_wait(Lock& lock, int timeout_millis) {
-            int nfds;
             unlock_guard<Lock> g2(lock);
-            #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
-            sys::log_message("poller", "wait");
-            #endif
-            nfds = ::epoll_wait(
+            auto nfds = ::epoll_wait(
                 this->_epollfd.fd(),
                 this->_events.data(),
                 this->_events.size(),
                 timeout_millis
             );
             UNISTDX_CHECK(nfds);
-            #if !defined(NDEBUG) && defined(UNISTDX_DEBUG_EVENT_POLLER)
-            sys::log_message("poller", "wake up nfds=_", nfds);
-            #endif
             this->_nevents = nfds;
-            if (nfds > 0) {
-                // TODO this is inefficient
-                this->consume_pipe();
-            }
+            if (nfds > 0) { read_notification(); }
             return nfds;
         }
 
-        void
-        consume_pipe() {
+        void read_notification() {
+            #if defined(UNISTDX_HAVE_EVENTFD)
+            this->_event_fd.read();
+            #else
             const size_t n = 20;
             fd_type fd = this->pipe_in();
             char tmp[n];
             ssize_t c;
             while ((c = ::read(fd, tmp, n)) != -1) ;
+            #endif
         }
 
-        inline fd_type
-        epoll_fd() noexcept {
-            return this->_epollfd.fd();
+        inline void control(int operation, epoll_event& ev) {
+            UNISTDX_CHECK(::epoll_ctl(this->_epollfd.fd(), operation, ev.fd(), &ev));
+        }
+
+        inline void control(int operation, fd_type fd) {
+            UNISTDX_CHECK(::epoll_ctl(this->_epollfd.fd(), operation, fd, nullptr));
         }
 
     };

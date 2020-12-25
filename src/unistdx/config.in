@@ -75,6 +75,7 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_COPY_FILE_RANGE
 #mesondefine UNISTDX_HAVE_DLADDR
 #mesondefine UNISTDX_HAVE_DTTOIF
+#mesondefine UNISTDX_HAVE_EVENTFD
 #mesondefine UNISTDX_HAVE_FIONREAD
 #mesondefine UNISTDX_HAVE_F_GETPIPE_SZ
 #mesondefine UNISTDX_HAVE_F_SETNOSIGPIPE
