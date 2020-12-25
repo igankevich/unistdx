@@ -76,7 +76,6 @@ namespace sys {
 
 #define UNISTDX_PRECONDITION(cond) \
     if (cond) {} else { \
-        ::sys::backtrace(2); \
         ::std::string s; \
         s += __FILE__ ":" UNISTDX_STRINGIFY(__LINE__) ":"; \
         s += __func__; \
@@ -85,22 +84,16 @@ namespace sys {
     }
 
 #define UNISTDX_POSTCONDITION(cond) \
-    struct UNISTDX_COMBINE(unistdx_postcondition_, __LINE__) { \
-        inline UNISTDX_COMBINE(~unistdx_postcondition_, __LINE__)() { \
-            if (cond) {} else { \
-                ::sys::backtrace(2); \
-                ::std::string s; \
-                s += __FILE__ ":" UNISTDX_STRINGIFY(__LINE__) ":"; \
-                s += __func__; \
-                s += " Postcondition \"" #cond "\" failed"; \
-                throw ::sys::postcondition_failure(s); \
-            } \
-        } \
-    } UNISTDX_COMBINE(unistdx_postcondition_instance_, __LINE__);
+    if (cond) {} else { \
+        ::std::string s; \
+        s += __FILE__ ":" UNISTDX_STRINGIFY(__LINE__) ":"; \
+        s += __func__; \
+        s += " Postcondition \"" #cond "\" failed"; \
+        throw ::sys::postcondition_failure(s); \
+    }
 
 #define UNISTDX_ASSERTION(cond) \
     if (cond) {} else { \
-        ::sys::backtrace(2); \
         ::std::string s; \
         s += __FILE__ ":" UNISTDX_STRINGIFY(__LINE__) ":"; \
         s += __func__; \
