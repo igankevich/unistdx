@@ -36,6 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistd.h>
 
 #include <unistdx/base/check>
+#include <unistdx/base/types>
 #include <unistdx/fs/path>
 #include <unistdx/io/fd_type>
 
@@ -52,6 +53,30 @@ namespace sys {
         int ret = ::isatty(f);
         UNISTDX_CHECK(ret);
         return ret == 1;
+    }
+
+    namespace terminal {
+
+        template <size_t N, char Ch>
+        struct escape_sequence { u32 args[N]; };
+
+        template <size_t N, char Ch>
+        inline std::ostream& operator<<(std::ostream& out, const escape_sequence<N,Ch>& rhs) {
+            out.put('\27').put('[');
+            if (N != 0) { out << rhs.args[0]; }
+            for (size_t i=1; i<N; ++i) { out.put(';'); out << rhs.args[i]; }
+            return out.put(Ch);
+        }
+
+        inline escape_sequence<1,'m'> reset() noexcept { return {0}; }
+        inline escape_sequence<1,'m'> bold() noexcept { return {1}; }
+        inline escape_sequence<1,'m'> underline() noexcept { return {4}; }
+        inline escape_sequence<1,'m'> reversed() noexcept { return {7}; }
+        inline escape_sequence<5,'m'> foreground_color(u8 r, u8 g, u8 b) noexcept { return {38,5,r,g,b}; }
+        inline escape_sequence<5,'m'> background_color(u8 r, u8 g, u8 b) noexcept { return {48,5,r,g,b}; }
+        inline escape_sequence<2,'H'> move(u32 line, u32 column) noexcept { return {line,column}; }
+        inline escape_sequence<0,'J'> clear() noexcept { return {}; }
+
     }
 
 }
