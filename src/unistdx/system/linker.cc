@@ -39,5 +39,5 @@ const char* dl::error_category::name() const noexcept {
 }
 
 std::string dl::error_category::message(int) const noexcept {
-    return ::dlerror();
+    return std::string("libdl error");
 }

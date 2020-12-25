@@ -63,13 +63,21 @@ namespace dl {
     }
 
     inline int call(int ret) {
-        if (ret < 0) { throw std::system_error(-1, dl_category); }
+        if (ret < 0) {
+            if (const char* what = ::dlerror()) {
+                throw std::system_error(-1, dl_category, what);
+            }
+        }
         return ret;
     }
 
     template <class T>
     inline T* call(T* ret) {
-        if (!ret) { throw std::system_error(-1, dl_category); }
+        if (!ret) {
+            if (const char* what = ::dlerror()) {
+                throw std::system_error(-1, dl_category, what);
+            }
+        }
         return ret;
     }
 
