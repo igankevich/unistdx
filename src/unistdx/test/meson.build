@@ -113,3 +113,5 @@ endif
 libunistdx_test_src += files([
     'sanitize_file_descriptors.cc'
 ])
+
+unistdx_test_src = files(['main.cc'])

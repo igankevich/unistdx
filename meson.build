@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.50.0',
+    version: '0.51.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -113,6 +113,7 @@ foreach pair : [
     ['fcntl.h', 'splice'],
     ['grp.h', 'getgrgid_r'],
     ['grp.h', 'getgrnam_r'],
+    ['link.h', 'dl_iterate_phdr'],
     ['linux/sockios.h', 'SIOCBRADDBR'],
     ['linux/sockios.h', 'SIOCBRADDIF'],
     ['linux/sockios.h', 'SIOCBRDELBR'],

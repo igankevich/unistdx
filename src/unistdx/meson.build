@@ -96,6 +96,12 @@ unistdx_test = declare_dependency(
     dependencies: unistdx_test_deps + unistdx_test_libs,
 )
 
+executable(
+    'unistdx-test',
+    sources: unistdx_test_src,
+    dependencies: [unistdx]
+)
+
 if with_tests
     foreach tuple : libunistdx_tests
         file = tuple[0]

@@ -74,6 +74,7 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_CLONE_SYSVSEM
 #mesondefine UNISTDX_HAVE_COPY_FILE_RANGE
 #mesondefine UNISTDX_HAVE_DLADDR
+#mesondefine UNISTDX_HAVE_DL_ITERATE_PHDR
 #mesondefine UNISTDX_HAVE_DTTOIF
 #mesondefine UNISTDX_HAVE_EVENTFD
 #mesondefine UNISTDX_HAVE_FIONREAD
