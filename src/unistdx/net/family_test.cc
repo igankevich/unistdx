@@ -31,37 +31,27 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/net/family>
-
 #include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/operator>
 
-struct family_test: public ::testing::TestWithParam<sys::socket_address_family> {};
-
-std::vector<sys::socket_address_family> all_families{
-    sys::socket_address_family::unspecified,
-    sys::socket_address_family::inet,
-    sys::socket_address_family::inet6,
-    sys::socket_address_family::unix,
-    #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-    sys::socket_address_family::netlink
-    #endif
-};
-
-TEST_P(family_test, bstream_insert_extract) {
-    test::bstream_insert_extract(GetParam());
+void test_family_insert_extract() {
+    for (auto family : {sys::socket_address_family::unspecified,
+        sys::socket_address_family::ipv4,
+        sys::socket_address_family::ipv6,
+        sys::socket_address_family::unix,
+        #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
+        sys::socket_address_family::netlink,
+        #endif
+    }) {
+        test::bstream_insert_extract(family);
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(
-    for_each_family,
-    family_test,
-    ::testing::ValuesIn(all_families)
-);
-
-TEST(family, print) {
+void test_family_print() {
     test::stream_insert_equals("inet", sys::socket_address_family::inet);
     test::stream_insert_equals("unknown", sys::socket_address_family(1000));
 }
 
-TEST(family, bstream_insert_extract_fails) {
+void test_family_bstream_insert_extract_fails() {
     test::bstream_insert_extract_fails(sys::socket_address_family(1000));
 }

@@ -48,19 +48,22 @@ install_headers(
 )
 
 libunistdx_tests += [
-    [files('base64_test.cc')],
-    [files('bit_count_test.cc')],
-    [files('byte_swap_test.cc')],
-    [files('bytes_test.cc')],
-    [files('ethernet_address_test.cc')],
-    [files('hosts_test.cc')],
-    [files('family_test.cc')],
-    [files('interface_address_test.cc')],
-    [files('interface_socket_address_test.cc')],
-    [files('ipv4_address_test.cc')],
-    [files('netlink_poller_test.cc')],
-    [files('network_interface_test.cc')],
-    [files('socket_test.cc')],
-    [files('socket_address_test.cc')],
-    [files('veth_interface_test.cc')],
-]
+    [files([
+        'base64_test.cc',
+        'bit_count_test.cc',
+        'byte_swap_test.cc',
+        'bytes_test.cc',
+        'ethernet_address_test.cc',
+        'endian_test.cc',
+        'hosts_test.cc',
+        'family_test.cc',
+        'interface_address_test.cc',
+        'interface_socket_address_test.cc',
+        'ipv4_address_test.cc',
+        'netlink_poller_test.cc',
+        'network_interface_test.cc',
+        'socket_test.cc',
+        'socket_address_test.cc',
+        'veth_interface_test.cc',
+        ])],
+    ]

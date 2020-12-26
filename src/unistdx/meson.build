@@ -30,7 +30,7 @@ subdir('test')
 
 unistdx_deps = []
 unistdx_libs = []
-if with_debug or with_backtrace
+if with_debug or with_backtrace or with_tests
     unistdx_libs += dwx
 endif
 if libdl.found()
@@ -65,8 +65,8 @@ unistdx = declare_dependency(
     dependencies: unistdx_deps + unistdx_libs,
 )
 
-unistdx_test_deps = []
-unistdx_test_libs = [unistdx]
+unistdx_test_deps = [threads]
+unistdx_test_libs = [unistdx,dwx]
 
 unistdx_test_lib = library(
     'unistdx-test',
@@ -94,12 +94,6 @@ unistdx_test = declare_dependency(
     link_with: unistdx_test_lib,
     include_directories: src,
     dependencies: unistdx_test_deps + unistdx_test_libs,
-)
-
-executable(
-    'unistdx-test',
-    sources: unistdx_test_src,
-    dependencies: [unistdx]
 )
 
 if with_tests
@@ -138,7 +132,7 @@ if with_tests
                 if args.length() != 0
                     tmp += '--' + '_'.join(args)
                 endif
-                test(tmp, exe, args: args)
+                test(tmp, exe, args: args, env: ['prefix=test_'])
             endforeach
         endforeach
     endforeach

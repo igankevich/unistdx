@@ -33,6 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BITS_PROCESS
 #define UNISTDX_BITS_PROCESS
 
+#define UNISTDX_DEGUG_PROCESS
+
 namespace sys {
 
     namespace bits {
@@ -45,7 +47,7 @@ namespace sys {
 
             template <class Function>
             inline static int
-            call(Function f) {
+            call(Function f) noexcept {
                 #if defined(UNISTDX_DEGUG_PROCESS)
                 return f();
                 #else
@@ -61,7 +63,7 @@ namespace sys {
 
             template <class F>
             static int
-            child_main(void* arg) {
+            child_main(void* arg) noexcept {
                 F* func = reinterpret_cast<F*>(arg);
                 #if defined(UNISTDX_DEGUG_PROCESS)
                 return (*func)();
@@ -84,7 +86,7 @@ namespace sys {
 
             template <class Function>
             inline static int
-            call(Function f) {
+            call(Function f) noexcept {
                 #if defined(UNISTDX_DEGUG_PROCESS)
                 f();
                 return 0;
@@ -101,7 +103,7 @@ namespace sys {
 
             template <class F>
             static int
-            child_main(void* arg) {
+            child_main(void* arg) noexcept {
                 F* func = reinterpret_cast<F*>(arg);
                 #if defined(UNISTDX_DEGUG_PROCESS)
                 (*func)();

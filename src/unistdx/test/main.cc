@@ -30,52 +30,69 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <iostream>
+#include <unistdx/test/test_executor>
 
-#include <unistdx/system/error>
-#include <unistdx/system/linker>
 
-void test_function() {
-    std::clog << "hello world" << std::endl;
+using namespace sys::test;
+
+void test_function(sys::test::Test* t) {
+    std::clog << "name=" << t->symbol().short_name() << std::endl;
+    std::clog << "stderr hello world" << std::endl;
+    std::cout << "stdout hello world" << std::endl;
+    sys::this_process::send(sys::signal::segmentation_fault);
+    //throw std::invalid_argument("asdasd");
+    //std::abort();
+    //throw "asdasd";
 }
 
 int main(int argc, char* argv[]) {
-    sys::for_each_shared_object([] (const sys::shared_object& obj, size_t nobjects) {
+    sys::test::Test_executor tests;
+    std::string prefix = "test_";
+    dl::for_each_shared_object([&] (const elf::shared_object& obj, size_t nobjects) {
         sys::string buf(4096);
         for (const auto& prg : obj) {
-            if (prg.type() != sys::segment_types::dynamic) { continue; }
-            auto dynamic_section = reinterpret_cast<sys::dynamic_section*>(
+            if (prg.type() != elf::segment_types::dynamic) { continue; }
+            auto dynamic_section = reinterpret_cast<elf::dynamic_section*>(
                 obj.base_address() + prg.virtual_address());
-            using tags = sys::dynamic_section_tags;
-            sys::elf_word* hash{};
-            sys::elf_word num_symbols{};
+            using tags = elf::dynamic_section_tags;
+            elf::elf_word* hash{};
+            elf::elf_word num_symbols{};
             char* strings{};
-            sys::symbol* symbols{};
+            elf::symbol* symbols{};
             for (; *dynamic_section; ++dynamic_section) {
                 //std::clog << "tag: " << int(dynamic_section->tag()) << std::endl;
                 switch (dynamic_section->tag()) {
                     case tags::hash:
-                        hash = dynamic_section->address<sys::elf_word>();
+                        hash = dynamic_section->address<elf::elf_word>();
                         num_symbols = hash[1];
                         break;
                     case tags::string_table:
                         strings = dynamic_section->address<char>();
                         break;
                     case tags::symbol_table:
-                        symbols = dynamic_section->address<sys::symbol>();
+                        symbols = dynamic_section->address<elf::symbol>();
                         break;
                     default:
                         break;
                 }
             }
             if (symbols && strings) {
-                for (sys::elf_word i=0; i<num_symbols; ++i) {
-                    auto name = &strings[symbols[i].name()];
-                    std::clog << sys::demangle(name, buf) << std::endl;
+                for (elf::elf_word i=0; i<num_symbols; ++i) {
+                    const auto& sym = symbols[i];
+                    auto name = &strings[sym.name()];
+                    if (*name == 0) { continue; }
+                    std::string demangled_name = sys::demangle(name, buf);
+                    if (demangled_name.compare(0, prefix.size(), prefix) == 0) {
+                        sys::test::Symbol s;
+                        s.demangled_name(std::move(demangled_name));
+                        s.original_name(std::string(name));
+                        s.address(reinterpret_cast<void*>(sym.address()));
+                        tests.emplace(std::move(s));
+                    }
                 }
             }
         }
         return 1;
     });
-    return 0;
+    return tests.run();
 }

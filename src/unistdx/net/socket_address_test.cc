@@ -43,69 +43,61 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/socket_address>
 
 #include <unistdx/test/bstream_insert_extract>
+#include <unistdx/test/language>
 #include <unistdx/test/make_types>
+#include <unistdx/test/operator>
 
-//void
-//check_read(const char* str, sys::socket_address expected_result) {
-    #define check_read(str, expected_result) { \
-    sys::socket_address addr; \
-    std::stringstream s; \
-    s << str; \
-    s >> addr; \
-    EXPECT_EQ(expected_result, addr); \
-}
+using namespace sys::test::lang;
 
-#define EXPECT_UNIX_SOCKET_ADDRESS(str) { \
-    sys::socket_address addr; \
-    std::stringstream s; \
-    s << str; \
-    s >> addr; \
-    EXPECT_EQ(sys::socket_address_family::unix, addr.family()); \
+inline void
+expect_unix_socket_address(const std::string& string_representation) {
+    using namespace sys::test::lang;
+    std::stringstream tmp;
+    tmp << string_representation;
+    sys::socket_address actual_value{};
+    tmp >> actual_value;
+    expect(value(sys::socket_address_family::unix) == value(actual_value.family()));
 }
 
 template <class T>
-struct EndpointTest: public ::testing::Test {
-
+struct PRNG {
     using traits_type = sys::ipaddr_traits<T>;
     using int_type = typename T::rep_type;
+    using sa = typename traits_type::socket_address_type;
     typedef std::independent_bits_engine<
         std::random_device,
         8*sizeof(int_type),
         int_type> engine_type;
-
-    sys::socket_address
-    random_addr() {
-        using sa = typename traits_type::socket_address_type;
-        return sa{T{generator()}, 0};
-    }
-
-    template <class Iterator>
-    void
-    generate_random(Iterator first, Iterator last) {
-        std::generate(
-            first,
-            last,
-            std::bind(&EndpointTest<T>::random_addr, this)
-        );
-    }
-
     engine_type generator;
+
+    inline sa random_address() { return sa{T{generator()}, 0}; }
+
 };
 
 TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_address, sys::ipv6_address));
 
-TYPED_TEST(EndpointTest, WriteReadSingle) {
-    sys::socket_address addr1 = this->random_addr();
+template <class T>
+void test_socket_address_write_read_single() {
+    PRNG<T> prng;
+    sys::socket_address addr1 = prng.random_address();
     sys::socket_address addr2;
     std::stringstream s;
     s << addr1;
     s >> addr2;
-    EXPECT_EQ(addr1, addr2);
+    expect(value(addr1) == value(addr2));
 }
 
-TYPED_TEST(EndpointTest, WriteReadMultiple) {
+void test_socket_address_write_read_single() {
+    test_socket_address_write_read_single<sys::ipv4_address>();
+    test_socket_address_write_read_single<sys::ipv6_address>();
+}
+
+template <class T>
+void test_socket_address_write_read_multiple() {
+    PRNG<T> prng;
     std::vector<sys::socket_address> addrs(10);
-    this->generate_random(addrs.begin(), addrs.end());
+    std::generate(addrs.begin(), addrs.end(),
+                  [&] () { return prng.random_address(); });
     // write
     std::stringstream os;
     std::ostream_iterator<sys::socket_address> oit(os, "\n");
@@ -114,234 +106,215 @@ TYPED_TEST(EndpointTest, WriteReadMultiple) {
     std::vector<sys::socket_address> addrs2;
     std::istream_iterator<sys::socket_address> iit(os), eos;
     std::copy(iit, eos, std::back_inserter(addrs2));
-    EXPECT_EQ(addrs, addrs2);
+    expect(value(addrs) == value(addrs2));
 }
 
-TEST(EndpointIPv4Test, All) {
-    EXPECT_EQ(
-        sizeof(sys::sockinet4_type),
-        sys::socket_address(sys::ipv4_socket_address{{127,0,0,1}, 0}).size()
-    );
+void test_socket_address_write_read_multiple() {
+    test_socket_address_write_read_multiple<sys::ipv4_address>();
+    test_socket_address_write_read_multiple<sys::ipv6_address>();
+}
+
+void test_socket_address_ipv4_all() {
+    expect(value(sizeof(sys::sockinet4_type)) ==
+           value(sys::socket_address(sys::ipv4_socket_address{{127,0,0,1}, 0}).size()));
     // basic functionality
-    check_read("0.0.0.0:0", sys::socket_address(sys::ipv4_socket_address{{0,0,0,0}, 0}));
-    check_read("0.0.0.0:1234", sys::socket_address(sys::ipv4_socket_address{{0,0,0,0}, 1234}));
-    check_read("0.0.0.0:65535", sys::socket_address(sys::ipv4_socket_address{{0,0,0,0}, 65535}));
-    check_read("10.0.0.1:0", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 0}));
-    check_read("255.0.0.1:0", sys::socket_address(sys::ipv4_socket_address{{255,0,0,1}, 0}));
-    check_read(
+    test::stream_extract("0.0.0.0:0", sys::socket_address(sys::ipv4_socket_address{{0,0,0,0}, 0}));
+    test::stream_extract("0.0.0.0:1234", sys::socket_address(sys::ipv4_socket_address{{0,0,0,0}, 1234}));
+    test::stream_extract("0.0.0.0:65535", sys::socket_address(sys::ipv4_socket_address{{0,0,0,0}, 65535}));
+    test::stream_extract("10.0.0.1:0", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 0}));
+    test::stream_extract("255.0.0.1:0", sys::socket_address(sys::ipv4_socket_address{{255,0,0,1}, 0}));
+    test::stream_extract(
         "255.255.255.255:65535",
         sys::socket_address(sys::ipv4_socket_address{{255,255,255,255}, 65535})
     );
     // out of range ports
-    EXPECT_UNIX_SOCKET_ADDRESS("0.0.0.0:65536");
-    EXPECT_UNIX_SOCKET_ADDRESS("0.0.0.1:65536");
-    EXPECT_UNIX_SOCKET_ADDRESS("10.0.0.1:100000");
+    expect_unix_socket_address("0.0.0.0:65536");
+    expect_unix_socket_address("0.0.0.1:65536");
+    expect_unix_socket_address("10.0.0.1:100000");
     // out of range addrs
-    EXPECT_UNIX_SOCKET_ADDRESS("1000.0.0.1:0");
+    expect_unix_socket_address("1000.0.0.1:0");
     // good spaces
-    check_read(" 10.0.0.1:100", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 100}));
-    check_read("10.0.0.1:100 ", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 100}));
-    check_read(" 10.0.0.1:100 ", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 100}));
+    test::stream_extract(" 10.0.0.1:100", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 100}));
+    test::stream_extract("10.0.0.1:100 ", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 100}));
+    test::stream_extract(" 10.0.0.1:100 ", sys::socket_address(sys::ipv4_socket_address{{10,0,0,1}, 100}));
     // bad spaces
-    EXPECT_UNIX_SOCKET_ADDRESS("10.0.0.1: 100");
-    EXPECT_UNIX_SOCKET_ADDRESS("10.0.0.1 :100");
-    EXPECT_UNIX_SOCKET_ADDRESS("10.0.0.1 : 100");
-    EXPECT_UNIX_SOCKET_ADDRESS(" 10.0.0.1 : 100 ");
+    expect_unix_socket_address("10.0.0.1: 100");
+    expect_unix_socket_address("10.0.0.1 :100");
+    expect_unix_socket_address("10.0.0.1 : 100");
+    expect_unix_socket_address(" 10.0.0.1 : 100 ");
     // fancy addrs
-    EXPECT_UNIX_SOCKET_ADDRESS("10:100");
-    EXPECT_UNIX_SOCKET_ADDRESS("10.1:100");
-    EXPECT_UNIX_SOCKET_ADDRESS("10.0.1:100");
-    check_read("", sys::socket_address());
-    EXPECT_UNIX_SOCKET_ADDRESS("anc:100");
-    EXPECT_UNIX_SOCKET_ADDRESS(":100");
-    EXPECT_UNIX_SOCKET_ADDRESS("10.0.0.0.1:100");
+    expect_unix_socket_address("10:100");
+    expect_unix_socket_address("10.1:100");
+    expect_unix_socket_address("10.0.1:100");
+    test::stream_extract("", sys::socket_address());
+    expect_unix_socket_address("anc:100");
+    expect_unix_socket_address(":100");
+    expect_unix_socket_address("10.0.0.0.1:100");
 }
 
-TEST(EndpointIPv6Test, All) {
-    EXPECT_EQ(
-        sizeof(sys::sockinet6_type),
-        sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1}, 0}).size()
-    );
-    EXPECT_EQ(
-        sys::socket_address(
-            sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1}, 1234}),
-            100
-        ),
-        sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1}, 100})
-    );
+void test_socket_address_ipv6_all() {
+    expect(value(sizeof(sys::sockinet6_type)) ==
+           value(sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1},0}).size()));
+    expect(value(sys::socket_address(sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1},1234}),100)) ==
+           value(sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1}, 100})));
     // basic functionality
-    check_read("[::1]:0", sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1}, 0}));
-    check_read("[1::1]:0", sys::socket_address(sys::ipv6_socket_address{{1,0,0,0,0,0,0,1}, 0}));
-    check_read("[::]:0", sys::socket_address(sys::ipv6_socket_address{{0,0,0,0,0,0,0,0}, 0}));
-    check_read(
+    test::stream_extract("[::1]:0", sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,1}, 0}));
+    test::stream_extract("[1::1]:0", sys::socket_address(sys::ipv6_socket_address{{1,0,0,0,0,0,0,1}, 0}));
+    test::stream_extract("[::]:0", sys::socket_address(sys::ipv6_socket_address{{0,0,0,0,0,0,0,0}, 0}));
+    test::stream_extract(
         "[2001:1:0::123]:0",
         sys::socket_address(sys::ipv6_socket_address{{0x2001,1,0,0,0,0,0,0x123}, 0})
     );
-    check_read(
+    test::stream_extract(
         "[0:0:0:0:0:0:0:0]:0",
         sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,0}, 0})
     );
-    check_read(
+    test::stream_extract(
         "[0:0:0:0:0:0:0:0]:1234",
         sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,0}, 1234})
     );
-    check_read(
+    test::stream_extract(
         "[0:0:0:0:0:0:0:0]:65535",
         sys::socket_address(sys::ipv6_socket_address{{0x0,0,0,0,0,0,0,0}, 65535})
     );
-    check_read(
+    test::stream_extract(
         "[10:1:0:1:0:0:0:0]:0",
         sys::socket_address(sys::ipv6_socket_address{{0x10,1,0,1,0,0,0,0}, 0})
     );
-    check_read(
+    test::stream_extract(
         "[255:0:0:1:1:2:3:4]:0",
         sys::socket_address(sys::ipv6_socket_address{{0x255,0,0,1,1,2,3,4}, 0})
     );
-    check_read(
+    test::stream_extract(
         "[ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff]:65535",
         sys::socket_address(sys::ipv6_socket_address{{0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff,0xffff}, 65535})
     );
     // out of range ports
-    EXPECT_UNIX_SOCKET_ADDRESS("[::1]:65536");
-    EXPECT_UNIX_SOCKET_ADDRESS("[::0]:65536");
-    EXPECT_UNIX_SOCKET_ADDRESS("[::0]:100000");
+    expect_unix_socket_address("[::1]:65536");
+    expect_unix_socket_address("[::0]:65536");
+    expect_unix_socket_address("[::0]:100000");
     // out of range addrs
-    EXPECT_UNIX_SOCKET_ADDRESS("[1ffff::1]:0");
+    expect_unix_socket_address("[1ffff::1]:0");
     // good spaces
-    check_read(" [10::1]:100", sys::socket_address(sys::ipv6_socket_address{{0x10,0,0,0,0,0,0,1}, 100}));
-    check_read("[10::1]:100 ", sys::socket_address(sys::ipv6_socket_address{{0x10,0,0,0,0,0,0,1}, 100}));
-    check_read(" [10::1]:100 ", sys::socket_address(sys::ipv6_socket_address{{0x10,0,0,0,0,0,0,1}, 100}));
+    test::stream_extract(" [10::1]:100", sys::socket_address(sys::ipv6_socket_address{{0x10,0,0,0,0,0,0,1}, 100}));
+    test::stream_extract("[10::1]:100 ", sys::socket_address(sys::ipv6_socket_address{{0x10,0,0,0,0,0,0,1}, 100}));
+    test::stream_extract(" [10::1]:100 ", sys::socket_address(sys::ipv6_socket_address{{0x10,0,0,0,0,0,0,1}, 100}));
     // bad spaces
-    EXPECT_UNIX_SOCKET_ADDRESS("[10::1]: 100");
-    EXPECT_UNIX_SOCKET_ADDRESS("[10::1 ]:100");
-    EXPECT_UNIX_SOCKET_ADDRESS("[10::1 ]: 100");
-    EXPECT_UNIX_SOCKET_ADDRESS(" [10::1 ]: 100 ");
+    expect_unix_socket_address("[10::1]: 100");
+    expect_unix_socket_address("[10::1 ]:100");
+    expect_unix_socket_address("[10::1 ]: 100");
+    expect_unix_socket_address(" [10::1 ]: 100 ");
     // fancy addrs
-    EXPECT_UNIX_SOCKET_ADDRESS("[::1::1]:0");
-    EXPECT_UNIX_SOCKET_ADDRESS("[:::]:0");
-    EXPECT_UNIX_SOCKET_ADDRESS("[:]:0");
-    EXPECT_UNIX_SOCKET_ADDRESS("[]:0");
-    EXPECT_UNIX_SOCKET_ADDRESS("]:0");
-    EXPECT_UNIX_SOCKET_ADDRESS("[:0");
-    EXPECT_UNIX_SOCKET_ADDRESS("[10:0:0:0:0:0:0:0:1]:0");
+    expect_unix_socket_address("[::1::1]:0");
+    expect_unix_socket_address("[:::]:0");
+    expect_unix_socket_address("[:]:0");
+    expect_unix_socket_address("[]:0");
+    expect_unix_socket_address("]:0");
+    expect_unix_socket_address("[:0");
+    expect_unix_socket_address("[10:0:0:0:0:0:0:0:1]:0");
     // IPv4 mapped addrs
-    check_read(
+    test::stream_extract(
         "[::ffff:127.1.2.3]:0",
         sys::socket_address(sys::ipv6_socket_address{{0,0,0,0xffff,0x127,1,2,3}, 0})
     );
 }
 
-TEST(Endpoint, OperatorBool) {
+void test_socket_address_operator_bool() {
     // operator bool
-    EXPECT_FALSE(bool(sys::socket_address()));
-    EXPECT_TRUE(!sys::socket_address());
+    expect(!bool(sys::socket_address()));
+    expect(!sys::socket_address());
     // operator bool (IPv4)
-    EXPECT_FALSE(bool(sys::socket_address("0.0.0.0:0")));
-    EXPECT_TRUE(!sys::socket_address("0.0.0.0:0"));
-    EXPECT_TRUE(bool(sys::socket_address("127.0.0.1:100")));
-    EXPECT_FALSE(!sys::socket_address("127.0.0.1:100"));
-    EXPECT_TRUE(bool(sys::socket_address("127.0.0.1:0")));
-    EXPECT_FALSE(!sys::socket_address("127.0.0.1:0"));
+    expect(!bool(sys::socket_address("0.0.0.0:0")));
+    expect(!sys::socket_address("0.0.0.0:0"));
+    expect(bool(sys::socket_address("127.0.0.1:100")));
+    expect(!value(!sys::socket_address("127.0.0.1:100")));
+    expect(bool(sys::socket_address("127.0.0.1:0")));
+    expect(!value(!sys::socket_address("127.0.0.1:0")));
     // operator bool (IPv6)
-    EXPECT_FALSE(bool(sys::socket_address("[0:0:0:0:0:0:0:0]:0")));
-    EXPECT_TRUE(!sys::socket_address("[0:0:0:0:0:0:0:0]:0"));
-    EXPECT_FALSE(bool(sys::socket_address("[::]:0")));
-    EXPECT_TRUE(!sys::socket_address("[::]:0"));
-    EXPECT_TRUE(bool(sys::socket_address("[::1]:0")));
-    EXPECT_FALSE(!sys::socket_address("[::1]:0"));
+    expect(!bool(sys::socket_address("[0:0:0:0:0:0:0:0]:0")));
+    expect(!sys::socket_address("[0:0:0:0:0:0:0:0]:0"));
+    expect(!bool(sys::socket_address("[::]:0")));
+    expect(!sys::socket_address("[::]:0"));
+    expect(bool(sys::socket_address("[::1]:0")));
+    expect(!value(!sys::socket_address("[::1]:0")));
 }
 
-TEST(Endpoint, OperatorCopy) {
-    EXPECT_EQ(
-        sys::socket_address(sys::socket_address("10.0.0.1:1234"), 100),
-        sys::socket_address("10.0.0.1:100")
-    );
+void test_socket_address_operator_copy() {
+    expect(value(sys::socket_address(sys::socket_address("10.0.0.1:1234"),100)) ==
+           value(sys::socket_address("10.0.0.1:100")));
 }
 
-TEST(Endpoint, Literals) {
+void test_socket_address_literals() {
     using sys::ipv4_address;
     using sys::ipv6_address;
     constexpr ipv4_address any4;
     constexpr ipv6_address any6;
     sys::socket_address endpU(sys::ipv6_socket_address(ipv6_address(), 1234), 100);
     sys::socket_address endpV(sys::ipv6_socket_address(ipv6_address(), 100));
-    EXPECT_EQ(endpU, endpV);
+    expect(value(endpU) == value(endpV));
 }
 
-TEST(socket_address, unix_domain) {
-    EXPECT_EQ(sys::socket_address_family::unix, sys::socket_address("/path").family());
+void test_socket_address_unix_domain() {
+    expect(value(sys::socket_address_family::unix) ==
+           value(sys::socket_address("/path").family()));
     std::clog << sys::socket_address("/path/to/socket") << std::endl;
     std::clog << sys::socket_address("\0/path/to/socket") << std::endl;
-    EXPECT_EQ(sys::socket_address("/path"), sys::socket_address("/path"));
-    EXPECT_EQ(sys::socket_address("\0/path"), sys::socket_address("\0/path"));
-    EXPECT_NE(sys::socket_address("\0/path"), sys::socket_address("/path"));
-    EXPECT_NE(sys::socket_address("/path"), sys::socket_address("\0/path"));
-    EXPECT_NE(sys::socket_address("/path"), sys::socket_address("\0/path"));
-    EXPECT_FALSE(sys::socket_address("/path") < sys::socket_address("/path"));
-    EXPECT_TRUE(sys::socket_address("/path"));
-    EXPECT_TRUE(sys::socket_address("\0/path"));
-    EXPECT_TRUE(sys::socket_address("\0"));
-    EXPECT_FALSE(sys::socket_address());
+    expect(value(sys::socket_address("/path")) == value(sys::socket_address("/path")));
+    expect(value(sys::socket_address("\0/path")) == value(sys::socket_address("\0/path")));
+    expect(value(sys::socket_address("\0/path")) != value(sys::socket_address("/path")));
+    expect(value(sys::socket_address("/path")) != value(sys::socket_address("\0/path")));
+    expect(value(sys::socket_address("/path")) != value(sys::socket_address("\0/path")));
+    expect(!(value(sys::socket_address("/path")) <
+             value(sys::socket_address("/path"))));
+    expect(value(bool(sys::socket_address("/path"))));
+    expect(value(bool(sys::socket_address("\0/path"))));
+    expect(value(bool(sys::socket_address("\0"))));
+    expect(!value(sys::socket_address()));
 }
 
-struct socket_address_test: public ::testing::TestWithParam<sys::socket_address> {};
-
-std::vector<sys::socket_address> all_addresses{
-    sys::socket_address(),
-    sys::socket_address(sys::ipv4_socket_address{{192,168,0,1},1000}),
-    sys::socket_address(sys::ipv6_socket_address{{0,0,0,0,0,0,0,1},1000}),
-};
-
-TEST_P(socket_address_test, bstream_insert_extract) {
-    test::bstream_insert_extract(GetParam());
+void test_socket_address_bstream_insert_extract() {
+    for (const auto& sa : {sys::socket_address(),
+        sys::socket_address(sys::ipv4_socket_address{{192,168,0,1},1000}),
+        sys::socket_address(sys::ipv6_socket_address{{0,0,0,0,0,0,0,1},1000}),
+    }) {
+        test::bstream_insert_extract(sa);
+    }
 }
-
-INSTANTIATE_TEST_CASE_P(
-    for_all_socket_addresses,
-    socket_address_test,
-    ::testing::ValuesIn(all_addresses)
-);
 
 #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
-TEST(socket_address, netlink) {
-    EXPECT_EQ(
-        sys::socket_address_family::netlink,
-        sys::netlink_socket_address(RTMGRP_IPV4_IFADDR).family()
-    );
-    EXPECT_EQ(
-        sys::netlink_socket_address(RTMGRP_IPV4_IFADDR),
-        sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)
-    );
-    EXPECT_FALSE(
-        sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)
-        <
-        sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)
-    );
-    EXPECT_NE(sys::netlink_socket_address(), sys::netlink_socket_address(RTMGRP_IPV4_IFADDR));
+void test_socket_address_netlink() {
+    expect(value(sys::socket_address_family::netlink) ==
+           value(sys::netlink_socket_address(RTMGRP_IPV4_IFADDR).family()));
+    expect(value(sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)) ==
+           value(sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)));
+    expect(!(value(sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)) <
+             value(sys::netlink_socket_address(RTMGRP_IPV4_IFADDR))));
+    expect(value(sys::netlink_socket_address()) !=
+           value(sys::netlink_socket_address(RTMGRP_IPV4_IFADDR)));
 }
 #endif
 
-TEST(socket_address, bad_family) {
+void test_socket_address_bad_family() {
     sys::socket_address a;
     a.get()->sa_family = 1111;
     sys::socket_address b;
     b.get()->sa_family = 1111;
-    EXPECT_FALSE(a < b);
-    EXPECT_NE(a, b);
-    EXPECT_EQ(0u, a.size());
-    EXPECT_EQ(0u, b.size());
+    expect(!(value(a) < value(b)));
+    expect(a != b);
+    expect(value(0u) == value(a.size()));
+    expect(value(0u) == value(b.size()));
 }
 
-TEST(ipv4_socket_address, port) {
+void test_ipv4_socket_address_port() {
     using t = sys::ipaddr_traits<sys::ipv4_address>;
     sys::ipv4_socket_address sa{{127,0,0,1},1234};
-    EXPECT_EQ(1234u, sa.port());
-    EXPECT_EQ(1234u, t::port(sa));
+    expect(value(1234u) == value(sa.port()));
+    expect(value(1234u) == value(t::port(sa)));
 }
 
-TEST(ipv6_socket_address, port) {
+void test_ipv6_socket_address_port() {
     using t = sys::ipaddr_traits<sys::ipv6_address>;
     sys::ipv6_socket_address sa{{0,0,0,0,0,0,0,0},1234};
-    EXPECT_EQ(1234u, sa.port());
-    EXPECT_EQ(1234u, t::port(sa));
+    expect(value(1234u) == value(sa.port()));
+    expect(value(1234u) == value(t::port(sa)));
 }

@@ -62,7 +62,8 @@ namespace sys {
 
         template <size_t N, char Ch>
         inline std::ostream& operator<<(std::ostream& out, const escape_sequence<N,Ch>& rhs) {
-            out.put('\27').put('[');
+            if (out.iword(0) != 1) { return out; }
+            out.put('\033').put('[');
             if (N != 0) { out << rhs.args[0]; }
             for (size_t i=1; i<N; ++i) { out.put(';'); out << rhs.args[i]; }
             return out.put(Ch);

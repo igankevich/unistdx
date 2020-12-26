@@ -32,15 +32,18 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/net/interface_socket_address>
 #include <unistdx/test/bstream_insert_extract>
+#include <unistdx/test/language>
 #include <unistdx/test/operator>
 
-TEST(interface_socket_address, _) {
+void test_interface_socket_address() {
+    using namespace sys::test::lang;
     sys::interface_socket_address<sys::ipv4_address> isa{{127,0,0,1},24,33333};
-    EXPECT_EQ((sys::ipv4_address{127,0,0,1}), isa.address());
-    EXPECT_EQ(33333, isa.port());
-    EXPECT_EQ(
-        (sys::socket_address{sys::ipv4_socket_address{{127,0,0,1},33333}}),
-        isa.socket_address()
+    expect(value(sys::ipv4_address{127,0,0,1}) == value(isa.address()));
+    expect(value(33333) == value(isa.port()));
+    expect(
+        value(sys::socket_address{sys::ipv4_socket_address{{127,0,0,1},33333}})
+        ==
+        value(isa.socket_address())
     );
     test::bstream_insert_extract(isa);
     test::stream_insert_equals("127.0.0.1/24:33333", isa);

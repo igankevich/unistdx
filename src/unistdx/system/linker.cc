@@ -30,6 +30,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <ostream>
+
 #include <unistdx/system/linker>
 
 dl::error_category dl::dl_category;
@@ -40,4 +42,51 @@ const char* dl::error_category::name() const noexcept {
 
 std::string dl::error_category::message(int) const noexcept {
     return std::string("libdl error");
+}
+
+const char* elf::to_string(symbol_types rhs) noexcept {
+    switch (rhs) {
+        #if defined(STT_NOTYPE)
+        case symbol_types::none: return "none";
+        #endif
+        #if defined(STT_OBJECT)
+        case symbol_types::data: return "data";
+        #endif
+        #if defined(STT_FUNC)
+        case symbol_types::code: return "code";
+        #endif
+        #if defined(STT_SECTION)
+        case symbol_types::section: return "section";
+        #endif
+        #if defined(STT_FILE)
+        case symbol_types::file: return "file";
+        #endif
+        #if defined(STT_COMMON)
+        case symbol_types::common: return "common";
+        #endif
+        #if defined(STT_TLS)
+        case symbol_types::tls: return "tls";
+        #endif
+        #if defined(STT_NUM)
+        case symbol_types::num: return "num";
+        #endif
+        #if defined(STT_LOOS)
+        case symbol_types::loos: return "loos";
+        #endif
+        #if defined(STT_HIOS)
+        case symbol_types::hios: return "hios";
+        #endif
+        #if defined(STT_LOPROC)
+        case symbol_types::loproc: return "loproc";
+        #endif
+        #if defined(STT_HIPROC)
+        case symbol_types::hiproc: return "hiproc";
+        #endif
+        default: return nullptr;
+    }
+}
+
+std::ostream& elf::operator<<(std::ostream& out, symbol_types rhs) {
+    auto s = to_string(rhs);
+    return out << (s ? s : "unknown");
 }

@@ -32,15 +32,16 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/log_message>
 #include <unistdx/io/pipe>
 #include <unistdx/ipc/process>
 #include <unistdx/net/interface_addresses>
 #include <unistdx/net/veth_interface>
 #include <unistdx/test/config>
+#include <unistdx/test/language>
 #include <unistdx/test/print_flags>
+
+using namespace sys::test::lang;
 
 template <class ... Args>
 inline void
@@ -57,13 +58,16 @@ void print_network_interfaces() {
 
 #if defined(UNISTDX_TEST_HAVE_UNSHARE)
 void test_veth_up_down() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::exit(77);
+    #endif
     {
         sys::veth_interface veth0("veth0", "veth1");
         using flags = sys::network_interface::flag;
         veth0.up();
-        ASSERT_EQ(flags::up, (veth0.flags() & flags::up));
+        expect(value(flags::up) == value((veth0.flags() & flags::up)));
         veth0.down();
-        ASSERT_EQ(flags{}, (veth0.flags() & flags::up));
+        expect(value(flags{}) == value((veth0.flags() & flags::up)));
         sys::test::print_flags(veth0.flags());
     }
     {
@@ -86,6 +90,9 @@ void test_veth_up_down() {
 #endif
 
 void test_bare() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::exit(77);
+    #endif
     std::vector<sys::veth_interface> veths;
     for (int i=0; i<10; ++i) {
         std::clog << "i=" << i << std::endl;
@@ -101,13 +108,20 @@ void test_bare() {
 }
 
 #if defined(UNISTDX_TEST_HAVE_UNSHARE)
+/*
 void test_unshare() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::exit(77);
+    #endif
     using f = sys::unshare_flag;
     sys::this_process::unshare(f::users | f::network);
     test_bare();
 }
 
 void test_clone_unshare() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::exit(77);
+    #endif
     sys::process child{[&] () {
         try {
             test_unshare();
@@ -117,10 +131,13 @@ void test_clone_unshare() {
         }
         return 1;
     }, sys::process_flag::fork, 4096*10};
-    EXPECT_EQ(0, child.wait().exit_code());
+    expect(value(0) == value(child.wait().exit_code()));
 }
 
 void test_clone() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::exit(77);
+    #endif
     using pf = sys::process_flag;
     sys::pipe pipe;
     pipe.in().unsetf(sys::open_flag::non_blocking);
@@ -140,23 +157,7 @@ void test_clone() {
     child.init_user_namespace();
     pipe.in().close();
     pipe.out().write("x", 1);
-    EXPECT_EQ(0, child.wait().exit_code());
+    expect(value(0) == value(child.wait().exit_code()));
 }
-
-TEST(fork, _) {
-    test_clone();
-    test_clone_unshare();
-    std::clog << "-\n";
-    //test_bare();
-    test_unshare();
-    test_veth_up_down();
-}
+*/
 #endif
-
-int main(int argc, char* argv[]) {
-    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
-    std::exit(77);
-    #endif
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

@@ -30,50 +30,50 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/ipc/process>
 #include <unistdx/net/bridge_interface>
 #include <unistdx/net/netlink_poller>
 #include <unistdx/net/network_interface>
 #include <unistdx/net/veth_interface>
 #include <unistdx/test/config>
+#include <unistdx/test/language>
 #include <unistdx/test/print_flags>
 
-TEST(network_interface, flags) {
-    using f = sys::network_interface::flag;
-    sys::network_interface lo("lo");
-    ASSERT_EQ(f{}, (lo.flags() & f::up));
-    lo.flags(lo.flags() | f::up);
-    ASSERT_EQ(f::up, (lo.flags() & f::up));
-    lo.unsetf(f::up);
-    ASSERT_EQ(f{}, (lo.flags() & f::up));
-    lo.setf(f::up);
-    ASSERT_EQ(f::up, (lo.flags() & f::up));
+using namespace sys::test::lang;
+
+void unshare_network() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::_Exit(77);
+    #endif
 }
 
-TEST(network_interface, index) {
+void test_network_interface_flags() {
+    unshare_network();
+    using f = sys::network_interface::flag;
+    sys::network_interface lo("lo");
+    //expect(value(f{}) == value((lo.flags() & f::up)));
+    lo.flags(lo.flags() | f::up);
+    expect(value(f::up) == value((lo.flags() & f::up)));
+    lo.unsetf(f::up);
+    expect(value(f{}) == value((lo.flags() & f::up)));
+    lo.setf(f::up);
+    expect(value(f::up) == value((lo.flags() & f::up)));
+}
+
+void test_network_interface_index() {
+    unshare_network();
     sys::network_interface lo("lo");
     auto index = lo.index();
     sys::network_interface lo2(index);
-    EXPECT_EQ(index, lo2.index());
+    expect(value(index) == value(lo2.index()));
 }
 
-TEST(bridge_interface, add) {
+void test_bridge_interface_add() {
+    unshare_network();
     using f = sys::network_interface::flag;
     sys::bridge_interface br("br0");
     br.up();
-    ASSERT_EQ(f::up, (br.flags() & f::up));
+    expect(value(f::up) == value((br.flags() & f::up)));
     br.down();
-    ASSERT_EQ(f{}, (br.flags() & f::up));
-}
-
-int main(int argc, char* argv[]) {
-    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
-    std::exit(77);
-    #endif
-    using f = sys::unshare_flag;
-    sys::this_process::unshare(f::users | f::network);
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    expect(value(f{}) == value((br.flags() & f::up)));
 }

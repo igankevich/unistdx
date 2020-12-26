@@ -35,32 +35,33 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <sstream>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/net/bstream>
+#include <unistdx/test/language>
 
 namespace test {
 
     template <class T>
     inline void
     bstream_insert_extract(const T& rhs) {
+        using namespace sys::test::lang;
         std::stringbuf buf;
         sys::bstream str(&buf);
         str << rhs;
         T copy;
         str >> copy;
-        EXPECT_EQ(rhs, copy);
+        expect(value(rhs) == value(copy));
     }
 
     template <class T>
     inline void
     bstream_insert_extract_fails(const T& rhs) {
+        using namespace sys::test::lang;
         std::stringbuf buf;
         sys::bstream str(&buf);
         str << rhs;
         T copy;
         str >> copy;
-        EXPECT_NE(rhs, copy);
+        expect(value(rhs) != value(copy));
     }
 
 }

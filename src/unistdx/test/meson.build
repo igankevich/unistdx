@@ -111,7 +111,7 @@ endif
 # }}}
 
 libunistdx_test_src += files([
-    'sanitize_file_descriptors.cc'
+    'sanitize_file_descriptors.cc',
+    'test_executor.cc',
+    'main.cc',
 ])
-
-unistdx_test_src = files(['main.cc'])

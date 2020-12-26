@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,50 +30,49 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/net/bytes>
-
 #include <unistdx/test/operator>
 
-TEST(bytes, members) {
+using namespace sys::test::lang;
+
+void test_bytes_members() {
     const sys::bytes<sys::u32> b(0xff);
-    EXPECT_EQ(sizeof(sys::u32), b.size());
-    EXPECT_EQ(size_t(b.end() - b.begin()), b.size());
-    EXPECT_EQ(0xffu, b.value());
+    expect(value(sizeof(sys::u32)) == value(b.size()));
+    expect(value(size_t(b.end() - b.begin())) == value(b.size()));
+    expect(value(0xffu) == value(b.value()));
     sys::u32 v = b;
-    EXPECT_EQ(0xffu, v);
+    expect(value(0xffu) == value(v));
 }
 
-TEST(bytes, front_begin) {
+void test_bytes_front_begin() {
     sys::bytes<sys::u32> b;
     for (int i=0; i<4; ++i) {
         b[i] = i+1;
     }
-    EXPECT_EQ(1, b.front());
-    EXPECT_EQ(4, b.back());
+    expect(value(1) == value(b.front()));
+    expect(value(4) == value(b.back()));
     sys::bytes<sys::u32> copy(b);
     b.to_network_format();
     if (sys::is_network_byte_order()) {
-        EXPECT_EQ(copy, b);
+        expect(value(copy) == value(b));
     } else {
         EXPECT_NE(copy, b);
-        EXPECT_EQ(4, b[0]);
-        EXPECT_EQ(3, b[1]);
-        EXPECT_EQ(2, b[2]);
-        EXPECT_EQ(1, b[3]);
+        expect(value(4) == value(b[0]));
+        expect(value(3) == value(b[1]));
+        expect(value(2) == value(b[2]));
+        expect(value(1) == value(b[3]));
     }
     b.to_host_format();
-    EXPECT_EQ(copy, b);
+    expect(value(copy) == value(b));
     test::stream_insert_equals("01 02 03 04", b);
 }
 
-TEST(bytes, constructors) {
+void test_bytes_constructors() {
     sys::bytes<sys::u64> a{};
     sys::bytes<sys::u64> b(0);
-    EXPECT_EQ(a, b);
+    expect(value(a) == value(b));
     char data[8] = {1, 2, 3, 4, 5, 6, 7, 8};
     sys::bytes<sys::u64> c(std::begin(data), std::end(data));
-    EXPECT_EQ(1, c.front());
-    EXPECT_EQ(8, c.back());
+    expect(value(1) == value(c.front()));
+    expect(value(8) == value(c.back()));
 }

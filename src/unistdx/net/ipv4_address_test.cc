@@ -34,20 +34,24 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/ipv6_address>
 #include <unistdx/test/operator>
 
-TEST(IPv4Addr, Calculus) {
+using namespace sys::test::lang;
+
+void test_ipv4_address_calculus() {
     using sys::ipv4_address;
     typedef ipv4_address::rep_type rep_type;
-    EXPECT_EQ(rep_type(1), ipv4_address(127,0,0,1).position(ipv4_address(255,0,0,0)));
-    EXPECT_EQ(rep_type(5), ipv4_address(127,0,0,5).position(ipv4_address(255,0,0,0)));
-    EXPECT_EQ(ipv4_address(255,255,255,0).to_prefix(), sys::prefix_type(24));
-    EXPECT_EQ(ipv4_address(255,255,0,0).to_prefix(), sys::prefix_type(16));
-    EXPECT_EQ(ipv4_address(255,0,0,0).to_prefix(), sys::prefix_type(8));
+    expect(value(rep_type(1)) ==
+           value(ipv4_address(127,0,0,1).position(ipv4_address(255,0,0,0))));
+    expect(value(rep_type(5)) ==
+           value(ipv4_address(127,0,0,5).position(ipv4_address(255,0,0,0))));
+    expect(value(ipv4_address(255,255,255,0).to_prefix()) == value(sys::prefix_type(24)));
+    expect(value(ipv4_address(255,255,0,0).to_prefix()) == value(sys::prefix_type(16)));
+    expect(value(ipv4_address(255,0,0,0).to_prefix()) == value(sys::prefix_type(8)));
 }
 
 typedef decltype(std::right) manipulator;
 
 void
-test_print(
+print(
     const char* expected,
     sys::ipv4_address addr,
     manipulator manip,
@@ -56,31 +60,32 @@ test_print(
     std::stringstream str;
     str << std::setw(width) << manip << addr;
     std::string result = str.str();
-    EXPECT_EQ(width, result.size());
-    EXPECT_EQ(expected, str.str());
+    expect(value(width) == value(result.size()));
+    expect(value(expected) == value(str.str()));
 }
 
-TEST(ipv4_address, print_padding) {
-    test_print(" 127.0.0.1", sys::ipv4_address{127,0,0,1}, std::right, 10);
-    test_print("127.0.0.1 ", sys::ipv4_address{127,0,0,1}, std::left, 10);
+void test_ipv4_address_print_padding() {
+    print(" 127.0.0.1", sys::ipv4_address{127,0,0,1}, std::right, 10);
+    print("127.0.0.1 ", sys::ipv4_address{127,0,0,1}, std::left, 10);
 }
 
-TEST(ipv4_address, identities) {
-    EXPECT_EQ(sys::ipv4_address{}, sys::ipv4_address{"0.0.0.0"});
-    EXPECT_EQ(sys::ipv4_address(0,0,0,0), sys::ipv4_address{"0.0.0.0"});
+void test_ipv4_address_identities() {
+    expect(value(sys::ipv4_address{}) == value(sys::ipv4_address{"0.0.0.0"}));
+    expect(value(sys::ipv4_address(0,0,0,0)) == value(sys::ipv4_address{"0.0.0.0"}));
 }
 
-TEST(ipv4_address, ordering) {
-    EXPECT_LT(sys::ipv4_address("10.0.0.1"), sys::ipv4_address("10.0.0.2"));
-    EXPECT_GE(sys::ipv4_address("10.0.0.2"), sys::ipv4_address("10.0.0.1"));
+void test_ipv4_address_ordering() {
+    expect(value(sys::ipv4_address("10.0.0.1")) < value(sys::ipv4_address("10.0.0.2")));
+    expect(value(sys::ipv4_address("10.0.0.2")) >= value(sys::ipv4_address("10.0.0.1")));
 }
 
-TEST(ipv6_address, identities) {
-    EXPECT_EQ(sys::ipv6_address{}, sys::ipv6_address{"::"});
-    EXPECT_EQ(sys::ipv6_address(0,0,0,0, 0,0,0,0), sys::ipv6_address{"0:0:0:0:0:0:0:0"});
+void test_ipv6_address_identities() {
+    expect(value(sys::ipv6_address{}) == value(sys::ipv6_address{"::"}));
+    expect(value(sys::ipv6_address(0,0,0,0,0,0,0,0)) ==
+           value(sys::ipv6_address{"0:0:0:0:0:0:0:0"}));
 }
 
-TEST(ipv6_address, ordering) {
-    EXPECT_LT(sys::ipv6_address("10::1"), sys::ipv6_address("10::2"));
-    EXPECT_GE(sys::ipv6_address("10::2"), sys::ipv6_address("10::1"));
+void test_ipv6_address_ordering() {
+    expect(value(sys::ipv6_address("10::1")) < value(sys::ipv6_address("10::2")));
+    expect(value(sys::ipv6_address("10::2")) >= value(sys::ipv6_address("10::1")));
 }

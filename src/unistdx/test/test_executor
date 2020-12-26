@@ -1,0 +1,242 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2020 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
+#ifndef UNISTDX_TEST_TEST_EXECUTOR
+#define UNISTDX_TEST_TEST_EXECUTOR
+
+#include <atomic>
+#include <chrono>
+#include <deque>
+#include <iomanip>
+#include <iosfwd>
+#include <iostream>
+#include <mutex>
+#include <sstream>
+#include <thread>
+#include <typeindex>
+#include <vector>
+
+#include <unistdx/base/byte_buffer>
+#include <unistdx/io/poller>
+#include <unistdx/ipc/process>
+#include <unistdx/ipc/process_group>
+#include <unistdx/system/error>
+#include <unistdx/system/linker>
+
+namespace sys {
+    namespace test {
+
+        class Symbol {
+
+        private:
+            std::string _original_name;
+            std::string _demangled_name;
+            void* _address{};
+
+        public:
+
+            inline void original_name(std::string&& rhs) {
+                this->_original_name = std::move(rhs);
+            }
+
+            inline void demangled_name(std::string&& rhs) {
+                this->_demangled_name = std::move(rhs);
+            }
+
+            inline void address(void* rhs) noexcept { this->_address = rhs; }
+            inline const void* address() const noexcept { return this->_address; }
+            inline void* address() noexcept { return this->_address; }
+
+            inline const std::string& original_name() const noexcept {
+                return this->_original_name;
+            }
+
+            inline const std::string& demangled_name() const noexcept {
+                return this->_demangled_name;
+            }
+
+            inline std::string short_name() const noexcept {
+                auto pos = this->_demangled_name.find('(');
+                return pos == std::string::npos ? this->_demangled_name
+                    : this->_demangled_name.substr(0,pos);
+            }
+
+            template <class ... Args>
+            void call(Args&& ... args) const {
+                auto func = reinterpret_cast<void(*)(...)>(address());
+                func(std::forward<Args>(args)...);
+            }
+
+            Symbol() = default;
+            ~Symbol() = default;
+            Symbol(const Symbol&) = default;
+            Symbol& operator=(const Symbol&) = default;
+            Symbol(Symbol&&) = default;
+            Symbol& operator=(Symbol&&) = default;
+        };
+
+        class Test;
+
+        class Backtrace_thread {
+        public:
+            void* addresses[4096 / sizeof(void*)];
+            int num_addresses = 0;
+            sys::signal signal{};
+            std::mutex mutex;
+            std::condition_variable cv;
+            std::atomic<bool> stopped{false};
+            std::thread thread;
+
+            void run(Test* t);
+            void capture_backtrace(int sig);
+            inline void stop() { stopped = true; cv.notify_one(); }
+            inline void join() { if (thread.joinable()) { thread.join(); } }
+
+            Backtrace_thread() = default;
+            ~Backtrace_thread() = default;
+            Backtrace_thread(const Backtrace_thread&) = delete;
+            Backtrace_thread& operator=(const Backtrace_thread&) = delete;
+            Backtrace_thread(Backtrace_thread&&) = default;
+            Backtrace_thread& operator=(Backtrace_thread&&) = default;
+
+        };
+
+        class Test {
+
+        public:
+            enum class Status {
+                Unknown=0,
+                Success,
+                Exception,
+                Unknown_exception,
+                Killed,
+                Skipped
+            };
+
+        private:
+            Symbol _symbol;
+            Status _status = Status::Success;
+            sys::signal _signal{};
+            std::string _exception_type;
+            std::string _exception_text;
+            int _exit_code = 0;
+
+        public:
+            inline explicit Test(Symbol&& symbol): _symbol(std::move(symbol)) {}
+
+            inline const Symbol& symbol() const noexcept { return this->_symbol; }
+            inline Status status() const noexcept { return this->_status; }
+            inline void status(Status rhs) noexcept { this->_status = rhs; }
+            inline bool success() const noexcept { return status() == Status::Success; }
+            inline sys::signal signal() const noexcept { return this->_signal; }
+            inline void signal(sys::signal rhs) noexcept { this->_signal = rhs; }
+
+            inline const std::string& exception_text() const noexcept {
+                return this->_exception_text;
+            }
+
+            inline const std::string& exception_type() const noexcept {
+                return this->_exception_type;
+            }
+
+            inline void exception_type(const std::string& rhs) noexcept {
+                this->_exception_type = rhs;
+            }
+
+            inline void exception_text(const std::string& rhs) noexcept {
+                this->_exception_text = rhs;
+            }
+
+            inline int exit_code() const noexcept { return this->_exit_code; }
+            inline void exit_code(int rhs) noexcept { this->_exit_code = rhs; }
+
+            int run();
+
+            void record_error(error err);
+
+            void child_write_status(std::ostream& out) const;
+            void parent_write_status(std::ostream& out) const;
+            void write(sys::byte_buffer& out) const;
+            void read(sys::byte_buffer& in);
+
+            Test() = default;
+            ~Test() = default;
+            Test(const Test&) = delete;
+            Test& operator=(const Test&) = delete;
+            Test(Test&&) = default;
+            Test& operator=(Test&&) = default;
+
+        };
+
+        const char* to_string(Test::Status rhs) noexcept;
+        std::ostream& operator<<(std::ostream& out, Test::Status rhs);
+
+        extern thread_local Test* current_test;
+
+        class Test_executor {
+
+        public:
+            using Clock = std::chrono::steady_clock;
+            using time_point = Clock::time_point;
+            using duration = Clock::duration;
+
+        private:
+            std::vector<sys::process> _child_processes;
+            std::deque<Test> _tests;
+            sys::event_poller _poller;
+            std::mutex _mutex;
+            duration _timeout = std::chrono::seconds(30);
+
+        public:
+            template <class ... Args>
+            inline void emplace(Args&& ... args) {
+                this->_tests.emplace_back(std::forward<Args>(args)...);
+            }
+
+            int run();
+
+        };
+
+        class Test_output {
+        public:
+            Test test;
+            sys::fildes fd;
+            sys::byte_buffer output;
+
+            void write_status(std::ostream& out) const;
+        };
+
+
+    }
+}
+
+#endif // vim:filetype=cpp

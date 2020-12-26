@@ -36,9 +36,12 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/socket>
 #include <unistdx/net/socket_address>
 
+#include <unistdx/test/language>
 #include <unistdx/test/operator>
 
-TEST(Socket, GetCredentials) {
+using namespace sys::test::lang;
+
+void test_socket_get_credentials() {
     const char* path = "\0test_socket";
     sys::unix_socket_address e(path);
     sys::socket sock(sys::socket_address_family::unix);
@@ -59,23 +62,25 @@ TEST(Socket, GetCredentials) {
     sys::socket client;
     sock.accept(client, client_end);
     client.unsetf(sys::open_flag::non_blocking);
-    EXPECT_NO_THROW(client.peer_name());
+    expect(no_throw(call([&] () { client.peer_name(); })));
     sys::user_credentials creds = client.credentials();
-    EXPECT_EQ(child.id(), creds.pid);
-    EXPECT_EQ(sys::this_process::user(), creds.uid);
-    EXPECT_EQ(sys::this_process::group(), creds.gid);
+    expect(value(child.id()) == value(creds.pid));
+    expect(value(sys::this_process::user()) == value(creds.uid));
+    expect(value(sys::this_process::group()) == value(creds.gid));
     sys::process_status status = child.wait();
-    EXPECT_EQ(0, status.exit_code());
+    if (!expect(value(0) == value(status.exit_code()))) {
+        std::clog << "status=" << status << std::endl;
+    }
 }
 
-TEST(Socket, SendFDs) {
+void test_socket_send_file_descriptors() {
     const char* path = "\0testsendfds";
     sys::unix_socket_address e(path);
     sys::socket sock(sys::socket_address_family::unix);
     sock.bind(e);
     sock.unsetf(sys::open_flag::non_blocking);
     sock.listen();
-    EXPECT_NE("", test::stream_insert(sock));
+    expect(value("") != value(test::stream_insert(sock)));
     sys::process child([&] () {
         sys::socket s(sys::socket_address_family::unix);
         s.unsetf(sys::open_flag::non_blocking);
@@ -97,31 +102,33 @@ TEST(Socket, SendFDs) {
     sock.accept(client, client_end);
     client.unsetf(sys::open_flag::non_blocking);
     sys::fd_type fds[3] = {0, 0, 0};
-    EXPECT_THROW(client.receive_fds(fds, 10000), std::invalid_argument);
-    EXPECT_THROW(client.send_fds(fds, 10000), std::invalid_argument);
+    expect(throws(call([&] () { client.receive_fds(fds, 10000); })));
+    expect(throws(call([&] () { client.send_fds(fds, 10000); })));
     client.receive_fds(fds, 3);
-    EXPECT_GT(fds[0], 2);
-    EXPECT_GT(fds[1], 2);
-    EXPECT_GT(fds[2], 2);
+    expect(value(fds[0]) > value(2));
+    expect(value(fds[1]) > value(2));
+    expect(value(fds[2]) > value(2));
     sys::process_status status = child.wait();
-    EXPECT_EQ(0, status.exit_code());
+    expect(value(0) == value(status.exit_code()));
 }
 
 #if defined(UNISTDX_HAVE_TCP_USER_TIMEOUT)
-TEST(socket, user_timeout) {
+void test_socket_user_timeout() {
     sys::socket sock(sys::socket_address_family::ipv4);
     sock.set(sys::socket::options::reuse_address);
     sock.bind(sys::ipv4_socket_address{{127,0,0,1}, 0});
-    EXPECT_NO_THROW(sock.set_user_timeout(std::chrono::seconds(7)));
+    expect(no_throw(call([&] () { sock.set_user_timeout(std::chrono::seconds(7)); })));
 }
 #endif
 
-TEST(socket, bind_connect) {
+void test_socket_bind_connect() {
     try {
         sys::socket sock(sys::socket_address_family::ipv4);
         sock.bind(sys::ipv4_socket_address{{127,0,0,1},0});
         sock.connect(sys::ipv4_socket_address{{127,0,0,1},0});
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::operation_in_progress, err.errc());
+        if (!expect(value(std::errc::operation_in_progress) == value(err.errc()))) {
+            std::clog << "err.what: " << err.what() << std::endl;
+        }
     }
 }

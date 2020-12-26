@@ -23,8 +23,11 @@ if with_debug
     suffix = '-debug'
 endif
 
-if with_debug or with_backtrace
+if with_debug or with_backtrace or with_tests
     cpp_args += '-DUNISTDX_ENABLE_BACKTRACE'
+endif
+
+if with_debug or with_backtrace
     cpp_args += '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE'
     cpp_args += '-DUNW_LOCAL_ONLY'
 endif
@@ -296,7 +299,7 @@ config.set('UNISTDX_PATCHLEVEL', v[2])
 
 threads = dependency('threads')
 if with_tests
-    gtest = dependency('gtest', main: true)
+    gtest = dependency('gtest', main: false)
 endif
 
 subdir('src')

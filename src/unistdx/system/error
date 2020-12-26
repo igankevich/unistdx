@@ -44,9 +44,6 @@ For more information, please refer to <http://unlicense.org/>
 #if defined(UNISTDX_ENABLE_BACKTRACE)
 #include <dwx/dw>
 #include <unistd.h>
-#if defined(UNISTDX_HAVE_PRCTL)
-#include <sys/prctl.h>
-#endif
 #endif
 
 namespace sys {
@@ -61,6 +58,7 @@ namespace sys {
     to mangled function names.
     */
     void backtrace(int fd) noexcept;
+    void backtrace_on_signal(int sig) noexcept;
 
     const char* demangle(const char* symbol, string& buf);
 
@@ -81,7 +79,7 @@ namespace sys {
             try {
                 dw::module mod(context, addr);
                 this->object = mod.name();
-                dw::line line(context, addr);
+                dw::line line(context, addr-4);
                 std::tie(this->filename, this->line) = line.location();
             } catch (...) {
                 // ignore the absense of line information
@@ -125,6 +123,7 @@ namespace sys {
     */
 
     std::vector<backtrace_symbol> backtrace_symbols() noexcept;
+    std::vector<backtrace_symbol> backtrace_symbols(void** addresses, int size) noexcept;
 
     class error: public std::exception {
 
@@ -135,6 +134,11 @@ namespace sys {
     public:
         inline explicit error(const std::string& message) noexcept {
             this->_symbols = backtrace_symbols();
+            init(message);
+        }
+        inline explicit error(const std::string& message,
+                              void** addresses, int size) noexcept {
+            this->_symbols = backtrace_symbols(addresses, size);
             init(message);
         }
         error() = default;
@@ -154,27 +158,6 @@ namespace sys {
         void init(const std::string& message) noexcept;
 
     };
-
-    #if defined(UNISTDX_ENABLE_BACKTRACE)
-    enum struct signal: int;
-    const char* to_string(signal s) noexcept;
-    inline void backtrace_on_signal(int sig) noexcept {
-        char name[16] {'\0'};
-        #if defined(UNISTDX_HAVE_PRCTL)
-        ::prctl(PR_GET_NAME, name);
-        #endif
-        auto name_size = std::char_traits<char>::length(name);
-        ::write(STDERR_FILENO, "Caught ", 7);
-        auto signal_name = to_string(sys::signal(sig));
-        auto signal_name_size = std::char_traits<char>::length(signal_name);
-        ::write(STDERR_FILENO, signal_name, signal_name_size);
-        ::write(STDERR_FILENO, " in process \"", 13);
-        ::write(STDERR_FILENO, name, name_size);
-        ::write(STDERR_FILENO, "\"\n", 2);
-        ::sys::backtrace(STDERR_FILENO);
-        std::exit(sig);
-    }
-    #endif
 
 }
 

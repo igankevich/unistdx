@@ -37,10 +37,13 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/netlink_socket_address>
 #include <unistdx/net/network_interface>
 #include <unistdx/net/veth_interface>
+#include <unistdx/test/language>
 #include <unistdx/test/operator>
 #include <unistdx/test/print_flags>
 
-TEST(NetlinkPoller, First) {
+using namespace sys::test::lang;
+
+void test_netlink_poller_first() {
     sys::netlink_socket_address endp(0, RTMGRP_IPV4_IFADDR);
     sys::netlink_socket sock(sys::netlink_protocol::route);
     sock.bind(endp);
@@ -75,7 +78,7 @@ TEST(NetlinkPoller, First) {
     }
 }
 
-TEST(netlink, get_address) {
+void test_netlink_get_address() {
     sys::socket sock(
         sys::socket_address_family::netlink,
         sys::socket_type::raw,
@@ -102,7 +105,7 @@ TEST(netlink, get_address) {
     sys::ifaddr_message_container response;
     response.read(sock);
     for (sys::ifaddr_message_header& hdr : response) {
-        EXPECT_FALSE(hdr.delete_address());
+        expect(!value(hdr.delete_address()));
         if (hdr.new_address()) {
             sys::ifaddr_message* m = hdr.message();
             sys::ipv4_address address;
@@ -123,7 +126,7 @@ TEST(netlink, get_address) {
     }
 }
 
-TEST(ifaddr_attribute, print) {
+void test_ifaddr_attribute_print() {
     test::stream_insert_equals(
         "interface_address",
         sys::ifaddr_attribute::address
@@ -145,20 +148,21 @@ TEST(ifaddr_attribute, print) {
 struct ifaddr_attribute_test:
     public ::testing::TestWithParam<sys::ifaddr_attribute> {};
 
-std::vector<sys::ifaddr_attribute> all_attributes{
-    sys::ifaddr_attribute::unspecified,
-    sys::ifaddr_attribute::address,
-    sys::ifaddr_attribute::local_address,
-    sys::ifaddr_attribute::interface_name,
-    sys::ifaddr_attribute::broadcast_address,
-    sys::ifaddr_attribute::anycast_address,
-    sys::ifaddr_attribute::address_info,
-    sys::ifaddr_attribute::multicast_address,
-    sys::ifaddr_attribute::flags,
-};
+std::vector<sys::ifaddr_attribute> all_attributes;
 
 TEST_P(ifaddr_attribute_test, print) {
-    EXPECT_NE("unknown", test::stream_insert(GetParam()));
+    for (auto a : {sys::ifaddr_attribute::unspecified,
+        sys::ifaddr_attribute::address,
+        sys::ifaddr_attribute::local_address,
+        sys::ifaddr_attribute::interface_name,
+        sys::ifaddr_attribute::broadcast_address,
+        sys::ifaddr_attribute::anycast_address,
+        sys::ifaddr_attribute::address_info,
+        sys::ifaddr_attribute::multicast_address,
+        sys::ifaddr_attribute::flags,
+    }) {
+        expect(value("unknown") != value(test::stream_insert(a)));
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -166,8 +170,3 @@ INSTANTIATE_TEST_CASE_P(
     ifaddr_attribute_test,
     ::testing::ValuesIn(all_attributes)
 );
-
-int main(int argc, char* argv[]) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
-}

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -33,23 +33,26 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/ethernet_address>
 #include <unistdx/test/operator>
 
-TEST(ethernet_address, Calculus) {
+using namespace sys::test::lang;
+
+void test_ethernet_address_calculus() {
     using namespace sys;
-    EXPECT_EQ(ethernet_address{}, ethernet_address{});
-    EXPECT_NE(
-        ethernet_address{},
-        ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff)
+    expect(value(ethernet_address{}) == value(ethernet_address{}));
+    expect(
+        value(ethernet_address{})
+        !=
+        value(ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff))
     );
-    EXPECT_EQ(
-        ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff),
-        ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff)
+    expect(
+        value(ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff))
+        ==
+        value(ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff))
     );
 }
 
 typedef decltype(std::right) manipulator;
 
-void
-test_print(
+void do_test_print(
     const char* expected,
     sys::ethernet_address addr,
     manipulator manip = std::left,
@@ -58,19 +61,18 @@ test_print(
     std::stringstream str;
     str << std::setw(width) << manip << addr;
     std::string result = str.str();
-    EXPECT_EQ(width, result.size());
-    EXPECT_EQ(expected, str.str());
+    expect(value(width) == value(result.size()));
+    expect(value(expected) == value(result));
 }
 
-TEST(ethernet_address, print_padding) {
+void test_ethernet_address_print_padding() {
     using namespace sys;
-    test_print("00:00:00:00:00:00", ethernet_address{});
-    test_print("ff:ff:ff:ff:ff:ff", ethernet_address{0xff,0xff,0xff,0xff,0xff,0xff});
-    test_print(" 00:00:00:00:00:00", ethernet_address{}, std::right, 18);
-    test_print("00:00:00:00:00:00 ", ethernet_address{}, std::left, 18);
+    do_test_print("00:00:00:00:00:00", ethernet_address{});
+    do_test_print("ff:ff:ff:ff:ff:ff", ethernet_address{0xff,0xff,0xff,0xff,0xff,0xff});
+    do_test_print(" 00:00:00:00:00:00", ethernet_address{}, std::right, 18);
+    do_test_print("00:00:00:00:00:00 ", ethernet_address{}, std::left, 18);
 }
 
-TEST(ethernet_address, io) {
-    using namespace sys;
-    test::io_operators(ethernet_address{0xff,0xff,0xff,0xff,0xff,0xff});
+void test_ethernet_address_io() {
+    test::io_operators(sys::ethernet_address{0xff,0xff,0xff,0xff,0xff,0xff});
 }

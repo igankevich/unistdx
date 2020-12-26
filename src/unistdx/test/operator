@@ -35,6 +35,9 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <gtest/gtest.h>
 
+#include <unistdx/test/language>
+
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -43,14 +46,15 @@ namespace test {
     template<class T>
     void
     io_operators(const T& expected) {
+        using namespace sys::test::lang;
         T actual;
         std::stringstream s;
-        EXPECT_TRUE(s.good());
+        expect(s.good());
         s << expected;
-        EXPECT_TRUE(s.good());
+        expect(s.good());
         s >> actual;
-        EXPECT_FALSE(s.fail());
-        EXPECT_EQ(expected, actual);
+        expect(!s.fail());
+        expect(value(expected) == value(actual));
     }
 
     template <class T>
@@ -64,24 +68,39 @@ namespace test {
     template <class T>
     inline void
     stream_insert_equals(const char* s, const T& obj) {
-        EXPECT_EQ(s, stream_insert<T>(obj));
+        using namespace sys::test::lang;
+        expect(value(s) == value(stream_insert<T>(obj)));
     }
 
     template <class T>
     inline void
     stream_insert_contains(const char* s, const T& obj) {
+        using namespace sys::test::lang;
         std::string str = stream_insert<T>(obj);
-        EXPECT_TRUE(str.find(s) != std::string::npos)
-            << "string=" << str;
+        if (!expect(value(str.find(s)) != value(std::string::npos))) {
+            std::clog << "string=" << str;
+        }
     }
 
     template <class T>
     inline void
     stream_insert_starts_with(const char* s, const T& obj) {
-        typedef std::string::traits_type traits_type;
+        using namespace sys::test::lang;
+        using t = std::string::traits_type;
         auto actual = stream_insert<T>(obj);
-        EXPECT_EQ(0, actual.compare(0, traits_type::length(s), s))
-            << "expected " << s << "\nactual " << actual;
+        if (!expect(value(0) == value(actual.compare(0, t::length(s), s)))) {
+            std::clog << "expected " << s << "\nactual " << actual;
+        }
+    }
+
+    template <class T> inline void
+    stream_extract(const std::string& string_representation, const T& expected_value) {
+        using namespace sys::test::lang;
+        std::stringstream tmp;
+        tmp << string_representation;
+        T actual_value{};
+        tmp >> actual_value;
+        expect(value(expected_value) == value(actual_value));
     }
 
 }

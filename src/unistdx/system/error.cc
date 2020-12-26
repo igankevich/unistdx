@@ -30,6 +30,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#if defined(UNISTDX_HAVE_PRCTL)
+#include <sys/prctl.h>
+#endif
+
 #include <ostream>
 #include <sstream>
 
@@ -77,12 +81,18 @@ void sys::backtrace(int fd) noexcept {
     #endif
 }
 
-std::vector<sys::backtrace_symbol> sys::backtrace_symbols() noexcept {
+std::vector<sys::backtrace_symbol>
+sys::backtrace_symbols() noexcept {
+    const size_t size = 4096 / sizeof(void*);
+    void* addresses[size];
+    const int nptrs = ::backtrace(addresses, size);
+    return backtrace_symbols(addresses, nptrs);
+}
+
+std::vector<sys::backtrace_symbol>
+sys::backtrace_symbols(void** addresses, int nptrs) noexcept {
     #if defined(UNISTDX_HAVE_BACKTRACE)
     try {
-        const size_t size = 4096 / sizeof(void*);
-        void* addresses[size];
-        const int nptrs = ::backtrace(addresses, size);
         std::vector<backtrace_symbol> symb;
         symb.reserve(nptrs);
         string buf(4096);
@@ -198,4 +208,21 @@ const char* sys::demangle(const char* symbol, string& buf) {
     #else
     return symbol;
     #endif
+}
+
+void sys::backtrace_on_signal(int sig) noexcept {
+    char name[16] {'\0'};
+    #if defined(UNISTDX_HAVE_PRCTL)
+    ::prctl(PR_GET_NAME, name);
+    #endif
+    auto name_size = std::char_traits<char>::length(name);
+    ::write(STDERR_FILENO, "Caught ", 7);
+    auto signal_name = to_string(sys::signal(sig));
+    auto signal_name_size = std::char_traits<char>::length(signal_name);
+    ::write(STDERR_FILENO, signal_name, signal_name_size);
+    ::write(STDERR_FILENO, " in process \"", 13);
+    ::write(STDERR_FILENO, name, name_size);
+    ::write(STDERR_FILENO, "\"\n", 2);
+    ::sys::backtrace(STDERR_FILENO);
+    std::exit(sig);
 }

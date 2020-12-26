@@ -586,7 +586,7 @@ namespace sys {
         */
         inline sys::process_status
         wait(wait_flags flags = wait_flags::exited) {
-            sys::siginfo_type info;
+            sys::siginfo_type info{};
             UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
             sys::process_status status(info);
             if (status.exited()) { this->_pid = 0; }

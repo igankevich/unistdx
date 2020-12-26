@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,27 +30,16 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <stdexcept>
 
 #include <unistdx/net/byte_order>
+#include <unistdx/test/language>
 
-void
-endian_guard() {
-    union Endian {
-        constexpr Endian() {}
-        u32 i = UINT32_C(1);
-        u8 b[4];
-    } endian;
-    if ((is_network_byte_order() && endian.b[0] != 0)
-        || (!is_network_byte_order() && endian.b[0] != 1)) {
-        throw std::runtime_error(
-            "endiannes was not correctly determined at compile time"
-        );
-    }
-}
+using namespace sys::test::lang;
 
-TEST(EndianGuard, NoThrow) {
-    EXPECT_NO_THROW(endian_guard());
+void test_endian_guard() {
+    sys::u32 i = UINT32_C(1);
+    sys::u8* b = reinterpret_cast<sys::u8*>(&i);
+    expect((value(sys::is_network_byte_order()) && value(int(b[0])) == value(0))
+        || (!value(sys::is_network_byte_order()) && value(int(b[0])) == value(1)));
 }
