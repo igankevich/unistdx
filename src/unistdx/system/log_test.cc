@@ -30,11 +30,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/system/error>
 #include <unistdx/system/log>
 
-TEST(log, compilation) {
+void test_log_compilation() {
     sys::log log;
 }

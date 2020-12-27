@@ -42,10 +42,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <thread>
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/log_message>
 #include <unistdx/ipc/process>
+#include <unistdx/test/language>
 
 namespace std {
 
@@ -65,127 +64,106 @@ namespace std {
 
 }
 
-template <class Semaphore>
-struct SemaphoreWaitTest: public ::testing::Test {
+template <class Semaphore> void
+test_wait_until() {
+    using namespace sys::test::lang;
+    using semaphore_type = Semaphore;
+    semaphore_type sem;
+    std::mutex mtx;
+    std::unique_lock<std::mutex> lock(mtx);
+    typedef std::chrono::system_clock clock_type;
+    typedef std::chrono::steady_clock clock_type_2;
+    //std::clog << "wait1" << std::endl;
+    expect(value(sem.wait_until(lock,clock_type::now())) == value(std::cv_status::timeout));
+    expect(value(sem.wait_until(lock,clock_type_2::now())) == value(std::cv_status::timeout));
+    expect(value(sem.wait_for(lock,clock_type::duration::zero())) ==
+           value(std::cv_status::timeout));
+    expect(value(sem.wait_for(lock,clock_type_2::duration::zero())) ==
+           value(std::cv_status::timeout));
+    auto f = [](){ return false; };
+    auto t = [](){ return true; };
+    // wait until with predicate
+    expect(!sem.wait_until(lock, clock_type::now(), f));
+    expect(sem.wait_until(lock, clock_type::now(), t));
+    expect(!sem.wait_until(lock, clock_type_2::now(), f));
+    expect(sem.wait_until(lock, clock_type_2::now(), t));
+    // wait for with predicate
+    expect(!sem.wait_for(lock, clock_type::duration::zero(), f));
+    expect(sem.wait_for(lock, clock_type::duration::zero(), t));
+    expect(!sem.wait_for(lock, clock_type_2::duration::zero(), f));
+    expect(sem.wait_for(lock, clock_type_2::duration::zero(), t));
+    //std::clog << "wait2" << std::endl;
+    expect(value(sem.wait_until(lock,clock_type::time_point(clock_type::duration::zero()))) ==
+           value(std::cv_status::timeout));
+    expect(value(sem.wait_until(lock,clock_type_2::time_point(clock_type_2::duration::zero()))) ==
+           value(std::cv_status::timeout));
+}
 
-    typedef Semaphore semaphore_type;
-
-    void
-    test_wait_until() {
-        semaphore_type sem;
-        std::mutex mtx;
-        std::unique_lock<std::mutex> lock(mtx);
-        typedef std::chrono::system_clock clock_type;
-        typedef std::chrono::steady_clock clock_type_2;
-        //std::clog << "wait1" << std::endl;
-        EXPECT_EQ(
-            sem.wait_until(lock, clock_type::now()),
-            std::cv_status::timeout
-        );
-        EXPECT_EQ(
-            sem.wait_until(lock, clock_type_2::now()),
-            std::cv_status::timeout
-        );
-        EXPECT_EQ(
-            sem.wait_for(lock, clock_type::duration::zero()),
-            std::cv_status::timeout
-        );
-        EXPECT_EQ(
-            sem.wait_for(lock, clock_type_2::duration::zero()),
-            std::cv_status::timeout
-        );
-        auto f = [](){ return false; };
-        auto t = [](){ return true; };
-        // wait until with predicate
-        EXPECT_FALSE(sem.wait_until(lock, clock_type::now(), f));
-        EXPECT_TRUE(sem.wait_until(lock, clock_type::now(), t));
-        EXPECT_FALSE(sem.wait_until(lock, clock_type_2::now(), f));
-        EXPECT_TRUE(sem.wait_until(lock, clock_type_2::now(), t));
-        // wait for with predicate
-        EXPECT_FALSE(sem.wait_for(lock, clock_type::duration::zero(), f));
-        EXPECT_TRUE(sem.wait_for(lock, clock_type::duration::zero(), t));
-        EXPECT_FALSE(sem.wait_for(lock, clock_type_2::duration::zero(), f));
-        EXPECT_TRUE(sem.wait_for(lock, clock_type_2::duration::zero(), t));
-        //std::clog << "wait2" << std::endl;
-        EXPECT_EQ(
-            sem.wait_until(
-                lock,
-                clock_type::time_point(clock_type::duration::zero())
-            ),
-            std::cv_status::timeout
-        );
-        EXPECT_EQ(
-            sem.wait_until(
-                lock,
-                clock_type_2::time_point(clock_type_2::duration::zero())
-            ),
-            std::cv_status::timeout
-        );
-    }
-
-    void
-    test_producer_consumer_thread() {
-        typedef int T;
-        std::default_random_engine rng;
-        std::uniform_int_distribution<T> dist('a', 'z');
-        semaphore_type sem_read;
-        semaphore_type sem_write;
-        sem_read.notify_one();
-        std::mutex mtx;
-        const size_t ninputs = 10000;
-        std::vector<size_t> buffer;
-        size_t sum_consumer = 0;
-        std::thread consumer([&] () {
-            size_t cnt = 0;
-            while (cnt < ninputs) {
-                //sys::log_message("consumer", "cnt=_ lock", cnt);
-                std::unique_lock<std::mutex> lock(mtx);
-                //sys::log_message("consumer", "cnt=_ wait", cnt);
-                sem_write.wait(lock, [&] () { return !buffer.empty(); });
-                while (!buffer.empty()) {
-                    ++cnt;
-                    sum_consumer += buffer.back();
-                    buffer.pop_back();
-                }
-                lock.unlock();
-                sem_read.notify_one();
-            }
-        });
-        size_t sum_producer = 0;
+template <class Semaphore> void
+test_producer_consumer_thread() {
+    using namespace sys::test::lang;
+    using semaphore_type = Semaphore;
+    using T = int;
+    std::default_random_engine rng;
+    std::uniform_int_distribution<T> dist('a', 'z');
+    semaphore_type sem_read;
+    semaphore_type sem_write;
+    sem_read.notify_one();
+    std::mutex mtx;
+    const size_t ninputs = 10000;
+    std::vector<size_t> buffer;
+    size_t sum_consumer = 0;
+    std::thread consumer([&] () {
         size_t cnt = 0;
         while (cnt < ninputs) {
-            //sys::log_message("producer", "cnt=_ lock", cnt);
+            //sys::log_message("consumer", "cnt=_ lock", cnt);
             std::unique_lock<std::mutex> lock(mtx);
-            //sys::log_message("producer", "cnt=_ wait", cnt);
-            sem_read.wait(lock, [&] () { return buffer.empty(); });
-            buffer.emplace_back(dist(rng));
-            sum_producer += buffer.back();
-            ++cnt;
+            //sys::log_message("consumer", "cnt=_ wait", cnt);
+            sem_write.wait(lock, [&] () { return !buffer.empty(); });
+            while (!buffer.empty()) {
+                ++cnt;
+                sum_consumer += buffer.back();
+                buffer.pop_back();
+            }
             lock.unlock();
-            sem_write.notify_one();
+            sem_read.notify_one();
         }
-        consumer.join();
-        EXPECT_EQ(sum_producer, sum_consumer);
+    });
+    size_t sum_producer = 0;
+    size_t cnt = 0;
+    while (cnt < ninputs) {
+        //sys::log_message("producer", "cnt=_ lock", cnt);
+        std::unique_lock<std::mutex> lock(mtx);
+        //sys::log_message("producer", "cnt=_ wait", cnt);
+        sem_read.wait(lock, [&] () { return buffer.empty(); });
+        buffer.emplace_back(dist(rng));
+        sum_producer += buffer.back();
+        ++cnt;
+        lock.unlock();
+        sem_write.notify_one();
     }
+    consumer.join();
+    expect(value(sum_producer) == value(sum_consumer));
+}
 
-    void
-    test_producer_consumer_process() {
-        using namespace std::chrono;
-        semaphore_type sem;
-        sys::process child([&sem] () {
-            semaphore_type sem_child(sem.id());
-            std::mutex mtx;
-            sem_child.wait(mtx);
-        });
-        using namespace std::this_thread;
-        sem.notify_one();
-        sleep_for(milliseconds(100));
-        if (child) { child.terminate(); }
-        sys::process_status status = child.wait();
-        EXPECT_TRUE(status.exited());
-        EXPECT_EQ(EXIT_SUCCESS, status.exit_code());
-    }
-
-};
+template <class Semaphore> void
+test_producer_consumer_process() {
+    using namespace sys::test::lang;
+    using semaphore_type = Semaphore;
+    using namespace std::chrono;
+    semaphore_type sem;
+    sys::process child([&sem] () {
+        semaphore_type sem_child(sem.id());
+        std::mutex mtx;
+        sem_child.wait(mtx);
+    });
+    using namespace std::this_thread;
+    sem.notify_one();
+    sleep_for(milliseconds(100));
+    if (child) { child.terminate(); }
+    sys::process_status status = child.wait();
+    expect(status.exited());
+    expect(value(EXIT_SUCCESS) == value(status.exit_code()));
+}
 
 #endif // vim:filetype=cpp

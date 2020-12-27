@@ -34,12 +34,29 @@ For more information, please refer to <http://unlicense.org/>
 #define UNISTDX_TEST_SANITIZE_FILE_DESCRIPTORS
 
 #include <iosfwd>
+#include <set>
 
 namespace sys {
     namespace test {
 
         void print_file_descriptors(std::ostream& out);
         void sanitize_file_descriptors(bool ignore_standard=true, bool ignore_urandom=true);
+
+        class file_descriptor_sanitizer {
+        private:
+            using entry = std::tuple<sys::fd_type,std::string>;
+        private:
+            std::set<entry> _file_descriptors;
+        public:
+            file_descriptor_sanitizer();
+            ~file_descriptor_sanitizer() noexcept;
+            file_descriptor_sanitizer(const file_descriptor_sanitizer&) = delete;
+            file_descriptor_sanitizer& operator=(const file_descriptor_sanitizer&) = delete;
+            file_descriptor_sanitizer(file_descriptor_sanitizer&&) = delete;
+            file_descriptor_sanitizer& operator=(file_descriptor_sanitizer&&) = delete;
+        private:
+            void record(std::set<entry>& entries);
+        };
 
     }
 }

@@ -118,7 +118,10 @@ namespace sys {
 
             void run(Test* t);
             void capture_backtrace(int sig);
-            inline void stop() { stopped = true; cv.notify_one(); }
+            inline void stop() {
+                std::unique_lock<std::mutex> lock(mutex);
+                stopped = true; cv.notify_one();
+            }
             inline void join() { if (thread.joinable()) { thread.join(); } }
 
             Backtrace_thread() = default;
@@ -215,6 +218,7 @@ namespace sys {
             sys::event_poller _poller;
             std::mutex _mutex;
             duration _timeout = std::chrono::seconds(30);
+            bool _catch_errors = true;
 
         public:
             template <class ... Args>
@@ -223,6 +227,9 @@ namespace sys {
             }
 
             int run();
+
+            inline bool catch_errors() const noexcept { return this->_catch_errors; }
+            inline void catch_errors(bool rhs) noexcept { this->_catch_errors = rhs; }
 
         };
 

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -41,13 +41,14 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/ipc/semaphore>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/test/basic_mutex_test>
+#include <unistdx/test/language>
 #include <unistdx/test/make_types>
 #include <unistdx/test/semaphore_base>
 #include <unistdx/test/semaphore_wait_test>
 #include <unistdx/test/thread_mutex_test>
+
+using namespace sys::test::lang;
 
 struct posix_process_semaphore: public sys::posix_semaphore {
     inline
@@ -63,45 +64,29 @@ struct posix_thread_semaphore: public sys::posix_semaphore {
     {}
 };
 
-template <class T>
-struct SemaphoreTest: public BasicMutexTest<T> {};
-
-TYPED_TEST_CASE(
-    SemaphoreTest,
-    MAKE_TYPES(
-        std::condition_variable
-        #if defined(UNISTDX_HAVE_SEMAPHORE_H)
-        , posix_process_semaphore
-        #endif
-    )
-);
-
-TYPED_TEST(SemaphoreTest, Semaphore) {
-    using Semaphore = TypeParam;
-    test_semaphore<Semaphore>();
+void test_semaphore() {
+    test_semaphore<std::condition_variable>();
 }
 
-TYPED_TEST_CASE(
-    SemaphoreWaitTest,
-    MAKE_TYPES(
-        std::condition_variable
-        #if defined(UNISTDX_HAVE_SEMAPHORE_H)
-        , posix_thread_semaphore
-        #endif
-    )
-);
-
-TYPED_TEST(SemaphoreWaitTest, WaitUntil) {
-    this->test_wait_until();
-}
-
-TYPED_TEST(SemaphoreWaitTest, ProducerConsumer) {
-    this->test_producer_consumer_thread();
-}
-
-int main(int argc, char* argv[]) {
-    test_semaphore_is_available<posix_thread_semaphore>();
+void test_posix_process_semaphore() {
     test_semaphore_is_available<posix_process_semaphore>();
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    #if defined(UNISTDX_HAVE_SEMAPHORE_H)
+    test_semaphore<posix_process_semaphore>();
+    #endif
+}
+
+void test_semaphore_wait_until() {
+    test_wait_until<std::condition_variable>();
+}
+
+void test_semaphore_producer_consumer() {
+    test_producer_consumer_thread<std::condition_variable>();
+}
+
+void test_posix_thread_semaphore() {
+    #if defined(UNISTDX_HAVE_SEMAPHORE_H)
+    test_semaphore_is_available<posix_thread_semaphore>();
+    test_producer_consumer_thread<posix_thread_semaphore>();
+    test_wait_until<posix_thread_semaphore>();
+    #endif
 }

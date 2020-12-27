@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,41 +30,41 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
 #include <unistdx/ipc/identity>
+#include <unistdx/test/language>
 
-TEST(SetIdentity, ExceptionsRunAsRoot) {
+using namespace sys::test::lang;
+
+void test_identity_exceptions_run_as_root() {
+    std::exit(77);
     using namespace sys::this_process;
-    if (user() != sys::superuser()) {
-        return;
-    }
-    EXPECT_NE(1000u, user());
-    EXPECT_NE(1000u, group());
-    EXPECT_NO_THROW(set_identity(1000, 1000));
-    EXPECT_EQ(1000u, user());
-    EXPECT_EQ(1000u, group());
-    EXPECT_EQ(1000u, effective_user());
-    EXPECT_EQ(1000u, effective_group());
+    if (user() != sys::superuser()) { std::exit(77); }
+    expect(value(1000u) != value(user()));
+    expect(value(1000u) != value(group()));
+    set_identity(1000, 1000);
+    expect(value(1000u) == value(user()));
+    expect(value(1000u) == value(group()));
+    expect(value(1000u) == value(effective_user()));
+    expect(value(1000u) == value(effective_group()));
 }
 
-TEST(identity, basic) {
+void test_identity_basic() {
     using namespace sys::this_process;
-    EXPECT_EQ(user(), effective_user());
-    EXPECT_EQ(group(), effective_group());
-    EXPECT_EQ(0u, sys::supergroup());
-    EXPECT_EQ(0u, sys::superuser());
+    expect(value(user()) == value(effective_user()));
+    expect(value(group()) == value(effective_group()));
+    expect(value(0u) == value(sys::supergroup()));
+    expect(value(0u) == value(sys::superuser()));
 }
 
-TEST(identity, set_unpriviledged) {
+void test_identity_set_unpriviledged() {
+    std::exit(77);
     using namespace sys::this_process;
-    if (user() == sys::superuser()) {
-        return;
-    }
+    if (user() == sys::superuser()) { std::exit(77); }
     sys::uid_type olduser = user();
     sys::gid_type oldgroup = group();
     sys::uid_type newuid = user() + 1;
     sys::gid_type newgid = group() + 1;
-    EXPECT_THROW(set_identity(newuid, newgid), sys::bad_call);
-    EXPECT_EQ(olduser, user());
-    EXPECT_EQ(oldgroup, group());
+    expect(throws<sys::bad_call>(call([&] () { set_identity(newuid, newgid); })));
+    expect(value(olduser) == value(user()));
+    expect(value(oldgroup) == value(group()));
 }

@@ -30,9 +30,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/flag>
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
 
 namespace sys {
 
@@ -42,20 +43,20 @@ namespace sys {
 
 }
 
-TEST(flag, _) {
+void test_is_flag() {
     using sys::My_flag;
     My_flag f = My_flag::A | My_flag::B;
-    EXPECT_TRUE(bool(f & My_flag::A));
-    EXPECT_TRUE(bool(f & My_flag::B));
-    EXPECT_FALSE(bool(f & My_flag::C));
+    expect(bool(f & My_flag::A));
+    expect(bool(f & My_flag::B));
+    expect(!bool(f & My_flag::C));
     f |= My_flag::C;
-    EXPECT_TRUE(bool(f & My_flag::A));
-    EXPECT_TRUE(bool(f & My_flag::B));
-    EXPECT_TRUE(bool(f & My_flag::C));
+    expect(bool(f & My_flag::A));
+    expect(bool(f & My_flag::B));
+    expect(bool(f & My_flag::C));
     f &= ~My_flag::B;
-    EXPECT_TRUE(bool(f & My_flag::A));
-    EXPECT_FALSE(bool(f & My_flag::B));
-    EXPECT_TRUE(bool(f & My_flag::C));
+    expect(bool(f & My_flag::A));
+    expect(!bool(f & My_flag::B));
+    expect(bool(f & My_flag::C));
 }
 
 namespace another_ns {
@@ -63,18 +64,18 @@ namespace another_ns {
     UNISTDX_FLAGS(Another_flag)
 }
 
-TEST(flags, _) {
+void test_flags_macro() {
     using another_ns::Another_flag;
     Another_flag f = Another_flag::A | Another_flag::B;
-    EXPECT_TRUE(bool(f & Another_flag::A));
-    EXPECT_TRUE(bool(f & Another_flag::B));
-    EXPECT_FALSE(bool(f & Another_flag::C));
+    expect(bool(f & Another_flag::A));
+    expect(bool(f & Another_flag::B));
+    expect(!bool(f & Another_flag::C));
     f |= Another_flag::C;
-    EXPECT_TRUE(bool(f & Another_flag::A));
-    EXPECT_TRUE(bool(f & Another_flag::B));
-    EXPECT_TRUE(bool(f & Another_flag::C));
+    expect(bool(f & Another_flag::A));
+    expect(bool(f & Another_flag::B));
+    expect(bool(f & Another_flag::C));
     f &= ~Another_flag::B;
-    EXPECT_TRUE(bool(f & Another_flag::A));
-    EXPECT_FALSE(bool(f & Another_flag::B));
-    EXPECT_TRUE(bool(f & Another_flag::C));
+    expect(bool(f & Another_flag::A));
+    expect(!bool(f & Another_flag::B));
+    expect(bool(f & Another_flag::C));
 }

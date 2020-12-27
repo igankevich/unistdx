@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,42 +34,44 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/test/operator>
 
-TEST(two_way_pipe, print) {
+using namespace sys::test::lang;
+
+void test_two_way_pipe_print() {
     sys::two_way_pipe p;
-    EXPECT_NE("", test::stream_insert(p));
+    expect(value("") != value(test::stream_insert(p)));
 }
 
-TEST(two_way_pipe, close_in_parent) {
+void test_two_way_pipe_close_in_parent() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     p.close_in_parent();
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
 }
 
-TEST(two_way_pipe, close_unused) {
+void test_two_way_pipe_close_unused() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     p.close_unused();
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
 }
 
-TEST(two_way_pipe, close) {
+void test_two_way_pipe_close() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     p.close();
-    EXPECT_THROW(p.validate(), sys::bad_call);
+    expect(throws<sys::bad_call>(call([&] () { p.validate(); })));
 }
 
-TEST(two_way_pipe, close_in_child) {
+void test_two_way_pipe_close_in_child() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     p.close_in_child();
-    EXPECT_THROW(p.validate(), sys::bad_call);
+    expect(throws<sys::bad_call>(call([&] () { p.validate(); })));
 }
 
-TEST(two_way_pipe, child_close_in_child) {
+void test_two_way_pipe_child_close_in_child() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     sys::process child{
         [&p] () {
             int ret = 0;
@@ -87,14 +89,14 @@ TEST(two_way_pipe, child_close_in_child) {
         }
     };
     p.close_in_parent();
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     sys::process_status status = child.wait();
-    EXPECT_EQ(0, status.exit_code());
+    expect(value(0) == value(status.exit_code()));
 }
 
-TEST(two_way_pipe, child_close_unused) {
+void test_two_way_pipe_child_close_unused() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     sys::process child{
         [&p] () {
             int ret = 0;
@@ -112,14 +114,14 @@ TEST(two_way_pipe, child_close_unused) {
         }
     };
     p.close_in_parent();
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     sys::process_status status = child.wait();
-    EXPECT_EQ(0, status.exit_code());
+    expect(value(0) == value(status.exit_code()));
 }
 
-TEST(two_way_pipe, open) {
+void test_two_way_pipe_open() {
     sys::two_way_pipe p;
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
     p.open();
-    EXPECT_NO_THROW(p.validate());
+    expect(no_throw(call([&] () { p.validate(); })));
 }

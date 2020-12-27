@@ -23,14 +23,16 @@ install_headers(
 )
 
 libunistdx_tests += [
-    [files('execute_test.cc')],
+    [files([
+        'execute_test.cc',
+        'process_test.cc',
+        'process_group_test.cc',
+        'process_status_test.cc',
+        'semaphore_test.cc',
+        'shared_memory_segment_test.cc',
+        'signal_test.cc',
+    ])],
     [files('identity_test.cc'), [[], [setgid_stub]]],
-    [files('process_test.cc')],
-    [files('process_group_test.cc')],
-    [files('process_status_test.cc')],
-    [files('semaphore_test.cc')],
-    [files('shared_memory_segment_test.cc')],
-    [files('signal_test.cc')],
 ]
 
 if host_machine.cpu() != 'aarch64'

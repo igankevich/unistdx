@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.51.0',
+    version: '0.52.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -37,6 +37,7 @@ foreach arg : [
     '-Werror=return-local-addr',
     '-Werror=cast-align',
     '-Wcast-align=strict',
+    '-Wno-terminate',
     '-fvisibility-inlines-hidden']
     if cpp.has_argument(arg)
         add_global_arguments(arg, language: 'cpp')
@@ -298,9 +299,6 @@ config.set('UNISTDX_PATCHLEVEL', v[2])
 # }}}
 
 threads = dependency('threads')
-if with_tests
-    gtest = dependency('gtest', main: false)
-endif
 
 subdir('src')
 subdir('ci')

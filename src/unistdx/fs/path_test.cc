@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,40 +30,43 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
 #include <string>
 #include <unistdx/fs/path>
 #include <unordered_set>
 
-TEST(Path, Hash) {
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
+
+void test_Path_Hash() {
     std::unordered_set<sys::path> s;
     for (int i=0; i<10; ++i) {
         s.emplace("/tmp");
     }
-    EXPECT_EQ(1u, s.size());
+    expect(value(1u) == value(s.size()));
 }
 
-TEST(Path, Equals) {
+void test_Path_Equals() {
     sys::path p("/tmp");
     sys::path q("/tmpx");
     // ==
-    EXPECT_EQ(p, p);
-    EXPECT_EQ("/tmp", p);
-    EXPECT_EQ(p, "/tmp");
-    EXPECT_EQ(std::string("/tmp"), p);
-    EXPECT_EQ(p, std::string("/tmp"));
+    expect(value(p) == value(p));
+    expect(value("/tmp") == value(p));
+    expect(value(p) == value("/tmp"));
+    expect(value(std::string("/tmp")) == value(p));
+    expect(value(p) == value(std::string("/tmp")));
     // !=
-    EXPECT_NE(q, p);
-    EXPECT_NE(p, q);
-    EXPECT_NE("/tmpx", p);
-    EXPECT_NE(p, "/tmpx");
-    EXPECT_NE(std::string("/tmpx"), p);
-    EXPECT_NE(p, std::string("/tmpx"));
+    expect(value(q) != value(p));
+    expect(value(p) != value(q));
+    expect(value("/tmpx") != value(p));
+    expect(value(p) != value("/tmpx"));
+    expect(value(std::string("/tmpx")) != value(p));
+    expect(value(p) != value(std::string("/tmpx")));
 }
 
-TEST(Path, VariadicConstructor) {
-    EXPECT_EQ("a", sys::path("a"));
-    EXPECT_EQ("a/b", sys::path("a", "b"));
-    EXPECT_EQ("a/b/c", sys::path("a", "b", "c"));
-    EXPECT_EQ("a/b/c/d", sys::path("a", "b", "c", "d"));
+void test_Path_VariadicConstructor() {
+    expect(value("a") == value(sys::path("a")));
+    expect(value("a/b") == value(sys::path("a", "b")));
+    expect(value("a/b/c") == value(sys::path("a", "b", "c")));
+    expect(value("a/b/c/d") == value(sys::path("a", "b", "c", "d")));
 }

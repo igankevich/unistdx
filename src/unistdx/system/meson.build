@@ -17,14 +17,13 @@ libunistdx_tests += [
 libunistdx_tests += [
     [files('clock_test.cc')],
     [files('error_test.cc')],
-    #[files('users_test.cc'), [[], [sysconf_stub]]],
+    [files('users_test.cc'), [[], [sysconf_stub]]],
 ]
 
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
     libunistdx_tests += [
         [files('backtrace_test.cc'),
-         [[], [backtrace_symbols_stub], [backtrace_symbols_stub_2]],
-         [['signal'], ['terminate']]],
+         [[], [backtrace_symbols_stub], [backtrace_symbols_stub_2]]],
     ]
 endif
 

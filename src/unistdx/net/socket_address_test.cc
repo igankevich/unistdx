@@ -74,8 +74,6 @@ struct PRNG {
 
 };
 
-TYPED_TEST_CASE(EndpointTest, MAKE_TYPES(sys::ipv4_address, sys::ipv6_address));
-
 template <class T>
 void test_socket_address_write_read_single() {
     PRNG<T> prng;

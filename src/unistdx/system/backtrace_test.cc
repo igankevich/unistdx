@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -36,6 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/ipc/signal>
 #include <unistdx/system/error>
 #include <unistdx/test/config>
+#include <valgrind/config>
 
 #include <chrono>
 #include <iostream>
@@ -49,10 +50,6 @@ For more information, please refer to <http://unlicense.org/>
 #define NO_INLINE [[gnu::noinline]]
 #else
 #define NO_INLINE
-#endif
-
-#if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
-#include <valgrind.h>
 #endif
 
 enum struct Test_type {
@@ -140,16 +137,8 @@ func1(Test_type type) {
     func2(type);
 }
 
-int main(int argc, char* argv[]) {
-    #if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
-    if (RUNNING_ON_VALGRIND) { std::exit(77); }
-    #endif
-    if (argc != 2) {
-        throw std::invalid_argument("bad command line arguments");
-    }
-    Test_type type = Test_type::Terminate;
-    std::stringstream str(argv[1]);
-    str >> type;
+void do_test_backtrace(Test_type type) {
+    UNISTDX_SKIP_IF_RUNNING_ON_VALGRIND();
     if (type == Test_type::Terminate_thread || type == Test_type::Signal_thread) {
         std::thread t(
             [type] () {
@@ -165,5 +154,12 @@ int main(int argc, char* argv[]) {
     } else {
         func1(type);
     }
-    return 1;
+}
+
+void test_backtrace_on_signal() {
+    do_test_backtrace(Test_type::Signal);
+}
+
+void test_backtrace_on_terminate() {
+    do_test_backtrace(Test_type::Terminate);
 }

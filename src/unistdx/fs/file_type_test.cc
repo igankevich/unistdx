@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -31,10 +31,9 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/fs/file_type>
-
 #include <unistdx/test/operator>
 
-TEST(file_type, print) {
+void test_file_type_print() {
     test::stream_insert_equals("-", sys::file_type::regular);
     test::stream_insert_equals("d", sys::file_type::directory);
     test::stream_insert_equals("b", sys::file_type::block_device);

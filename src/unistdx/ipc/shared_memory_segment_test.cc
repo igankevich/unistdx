@@ -36,60 +36,61 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/system/resource>
 
 #include <functional>
-#include <gtest/gtest.h>
 #include <limits>
 #include <mutex>
 #include <random>
 
 #include <unistdx/test/exception>
-#include <unistdx/test/make_types>
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
 
 template <class T>
-struct SharedMemTest: public ::testing::Test {};
-
-TYPED_TEST_CASE(SharedMemTest, MAKE_TYPES(char, unsigned char));
-
-TYPED_TEST(SharedMemTest, SharedMem) {
-    typedef TypeParam T;
+void test_shared_memory_segment() {
     typedef typename sys::shared_memory_segment<T>::size_type size_type;
     const size_type SHMEM_SIZE = 512;
     sys::shared_memory_segment<T> mem1(0666, SHMEM_SIZE);
     sys::shared_memory_segment<T> mem2(mem1.id());
     // check some invariants
-    EXPECT_GE(mem1.size(), SHMEM_SIZE);
-    EXPECT_GE(mem2.size(), SHMEM_SIZE);
-    EXPECT_EQ(mem1.size(), mem2.size());
-    EXPECT_TRUE(mem1.owner());
-    EXPECT_FALSE(mem2.owner());
-    EXPECT_TRUE(static_cast<bool>(mem1))
-        << "ptr=" << ((void*)mem1.ptr())
-        << ",id=" << mem1.id();
-    EXPECT_TRUE(static_cast<bool>(mem2))
-        << "ptr=" << ((void*)mem2.ptr())
-        << ",id=" << mem2.id();
-    EXPECT_FALSE(!mem1);
-    EXPECT_FALSE(!mem2);
-    EXPECT_NE(nullptr, mem1.begin());
-    EXPECT_NE(nullptr, mem1.end());
-    EXPECT_NE(nullptr, mem2.begin());
-    EXPECT_NE(nullptr, mem2.end());
-    EXPECT_EQ(mem1.size(), size_t(std::distance(mem1.begin(), mem1.end())));
-    EXPECT_EQ(mem2.size(), size_t(std::distance(mem2.begin(), mem2.end())));
+    expect(value(mem1.size()) >= value(SHMEM_SIZE));
+    expect(value(mem2.size()) >= value(SHMEM_SIZE));
+    expect(value(mem1.size()) == value(mem2.size()));
+    expect(mem1.owner());
+    expect(!mem2.owner());
+    if (!expect(static_cast<bool>(mem1))) {
+        std::clog << "ptr=" << ((void*)mem1.ptr()) << ",id=" << mem1.id();
+    }
+    if (!expect(static_cast<bool>(mem2))) {
+        std::clog << "ptr=" << ((void*)mem2.ptr()) << ",id=" << mem2.id();
+    }
+    expect(!value(!mem1));
+    expect(!value(!mem2));
+    expect(value(nullptr) != value(mem1.begin()));
+    expect(value(nullptr) != value(mem1.end()));
+    expect(value(nullptr) != value(mem2.begin()));
+    expect(value(nullptr) != value(mem2.end()));
+    expect(value(mem1.size()) == value(size_t(std::distance(mem1.begin(), mem1.end()))));
+    expect(value(mem2.size()) == value(size_t(std::distance(mem2.begin(), mem2.end()))));
     std::default_random_engine rng;
     std::uniform_int_distribution<T> dist('a', 'z');
     std::generate(mem1.begin(), mem1.end(), std::bind(dist, rng));
-    EXPECT_EQ(mem1, mem2);
+    expect(value(mem1) == value(mem2));
     // close multiple times
-    EXPECT_NO_THROW(mem1.close());
-    EXPECT_NO_THROW(mem2.close());
-    EXPECT_NO_THROW(mem1.close());
-    EXPECT_NO_THROW(mem2.close());
-    EXPECT_FALSE(static_cast<bool>(mem1));
-    EXPECT_FALSE(static_cast<bool>(mem2));
+    mem1.close();
+    mem2.close();
+    mem1.close();
+    mem2.close();
+    expect(!static_cast<bool>(mem1));
+    expect(!static_cast<bool>(mem2));
 }
 
-TYPED_TEST(SharedMemTest, SharedMemBuf) {
-    typedef TypeParam T;
+void test_shared_memory_segment() {
+    test_shared_memory_segment<char>();
+    test_shared_memory_segment<unsigned char>();
+}
+
+template <class T>
+void test_shmembuf_producer_consumer() {
     typedef typename sys::shared_memory_segment<T> shmem;
     typedef typename sys::basic_shmembuf<T> shmembuf;
     typedef std::lock_guard<shmembuf> shmembuf_guard;
@@ -119,7 +120,7 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
                 shmembuf_guard lock(buf2);
                 buf2.sgetn(output.data(), output.size());
             }
-            EXPECT_EQ(input, output);
+            expect(value(input) == value(output));
             if (input != output) {
                 success = false;
             }
@@ -133,10 +134,15 @@ TYPED_TEST(SharedMemTest, SharedMemBuf) {
         buf1.sputn(input.data(), input.size());
     }
     sys::process_status status = consumer.wait();
-    EXPECT_TRUE(status.exited() && status.exit_code() == EXIT_SUCCESS);
+    expect(value(status.exited()) && value(status.exit_code()) == value(EXIT_SUCCESS));
 }
 
-TEST(shmembuf, errors) {
+void test_shmembuf_producer_consumer() {
+    test_shmembuf_producer_consumer<char>();
+    test_shmembuf_producer_consumer<unsigned char>();
+}
+
+void test_shmembuf_errors() {
     sys::size_type page_size =  sys::page_size();
     sys::shmembuf buf(sys::shared_memory_segment<char>(0600, page_size));
     std::vector<char> tmp(page_size*2);

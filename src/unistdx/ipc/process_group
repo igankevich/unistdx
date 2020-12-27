@@ -112,7 +112,7 @@ namespace sys {
         /// Add new process to a group using \p childmain as the main function.
         template<class F>
         const process&
-        emplace(F&& childmain, process_flag pf=process_flag::fork, size_t stack_size=4096*2) {
+        emplace(F&& childmain, process_flag pf=process_flag::fork, size_t stack_size=4096*8) {
             const bool has_id = !this->_procs.empty();
             const auto id = this->_id;
             this->_procs.emplace_back([id,&childmain] () {

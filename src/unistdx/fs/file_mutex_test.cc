@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -35,18 +35,19 @@ For more information, please refer to <http://unlicense.org/>
 #include <mutex>
 #include <thread>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/fs/file_mutex>
 #include <unistdx/ipc/process>
+#include <unistdx/test/language>
 #include <unistdx/test/temporary_file>
 
-TEST(FileMutex, Check) {
-    typedef sys::file_mutex mutex_type;
-    typedef std::lock_guard<mutex_type> lock_type;
+using namespace sys::test::lang;
+
+void test_file_mutex_check() {
+    using mutex_type = sys::file_mutex;
+    using lock_type = std::lock_guard<mutex_type>;
     test::temporary_file tmp(UNISTDX_TMPFILE);
     mutex_type mtx(tmp.path(), 0600);
-    EXPECT_TRUE(static_cast<bool>(mtx));
+    expect(static_cast<bool>(mtx));
     sys::process child([&tmp] () {
         mutex_type mtx2(tmp.path(), 0600);
         lock_type lock(mtx2);
@@ -56,20 +57,20 @@ TEST(FileMutex, Check) {
     using namespace std::chrono;
     using namespace std::this_thread;
     sleep_for(milliseconds(500));
-    EXPECT_FALSE(mtx.try_lock());
+    expect(!mtx.try_lock());
     child.terminate();
     child.join();
-    EXPECT_TRUE(mtx.try_lock());
-    EXPECT_NO_THROW(mtx.lock());
-    EXPECT_NO_THROW(mtx.unlock());
+    expect(mtx.try_lock());
+    expect(no_throw(call([&] () { mtx.lock(); })));
+    expect(no_throw(call([&] () { mtx.unlock(); })));
 }
 
-TEST(file_mutex, bad_lock) {
+void test_file_mutex_bad_lock() {
     sys::file_mutex mtx;
-    EXPECT_NO_THROW(mtx.open(UNISTDX_TMPFILE, 600));
-    EXPECT_NO_THROW(mtx.close());
-    EXPECT_NO_THROW(sys::remove(UNISTDX_TMPFILE));
-    EXPECT_THROW(mtx.try_lock(), sys::bad_call);
-    EXPECT_THROW(mtx.lock(), sys::bad_call);
-    EXPECT_THROW(mtx.unlock(), sys::bad_call);
+    expect(no_throw(call([&] () { mtx.open(UNISTDX_TMPFILE, 600); })));
+    expect(no_throw(call([&] () { mtx.close(); })));
+    expect(no_throw(call([&] () { sys::remove(UNISTDX_TMPFILE); })));
+    expect(throws(call([&] () { mtx.try_lock(); })));
+    expect(throws(call([&] () { mtx.lock(); })));
+    expect(throws(call([&] () { mtx.unlock(); })));
 }

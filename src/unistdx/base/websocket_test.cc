@@ -30,8 +30,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <algorithm>
 #include <iomanip>
 #include <limits>
@@ -48,9 +46,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/operator>
 #include <unistdx/test/random_string>
 
-using sys::u16;
+using namespace sys::test::lang;
 
-struct PacketSizeTest: public ::testing::TestWithParam<size_t> {};
+using sys::u16;
 
 std::vector<size_t> packet_sizes{
     1,
@@ -69,7 +67,7 @@ std::vector<size_t> packet_sizes{
     0
 };
 
-TEST_P(PacketSizeTest, Write) {
+void test_websocketbuf_write_with_different_packet_sizes() {
 
     typedef char T;
     typedef std::char_traits<T> Tr;
@@ -80,47 +78,43 @@ TEST_P(PacketSizeTest, Write) {
     typedef websocketbuf packetbuf_type;
     typedef typename packetbuf_type::role_type role;
 
-    std::string packet_in = test::random_string<char>(GetParam());
-    std::string packet_out(packet_in.size(), '_');
-
-    packetbuf_type buf;
-    buf.role(role::client);
-    EXPECT_EQ(role::client, buf.role());
-    EXPECT_FALSE(buf.client_handshake());
-    EXPECT_FALSE(buf.handshake());
-    buf.pubsync();
-    buf.role(role::server);
-    EXPECT_EQ(role::server, buf.role());
-    EXPECT_FALSE(buf.server_handshake());
-    EXPECT_FALSE(buf.handshake());
-    buf.pubsync();
-    buf.role(role::client);
-    EXPECT_TRUE(buf.client_handshake());
-    buf.pubsync();
-    buf.role(role::server);
-    EXPECT_TRUE(buf.server_handshake());
-    buf.role(role::client);
-    buf.begin_packet();
-    buf.sputn(packet_in.data(), packet_in.size());
-    buf.end_packet();
-    buf.pubsync();
-    buf.role(role::server);
-    EXPECT_TRUE(buf.read_packet());
-    buf.sgetn(&packet_out[0], packet_out.size());
-    EXPECT_EQ(packet_in, packet_out) << "packet_size=" << packet_in.size();
+    for (auto packet_size : packet_sizes) {
+        std::string packet_in = test::random_string<char>(packet_size);
+        std::string packet_out(packet_in.size(), '_');
+        packetbuf_type buf;
+        buf.role(role::client);
+        expect(value(role::client) == value(buf.role()));
+        expect(!buf.client_handshake());
+        expect(!buf.handshake());
+        buf.pubsync();
+        buf.role(role::server);
+        expect(value(role::server) == value(buf.role()));
+        expect(!buf.server_handshake());
+        expect(!buf.handshake());
+        buf.pubsync();
+        buf.role(role::client);
+        expect(buf.client_handshake());
+        buf.pubsync();
+        buf.role(role::server);
+        expect(buf.server_handshake());
+        buf.role(role::client);
+        buf.begin_packet();
+        buf.sputn(packet_in.data(), packet_in.size());
+        buf.end_packet();
+        buf.pubsync();
+        buf.role(role::server);
+        expect(buf.read_packet());
+        buf.sgetn(&packet_out[0], packet_out.size());
+        if (!expect(value(packet_in) == value(packet_out))) {
+            std::clog << "packet_size=" << packet_in.size();
+        }
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(
-    WebSocketBuf,
-    PacketSizeTest,
-    ::testing::ValuesIn(packet_sizes)
-);
-
-
-TEST(websocket_frame, members) {
+void test_websocket_frame_members() {
     sys::websocket_frame frame;
     frame.mask(0);
-    EXPECT_NE("", test::stream_insert(frame));
+    expect(value("") != value(test::stream_insert(frame)));
 }
 
 struct websocket_test_params {
@@ -136,9 +130,6 @@ std::ostream& operator<<(std::ostream& out, const websocket_test_params& rhs) {
     return out;
 }
 
-struct websocketbuf_test:
-    public ::testing::TestWithParam<websocket_test_params> {};
-
 std::vector<websocket_test_params> all_headers {
     {"\r\n", "", ""},
     {"GED / HTTP/1.1\r\n", "", ""},
@@ -151,7 +142,7 @@ std::vector<websocket_test_params> all_headers {
     {"", "", "HTTP/1.1 999\r\n"},
 };
 
-TEST_P(websocketbuf_test, errors) {
+void test_websocketbuf_bad_headers() {
 
     typedef char T;
     typedef std::char_traits<T> Tr;
@@ -162,34 +153,30 @@ TEST_P(websocketbuf_test, errors) {
     typedef websocketbuf packetbuf_type;
     typedef typename packetbuf_type::role_type role;
 
-    std::string bad_method = GetParam().method;
-    std::string bad_header = GetParam().header;
-    std::string bad_status = GetParam().status;
-    packetbuf_type buf;
-    buf.role(role::client);
-    if (!bad_method.empty()) {
-        buf.sputn(bad_method.data(), bad_method.size());
+    for (auto params : all_headers) {
+        std::string bad_method = params.method;
+        std::string bad_header = params.header;
+        std::string bad_status = params.status;
+        packetbuf_type buf;
+        buf.role(role::client);
+        if (!bad_method.empty()) {
+            buf.sputn(bad_method.data(), bad_method.size());
+        }
+        expect(!buf.client_handshake());
+        if (!bad_header.empty()) {
+            buf.sputn(bad_header.data(), bad_header.size());
+        }
+        buf.pubsync();
+        buf.role(role::server);
+        if (!bad_status.empty()) {
+            buf.sputn(bad_status.data(), bad_status.size());
+        }
+        expect(!buf.server_handshake());
+        buf.pubsync();
+        buf.role(role::client);
+        expect(!buf.client_handshake());
+        buf.pubsync();
+        buf.role(role::server);
+        expect(!buf.server_handshake());
     }
-    EXPECT_FALSE(buf.client_handshake());
-    if (!bad_header.empty()) {
-        buf.sputn(bad_header.data(), bad_header.size());
-    }
-    buf.pubsync();
-    buf.role(role::server);
-    if (!bad_status.empty()) {
-        buf.sputn(bad_status.data(), bad_status.size());
-    }
-    EXPECT_FALSE(buf.server_handshake());
-    buf.pubsync();
-    buf.role(role::client);
-    EXPECT_FALSE(buf.client_handshake());
-    buf.pubsync();
-    buf.role(role::server);
-    EXPECT_FALSE(buf.server_handshake());
 }
-
-INSTANTIATE_TEST_CASE_P(
-    _,
-    websocketbuf_test,
-    ::testing::ValuesIn(all_headers)
-);

@@ -30,17 +30,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/io/pipe>
 #include <unistdx/test/sanitize_file_descriptors>
 
-TEST(mypipe, close_in_destructor) {
+void test_pipe_close_in_destructor() {
+    sys::test::file_descriptor_sanitizer fds;
     for (int i=0; i<4096; ++i) { sys::pipe{}; }
-}
-
-int main(int argc, char* argv[]) {
-    std::atexit([] () { sys::test::sanitize_file_descriptors(); });
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }

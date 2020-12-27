@@ -35,14 +35,14 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/ipc/process_group>
 #include <unistdx/test/config>
 #include <unistdx/test/operator>
+#include <valgrind/config>
 
-#if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
-#include <valgrind.h>
-#endif
+using namespace sys::test::lang;
 
 using f = sys::process_flag;
 
-TEST(process_group, wait_async) {
+void test_process_group_wait_async() {
+    UNISTDX_SKIP_IF_RUNNING_ON_VALGRIND();
     sys::process_group g;
     g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
@@ -50,31 +50,24 @@ TEST(process_group, wait_async) {
     g.wait(
         mtx,
         [] (const sys::process&, sys::process_status status) {
-            EXPECT_TRUE(status.exited());
-            EXPECT_FALSE(status.killed());
-            EXPECT_FALSE(status.stopped());
-            EXPECT_FALSE(status.core_dumped());
-            EXPECT_FALSE(status.trapped());
-            EXPECT_FALSE(status.continued());
-            EXPECT_EQ(0, status.exit_code());
-            EXPECT_STREQ("exited", status.status_string());
-            EXPECT_NE("", test::stream_insert(status));
+            expect(status.exited());
+            expect(!value(status.killed()));
+            expect(!value(status.stopped()));
+            expect(!value(status.core_dumped()));
+            expect(!value(status.trapped()));
+            expect(!value(status.continued()));
+            expect(value(0) == value(status.exit_code()));
+            expect(value(std::string("exited")) == value(status.status_string()));
+            expect(value("") != value(test::stream_insert(status)));
         }
     );
 }
 
-TEST(process_group, wait_sync) {
+void test_process_group_wait_sync() {
+    UNISTDX_SKIP_IF_RUNNING_ON_VALGRIND();
     sys::process_group g;
     g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     g.emplace([] () { return 0; }, f::wait_for_exec | f::signal_parent);
     int ret = g.wait();
-    EXPECT_EQ(0, ret);
-}
-
-int main(int argc, char* argv[]) {
-    #if defined(UNISTDX_TEST_HAVE_VALGRIND_H)
-    if (RUNNING_ON_VALGRIND) { std::exit(77); }
-    #endif
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    expect(value(0) == value(ret));
 }

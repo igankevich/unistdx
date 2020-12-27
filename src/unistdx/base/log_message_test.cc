@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,16 +30,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/log_message>
+#include <unistdx/test/language>
 
-TEST(log_message, bad_number_of_arguments) {
-    EXPECT_NO_THROW(sys::log_message("tst", "_", 1, 2));
-    EXPECT_NO_THROW(sys::log_message("tst", "no arguments", 1));
+using namespace sys::test::lang;
+
+void test_log_message_bad_number_of_arguments() {
+    expect(no_throw(call([] () { sys::log_message("tst", "_", 1, 2); })));
+    expect(no_throw(call([] () { sys::log_message("tst", "no arguments", 1); })));
 }
 
-TEST(log_message, manual_output) {
+void test_log_message_manual_output() {
     sys::log_message msg("tst");
     msg.out() << std::setw(20) << 1234;
 }

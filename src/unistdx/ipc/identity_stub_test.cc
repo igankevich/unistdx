@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,19 +30,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
 #include <unistdx/ipc/identity>
+#include <unistdx/test/language>
 
-TEST(identity, set_stub) {
+using namespace sys::test::lang;
+
+void test_identity_set_stub() {
     using namespace sys::this_process;
-    if (user() == sys::superuser()) {
-        return;
-    }
+    if (user() == sys::superuser()) { return; }
     sys::uid_type olduser = user();
     sys::gid_type oldgroup = group();
     sys::uid_type newuid = user()+ 1;
     sys::gid_type newgid = group() + 1;
-    EXPECT_THROW(set_identity(newuid, newgid), sys::bad_call);
-    EXPECT_EQ(olduser, user());
-    EXPECT_EQ(oldgroup, group());
+    expect(throws<sys::bad_call>(call([&] () { set_identity(newuid, newgid); })));
+    expect(value(olduser) == value(user()));
+    expect(value(oldgroup) == value(group()));
 }

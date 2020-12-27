@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,61 +30,62 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
 #include <string>
-#include <unistdx/fs/canonical_path>
 #include <unordered_set>
 
-TEST(CanonicalPath, Hash) {
+#include <unistdx/fs/canonical_path>
+#include <unistdx/system/resource>
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
+
+void test_canonical_path_hash() {
     std::unordered_set<sys::canonical_path> s;
     for (int i=0; i<10; ++i) {
         s.emplace("/tmp");
     }
-    EXPECT_EQ(1, s.size());
+    expect(value(1u) == value(s.size()));
 }
 
-TEST(CanonicalPath, EqualsCurrentWorkingDirectory) {
+void test_canonical_path_equals_current_working_directory() {
     sys::canonical_path dir1(".");
     char buf[4096*4] = {0};
-    EXPECT_NE(nullptr, ::getcwd(buf, sizeof(buf)));
+    expect(value(nullptr) != value(::getcwd(buf, sizeof(buf))));
     sys::canonical_path dir2(buf);
-    EXPECT_EQ(dir1, dir2);
+    expect(value(dir1) == value(dir2));
     sys::canonical_path dir3 = sys::this_process::workdir();
-    EXPECT_EQ(dir2, dir3);
+    expect(value(dir2) == value(dir3));
 }
 
-TEST(CanonicalPath, Assign) {
+void test_canonical_path_assign() {
     sys::canonical_path dir1(".");
     sys::canonical_path dir2("..");
     dir1 = dir1.dirname();
-    EXPECT_EQ(dir1, dir2);
+    expect(value(dir1) == value(dir2));
 }
 
-TEST(CanonicalPath, Dirname) {
+void test_canonical_path_dirname() {
     sys::canonical_path dir1("/usr");
     sys::canonical_path dir2("/");
-    EXPECT_EQ(dir1.dirname(), dir2);
-    EXPECT_EQ(dir2.dirname(), dir2);
-    EXPECT_EQ(dir2.basename(), dir2);
+    expect(value(dir1.dirname()) == value(dir2));
+    expect(value(dir2.dirname()) == value(dir2));
+    expect(value(dir2.basename()) == value(dir2));
 }
 
-TEST(CanonicalPath, TwoArgConstructor) {
+void test_canonical_path_two_arg_constructor() {
     sys::canonical_path cwd(".");
-    EXPECT_EQ(sys::canonical_path(cwd.dirname(), cwd.basename()), cwd);
+    expect(value(sys::canonical_path(cwd.dirname(),cwd.basename())) == value(cwd));
 }
 
-TEST(CanonicalPath, NonExistent) {
+void test_canonical_path_non_existent() {
     sys::canonical_path root("/");
     sys::canonical_path tmp;
-    EXPECT_THROW(
-        {
-            sys::canonical_path nonexistent(root, "non-existent-directory");
-        },
-        sys::bad_call
-    );
+    expect(throws(call([&] () {
+        sys::canonical_path nonexistent(root, "non-existent-directory");
+    })));
 }
 
-TEST(CanonicalPath, FromString) {
+void test_canonical_path_from_string() {
     std::string str = "/";
     sys::canonical_path root(str);
 }

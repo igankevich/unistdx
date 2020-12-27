@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -35,7 +35,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/exception>
 #include <unistdx/test/operator>
 
-TEST(file_status, errors) {
+using namespace sys::test::lang;
+
+void test_file_status_errors() {
     UNISTDX_EXPECT_ERROR(
         std::errc::no_such_file_or_directory,
         sys::file_status("non-existent-file")
@@ -47,17 +49,17 @@ TEST(file_status, errors) {
     );
 }
 
-TEST(file_status, print) {
+void test_file_status_print() {
     test::stream_insert_starts_with("d", sys::file_status("src"));
 }
 
-TEST(file_status, members) {
+void test_file_status_members() {
     sys::file_status st("src");
-    EXPECT_TRUE(st.is_directory());
-    EXPECT_FALSE(st.is_regular());
-    EXPECT_FALSE(st.is_block_device());
-    EXPECT_FALSE(st.is_character_device());
-    EXPECT_FALSE(st.is_socket());
-    EXPECT_FALSE(st.is_pipe());
-    EXPECT_FALSE(st.is_symbolic_link());
+    expect(st.is_directory());
+    expect(!st.is_regular());
+    expect(!st.is_block_device());
+    expect(!st.is_character_device());
+    expect(!st.is_socket());
+    expect(!st.is_pipe());
+    expect(!st.is_symbolic_link());
 }

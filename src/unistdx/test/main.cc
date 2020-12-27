@@ -35,19 +35,32 @@ For more information, please refer to <http://unlicense.org/>
 
 using namespace sys::test;
 
-void test_function(sys::test::Test* t) {
-    std::clog << "name=" << t->symbol().short_name() << std::endl;
-    std::clog << "stderr hello world" << std::endl;
-    std::cout << "stdout hello world" << std::endl;
-    sys::this_process::send(sys::signal::segmentation_fault);
-    //throw std::invalid_argument("asdasd");
-    //std::abort();
-    //throw "asdasd";
+std::string prefix = "test_";
+bool catch_errors = true;
+
+void arguments(int argc, char** argv) {
+    for (int i=1; i<argc; ++i) {
+        std::string arg(argv[i]);
+        auto pos = arg.find('=');
+        if (pos == std::string::npos) {
+            throw std::invalid_argument(arg);
+        }
+        std::string name = arg.substr(0,pos);
+        std::string value = arg.substr(pos+1);
+        if (name == "prefix") {
+            prefix = std::move(value);
+        } else if (name == "catch-errors") {
+            catch_errors = bool(std::stoi(value));
+        } else if (name == "filter") {
+            // TODO glob regex filter
+        }
+    }
 }
 
 int main(int argc, char* argv[]) {
+    arguments(argc, argv);
     sys::test::Test_executor tests;
-    std::string prefix = "test_";
+    tests.catch_errors(catch_errors);
     dl::for_each_shared_object([&] (const elf::shared_object& obj, size_t nobjects) {
         sys::string buf(4096);
         for (const auto& prg : obj) {

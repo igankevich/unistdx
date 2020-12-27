@@ -25,14 +25,16 @@ install_headers(
 )
 
 libunistdx_tests += [
-    [files('epoll_event_test.cc')],
-    [files('fildes_test.cc')],
-    [files('fildesbuf_test.cc')],
-    [files('memory_mapping_test.cc')],
-    [files('pipe_test.cc')],
-    [files('poll_event_test.cc')],
-    [files('poller_test.cc')],
-    [files('two_way_pipe_test.cc')],
+    [files([
+        'epoll_event_test.cc',
+        'fildes_test.cc',
+        'fildesbuf_test.cc',
+        'memory_mapping_test.cc',
+        'pipe_test.cc',
+        'poll_event_test.cc',
+        'poller_test.cc',
+        'two_way_pipe_test.cc',
+    ])]
 ]
 
 libunistdx_benchmarks += files([

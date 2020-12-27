@@ -56,7 +56,7 @@ void test_bytes_front_begin() {
     if (sys::is_network_byte_order()) {
         expect(value(copy) == value(b));
     } else {
-        EXPECT_NE(copy, b);
+        expect(value(copy) != value(b));
         expect(value(4) == value(b[0]));
         expect(value(3) == value(b[1]));
         expect(value(2) == value(b[2]));

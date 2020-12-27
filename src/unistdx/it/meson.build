@@ -9,6 +9,5 @@ install_headers(
 )
 
 libunistdx_tests += [
-    [files('cstring_iterator_test.cc')],
-    [files('field_iterator_test.cc')],
+    [files(['cstring_iterator_test.cc','field_iterator_test.cc'])],
 ]

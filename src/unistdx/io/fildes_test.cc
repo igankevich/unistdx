@@ -30,18 +30,20 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <set>
 
 #include <unistdx/bits/for_each_file_descriptor>
 #include <unistdx/io/fildes>
 #include <unistdx/io/pipe>
 
+#include <unistdx/test/language>
 #include <unistdx/test/sanitize_file_descriptors>
 #include <unistdx/test/temporary_file>
 
-TEST(ForEachFileDescriptor, Pipe) {
+using namespace sys::test::lang;
+
+void test_for_each_file_descriptor_pipe() {
+    sys::test::file_descriptor_sanitizer fds;
     sys::pipe p;
     std::set<sys::fd_type> expected{p.in().fd(), p.out().fd()}, actual;
     sys::bits::for_each_file_descriptor(
@@ -52,51 +54,49 @@ TEST(ForEachFileDescriptor, Pipe) {
             }
         }
     );
-    EXPECT_EQ(expected, actual);
+    expect(value(expected) == value(actual));
 }
 
-TEST(fildes, duplicate) {
+void test_fildes_duplicate() {
+    sys::test::file_descriptor_sanitizer fds;
     sys::fildes f(UNISTDX_TMPFILE, sys::open_flag::create, 0644);
     sys::fildes tmp1(f);
     sys::fildes tmp2(1000);
     tmp2 = f;
 }
 
-TEST(fildes, basic) {
+void test_fildes_basic() {
+    sys::test::file_descriptor_sanitizer fds;
     sys::fildes a, b;
-    EXPECT_FALSE(a);
-    EXPECT_FALSE(b);
-    EXPECT_EQ(a, b);
-    EXPECT_EQ(a, b.fd());
-    EXPECT_EQ(a.fd(), b);
-    EXPECT_NO_THROW(b.open(UNISTDX_TMPFILE, sys::open_flag::create, 0644));
-    EXPECT_TRUE(static_cast<bool>(b));
-    EXPECT_NE(a, b);
-    EXPECT_NE(a.fd(), b);
-    EXPECT_NE(a, b.fd());
+    expect(!value(a));
+    expect(!value(b));
+    expect(value(a) == value(b));
+    expect(value(a) == value(b.fd()));
+    expect(value(a.fd()) == value(b));
+    b.open(UNISTDX_TMPFILE, sys::open_flag::create, 0644);
+    expect(static_cast<bool>(b));
+    expect(value(a) != value(b));
+    expect(value(a.fd()) != value(b));
+    expect(value(a) != value(b.fd()));
 }
 
-TEST(fildes, traits) {
+void test_fildes_traits() {
+    sys::test::file_descriptor_sanitizer fds;
     typedef sys::streambuf_traits<sys::fildes> traits_type;
     sys::fildes a;
     char buf[1024] = {0};
-    EXPECT_THROW(traits_type::read(a, buf, 1024), sys::bad_call);
-    EXPECT_THROW(traits_type::write(a, buf, 1024), sys::bad_call);
+    expect(throws<sys::bad_call>(call([&] () { traits_type::read(a, buf, 1024); })));
+    expect(throws<sys::bad_call>(call([&] () { traits_type::write(a, buf, 1024); })));
 }
 
-TEST(fd_type, traits) {
+void test_fd_type_traits() {
+    sys::test::file_descriptor_sanitizer fds;
     typedef sys::streambuf_traits<sys::fd_type> traits_type;
     sys::fildes a;
     char buf[1024] = {0};
-    EXPECT_THROW(traits_type::read(a.fd(), buf, 1024), sys::bad_call);
-    EXPECT_THROW(traits_type::write(a.fd(), buf, 1024), sys::bad_call);
+    expect(throws<sys::bad_call>(call([&] () { traits_type::read(a.fd(), buf, 1024); })));
+    expect(throws<sys::bad_call>(call([&] () { traits_type::write(a.fd(), buf, 1024); })));
     a.open("/dev/null");
-    EXPECT_TRUE(static_cast<bool>(a));
-    EXPECT_NO_THROW(traits_type::read(a.fd(), buf, 1024));
-}
-
-int main(int argc, char* argv[]) {
-    std::atexit([] () { sys::test::sanitize_file_descriptors(); });
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    expect(static_cast<bool>(a));
+    expect(no_throw(call([&] () { traits_type::read(a.fd(), buf, 1024); })));
 }

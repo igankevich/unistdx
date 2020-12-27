@@ -33,11 +33,35 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_TEST_LANGUAGE
 #define UNISTDX_TEST_LANGUAGE
 
+#include <set>
 #include <sstream>
 #include <typeinfo>
+#include <vector>
 
 #include <unistdx/system/error>
 #include <unistdx/test/test_executor>
+
+namespace std {
+
+    template <>
+    struct iterator_traits<void*> {
+        using iterator_category = random_access_iterator_tag;
+        using value_type = void;
+        using difference_type = ptrdiff_t;
+        using pointer = void*;
+        using reference = void;
+    };
+
+    template <>
+    struct iterator_traits<const void*> {
+        using iterator_category = random_access_iterator_tag;
+        using value_type = void;
+        using difference_type = ptrdiff_t;
+        using pointer = const void*;
+        using reference = void;
+    };
+
+}
 
 namespace sys {
     namespace test {
@@ -61,6 +85,18 @@ namespace sys {
                 return out << static_cast<t>(rhs);
             }
 
+            template <class E> inline
+            typename std::enable_if<
+            !std::is_pointer<E>::value &&
+            (std::is_base_of<std::input_iterator_tag,
+                typename std::iterator_traits<E>::iterator_category>::value ||
+            std::is_base_of<std::output_iterator_tag,
+                typename std::iterator_traits<E>::iterator_category>::value),
+                std::ostream&>::type
+            operator<<(std::ostream& out, const E& rhs) {
+                return out << "#iterator";
+            }
+
             template <class E> inline std::ostream&
             operator<<(std::ostream& out, const std::vector<E>& rhs) {
                 out << "(list ";
@@ -69,6 +105,24 @@ namespace sys {
                 for (size_t i=1; i<n; ++i) { out << ' ' << rhs[i]; }
                 out.put(')');
                 return out;
+            }
+
+            template <class E> inline std::ostream&
+            operator<<(std::ostream& out, const std::set<E>& rhs) {
+                out << "(list ";
+                auto first = rhs.begin(), last = rhs.end();
+                if (first != last) { out << *first; ++first; }
+                while (first != last) {
+                    out << ' ' << *first;
+                    ++first;
+                }
+                out.put(')');
+                return out;
+            }
+
+            inline std::ostream&
+            operator<<(std::ostream& out, std::nullptr_t) {
+                return out << "#nil";
             }
 
             template <class T>
@@ -114,7 +168,7 @@ namespace sys {
                 }
             };
 
-            template <class E>
+            template <class E, class Error>
             struct Throw: public Expression {
                 const E& arg0;
                 inline explicit Throw(const E& e): arg0(e) {}
@@ -126,12 +180,14 @@ namespace sys {
                             << " to throw exception, but it does not throw.";
                         current_test->record_error(error(tmp.str()));
                         return false;
-                    } catch (...) {
+                    } catch (const Error& err) {
                         return true;
                     }
                 }
                 inline void display(std::ostream& out) const {
-                    out << "(throw " << arg0 << ")";
+                    out << "(throw " << arg0;
+                    out << typeid(Error).name();
+                    out << ")";
                 }
             };
 
@@ -215,6 +271,10 @@ namespace sys {
                 return b;
             }
 
+            inline void fail(const std::string& message) {
+                current_test->record_error(error(message));
+            }
+
             template <class T>
             inline Value<T> value(const T& v) { return Value<T>{v}; }
 
@@ -226,8 +286,12 @@ namespace sys {
             no_throw(const E& e) { return No_throw<E>{e}; }
 
             template <class E> inline
-            typename std::enable_if<std::is_base_of<Expression,E>::value,Throw<E>>::type
-            throws(const E& e) { return Throw<E>{e}; }
+            typename std::enable_if<std::is_base_of<Expression,E>::value,Throw<E,std::exception>>::type
+            throws(const E& e) { return Throw<E,std::exception>{e}; }
+
+            template <class Error,class E> inline
+            typename std::enable_if<std::is_base_of<Expression,E>::value,Throw<E,Error>>::type
+            throws(const E& e) { return Throw<E,Error>{e}; }
 
         }
     }

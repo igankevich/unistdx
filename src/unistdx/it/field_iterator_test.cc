@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -36,10 +36,11 @@ For more information, please refer to <http://unlicense.org/>
 #include <string>
 #include <vector>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/it/field_iterator>
 #include <unistdx/it/iterator_pair>
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
 
 template <class Container>
 void
@@ -60,23 +61,23 @@ test_field_iterator() {
         key_iterator(data.end()),
         std::back_inserter(keys)
     );
-    EXPECT_EQ(expected_keys, keys);
+    expect(value(expected_keys) == value(keys));
     std::copy(
         value_iterator(data.begin()),
         value_iterator(data.end()),
         std::back_inserter(values)
     );
-    EXPECT_EQ(expected_values, values);
+    expect(value(expected_values) == value(values));
     for (const auto& v : sys::make_view<1>(data)) {
         values2.push_back(v);
     }
-    EXPECT_EQ(expected_values, values2);
+    expect(value(expected_values) == value(values2));
 }
 
-TEST(FieldIterator, TraverseVector) {
+void test_fielditerator_traverse_vector() {
     test_field_iterator<std::vector<std::pair<std::string,int>>>();
 }
 
-TEST(FieldIterator, TraverseMap) {
+void test_fielditerator_traverse_map() {
     test_field_iterator<std::map<std::string,int>>();
 }

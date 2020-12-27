@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -38,6 +38,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <string>
 #include <vector>
 
+#include <unistdx/test/language>
 #include <unistdx/test/tmpdir>
 
 namespace test {
@@ -48,6 +49,7 @@ namespace test {
         const tmpdir& tdir,
         const std::vector<std::string>& files
     ) {
+        using namespace sys::test::lang;
         Stream dir(tdir);
         std::set<std::string> files_orig(files.begin(), files.end());
         std::set<std::string> files_actual;
@@ -58,7 +60,9 @@ namespace test {
                 files_actual.emplace(ent.name());
             }
         );
-        EXPECT_EQ(files_orig, files_actual) << "bad file list in " << tdir.name();
+        if (!expect(value(files_orig) == value(files_actual))) {
+            std::clog << "bad file list in " << tdir.name();
+        }
     }
 
     template <class Stream, class Iterator>
@@ -67,19 +71,23 @@ namespace test {
         const test::tmpdir& tdir,
         const std::vector<std::string>& files
     ) {
+        using namespace sys::test::lang;
         Stream dir(tdir);
         size_t cnt = std::distance(Iterator(dir), Iterator());
-        EXPECT_EQ(cnt, files.size()) << "bad total file count in " << tdir.name();
+        if (!expect(value(cnt) == value(files.size()))) {
+            std::clog << "bad total file count in " << tdir.name();
+        }
     }
 
     template <class Stream>
     inline void
     assert_good(const Stream& dir, bool is_open) {
-        EXPECT_EQ(dir.is_open(), is_open);
-        EXPECT_EQ(dir.good(), true);
-        EXPECT_EQ(dir.bad(), false);
-        EXPECT_EQ(dir.eof(), false);
-        EXPECT_EQ(static_cast<bool>(dir), true);
+        using namespace sys::test::lang;
+        expect(value(dir.is_open()) == value(is_open));
+        expect(value(dir.good()) == value(true));
+        expect(value(dir.bad()) == value(false));
+        expect(value(dir.eof()) == value(false));
+        expect(value(static_cast<bool>(dir)) == value(true));
     }
 
     template <class Stream>

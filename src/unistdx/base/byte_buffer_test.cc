@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,51 +30,52 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/byte_buffer>
 #include <unistdx/base/check>
+#include <unistdx/test/language>
 
-TEST(byte_buffer, resize) {
+using namespace sys::test::lang;
+
+void test_byte_buffer_resize() {
     const size_t max0 = sys::byte_buffer::max_size();
     sys::byte_buffer buf(4096);
-    EXPECT_THROW(buf.resize(max0), sys::bad_call);
-    EXPECT_THROW(sys::byte_buffer b(max0), sys::bad_call);
+    expect(throws(call([&] () { buf.resize(max0); })));
+    expect(throws(call([&] () { sys::byte_buffer b(max0); })));
 }
 
-TEST(byte_buffer, resize_empty) {
+void test_byte_buffer_resize_empty() {
     sys::byte_buffer buf(0);
     buf.resize(4096);
-    EXPECT_EQ(4096u, buf.size());
+    expect(value(4096u) == value(buf.size()));
 }
 
-TEST(byte_buffer, read) {
-    sys::byte_buffer buf(0);
-    char tmp[16];
-    EXPECT_THROW(buf.read(tmp, sizeof(tmp)), std::range_error);
-    buf.resize(4096);
-    EXPECT_NO_THROW(buf.read(tmp, sizeof(tmp)));
-}
-
-TEST(byte_buffer, peek) {
+void test_byte_buffer_read() {
     sys::byte_buffer buf(0);
     char tmp[16];
-    EXPECT_THROW(buf.peek(tmp, sizeof(tmp)), std::range_error);
+    expect(throws(call([&] () { buf.read(tmp, sizeof(tmp)); })));
     buf.resize(4096);
-    EXPECT_NO_THROW(buf.peek(tmp, sizeof(tmp)));
+    expect(no_throw(call([&] () { buf.read(tmp, sizeof(tmp)); })));
 }
 
-TEST(byte_buffer, copy) {
+void test_byte_buffer_peek() {
+    sys::byte_buffer buf(0);
+    char tmp[16];
+    expect(throws(call([&] () { buf.peek(tmp, sizeof(tmp)); })));
+    buf.resize(4096);
+    expect(no_throw(call([&] () { buf.peek(tmp, sizeof(tmp)); })));
+}
+
+void test_byte_buffer_copy() {
     sys::byte_buffer a(4096);
     a.write(1);
     a.write(2);
     a.write(3);
     sys::byte_buffer b(a);
-    EXPECT_TRUE(std::equal(a.data(), a.data()+a.size(), b.data()));
+    expect(std::equal(a.data(), a.data()+a.size(), b.data()));
     sys::byte_buffer c(4096);
     c.write(4);
     c.write(5);
     c.write(6);
     c = a;
-    EXPECT_TRUE(std::equal(a.data(), a.data()+a.size(), c.data()));
+    expect(std::equal(a.data(), a.data()+a.size(), c.data()));
 }

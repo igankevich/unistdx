@@ -32,6 +32,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unordered_map>
 
+#include <unistdx/io/event_file_descriptor>
 #include <unistdx/io/pipe>
 #include <unistdx/io/terminal>
 #include <unistdx/net/network_interface>
@@ -50,7 +51,6 @@ namespace {
     sys::test::Backtrace_thread* backtrace_thread_ptr{};
 
     void backtrace_on_signal_static(int sig) noexcept {
-        using sys::test::current_test;
         if (!backtrace_thread_ptr) {
             sys::backtrace_on_signal(sig);
             std::_Exit(sig);
@@ -170,6 +170,8 @@ std::ostream& sys::test::operator<<(std::ostream& out, Test::Status rhs) {
 }
 
 int sys::test::Test_executor::run() {
+    size_t num_tests = this->_tests.size();
+    size_t num_finished = 0;
     std::unordered_map<sys::pid_type,Test_output> tests_by_process;
     std::unordered_map<sys::fd_type,sys::pid_type> process_by_fd;
     tests_by_process.reserve(this->_tests.size());
@@ -187,10 +189,16 @@ int sys::test::Test_executor::run() {
                 this->_tests.pop_front();
                 sys::pipe stderr;
                 stderr.out().unsetf(sys::open_flag::non_blocking);
-                this->_child_processes.emplace_back([&test,&stderr]() noexcept {
+                sys::event_file_descriptor notifier;
+                notifier.unsetf(sys::open_flag::non_blocking);
+                using f = sys::process::flags;
+                this->_child_processes.emplace_back([this,&test,&stderr,&notifier]() noexcept {
+                    notifier.read();
+                    notifier.close();
+                    //using f = sys::unshare_flag;
+                    //sys::this_process::unshare(f::network | f::users);
+                    this->_poller.close();
                     // TODO
-                    using f = sys::unshare_flag;
-                    sys::this_process::unshare(f::users | f::network);
                     { sys::network_interface lo("lo");
                         lo.setf(sys::network_interface::flag::up); }
                     current_test = &test;
@@ -199,55 +207,60 @@ int sys::test::Test_executor::run() {
                     out = stderr.out();
                     sys::fildes err(STDERR_FILENO);
                     err = stderr.out();
-                    using sys::this_process::bind_signal;
-                    using sys::this_process::ignore_signal;
-                    bind_signal(sys::signal::segmentation_fault, backtrace_on_signal_static);
-                    bind_signal(sys::signal::bad_memory_access, backtrace_on_signal_static);
-                    bind_signal(sys::signal::keyboard_interrupt, backtrace_on_signal_static);
-                    bind_signal(sys::signal::abort, backtrace_on_signal_static);
-                    ignore_signal(sys::signal::broken_pipe);
-                    std::set_terminate([] () {
-                        if (auto ptr = std::current_exception()) {
-                            sys::string buf(4096);
-                            try {
-                                std::rethrow_exception(ptr);
-                            } catch (const error& err) {
-                                current_test->status(Test::Status::Exception);
-                                current_test->exception_type(sys::demangle(typeid(err).name(), buf));
-                                current_test->exception_text(err.what());
-                            } catch (const std::exception& err) {
-                                current_test->status(Test::Status::Exception);
-                                current_test->exception_type(sys::demangle(typeid(err).name(), buf));
-                                current_test->exception_text(error(err.what()).what());
-                            } catch (...) {
+                    Backtrace_thread backtrace_thread;
+                    if (catch_errors()) {
+                        using sys::this_process::bind_signal;
+                        using sys::this_process::ignore_signal;
+                        bind_signal(sys::signal::segmentation_fault, backtrace_on_signal_static);
+                        bind_signal(sys::signal::bad_memory_access, backtrace_on_signal_static);
+                        bind_signal(sys::signal::keyboard_interrupt, backtrace_on_signal_static);
+                        bind_signal(sys::signal::abort, backtrace_on_signal_static);
+                        ignore_signal(sys::signal::broken_pipe);
+                        std::set_terminate([] () {
+                            if (auto ptr = std::current_exception()) {
+                                sys::string buf(4096);
+                                try {
+                                    std::rethrow_exception(ptr);
+                                } catch (const error& err) {
+                                    current_test->status(Test::Status::Exception);
+                                    current_test->exception_type(sys::demangle(typeid(err).name(), buf));
+                                    current_test->exception_text(err.what());
+                                } catch (const std::exception& err) {
+                                    current_test->status(Test::Status::Exception);
+                                    current_test->exception_type(sys::demangle(typeid(err).name(), buf));
+                                    current_test->exception_text(error(err.what()).what());
+                                } catch (...) {
+                                    current_test->status(Test::Status::Unknown_exception);
+                                    current_test->exception_type("unknown");
+                                    current_test->exception_text(error("Uncaught exception").what());
+                                }
+                            } else {
                                 current_test->status(Test::Status::Unknown_exception);
                                 current_test->exception_type("unknown");
                                 current_test->exception_text(error("Uncaught exception").what());
                             }
-                        } else {
-                            current_test->status(Test::Status::Unknown_exception);
-                            current_test->exception_type("unknown");
-                            current_test->exception_text(error("Uncaught exception").what());
-                        }
-                        current_test->child_write_status(std::clog);
-                        std::_Exit(1);
-                    });
-                    Backtrace_thread backtrace_thread;
-                    backtrace_thread_ptr = &backtrace_thread;
-                    backtrace_thread.run(current_test);
+                            current_test->child_write_status(std::clog);
+                            std::_Exit(1);
+                        });
+                        backtrace_thread_ptr = &backtrace_thread;
+                        backtrace_thread.run(current_test);
+                    }
                     auto ret = current_test->run();
-                    std::clog << "0=" << 0 << std::endl;
-                    backtrace_thread.stop();
-                    std::clog << "1=" << 1 << std::endl;
-                    backtrace_thread.join();
-                    std::clog << "2=" << 2 << std::endl;
+                    if (catch_errors()) {
+                        backtrace_thread.stop();
+                        backtrace_thread.join();
+                    }
                     return ret;
-                });
+                }, f::fork | f::signal_parent | f::unshare_users | f::unshare_network,
+                    4096*512);
                 auto& process = this->_child_processes.back();
+                process.init_user_namespace();
+                notifier.write(1);
                 stderr.out().close();
                 this->_poller.emplace(stderr.in().fd(), sys::event::in);
                 process_by_fd[stderr.in().fd()] = process.id();
-                tests_by_process[process.id()] = Test_output{std::move(test),std::move(stderr.in())};
+                tests_by_process[process.id()] =
+                    Test_output{std::move(test),std::move(stderr.in())};
             }
         }
         this->_poller.wait_for(this->_mutex, std::chrono::milliseconds(99));
@@ -264,15 +277,19 @@ int sys::test::Test_executor::run() {
                 output.output.fill(fd);
             }
             if (!event) {
-                auto result = std::find_if(
-                    this->_child_processes.begin(),
-                    this->_child_processes.end(),
-                    [process_id] (const sys::process& p) { return p.id() == process_id; });
-                if (result == this->_child_processes.end()) { continue; }
-                auto& p = *result;
-                //using f = sys::wait_flags;
-                auto status = p.wait(/*f::exited | f::non_blocking*/);
-                if (status.pid() == 0) { continue; }
+                process_by_fd.erase(result);
+            }
+        }
+        auto first = this->_child_processes.begin();
+        auto last = this->_child_processes.end();
+        while (first != last) {
+            auto& process = *first;
+            using f = sys::wait_flags;
+            auto status = process.wait(f::exited | f::non_blocking);
+            if (status.pid() == 0) {
+                ++first;
+            } else {
+                auto& output = tests_by_process[process.id()];
                 auto& t = output.test;
                 t.exit_code(status.exit_code());
                 switch (status.exit_code()) {
@@ -283,13 +300,29 @@ int sys::test::Test_executor::run() {
                              t.status(Test::Status::Killed);
                              break;
                 }
-                exit_code |= t.exit_code();
+                if (exit_code != 77) {
+                    exit_code |= t.exit_code();
+                }
                 {
+                    ++num_finished;
                     using namespace sys::terminal;
                     std::clog.iword(0) = sys::is_a_terminal(STDERR_FILENO);
-                    std::clog << reversed() << bold() << t.status() << reset();
-                    std::clog << ' ' << bold() << t.symbol().short_name()
-                        << reset() << std::endl;
+                    std::clog << '[' << num_finished << '/' << num_tests << "] ";
+                    std::clog << bold();
+                    switch (t.status()) {
+                        case Test::Status::Success:
+                            std::clog << color(colors::fg_green);
+                            break;
+                        case Test::Status::Skipped:
+                            std::clog << color(colors::fg_yellow);
+                            break;
+                        default:
+                            std::clog << color(colors::fg_red);
+                            break;
+                    }
+                    std::clog << t.status();
+                    std::clog << reset();
+                    std::clog << ' ' << t.symbol().short_name() << std::endl;
                 }
                 if (t.status() != Test::Status::Success &&
                     t.status() != Test::Status::Skipped) {
@@ -298,7 +331,9 @@ int sys::test::Test_executor::run() {
                     t.parent_write_status(std::clog);
                     std::clog << "========  End   ======== \n";
                 }
-                this->_child_processes.erase(result);
+                tests_by_process.erase(process.id());
+                first = this->_child_processes.erase(first);
+                last = this->_child_processes.end();
             }
         }
         //std::this_thread::sleep_for(std::chrono::milliseconds(99));

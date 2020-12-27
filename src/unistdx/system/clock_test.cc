@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,9 +30,10 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/system/clock>
+#include <unistdx/test/language>
 
-TEST(clock, _) {
+using namespace sys::test::lang;
+
+void test_clock() {
 }

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,51 +30,46 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/fs/file_mode>
+#include <unistdx/test/language>
+#include <unistdx/test/operator>
 
-TEST(file_mode, operators) {
+using namespace sys::test::lang;
+
+void test_file_mode_operators() {
     sys::file_mode a;
     sys::file_mode b(0755u);
     sys::file_mode c(0644u);
     sys::file_mode d(0755u);
     sys::file_mode e(c);
-    EXPECT_EQ(a, a);
-    EXPECT_EQ(b, b);
-    EXPECT_EQ(c, c);
-    EXPECT_NE(a, b);
-    EXPECT_NE(a, c);
-    EXPECT_NE(a, d);
-    EXPECT_EQ(b, d);
-    EXPECT_EQ(c, e);
-    EXPECT_EQ(c, 0644u);
-    EXPECT_EQ(c.mode(), 0644u);
-    EXPECT_NE(c, 0600u);
+    expect(value(a) == value(a));
+    expect(value(b) == value(b));
+    expect(value(c) == value(c));
+    expect(value(a) != value(b));
+    expect(value(a) != value(c));
+    expect(value(a) != value(d));
+    expect(value(b) == value(d));
+    expect(value(c) == value(e));
+    expect(value(c) == value(0644u));
+    expect(value(c.mode()) == value(0644u));
+    expect(value(c) != value(0600u));
     c = 0600u;
-    EXPECT_EQ(c, 0600u);
+    expect(value(c) == value(0600u));
 }
 
-TEST(file_mode, bits) {
+void test_file_mode_bits() {
     sys::file_mode a(0752u);
     sys::file_mode b(0147u);
     sys::file_mode c(0640u);
     sys::file_mode e(01640u);
     sys::file_mode d(a.user() | b.group() | c.other() | e.special());
-    EXPECT_EQ(sys::file_mode(01740u), d);
+    expect(value(sys::file_mode(01740u)) == value(d));
 }
 
-void
-expect_eq(const char* s, sys::file_mode m) {
-    std::stringstream str;
-    str << m;
-    EXPECT_EQ(s, str.str());
-}
-
-TEST(file_mode, print) {
-    expect_eq("--trwxrw-r--", sys::file_mode(01764u));
-    expect_eq("ug-rwxrw-r--", sys::file_mode(06764u));
-    expect_eq("------rw-r--", sys::file_mode(0064u));
-    expect_eq("---r----xr--", sys::file_mode(0414u));
-    expect_eq("---r----x-wx", sys::file_mode(0413u));
+void test_file_mode_print() {
+    test::stream_insert_equals("--trwxrw-r--", sys::file_mode(01764u));
+    test::stream_insert_equals("ug-rwxrw-r--", sys::file_mode(06764u));
+    test::stream_insert_equals("------rw-r--", sys::file_mode(0064u));
+    test::stream_insert_equals("---r----xr--", sys::file_mode(0414u));
+    test::stream_insert_equals("---r----x-wx", sys::file_mode(0413u));
 }

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,15 +30,16 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <iterator>
 #include <string>
 #include <vector>
 
 #include <unistdx/it/cstring_iterator>
+#include <unistdx/test/language>
 
-TEST(cstring_iterator, basic) {
+using namespace sys::test::lang;
+
+void test_cstring_iterator_basic() {
     const char* args[] = {
         "first",
         "second",
@@ -47,9 +48,9 @@ TEST(cstring_iterator, basic) {
     sys::cstring_iterator<const char*> first(args), last;
     std::vector<std::string> actual;
     std::copy(first, last, std::back_inserter(actual));
-    EXPECT_EQ(2u, actual.size());
-    EXPECT_EQ("first", actual[0]);
-    EXPECT_EQ("second", actual[1]);
+    expect(value(2u) == value(actual.size()));
+    expect(value("first") == value(actual[0]));
+    expect(value("second") == value(actual[1]));
 }
 
 struct args_and_count {
@@ -64,24 +65,14 @@ struct args_and_count {
 
 };
 
-class cstring_iterator_test: public ::testing::TestWithParam<args_and_count> {};
-
-TEST_P(cstring_iterator_test, All) {
-    const args_and_count& param = GetParam();
-    const size_t cnt =
-        std::distance(
-            sys::cstring_iterator<const char*>(param.get_args()),
-            sys::cstring_iterator<const char*>()
-        );
-    EXPECT_EQ(param.count, cnt);
-}
-
-INSTANTIATE_TEST_CASE_P(
-    AllSizes,
-    cstring_iterator_test,
-    ::testing::Values(
+void test_cstring_iterator() {
+    using iterator = sys::cstring_iterator<const char*>;
+    for (const auto& param : {
         args_and_count{2, {"1", "2", 0}},
         args_and_count{1, {"1", 0}},
-        args_and_count{0, {0}}
-    )
-);
+        args_and_count{0, {0}}})
+    {
+        const size_t cnt = std::distance(iterator(param.get_args()), iterator());
+        expect(value(param.count) == value(cnt));
+    }
+}

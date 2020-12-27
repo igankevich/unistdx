@@ -57,6 +57,30 @@ namespace sys {
 
     namespace terminal {
 
+        enum struct colors: u8 {
+            reset            = 0,
+            fg_red           = 31,
+            fg_green         = 32,
+            fg_yellow        = 33,
+            fg_blue          = 34,
+            fg_magenta       = 35,
+            fg_cyan          = 36,
+            fg_light_gray    = 37,
+            fg_dark_gray     = 90,
+            fg_light_red     = 91,
+            fg_light_green   = 92,
+            fg_light_yellow  = 93,
+            fg_light_blue    = 94,
+            fg_light_magenta = 95,
+            fg_light_cyan    = 96,
+            fg_white         = 97,
+            fg_default       = 39,
+            bg_red           = 41,
+            bg_green         = 42,
+            bg_blue          = 44,
+            bg_default       = 49,
+        };
+
         template <size_t N, char Ch>
         struct escape_sequence { u32 args[N]; };
 
@@ -73,8 +97,14 @@ namespace sys {
         inline escape_sequence<1,'m'> bold() noexcept { return {1}; }
         inline escape_sequence<1,'m'> underline() noexcept { return {4}; }
         inline escape_sequence<1,'m'> reversed() noexcept { return {7}; }
-        inline escape_sequence<5,'m'> foreground_color(u8 r, u8 g, u8 b) noexcept { return {38,5,r,g,b}; }
-        inline escape_sequence<5,'m'> background_color(u8 r, u8 g, u8 b) noexcept { return {48,5,r,g,b}; }
+        // 16 colors
+        inline escape_sequence<1,'m'> color(colors c) noexcept { return {u8(c)}; }
+        // 8-bit colors
+        inline escape_sequence<3,'m'> foreground_color(u8 c) noexcept { return {38,5,c}; }
+        inline escape_sequence<3,'m'> background_color(u8 c) noexcept { return {48,5,c}; }
+        // 24-bit colors
+        inline escape_sequence<5,'m'> foreground_color(u8 r, u8 g, u8 b) noexcept { return {38,2,r,g,b}; }
+        inline escape_sequence<5,'m'> background_color(u8 r, u8 g, u8 b) noexcept { return {48,2,r,g,b}; }
         inline escape_sequence<2,'H'> move(u32 line, u32 column) noexcept { return {line,column}; }
         inline escape_sequence<0,'J'> clear() noexcept { return {}; }
 

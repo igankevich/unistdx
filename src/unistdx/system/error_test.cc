@@ -30,17 +30,16 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/bad_call>
 #include <unistdx/system/error>
+#include <unistdx/test/language>
 
 void func() {
     //throw sys::error("xyz");
     throw sys::bad_call(std::errc::permission_denied);
 }
 
-TEST(error, try_catch) {
+void test_error_try_catch() {
     try {
         func();
     } catch (const std::exception& err) {

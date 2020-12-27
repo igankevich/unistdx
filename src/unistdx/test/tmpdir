@@ -39,15 +39,14 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/ipc/execute>
 #include <unistdx/ipc/process>
-
-#include <gtest/gtest.h>
+#include <unistdx/test/language>
+#include <unistdx/test/test_executor>
 
 namespace test {
 
     inline std::string
     current_test_name() {
-        std::string name =
-            ::testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::string name = sys::test::current_test->symbol().short_name();
         std::transform(
             name.begin(),
             name.end(),
@@ -116,6 +115,7 @@ namespace test {
 
         inline void
         clear() {
+            using namespace sys::test::lang;
             sys::process child{
                 [this] () {
                     sys::argstream args;
@@ -127,12 +127,13 @@ namespace test {
                 }
             };
             sys::process_status status = child.wait();
-            ASSERT_TRUE(status.exited());
-            ASSERT_EQ(0, status.exit_code());
+            expect(status.exited());
+            expect(value(0) == value(status.exit_code()));
         }
 
         inline void
         list() {
+            using namespace sys::test::lang;
             sys::process child{
                 [this] () {
                     sys::argstream args;
@@ -143,8 +144,8 @@ namespace test {
                 }
             };
             sys::process_status status = child.wait();
-            ASSERT_TRUE(status.exited());
-            ASSERT_EQ(0, status.exit_code());
+            expect(status.exited());
+            expect(value(0) == value(status.exit_code()));
         }
 
         inline

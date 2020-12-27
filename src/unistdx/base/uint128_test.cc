@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,360 +34,362 @@ For more information, please refer to <http://unlicense.org/>
 #include <sstream>
 #include <string>
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/uint128>
 #include <unistdx/test/operator>
 
-TEST(uint128, Limits) {
+using namespace sys::test::lang;
+
+void test_uint128_limits() {
     using namespace sys::literals;
     using sys::u128;
-    EXPECT_EQ(
-        340282366920938463463374607431768211455_u128,
-        std::numeric_limits<u128>::max()
-    );
-    EXPECT_EQ(0_u128, std::numeric_limits<u128>::min());
-    EXPECT_EQ(128, std::numeric_limits<u128>::digits);
+    expect(value(340282366920938463463374607431768211455_u128) ==
+           value(std::numeric_limits<u128>::max()));
+    expect(value(0_u128) == value(std::numeric_limits<u128>::min()));
+    expect(value(128) == value(std::numeric_limits<u128>::digits));
 }
 
 using sys::u128;
 using sys::u64;
 
-TEST(uint128, comparisons) {
+void test_uint128_comparisons() {
     // one component
-    EXPECT_EQ(u128(), u128(0));
-    EXPECT_LT(u128(0), u128(1));
-    EXPECT_LE(u128(0), u128(1));
-    EXPECT_LE(u128(0), u128(0));
-    EXPECT_GT(u128(1), u128(0));
-    EXPECT_GE(u128(1), u128(0));
-    EXPECT_GE(u128(0), u128(0));
-    EXPECT_NE(u128(0), u128(1));
+    expect(value(u128()) == value(u128(0)));
+    expect(value(u128(0)) < value(u128(1)));
+    expect(value(u128(0)) <= value(u128(1)));
+    expect(value(u128(0)) <= value(u128(0)));
+    expect(value(u128(1)) > value(u128(0)));
+    expect(value(u128(1)) >= value(u128(0)));
+    expect(value(u128(0)) >= value(u128(0)));
+    expect(value(u128(0)) != value(u128(1)));
     // two components
-    EXPECT_EQ(u128(), u128(0,0));
-    EXPECT_LT(u128(0,1), u128(1,0));
-    EXPECT_LE(u128(0,1), u128(1,0));
-    EXPECT_LE(u128(1,0), u128(1,0));
-    EXPECT_GT(u128(1,0), u128(0,1));
-    EXPECT_GE(u128(1,0), u128(0,1));
-    EXPECT_GE(u128(1,0), u128(1,0));
-    EXPECT_NE(u128(1,0), u128(0,1));
+    expect(value(u128()) == value(u128(0,0)));
+    expect(value(u128(0,1)) < value(u128(1,0)));
+    expect(value(u128(0,1)) <= value(u128(1,0)));
+    expect(value(u128(1,0)) <= value(u128(1,0)));
+    expect(value(u128(1,0)) > value(u128(0,1)));
+    expect(value(u128(1,0)) >= value(u128(0,1)));
+    expect(value(u128(1,0)) >= value(u128(1,0)));
+    expect(value(u128(1,0)) != value(u128(0,1)));
 }
 
-TEST(uint128, operator_bool) {
-    EXPECT_TRUE(bool(u128(0,1)));
-    EXPECT_TRUE(bool(u128(1,0)));
-    EXPECT_FALSE(bool(u128(0,0)));
-    EXPECT_FALSE(!u128(0,1));
-    EXPECT_FALSE(!u128(1,0));
-    EXPECT_TRUE(!u128(0,0));
+void test_uint128_operator_bool() {
+    expect(bool(u128(0,1)));
+    expect(bool(u128(1,0)));
+    expect(!bool(u128(0,0)));
+    expect(!value(!u128(0,1)));
+    expect(!value(!u128(1,0)));
+    expect(!u128(0,0));
 }
 
-TEST(uint128, operator_tilde) {
-    EXPECT_EQ(u128(0), ~std::numeric_limits<u128>::max());
-    EXPECT_EQ(~u128(0), std::numeric_limits<u128>::max());
+void test_uint128_operator_tilde() {
+    expect(value(u128(0)) == value(~std::numeric_limits<u128>::max()));
+    expect(value(~u128(0)) == value(std::numeric_limits<u128>::max()));
 }
 
-TEST(uint128, operator_minus) {
-    EXPECT_EQ(-u64(0), u64(0));
-    EXPECT_EQ(-u64(1), std::numeric_limits<u64>::max());
-    EXPECT_EQ(-u64(2), std::numeric_limits<u64>::max()-1);
-    EXPECT_EQ(-u128(0), u128(0));
-    EXPECT_EQ(-u128(1), std::numeric_limits<u128>::max());
-    EXPECT_EQ(-u128(2), std::numeric_limits<u128>::max()-1);
+void test_uint128_operator_minus() {
+    expect(value(-u64(0)) == value(u64(0)));
+    expect(value(-u64(1)) == value(std::numeric_limits<u64>::max()));
+    expect(value(-u64(2)) == value(std::numeric_limits<u64>::max()-1));
+    expect(value(-u128(0)) == value(u128(0)));
+    expect(value(-u128(1)) == value(std::numeric_limits<u128>::max()));
+    expect(value(-u128(2)) == value(std::numeric_limits<u128>::max()-1));
 }
 
-TEST(uint128, operator_bitwise_or) {
-    EXPECT_EQ(u128(0), u128(0) | u128(0));
-    EXPECT_EQ(u128(1), u128(0) | u128(1));
-    EXPECT_EQ(u128(1), u128(1) | u128(0));
-    EXPECT_EQ(u128(1), u128(1) | u128(1));
+void test_uint128_operator_bitwise_or() {
+    expect(value(u128(0)) == value(u128(0) | u128(0)));
+    expect(value(u128(1)) == value(u128(0) | u128(1)));
+    expect(value(u128(1)) == value(u128(1) | u128(0)));
+    expect(value(u128(1)) == value(u128(1) | u128(1)));
     u128 x;
     x = 0;
-    EXPECT_EQ(u128(0), x |= 0);
+    expect(value(u128(0)) == value(x |= 0));
     x = 0;
-    EXPECT_EQ(u128(1), x |= 1);
+    expect(value(u128(1)) == value(x |= 1));
     x = 1;
-    EXPECT_EQ(u128(1), x |= 0);
+    expect(value(u128(1)) == value(x |= 0));
     x = 1;
-    EXPECT_EQ(u128(1), x |= 1);
+    expect(value(u128(1)) == value(x |= 1));
 }
 
-TEST(uint128, operator_bitwise_and) {
-    EXPECT_EQ(u128(0), u128(0) & u128(0));
-    EXPECT_EQ(u128(0), u128(0) & u128(1));
-    EXPECT_EQ(u128(0), u128(1) & u128(0));
-    EXPECT_EQ(u128(1), u128(1) & u128(1));
+void test_uint128_operator_bitwise_and() {
+    expect(value(u128(0)) == value(u128(0) & u128(0)));
+    expect(value(u128(0)) == value(u128(0) & u128(1)));
+    expect(value(u128(0)) == value(u128(1) & u128(0)));
+    expect(value(u128(1)) == value(u128(1) & u128(1)));
     u128 x;
     x = 0;
-    EXPECT_EQ(u128(0), x &= 0);
+    expect(value(u128(0)) == value(x &= 0));
     x = 0;
-    EXPECT_EQ(u128(0), x &= 1);
+    expect(value(u128(0)) == value(x &= 1));
     x = 1;
-    EXPECT_EQ(u128(0), x &= 0);
+    expect(value(u128(0)) == value(x &= 0));
     x = 1;
-    EXPECT_EQ(u128(1), x &= 1);
+    expect(value(u128(1)) == value(x &= 1));
 }
 
-TEST(uint128, operator_bitwise_xor) {
-    EXPECT_EQ(u128(0), u128(0) ^ u128(0));
-    EXPECT_EQ(u128(1), u128(0) ^ u128(1));
-    EXPECT_EQ(u128(1), u128(1) ^ u128(0));
-    EXPECT_EQ(u128(0), u128(1) ^ u128(1));
+void test_uint128_operator_bitwise_xor() {
+    expect(value(u128(0)) == value(u128(0) ^ u128(0)));
+    expect(value(u128(1)) == value(u128(0) ^ u128(1)));
+    expect(value(u128(1)) == value(u128(1) ^ u128(0)));
+    expect(value(u128(0)) == value(u128(1) ^ u128(1)));
     u128 x;
     x = 0;
-    EXPECT_EQ(u128(0), x ^= 0);
+    expect(value(u128(0)) == value(x ^= 0));
     x = 0;
-    EXPECT_EQ(u128(1), x ^= 1);
+    expect(value(u128(1)) == value(x ^= 1));
     x = 1;
-    EXPECT_EQ(u128(1), x ^= 0);
+    expect(value(u128(1)) == value(x ^= 0));
     x = 1;
-    EXPECT_EQ(u128(0), x ^= 1);
+    expect(value(u128(0)) == value(x ^= 1));
 }
 
-TEST(uint128, operator_shift_left) {
+void test_uint128_operator_shift_left() {
     for (int i=0; i<64; ++i) {
         u64 y = u64(1)<<u64(i);
-        EXPECT_EQ(u128(0,y), u128(1)<<u128(i)) << "i=" << i;
+        if (!expect(value(u128(0,y)) == value(u128(1)<<u128(i)))) {
+            std::clog << "i=" << i;
+        }
         u128 x(1);
         x <<= u128(i);
-        EXPECT_EQ(u128(0,y), x) << "i=" << i;
+        if (!expect(value(u128(0,y)) == value(x))) {
+            std::clog << "i=" << i;
+        }
     }
-    EXPECT_EQ(u128(1,0), u128(1)<<u128(64));
+    expect(value(u128(1,0)) == value(u128(1)<<u128(64)));
     for (int i=65; i<128; ++i) {
         u64 y = u64(1)<<u64(i-64);
-        EXPECT_EQ(u128(y,0), u128(1)<<u128(i)) << "i=" << i;
+        if (!expect(value(u128(y,0)) == value(u128(1)<<u128(i)))) {
+            std::clog << "i=" << i;
+        }
         u128 x(1);
         x <<= u128(i);
-        EXPECT_EQ(u128(y,0), x) << "i=" << i;
+        if (!expect(value(u128(y,0)) == value(x))) { std::clog << "i=" << i; }
     }
 }
 
-TEST(uint128, operator_shift_right) {
+void test_uint128_operator_shift_right() {
     for (int i=0; i<64; ++i) {
         u64 y = u64(1)>>u64(i);
-        EXPECT_EQ(u128(0,y), u128(1)>>u128(i)) << "i=" << i;
+        if (!expect(value(u128(0,y)) == value(u128(1)>>u128(i)))) { std::clog << "i=" << i; }
         u128 x(1);
         x >>= u128(i);
-        EXPECT_EQ(u128(0,y), x) << "i=" << i;
+        if (!expect(value(u128(0,y)) == value(x))) { std::clog << "i=" << i; }
     }
-    EXPECT_EQ(u128(0,1), u128(1,0)>>u128(64));
+    expect(value(u128(0,1)) == value(u128(1,0)>>u128(64)));
     for (int i=65; i<128; ++i) {
         u64 y = u64(1)>>u64(i-64);
-        EXPECT_EQ(u128(y,0), u128(1)>>u128(i)) << "i=" << i;
+        if (!expect(value(u128(y,0)) == value(u128(1)>>u128(i)))) { std::clog << "i=" << i; }
         u128 x(1);
         x >>= u128(i);
-        EXPECT_EQ(u128(y,0), x) << "i=" << i;
+        if (!expect(value(u128(y,0)) == value(x))) { std::clog << "i=" << i; }
     }
 }
 
-TEST(uint128, increment) {
+void test_uint128_increment() {
     u128 x;
     x = 0;
-    EXPECT_EQ(u128(0), x);
-    EXPECT_EQ(u128(1), ++x);
-    EXPECT_EQ(u128(1), x);
+    expect(value(u128(0)) == value(x));
+    expect(value(u128(1)) == value(++x));
+    expect(value(u128(1)) == value(x));
     x = 0;
-    EXPECT_EQ(u128(0), x);
-    EXPECT_EQ(u128(0), x++);
-    EXPECT_EQ(u128(1), x);
+    expect(value(u128(0)) == value(x));
+    expect(value(u128(0)) == value(x++));
+    expect(value(u128(1)) == value(x));
     x = std::numeric_limits<u64>::max();
-    EXPECT_EQ(u128(1,0), ++x);
-    EXPECT_EQ(u128(1,0), x);
+    expect(value(u128(1,0)) == value(++x));
+    expect(value(u128(1,0)) == value(x));
     x = std::numeric_limits<u64>::max();
-    EXPECT_EQ(u128(0,std::numeric_limits<u64>::max()), x++);
-    EXPECT_EQ(u128(1,0), x);
+    expect(value(u128(0,std::numeric_limits<u64>::max())) == value(x++));
+    expect(value(u128(1,0)) == value(x));
 }
 
-TEST(uint128, decrement) {
+void test_uint128_decrement() {
     u128 x;
     x = 1;
-    EXPECT_EQ(u128(1), x);
-    EXPECT_EQ(u128(0), --x);
-    EXPECT_EQ(u128(0), x);
+    expect(value(u128(1)) == value(x));
+    expect(value(u128(0)) == value(--x));
+    expect(value(u128(0)) == value(x));
     x = 1;
-    EXPECT_EQ(u128(1), x);
-    EXPECT_EQ(u128(1), x--);
-    EXPECT_EQ(u128(0), x);
+    expect(value(u128(1)) == value(x));
+    expect(value(u128(1)) == value(x--));
+    expect(value(u128(0)) == value(x));
     x = u128(1,0);
-    EXPECT_EQ(u128(0,std::numeric_limits<u64>::max()), --x);
-    EXPECT_EQ(u128(0,std::numeric_limits<u64>::max()), x);
+    expect(value(u128(0,std::numeric_limits<u64>::max())) == value(--x));
+    expect(value(u128(0,std::numeric_limits<u64>::max())) == value(x));
     x = u128(1,0);
-    EXPECT_EQ(u128(1,0), x--);
-    EXPECT_EQ(u128(0,std::numeric_limits<u64>::max()), x);
+    expect(value(u128(1,0)) == value(x--));
+    expect(value(u128(0,std::numeric_limits<u64>::max())) == value(x));
 }
 
-TEST(uint128, add) {
-    EXPECT_EQ(u128(1,0), u128(1) + u128(std::numeric_limits<u64>::max()));
-    EXPECT_EQ(u128(2,0), u128(1,0) + u128(1,0));
-    EXPECT_EQ(u128(1,1), u128(1,0) + u128(0,1));
-    EXPECT_EQ(u128(1,1), u128(0,1) + u128(1,0));
-    EXPECT_EQ(u128(1,0)<<1, u128(1,0) + u128(1,0));
-    EXPECT_EQ(u128(0), std::numeric_limits<u128>::max()+1);
-    EXPECT_EQ(u128(1), std::numeric_limits<u128>::max()+2);
-    EXPECT_EQ(u128(1,1), u128(1,1) + std::numeric_limits<u128>::max()+1);
+void test_uint128_add() {
+    expect(value(u128(1,0)) == value(u128(1) + u128(std::numeric_limits<u64>::max())));
+    expect(value(u128(2,0)) == value(u128(1,0) + u128(1,0)));
+    expect(value(u128(1,1)) == value(u128(1,0) + u128(0,1)));
+    expect(value(u128(1,1)) == value(u128(0,1) + u128(1,0)));
+    expect(value(u128(1,0)<<1) == value(u128(1,0) + u128(1,0)));
+    expect(value(u128(0)) == value(std::numeric_limits<u128>::max()+1));
+    expect(value(u128(1)) == value(std::numeric_limits<u128>::max()+2));
+    expect(value(u128(1,1)) == value(u128(1,1) + std::numeric_limits<u128>::max()+1));
 }
 
-TEST(uint128, add_assign) {
+void test_uint128_add_assign() {
     u128 x;
     x = 1;
-    EXPECT_EQ(u128(1,0), x += u128(std::numeric_limits<u64>::max()));
+    expect(value(u128(1,0)) == value(x += u128(std::numeric_limits<u64>::max())));
     x = u128(1,0);
-    EXPECT_EQ(u128(2,0), x += u128(1,0));
+    expect(value(u128(2,0)) == value(x += u128(1,0)));
     x = u128(1,0);
-    EXPECT_EQ(u128(1,1), x += u128(0,1));
+    expect(value(u128(1,1)) == value(x += u128(0,1)));
     x = u128(0,1);
-    EXPECT_EQ(u128(1,1), x += u128(1,0));
+    expect(value(u128(1,1)) == value(x += u128(1,0)));
     x = u128(1,0);
-    EXPECT_EQ(u128(1,0)<<1, x += u128(1,0));
+    expect(value(u128(1,0)<<1) == value(x += u128(1,0)));
     x = std::numeric_limits<u128>::max();
-    EXPECT_EQ(u128(0), x+=1);
+    expect(value(u128(0)) == value(x+=1));
     x = std::numeric_limits<u128>::max();
-    EXPECT_EQ(u128(1), x+=2);
+    expect(value(u128(1)) == value(x+=2));
     x = u128(1,1);
     x += std::numeric_limits<u128>::max();
     x += 1;
-    EXPECT_EQ(u128(1,1), x);
+    expect(value(u128(1,1)) == value(x));
 }
 
-TEST(uint128, subtract) {
-    EXPECT_EQ(u128(std::numeric_limits<u64>::max()), u128(1,0) - 1);
-    EXPECT_EQ(std::numeric_limits<u128>::max(), u128(0) - 1);
-    EXPECT_EQ(-u128(1), u128(0) - 1);
-    EXPECT_EQ(u128(2,0)>>1, u128(2,0) - u128(1,0));
-    EXPECT_EQ(u128(0), u128(1,0) - u128(1,0));
-    EXPECT_EQ(u128(1,1), u128(1,1) - std::numeric_limits<u128>::max()-1);
+void test_uint128_subtract() {
+    expect(value(u128(std::numeric_limits<u64>::max())) == value(u128(1,0) - 1));
+    expect(value(std::numeric_limits<u128>::max()) == value(u128(0) - 1));
+    expect(value(-u128(1)) == value(u128(0) - 1));
+    expect(value(u128(2,0)>>1) == value(u128(2,0) - u128(1,0)));
+    expect(value(u128(0)) == value(u128(1,0) - u128(1,0)));
+    expect(value(u128(1,1)) == value(u128(1,1) - std::numeric_limits<u128>::max()-1));
 }
 
-TEST(uint128, subtract_assign) {
+void test_uint128_subtract_assign() {
     u128 x;
     x = u128(1,0);
-    EXPECT_EQ(u128(std::numeric_limits<u64>::max()), x -= 1);
+    expect(value(u128(std::numeric_limits<u64>::max())) == value(x -= 1));
     x = u128(0);
-    EXPECT_EQ(std::numeric_limits<u128>::max(), x -= 1);
+    expect(value(std::numeric_limits<u128>::max()) == value(x -= 1));
     x = u128(0);
-    EXPECT_EQ(-u128(1), x -= 1);
+    expect(value(-u128(1)) == value(x -= 1));
     x = u128(2,0);
-    EXPECT_EQ(u128(2,0)>>1, x -= u128(1,0));
+    expect(value(u128(2,0)>>1) == value(x -= u128(1,0)));
     x = u128(1,0);
-    EXPECT_EQ(u128(0), x -= u128(1,0));
+    expect(value(u128(0)) == value(x -= u128(1,0)));
     x = u128(1,1);
     x -= std::numeric_limits<u128>::max();
     x -= 1;
-    EXPECT_EQ(u128(1,1), x);
+    expect(value(u128(1,1)) == value(x));
 }
 
-TEST(uint128, multiply) {
-    EXPECT_EQ(u128(0,0), u128(1,1)*u128(0));
-    EXPECT_EQ(u128(0,2), u128(0,1)*u128(2));
-    EXPECT_EQ(u128(2,0), u128(1,0)*u128(2));
-    EXPECT_EQ(
-        u128(std::numeric_limits<u64>::max())+
-        u128(std::numeric_limits<u64>::max()),
-        u128(std::numeric_limits<u64>::max())*u128(2)
-    );
+void test_uint128_multiply() {
+    expect(value(u128(0,0)) == value(u128(1,1)*u128(0)));
+    expect(value(u128(0,2)) == value(u128(0,1)*u128(2)));
+    expect(value(u128(2,0)) == value(u128(1,0)*u128(2)));
+    expect(value(u128(std::numeric_limits<u64>::max())+u128(std::numeric_limits<u64>::max()))
+           ==
+           value(u128(std::numeric_limits<u64>::max())*u128(2)));
 }
 
-TEST(uint128, multiply_assign) {
+void test_uint128_multiply_assign() {
     u128 x;
     x = u128(1,1);
-    EXPECT_EQ(u128(0,0), x *= u128(0));
+    expect(value(u128(0,0)) == value(x *= u128(0)));
     x = u128(0,1);
-    EXPECT_EQ(u128(0,2), x *= u128(2));
+    expect(value(u128(0,2)) == value(x *= u128(2)));
     x = u128(1,0);
-    EXPECT_EQ(u128(2,0), x *= u128(2));
+    expect(value(u128(2,0)) == value(x *= u128(2)));
     x = u128(std::numeric_limits<u64>::max());
-    EXPECT_EQ(
-        u128(std::numeric_limits<u64>::max())+
-        u128(std::numeric_limits<u64>::max()), x*=u128(2));
+    expect(value(u128(std::numeric_limits<u64>::max())+u128(std::numeric_limits<u64>::max()))
+           == value(x*=u128(2)));
 }
 
-TEST(uint128, divide) {
-    EXPECT_EQ(u128(0,1), u128(1,1) / u128(1,1));
-    EXPECT_EQ(u128(0,2), u128(0,2) / u128(0,1));
-    EXPECT_EQ(u128(0,0), u128(0,9) % u128(0,3));
-    EXPECT_EQ(u128(0,1), u128(0,10) % u128(0,3));
-    EXPECT_EQ(u128(0,0), u128(0,1) / u128(0,3));
-    EXPECT_EQ(u128(0,1), u128(0,1) % u128(0,3));
-    EXPECT_EQ(u128(1,0), u128(2,0) / u128(0,2));
-    EXPECT_EQ(u128(0,0), u128(2,0) % u128(0,2));
+void test_uint128_divide() {
+    expect(value(u128(0,1)) == value(u128(1,1) / u128(1,1)));
+    expect(value(u128(0,2)) == value(u128(0,2) / u128(0,1)));
+    expect(value(u128(0,0)) == value(u128(0,9) % u128(0,3)));
+    expect(value(u128(0,1)) == value(u128(0,10) % u128(0,3)));
+    expect(value(u128(0,0)) == value(u128(0,1) / u128(0,3)));
+    expect(value(u128(0,1)) == value(u128(0,1) % u128(0,3)));
+    expect(value(u128(1,0)) == value(u128(2,0) / u128(0,2)));
+    expect(value(u128(0,0)) == value(u128(2,0) % u128(0,2)));
 }
 
-TEST(uint128, divide_assign) {
+void test_uint128_divide_assign() {
     u128 x;
     x = u128(1,1);
-    EXPECT_EQ(u128(0,1), x / u128(1,1));
+    expect(value(u128(0,1)) == value(x / u128(1,1)));
     x = u128(0,2);
-    EXPECT_EQ(u128(0,2), x / u128(0,1));
+    expect(value(u128(0,2)) == value(x / u128(0,1)));
     x = u128(0,9);
-    EXPECT_EQ(u128(0,0), x % u128(0,3));
+    expect(value(u128(0,0)) == value(x % u128(0,3)));
     x = u128(0,10);
-    EXPECT_EQ(u128(0,1), x % u128(0,3));
+    expect(value(u128(0,1)) == value(x % u128(0,3)));
     x = u128(0,1);
-    EXPECT_EQ(u128(0,0), x / u128(0,3));
+    expect(value(u128(0,0)) == value(x / u128(0,3)));
     x = u128(0,1);
-    EXPECT_EQ(u128(0,1), x % u128(0,3));
+    expect(value(u128(0,1)) == value(x % u128(0,3)));
     x = u128(2,0);
-    EXPECT_EQ(u128(1,0), x / u128(0,2));
+    expect(value(u128(1,0)) == value(x / u128(0,2)));
     x = u128(2,0);
-    EXPECT_EQ(u128(0,0), x % u128(0,2));
+    expect(value(u128(0,0)) == value(x % u128(0,2)));
 }
 
-TEST(uint128, to_string) {
-    EXPECT_EQ("0", to_string(u128(0)));
-    EXPECT_EQ("1", to_string(u128(1)));
-    EXPECT_EQ("10", to_string(u128(10)));
-    EXPECT_EQ("340282366920938463463374607431768211455",
-              to_string(std::numeric_limits<u128>::max()));
+void test_uint128_to_string() {
+    expect(value("0") == value(to_string(u128(0))));
+    expect(value("1") == value(to_string(u128(1))));
+    expect(value("10") == value(to_string(u128(10))));
+    expect(value("340282366920938463463374607431768211455") ==
+           value(to_string(std::numeric_limits<u128>::max())));
 }
 
-TEST(uint128, stream_insert) {
-    EXPECT_EQ("0", ([](){ std::stringstream s; s << u128(0); return s.str(); })());
-    EXPECT_EQ("+0", ([](){
+void test_uint128_stream_insert() {
+    expect(value("0") ==
+           value(([](){ std::stringstream s; s << u128(0); return s.str(); })()));
+    expect(value("+0") == value(([](){
         std::stringstream s;
         s.flags(std::ios::showpos);
         s << u128(0);
         return s.str();
-    })());
-    EXPECT_EQ("0    ", ([](){
+    })()));
+    expect(value("0    ") == value(([](){
         std::stringstream s;
         s.width(5);
         s.flags(std::ios::left);
         s << u128(0);
         return s.str();
-    })());
-    EXPECT_EQ("    0", ([](){
+    })()));
+    expect(value("    0") == value(([](){
         std::stringstream s;
         s.width(5);
         s.flags(std::ios::right);
         s << u128(0);
         return s.str();
-    })());
-    EXPECT_EQ("   +0", ([](){
+    })()));
+    expect(value("   +0") == value(([](){
         std::stringstream s;
         s.width(5);
         s.flags(std::ios::right | std::ios::showpos);
         s << u128(0);
         return s.str();
-    })());
-    EXPECT_EQ("ff", ([](){
+    })()));
+    expect(value("ff") == value(([](){
         std::stringstream s;
         s.flags(std::ios::hex);
         s << u128(255);
         return s.str();
-    })());
-    EXPECT_EQ("77", ([](){
+    })()));
+    expect(value("77") == value(([](){
         std::stringstream s;
         s.flags(std::ios::oct);
         s << u128(63);
         return s.str();
-    })());
-    EXPECT_EQ("000000+777", ([](){
+    })()));
+    expect(value("000000+777") == value(([](){
         std::stringstream s;
         s.flags(std::ios::oct | std::ios::showpos);
         s.width(10);
         s.fill('0');
         s << u128(512-1);
         return s.str();
-    })());
+    })()));
 }

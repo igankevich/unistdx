@@ -40,25 +40,26 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/fs/odirtree>
 #include <unistdx/fs/path>
 #include <unistdx/test/base>
+#include <unistdx/test/language>
 #include <unistdx/test/temporary_file>
 
-#include <gtest/gtest.h>
+using namespace sys::test::lang;
 
-TEST(idirtree, open_close) {
+void test_idirtree_open_close() {
     std::vector<std::string> files {"a", "b", "c"};
     test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
     sys::idirtree tree;
     test::test_open_close(tree, tdir);
 }
 
-TEST(idirtree, current_dir) {
+void test_idirtree_current_dir() {
     std::vector<std::string> files {"a", "b", "c"};
     test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
     sys::idirtree tree(tdir);
-    EXPECT_EQ(tree.current_dir(), static_cast<const sys::path&>(tdir));
+    expect(value(tree.current_dir()) == value(static_cast<const sys::path&>(tdir)));
 }
 
-TEST(idirtree, Iterator) {
+void test_idirtree_iterator() {
     std::vector<std::string> files {"a", "b", "c"};
     std::vector<std::string> files_d {"e", "f", "g"};
     std::vector<std::string> files_h {"i", "j", "k", "l"};
@@ -84,19 +85,19 @@ TEST(idirtree, Iterator) {
     test::test_file_list<sys::idirtree,iterator>(tdir, all_files);
 }
 
-TEST(FileStat, Exists) {
+void test_file_stat_exists() {
     sys::canonical_path cwd(".");
     sys::path non_existent_file(cwd, "asdasdasd");
     sys::file_status stat;
     try {
         stat.update(non_existent_file);
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(ENOENT, err.code().value());
+        expect(value(ENOENT) == value(err.code().value()));
     }
-    EXPECT_FALSE(stat.exists());
+    expect(!stat.exists());
 }
 
-TEST(GetFileType, DirEntry) {
+void test_get_file_type_direntry() {
     test::temporary_file tmp(UNISTDX_TMPFILE);
     std::ofstream(tmp.path()) << "hello world";
     sys::path cwd(".");
@@ -110,11 +111,11 @@ TEST(GetFileType, DirEntry) {
                 return rhs.name() == tmp.path();
             }
         );
-    EXPECT_NE(result, end);
-    EXPECT_EQ(sys::file_type::regular, sys::get_file_type(cwd, *result));
+    expect(value(result) != value(end));
+    expect(value(sys::file_type::regular) == value(sys::get_file_type(cwd, *result)));
 }
 
-TEST(GetFileType, PathEntry) {
+void test_get_file_type_pathentry() {
     test::temporary_file tmp(UNISTDX_TMPFILE);
     std::ofstream(tmp.path()) << "hello world";
     sys::path cwd(".");
@@ -128,8 +129,9 @@ TEST(GetFileType, PathEntry) {
                 return rhs.name() == tmp.path();
             }
         );
-    EXPECT_NE(result, end);
-    EXPECT_EQ(sys::file_type::regular, sys::get_file_type(dir.current_dir(), *result));
+    expect(value(result) != value(end));
+    expect(value(sys::file_type::regular) ==
+           value(sys::get_file_type(dir.current_dir(), *result)));
 }
 
 struct idirtree_test_param {
@@ -140,63 +142,57 @@ std::ostream& operator<<(std::ostream& out, const idirtree_test_param& rhs) {
     return out << rhs.src;
 }
 
-struct idirtree_test: public ::testing::TestWithParam<idirtree_test_param> {};
-
 std::vector<idirtree_test_param> all_params {
     {"dirtree-copy-in"},
     {"dirtree-copy-in/"},
     {"dirtree-copy-in//"},
 };
 
-TEST_P(idirtree_test, insert) {
-    sys::path src(GetParam().src);
-    std::vector<std::string> files1 {"a", "b", "c"};
-    std::vector<std::string> files2 {"d", "e", "f"};
-    test::tmpdir dir1(src, files1.begin(), files1.end());
-    test::tmpdir dir2(sys::path(src, "next"), files2.begin(), files2.end());
-    test::tmpdir dir3("dirtree-copy-out");
-    std::set<sys::path> expected;
-    expected.emplace("a");
-    expected.emplace("b");
-    expected.emplace("c");
-    expected.emplace("next");
-    expected.emplace("next/d");
-    expected.emplace("next/e");
-    expected.emplace("next/f");
-    {
-        sys::idirtree idir(dir1);
-        sys::odirtree odir(dir3);
-        odir.settransform(sys::copy_recursively{dir1, dir3});
-        odir << idir;
-        /*
-        std::copy(
-            sys::idirtree_iterator<sys::directory_entry>(idir),
-            sys::idirtree_iterator<sys::directory_entry>(),
-            sys::odirtree_iterator<sys::directory_entry>(odir)
-        );
-        */
-    }
-    std::set<sys::path> actual;
-    {
-        sys::idirtree idir(dir3);
-        std::transform(
-            sys::idirtree_iterator<sys::directory_entry>(idir),
-            sys::idirtree_iterator<sys::directory_entry>(),
-            std::inserter(actual, actual.begin()),
-            [&] (const sys::directory_entry& rhs) {
-                sys::path p(idir.current_dir(), rhs.name());
-                if (p.find(dir3.name()) == 0) {
-                    p = p.substr(dir3.name().size()+1);
+void test_idirtree_test_insert() {
+    for (const auto& param : all_params) {
+        sys::path src(param.src);
+        std::vector<std::string> files1 {"a", "b", "c"};
+        std::vector<std::string> files2 {"d", "e", "f"};
+        test::tmpdir dir1(src, files1.begin(), files1.end());
+        test::tmpdir dir2(sys::path(src, "next"), files2.begin(), files2.end());
+        test::tmpdir dir3("dirtree-copy-out");
+        std::set<sys::path> expected;
+        expected.emplace("a");
+        expected.emplace("b");
+        expected.emplace("c");
+        expected.emplace("next");
+        expected.emplace("next/d");
+        expected.emplace("next/e");
+        expected.emplace("next/f");
+        {
+            sys::idirtree idir(dir1);
+            sys::odirtree odir(dir3);
+            odir.settransform(sys::copy_recursively{dir1, dir3});
+            odir << idir;
+            /*
+            std::copy(
+                sys::idirtree_iterator<sys::directory_entry>(idir),
+                sys::idirtree_iterator<sys::directory_entry>(),
+                sys::odirtree_iterator<sys::directory_entry>(odir)
+            );
+            */
+        }
+        std::set<sys::path> actual;
+        {
+            sys::idirtree idir(dir3);
+            std::transform(
+                sys::idirtree_iterator<sys::directory_entry>(idir),
+                sys::idirtree_iterator<sys::directory_entry>(),
+                std::inserter(actual, actual.begin()),
+                [&] (const sys::directory_entry& rhs) {
+                    sys::path p(idir.current_dir(), rhs.name());
+                    if (p.find(dir3.name()) == 0) {
+                        p = p.substr(dir3.name().size()+1);
+                    }
+                    return p;
                 }
-                return p;
-            }
-        );
+            );
+        }
+        expect(value(expected) == value(actual));
     }
-    EXPECT_EQ(expected, actual);
 }
-
-INSTANTIATE_TEST_CASE_P(
-    _,
-    idirtree_test,
-    ::testing::ValuesIn(all_params)
-);

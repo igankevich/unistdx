@@ -34,14 +34,14 @@ For more information, please refer to <http://unlicense.org/>
 #define UNISTDX_TEST_EXCEPTION
 
 #include <unistdx/base/bad_call>
-
-#include <gtest/gtest.h>
+#include <unistdx/test/language>
 
 #define UNISTDX_EXPECT_ERROR(errcond, src) \
     try { \
         src; \
     } catch (const ::sys::bad_call& err) { \
-        EXPECT_EQ(errcond, err.errc()); \
+        using namespace sys::test::lang; \
+        expect(value(errcond) == value(err.errc())); \
     }
 
 #endif // vim:filetype=cpp

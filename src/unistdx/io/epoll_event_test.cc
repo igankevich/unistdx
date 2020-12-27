@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,7 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/test/operator>
 
-TEST(epoll_event, print) {
+void test_epoll_event_print() {
     test::stream_insert_equals(
         "{fd=1,ev=rwce}",
         sys::epoll_event(

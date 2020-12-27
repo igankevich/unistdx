@@ -145,12 +145,7 @@ void test_ifaddr_attribute_print() {
     );
 }
 
-struct ifaddr_attribute_test:
-    public ::testing::TestWithParam<sys::ifaddr_attribute> {};
-
-std::vector<sys::ifaddr_attribute> all_attributes;
-
-TEST_P(ifaddr_attribute_test, print) {
+void test_ifaddr_attribute_test_print() {
     for (auto a : {sys::ifaddr_attribute::unspecified,
         sys::ifaddr_attribute::address,
         sys::ifaddr_attribute::local_address,
@@ -164,9 +159,3 @@ TEST_P(ifaddr_attribute_test, print) {
         expect(value("unknown") != value(test::stream_insert(a)));
     }
 }
-
-INSTANTIATE_TEST_CASE_P(
-    for_all_ifaddr_attributes,
-    ifaddr_attribute_test,
-    ::testing::ValuesIn(all_attributes)
-);

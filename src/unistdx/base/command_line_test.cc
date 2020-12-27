@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,10 +30,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
 #include <unistdx/base/command_line>
+#include <unistdx/test/language>
 
-TEST(CommandLine, Parse) {
+using namespace sys::test::lang;
+
+void test_commandline_parse() {
     const char* argv[] = {
         "progname",
         "arg1=123",
@@ -48,11 +50,11 @@ TEST(CommandLine, Parse) {
         nullptr
     };
     sys::parse_arguments(3, argv, options);
-    EXPECT_EQ(123, arg1);
-    EXPECT_EQ("hello", arg2);
+    expect(value(123) == value(arg1));
+    expect(value("hello") == value(arg2));
 }
 
-TEST(CommandLine, InvalidArgument) {
+void test_commandline_invalid_argument() {
     const char* argv[] = {
         "progname",
         "arg3=123"
@@ -67,10 +69,10 @@ TEST(CommandLine, InvalidArgument) {
     };
     try {
         sys::parse_arguments(2, argv, options);
-        FAIL();
+        expect(false);
     } catch (const sys::bad_argument& err) {
-        EXPECT_TRUE(err.what() != nullptr);
+        expect(value(err.what()) != value(nullptr));
     }
-    EXPECT_EQ(0, arg1);
-    EXPECT_TRUE(arg2.empty());
+    expect(value(0) == value(arg1));
+    expect(arg2.empty());
 }

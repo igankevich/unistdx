@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -31,6 +31,7 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/test/basic_mutex_test>
+#include <unistdx/test/language>
 #include <unistdx/test/make_types>
 #include <unistdx/test/thread_mutex_test>
 
@@ -38,16 +39,13 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/recursive_spin_mutex>
 #include <unistdx/base/spin_mutex>
 
+using namespace sys::test::lang;
+
 using sys::u64;
 
-template <class T>
-struct MutexTest: public BasicMutexTest<T> {};
-
-TYPED_TEST_CASE(MutexTest, MAKE_TYPES(sys::spin_mutex));
-
-TYPED_TEST(MutexTest, Mutex) {
-    typedef TypeParam Mutex;
-    this->run(
+void test_spin_mutex() {
+    using Mutex = sys::spin_mutex;
+    mutex_test(
         [&] (unsigned nthreads, u64 increment) {
             volatile unsigned counter = 0;
             Mutex m;
@@ -66,18 +64,17 @@ TYPED_TEST(MutexTest, Mutex) {
                 t.join();
             }
             unsigned good_counter = nthreads*increment;
-            EXPECT_EQ(counter, good_counter);
+            expect(value(counter) == value(good_counter));
         }
     );
 }
 
-TYPED_TEST_CASE(ThreadMutexTest, MAKE_TYPES(std::mutex,sys::spin_mutex));
-
-TYPED_TEST(ThreadMutexTest, SpinMutex) {
-    this->test_thread();
+void test_spin_mutex_thread() {
+    test_thread<std::mutex>();
+    test_thread<sys::spin_mutex>();
 }
 
-TEST(RecursiveSpinMutex, LockLock) {
+void test_recursive_spin_mutex_lock_lock() {
     sys::recursive_spin_mutex mtx;
     mtx.lock();
     mtx.lock();

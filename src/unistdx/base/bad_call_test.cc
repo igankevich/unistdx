@@ -32,20 +32,18 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <sys/stat.h>
 
-#include <gtest/gtest.h>
-
-#include <sstream>
-#include <string>
-
 #include <unistdx/base/bad_call>
+#include <unistdx/test/language>
 
-TEST(bad_call, throw_error) {
+using namespace sys::test::lang;
+
+void test_bad_call_throw_error() {
     try {
         struct ::stat st;
         int ret = ::stat("non-existent-file", &st);
-        EXPECT_EQ(-1, ret);
+        expect(value(-1) == value(ret));
         throw sys::bad_call();
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::no_such_file_or_directory, err.errc());
+        expect(value(std::errc::no_such_file_or_directory) == value(err.errc()));
     }
 }

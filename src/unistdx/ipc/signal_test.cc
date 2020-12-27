@@ -30,13 +30,13 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
 
 #include <unistdx/test/exception>
 #include <unistdx/test/operator>
+
+using namespace sys::test::lang;
 
 volatile int caught = 0;
 
@@ -54,15 +54,15 @@ catch_sigaction(int,sys::siginfo_type*,void*) {
     caught = 1;
 }
 
-TEST(Signal, BindSignal) {
+void test_Signal_BindSignal() {
     using namespace sys::this_process;
     bind_signal(sys::signal::user_defined_1, catch_sigaction);
     sys::this_process::send(sys::signal::user_defined_1);
-    EXPECT_EQ(1, caught);
+    expect(value(1) == value(caught));
 }
 
 
-TEST(signal, print) {
+void test_signal_print() {
     test::stream_insert_starts_with("terminate", sys::signal::terminate);
     test::stream_insert_starts_with("unknown", sys::signal(-1));
     test::stream_insert_starts_with("unknown", sys::signal(0));
@@ -72,7 +72,7 @@ TEST(signal, print) {
     );
 }
 
-TEST(signal, bind_bad_signal) {
+void test_signal_bind_bad_signal() {
     using namespace sys::this_process;
     UNISTDX_EXPECT_ERROR(
         std::errc::invalid_argument,

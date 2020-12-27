@@ -101,8 +101,23 @@ namespace sys {
         }
 
         ~event_poller() = default;
+        event_poller(const event_poller&) = delete;
+        event_poller& operator=(const event_poller&) = delete;
+        event_poller(event_poller&&) = default;
+        event_poller& operator=(event_poller&&) = default;
 
-        UNISTDX_NO_COPY_AND_MOVE(event_poller)
+        /**
+        Close poller and notification file descriptors.
+        After this operation poller becomes unusable.
+        */
+        inline void close() {
+            this->_epollfd.close();
+            #if defined(UNISTDX_HAVE_EVENTFD)
+            this->_event_fd.close();
+            #else
+            this->_pipe.close();
+            #endif
+        }
 
         /**
         Returns file descriptor which is used to notify poller

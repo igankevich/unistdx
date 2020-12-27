@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,11 +30,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/base/delete_each>
+#include <unistdx/test/language>
 
-TEST(delete_each, null_pointers) {
+using namespace sys::test::lang;
+
+void test_delete_each_null_pointers() {
     std::vector<char*> ptrs{nullptr, nullptr, nullptr};
-    EXPECT_NO_THROW(sys::delete_each(ptrs.begin(), ptrs.end()));
+    expect(no_throw(call([&] () { sys::delete_each(ptrs.begin(), ptrs.end()); })));
 }

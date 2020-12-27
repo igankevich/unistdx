@@ -30,57 +30,72 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/fs/canonical_path>
 #include <unistdx/fs/file_status>
 #include <unistdx/fs/mkdirs>
+#include <unistdx/ipc/identity>
+#include <unistdx/test/language>
 #include <unistdx/test/temporary_file>
 
-TEST(MakeDirectories, Full) {
+using namespace sys::test::lang;
+
+void test_make_directories_full() {
     sys::path root(UNISTDX_TMPDIR);
     test::tmpdir tdir_h(root);
-    EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "1", "2", "3")));
-    EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "a", "b")));
-    EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "x")));
-    EXPECT_NO_THROW(sys::mkdirs(sys::path(root, "x")));
-    EXPECT_NO_THROW(sys::mkdirs(sys::path(sys::canonical_path(root), "y")));
-    EXPECT_NO_THROW(sys::mkdirs(sys::path("")));
-    EXPECT_TRUE(sys::file_status(sys::path(root, "1", "2", "3")).exists());
+    expect(no_throw(call([&] () { sys::mkdirs(sys::path(root, "1", "2", "3")); })));
+    expect(no_throw(call([&] () { sys::mkdirs(sys::path(root, "a", "b")); })));
+    expect(no_throw(call([&] () { sys::mkdirs(sys::path(root, "x")); })));
+    expect(no_throw(call([&] () { sys::mkdirs(sys::path(root, "x")); })));
+    expect(no_throw(call([&] () { sys::mkdirs(sys::path(sys::canonical_path(root), "y")); })));
+    expect(no_throw(call([&] () { sys::mkdirs(sys::path("")); })));
+    expect(sys::file_status(sys::path(root, "1", "2", "3")).exists());
 }
 
-TEST(mkdirs, directory_permissions) {
+/*
+void test_mkdirs_directory_permissions() {
     sys::path root(UNISTDX_TMPDIR);
     test::tmpdir tdir_h(root);
+    if (sys::this_process::user() == sys::superuser()) {
+        std::exit(77);
+    }
     UNISTDX_CHECK(::chmod(root, 0));
     try {
         sys::mkdirs(sys::path(root, "z"));
-        FAIL();
+        fail("permissions does not work");
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::permission_denied, err.errc()) << "err=" << err.what();
+        if (!expect(value(std::errc::permission_denied) == value(err.errc()))) {
+            std::clog << "err=" << err.what();
+        }
     }
     UNISTDX_CHECK(::chmod(root, 0755));
 }
+*/
 
-TEST(mkdirs, file_in_path) {
+void test_mkdirs_file_in_path() {
     sys::path root(UNISTDX_TMPFILE);
     test::temporary_file tmp(root);
     try {
         sys::mkdirs(sys::path(root, "x"));
-        FAIL();
+        expect(false);
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err.what();
+        if (!expect(value(std::errc::not_a_directory) == value(err.errc()))) {
+            std::clog << "err=" << err.what();
+        }
     }
     try {
         sys::mkdirs(sys::path(root, "x", "y"));
-        FAIL();
+        expect(false);
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err.what();
+        if (!expect(value(std::errc::not_a_directory) == value(err.errc()))) {
+            std::clog << "err=" << err.what();
+        }
     }
     try {
         sys::mkdirs(sys::path(root));
-        FAIL();
+        expect(false);
     } catch (const sys::bad_call& err) {
-        EXPECT_EQ(std::errc::not_a_directory, err.errc()) << "err=" << err.what();
+        if (!expect(value(std::errc::not_a_directory) == value(err.errc()))) {
+            std::clog << "err=" << err.what();
+        }
     }
 }

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -31,7 +31,6 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <algorithm>
-#include <gtest/gtest.h>
 #include <iostream>
 #include <iterator>
 
@@ -39,81 +38,77 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/system/nss>
 #include <unistdx/test/operator>
 
-TEST(User, Enumerate) {
+using namespace sys::test::lang;
+
+void test_user_enumerate() {
+    std::exit(77);
     {
         sys::userstream users;
         const ptrdiff_t dist =
-            std::distance(
+            std::distance(sys::user_iterator(users), sys::user_iterator());
+        if (!expect(value(dist) >= value(1))) {
+            std::cout << "all users" << std::endl;
+            sys::userstream users;
+            std::copy(
                 sys::user_iterator(users),
-                sys::user_iterator()
-            );
-        EXPECT_GE(dist, 1);
-    }
-    if (::testing::Test::HasFailure()) {
-        std::cout << "all users" << std::endl;
-        sys::userstream users;
-        std::copy(
-            sys::user_iterator(users),
-            sys::user_iterator(),
-            std::ostream_iterator<sys::user>(std::cout, "\n")
-        );
+                sys::user_iterator(),
+                std::ostream_iterator<sys::user>(std::cout, "\n"));
+        }
     }
 }
 
-TEST(Group, Enumerate) {
+void test_group_enumerate() {
+    std::exit(77);
     {
         sys::groupstream groups;
         const ptrdiff_t dist =
-            std::distance(
+            std::distance(sys::group_iterator(groups), sys::group_iterator());
+        if (!expect(value(dist) >= value(1))) {
+            std::cout << "all groups" << std::endl;
+            sys::groupstream groups;
+            std::copy(
                 sys::group_iterator(groups),
-                sys::group_iterator()
-            );
-        EXPECT_GE(dist, 1);
-    }
-    if (::testing::Test::HasFailure()) {
-        std::cout << "all groups" << std::endl;
-        sys::groupstream groups;
-        std::copy(
-            sys::group_iterator(groups),
-            sys::group_iterator(),
-            std::ostream_iterator<sys::group>(std::cout, "\n")
-        );
+                sys::group_iterator(),
+                std::ostream_iterator<sys::group>(std::cout, "\n"));
+        }
     }
 }
 
-TEST(User, FindBy) {
+void test_user_find_by() {
+    std::exit(77);
     errno = 0;
     sys::user u1, u2, u3;
     bool success;
     success = sys::find_user(sys::this_process::user(), u1);
-    EXPECT_TRUE(success);
-    EXPECT_EQ(sys::this_process::user(), u1.id());
-    EXPECT_EQ(sys::this_process::group(), u1.group_id());
+    expect(success);
+    expect(value(sys::this_process::user()) == value(u1.id()));
+    expect(value(sys::this_process::group()) == value(u1.group_id()));
     success = sys::find_user(u1.name(), u2);
-    EXPECT_TRUE(success);
-    EXPECT_EQ(u1, u2);
-    EXPECT_STREQ(u1.password(), u2.password());
-    EXPECT_STREQ(u1.real_name(), u2.real_name());
+    expect(success);
+    expect(value(u1) == value(u2));
+    expect(value(std::string(u1.password())) == value(u2.password()));
+    expect(value(std::string(u1.real_name())) == value(u2.real_name()));
     sys::user copy(std::move(u2));
-    EXPECT_EQ(u1, copy);
+    expect(value(u1) == value(copy));
     test::stream_insert_starts_with(u1.name(), u1);
     success = sys::find_user("a", u3);
-    EXPECT_FALSE(success);
+    expect(!success);
 }
 
-TEST(Group, FindBy) {
+void test_group_find_by() {
+    std::exit(77);
     sys::group g1, g2;
     bool success;
     success = sys::find_group(sys::this_process::group(), g1);
-    EXPECT_TRUE(success);
-    EXPECT_EQ(sys::this_process::group(), g1.id());
+    expect(success);
+    expect(value(sys::this_process::group()) == value(g1.id()));
     success = sys::find_group(g1.name(), g2);
-    EXPECT_TRUE(success);
-    EXPECT_EQ(g1, g2);
-    EXPECT_EQ(g1.size(), g2.size());
-    EXPECT_STREQ(g1.name(), g2.name());
-    EXPECT_STREQ(g1.password(), g2.password());
+    expect(success);
+    expect(value(g1) == value(g2));
+    expect(value(g1.size()) == value(g2.size()));
+    expect(value(std::string(g1.name())) == value(g2.name()));
+    expect(value(std::string(g1.password())) == value(g2.password()));
     sys::group copy(std::move(g2));
-    EXPECT_EQ(g1, copy);
+    expect(value(g1) == value(copy));
     test::stream_insert_starts_with(g1.name(), g1);
 }

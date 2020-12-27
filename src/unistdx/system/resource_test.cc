@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,34 +30,35 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/io/terminal>
-#include <unistdx/system/resource>
-
-#include <gtest/gtest.h>
-
 #include <stdlib.h>
 
-TEST(System, ThreadConcurrency) {
+#include <unistdx/io/terminal>
+#include <unistdx/system/resource>
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
+
+void test_system_thread_concurrency() {
     ::setenv("UNISTDX_CONCURRENCY", "123", 1);
-    EXPECT_EQ(123u, sys::thread_concurrency());
+    expect(value(123u) == value(sys::thread_concurrency()));
     ::setenv("UNISTDX_CONCURRENCY", "1", 1);
-    EXPECT_EQ(1u, sys::thread_concurrency());
+    expect(value(1u) == value(sys::thread_concurrency()));
     ::setenv("UNISTDX_CONCURRENCY", "0", 1);
-    EXPECT_NE(0u, sys::thread_concurrency());
+    expect(value(0u) != value(sys::thread_concurrency()));
     ::setenv("UNISTDX_CONCURRENCY", "-123", 1);
-    EXPECT_NE(unsigned(-123), sys::thread_concurrency());
+    expect(value(unsigned(-123)) != value(sys::thread_concurrency()));
     ::unsetenv("UNISTDX_CONCURRENCY");
 }
 
-TEST(System, IOConcurrency) {
-    EXPECT_GT(sys::io_concurrency(), 0u);
+void test_system_io_concurrency() {
+    expect(value(sys::io_concurrency()) > value(0u));
 }
 
-TEST(System, PageSize) {
-    EXPECT_GT(sys::page_size(), 0u);
+void test_system_page_size() {
+    expect(value(sys::page_size()) > value(0u));
 }
 
-TEST(System, Cache) {
+void test_system_cache() {
     sys::cache cache;
     for (const auto& c : cache) {
         std::clog << "Cache level=" << c.level()

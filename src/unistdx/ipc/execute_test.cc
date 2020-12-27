@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,16 +30,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <gtest/gtest.h>
-
 #include <unistdx/ipc/execute>
+#include <unistdx/test/language>
 
-TEST(execute, errors) {
+using namespace sys::test::lang;
+
+void test_execute_errors() {
     sys::argstream args;
     args.append("non-existent-file");
     sys::argstream env;
-    EXPECT_THROW(sys::this_process::execute(args), sys::bad_call);
-    EXPECT_THROW(sys::this_process::execute_command(args), sys::bad_call);
-    EXPECT_THROW(sys::this_process::execute(args, env), sys::bad_call);
-    EXPECT_THROW(sys::this_process::execute_command(args, env), sys::bad_call);
+    expect(throws<sys::bad_call>(call([&] () { sys::this_process::execute(args); })));
+    expect(throws<sys::bad_call>(call([&] () { sys::this_process::execute_command(args); })));
+    expect(throws<sys::bad_call>(call([&] () { sys::this_process::execute(args, env); })));
+    expect(throws<sys::bad_call>(call([&] () { sys::this_process::execute_command(args, env); })));
 }

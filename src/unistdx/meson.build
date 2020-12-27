@@ -123,7 +123,7 @@ if with_tests
                 '_'.join(words) + '_test' + suffix.underscorify(),
                 sources: source_name,
                 include_directories: src,
-                dependencies: [unistdx_test,gtest,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
+                dependencies: [unistdx_test,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
                 link_with: libs,
                 implicit_include_directories: false,
             )
@@ -132,7 +132,7 @@ if with_tests
                 if args.length() != 0
                     tmp += '--' + '_'.join(args)
                 endif
-                test(tmp, exe, args: args, env: ['prefix=test_'])
+                test(tmp, exe, args: args, is_parallel: false)
             endforeach
         endforeach
     endforeach

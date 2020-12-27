@@ -696,6 +696,7 @@ namespace sys {
 
     public:
         using stack_ptr = std::unique_ptr<char[]>;
+        using flags = process_flag;
 
     private:
         stack_ptr _stack;
@@ -710,7 +711,7 @@ namespace sys {
         */
         template<class F>
         inline explicit
-        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*4) {
+        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*8) {
             typedef bits::call_traits<decltype(f())> traits_type;
             if (flags == process_flag::fork) {
                 this->_pid = this_process::fork();
@@ -767,7 +768,7 @@ namespace sys {
             sys::siginfo_type info;
             UNISTDX_CHECK(::waitid(P_PID, this->_pid, &info, int(flags)));
             sys::process_status status(info);
-            if (status.exited()) { this->_pid = 0; this->_stack.reset(); }
+            if (status.exited()) { this->_stack.reset(); }
             return status;
         }
 

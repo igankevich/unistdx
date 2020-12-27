@@ -87,3 +87,36 @@ void sys::test::sanitize_file_descriptors(bool ignore_standard, bool ignore_uran
         });
     if (found) { throw std::runtime_error("Found opened file descriptors:\n" + out.str()); }
 }
+
+sys::test::file_descriptor_sanitizer::file_descriptor_sanitizer() {
+    record(this->_file_descriptors);
+}
+
+sys::test::file_descriptor_sanitizer::~file_descriptor_sanitizer() noexcept {
+    std::set<entry> new_file_descritors;
+    record(new_file_descritors);
+    // set difference
+    for (const auto& old_entry: this->_file_descriptors) {
+        new_file_descritors.erase(old_entry);
+    }
+    if (!new_file_descritors.empty()) {
+        std::stringstream out;
+        out << std::setw(10) << std::right << "number";
+        out << "    ";
+        out << std::setw(20) << std::left << "target";
+        out << '\n';
+        for (const auto& entry : new_file_descritors) {
+            out << std::setw(10) << std::right << std::get<0>(entry);
+            out << "    ";
+            out << std::setw(20) << std::left << std::get<1>(entry);
+            out << '\n';
+        }
+        throw std::runtime_error("Found opened file descriptors:\n" + out.str());
+    }
+}
+
+void sys::test::file_descriptor_sanitizer::record(std::set<entry>& entries) {
+    for_each_open_file_descriptor([&] (const char* name, const char* target) {
+        entries.emplace(std::atoi(name), target);
+    });
+}

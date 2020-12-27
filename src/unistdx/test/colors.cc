@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2016, 2017, 2018, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,13 +30,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/io/poller>
-#include <unistdx/test/semaphore_wait_test>
+#include <iostream>
+#include <limits>
 
-void test_event_poller_wait_until() {
-    test_wait_until<sys::event_poller>();
-}
+#include <unistdx/io/terminal>
 
-void test_event_poller_producer_consumer() {
-    test_producer_consumer_thread<sys::event_poller>();
+int main(int argc, char* argv[]) {
+    using namespace sys::terminal;
+    std::cout.iword(0) = sys::is_a_terminal(STDERR_FILENO);
+    for (int i=0; i<=255; ++i) {
+        if (i%64 == 0 && i!=0) { std::cout << std::endl; }
+        //std::cout << color(colors(i)) << '-' << reset();
+        std::cout << background_color(i) << '-' << reset();
+    }
+    std::cout << reset() << std::endl;
+    return 0;
 }

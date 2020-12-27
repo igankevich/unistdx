@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -39,16 +39,14 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/bits/macros>
 #include <unistdx/net/byte_order>
 #include <unistdx/net/bytes>
+#include <unistdx/test/language>
 
-#include <gtest/gtest.h>
-
+using namespace sys::test::lang;
 using sys::u32;
 
 typedef std::tuple<std::string, std::string> hash_tuple;
 
-struct SHA1Test: public ::testing::TestWithParam<hash_tuple> {};
-
-const std::vector<std::tuple<std::string, std::string>> KNOWN_HASHES = {
+const std::vector<std::tuple<std::string, std::string>> known_hashes = {
     std::make_tuple(
         "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "c1c8bbdc 22796e28 c0e15163 d20899b6 5621d65a"
@@ -93,7 +91,7 @@ std::string sha1_digest_to_string(
     const unsigned char* first,
     const unsigned char* last
 ) {
-    EXPECT_EQ(sys::sha1::digest_bytes_length(), last-first);
+    expect(value(sys::sha1::digest_bytes_length()) == value(last-first));
     sys::bytes<u32> arr[sys::sha1::digest_length()];
     u32 arr2[sys::sha1::digest_length()];
     for (int i=0; i<sys::sha1::digest_length(); ++i) {
@@ -119,26 +117,23 @@ std::string sha1_digest_to_string(const std::vector<char>& result) {
     return sha1_digest_to_string(result.data(), result.data() + result.size());
 }
 
-TEST_P(SHA1Test, All) {
-    const std::string& input = std::get<0>(GetParam());
-    const std::string& expected_output = std::get<1>(GetParam());
-    std::vector<u32> result(5);
-    sys::sha1 sha;
-    sha.put(input.data(), input.size());
-    sha.compute();
-    sha.digest(result.data());
-    std::string output = sha1_digest_to_string(result);
-    EXPECT_EQ(expected_output, output) << "input=" << input;
+void test_sha1_known_hashes() {
+    for (const auto& pair : known_hashes) {
+        const std::string& input = std::get<0>(pair);
+        const std::string& expected_output = std::get<1>(pair);
+        std::vector<u32> result(5);
+        sys::sha1 sha;
+        sha.put(input.data(), input.size());
+        sha.compute();
+        sha.digest(result.data());
+        std::string output = sha1_digest_to_string(result);
+        if (!expect(value(expected_output) == value(output))) {
+            std::clog << "input=" << input;
+        }
+    }
 }
 
-INSTANTIATE_TEST_CASE_P(
-    SHA1Instance,
-    SHA1Test,
-    ::testing::ValuesIn(KNOWN_HASHES)
-);
-
-
-TEST(SHA1, OneMillionOfAs) {
+void test_sha1_one_million_of_a() {
     sys::sha1 sha;
     std::string a = "aaaaaaaaaa";
     for (int i=0; i<100000; i++) {
@@ -148,38 +143,35 @@ TEST(SHA1, OneMillionOfAs) {
     sha.compute();
     sha.digest(result.data());
     std::string output = sha1_digest_to_string(result);
-    EXPECT_EQ(SHA_OF_ONE_MILLION_OF_A, output)
-        << "SHA of one million of 'a' failed";
+    if (!expect(value(SHA_OF_ONE_MILLION_OF_A) == value(output))) {
+        std::clog << "SHA of one million of 'a' failed\n";
+    }
 }
 
-TEST(SHA1, BigInputs) {
+void test_sha1_big_inputs() {
     sys::sha1 sha;
-    EXPECT_THROW(
-        sha.put("", std::numeric_limits<size_t>::max()),
-        std::length_error
-    );
+    expect(throws(call([&] () { sha.put("", std::numeric_limits<size_t>::max()); })));
     sha.reset();
     sha.put("a", 1);
-    EXPECT_THROW(
-        sha.put("", std::numeric_limits<size_t>::max()/8-1),
-        std::length_error
-    );
+    expect(throws(call([&] () { sha.put("", std::numeric_limits<size_t>::max()/8-1); })));
 }
 
-TEST(SHA1, RepeatingCompute) {
+void test_sha1_repeating_compute() {
     sys::sha1 sha;
     std::vector<char> a(64, 'a');
     sha.put(a.data(), a.size());
     sha.compute();
-    EXPECT_EQ(a.size()*8, sha.length());
+    expect(value(a.size()*8) == value(sha.length()));
     sha.compute();
     std::vector<u32> result(5);
     sha.digest(result.data());
     std::string output = sha1_digest_to_string(result);
-    EXPECT_EQ(SHA_OF_64_OF_A, output) << "SHA of 64 of 'a' failed";
+    if (!expect(value(SHA_OF_64_OF_A) == value(output))) {
+        std::clog << "SHA of 64 of 'a' failed\n";
+    }
 }
 
-TEST(SHA1, Put) {
+void test_sha1_put() {
     std::vector<char> a(64, 'a');
     sys::sha1 sha;
     sha.put(a.data(), a.size()/2);
@@ -188,28 +180,22 @@ TEST(SHA1, Put) {
     {
         std::vector<u32> result(5);
         sha.digest(result.data());
-        EXPECT_EQ(SHA_OF_64_OF_A, sha1_digest_to_string(result));
+        expect(value(SHA_OF_64_OF_A) == value(sha1_digest_to_string(result)));
     }
-    EXPECT_EQ(
-        SHA_OF_64_OF_A,
-        sha1_digest_to_string(sha.digest(), sha.digest() + 5)
-    );
+    expect(value(SHA_OF_64_OF_A) ==
+           value(sha1_digest_to_string(sha.digest(), sha.digest() + 5)));
     {
         std::vector<unsigned char> result(sys::sha1::digest_bytes_length());
         sha.digest(result.data());
-        EXPECT_EQ(SHA_OF_64_OF_A, sha1_digest_to_string(result));
+        expect(value(SHA_OF_64_OF_A) == value(sha1_digest_to_string(result)));
     }
-    EXPECT_EQ(
-        SHA_OF_64_OF_A,
-        sha1_digest_to_string(sha.digest_bytes(), sha.digest_bytes() + 20)
-    );
+    expect(value(SHA_OF_64_OF_A) ==
+           value(sha1_digest_to_string(sha.digest_bytes(), sha.digest_bytes() + 20)));
     {
         std::vector<char> result(sys::sha1::digest_bytes_length());
         sha.digest(result.data());
-        EXPECT_EQ(SHA_OF_64_OF_A, sha1_digest_to_string(result));
+        expect(value(SHA_OF_64_OF_A) == value(sha1_digest_to_string(result)));
     }
-    EXPECT_EQ(
-        SHA_OF_64_OF_A,
-        sha1_digest_to_string(sha.digest_chars(), sha.digest_chars() + 20)
-    );
+    expect(value(SHA_OF_64_OF_A) ==
+           value(sha1_digest_to_string(sha.digest_chars(), sha.digest_chars() + 20)));
 }
