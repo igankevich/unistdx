@@ -64,7 +64,9 @@
             "meson -Db_coverage=true . $d"
             "cd $d"
             "ninja -v test-lcov"
-            (format #f "mv -v lcov $outdir/~a-coverage" system)
+            ;;(format #f "mv -v lcov $outdir/~a-coverage" system)
+            "mkdir -p /fennec/home/gitbucket/.sites/unistdx"
+            (format #f "rsync -acv --delete lcov/ /fennec/home/gitbucket/.sites/unistdx/~a-coverage/" system)
             "rm -rf --one-file-system --preserve-root $d")
           "\n")
         #:name "coverage")
@@ -117,7 +119,7 @@
                        "ninja -v doxygen-std-tagfile"
                        "ninja -v site"
                        "mkdir -p /fennec/home/gitbucket/.sites"
-                       "rsync -acv --delete src/unistdx/site/ /fennec/home/gitbucket/.sites/unistdx/"
+                       "rsync -acv --exclude coverage --delete src/unistdx/site/ /fennec/home/gitbucket/.sites/unistdx/"
                        "rm -rf $d")
                      "\n")))
       '())))
