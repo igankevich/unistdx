@@ -65,7 +65,7 @@ void test_canonical_path_assign() {
 }
 
 void test_canonical_path_dirname() {
-    sys::canonical_path dir1("/usr");
+    sys::canonical_path dir1("/tmp");
     sys::canonical_path dir2("/");
     expect(value(dir1.dirname()) == value(dir2));
     expect(value(dir2.dirname()) == value(dir2));
