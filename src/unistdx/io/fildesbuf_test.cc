@@ -59,7 +59,7 @@ random_string(std::streamsize n) {
     return str;
 }
 
-using TypeParam = sys::basic_fildesbuf<char, std::char_traits<char>, test::random_buffer>;
+using TypeParam = sys::basic_fildesbuf<char, std::char_traits<char>, ::test::random_buffer>;
 
 void test_fdstream() {
     typedef typename TypeParam::char_type char_type;

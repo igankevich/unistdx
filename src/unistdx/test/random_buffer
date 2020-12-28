@@ -116,11 +116,11 @@ namespace test {
 namespace sys {
 
     template<>
-    class streambuf_traits<test::random_buffer> {
+    class streambuf_traits<::test::random_buffer> {
 
     public:
         typedef char char_type;
-        typedef test::random_buffer T;
+        typedef ::test::random_buffer T;
 
         inline static std::streamsize
         write(T& buf, const char_type* s, std::streamsize n) {
