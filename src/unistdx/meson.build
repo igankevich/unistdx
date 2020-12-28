@@ -30,7 +30,7 @@ subdir('test')
 
 unistdx_deps = []
 unistdx_libs = []
-if with_debug or with_backtrace or with_tests
+if with_libdw
     unistdx_libs += dwx
 endif
 if libdl.found()

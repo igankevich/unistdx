@@ -96,7 +96,7 @@ sys::backtrace_symbols(void** addresses, int nptrs) noexcept {
         std::vector<backtrace_symbol> symb;
         symb.reserve(nptrs);
         string buf(4096);
-        #if defined(UNISTDX_ENABLE_BACKTRACE)
+        #if defined(UNISTDX_WITH_LIBDW)
         dw::context context;
         context.report();
         #endif
@@ -105,7 +105,7 @@ sys::backtrace_symbols(void** addresses, int nptrs) noexcept {
             dl::symbol sym(addresses[i]);
             if (!sym) { continue; }
             auto demangled_name = demangle(sym.name(), buf);
-            #if defined(UNISTDX_ENABLE_BACKTRACE)
+            #if defined(UNISTDX_WITH_LIBDW)
             symb.emplace_back(demangled_name, context, dw::address(addresses[i]));
             #else
             symb.emplace_back(sym.filename(), demangled_name, 0);

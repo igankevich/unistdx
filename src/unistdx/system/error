@@ -41,7 +41,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/base/string>
 
-#if defined(UNISTDX_ENABLE_BACKTRACE)
+#if defined(UNISTDX_WITH_LIBDW)
 #include <dwx/dw>
 #include <unistd.h>
 #endif
@@ -73,7 +73,7 @@ namespace sys {
         inline backtrace_symbol(std::string&& filename, std::string&& name, int line):
         filename(filename), name(name), line(line) {}
 
-        #if defined(UNISTDX_ENABLE_BACKTRACE)
+        #if defined(UNISTDX_WITH_LIBDW)
         inline backtrace_symbol(std::string&& name, dw::context& context, dw::address addr):
         name(std::move(name)), address(addr) {
             try {
@@ -90,37 +90,6 @@ namespace sys {
     };
 
     std::ostream& operator<<(std::ostream& out, const backtrace_symbol& rhs);
-
-    /*
-    #if defined(UNISTDX_ENABLE_BACKTRACE)
-    inline std::vector<backtrace_symbol> unwind_symbols() noexcept {
-        try {
-            char symbol[4096];
-            using namespace unw;
-            context ctx;
-            cursor cur(ctx);
-            std::vector<backtrace_symbol> symbols;
-            string buf(4096);
-            dw::context context;
-            context.report();
-            while (cur.step() > 0) {
-                auto ip = cur.read_int_register(UNW_REG_IP);
-                if (ip == 0) { break; }
-                for (auto& ch : symbol) { ch = 0; }
-                cur.procedure_name(symbol, sizeof(symbol));
-                try {
-                    symbols.emplace_back(std::string(demangle(symbol, buf)), context, ip-4);
-                } catch (...) {
-                    // ignore nested errors
-                }
-            }
-            return symbols;
-        } catch (...) {
-            return {};
-        }
-    }
-    #endif
-    */
 
     std::vector<backtrace_symbol> backtrace_symbols() noexcept;
     std::vector<backtrace_symbol> backtrace_symbols(void** addresses, int size) noexcept;

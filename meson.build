@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.52.2',
+    version: '0.52.3',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -9,8 +9,16 @@ project(
 
 with_tests = get_option('with_tests')
 with_site = get_option('with_site')
-with_debug = get_option('with_debug')
-with_backtrace = get_option('with_backtrace')
+with_backtrace_on_exception = get_option('with_backtrace_on_exception')
+with_libdw = get_option('with_libdw')
+
+if with_tests and not with_libdw
+    error('Option "with_tests" requires "with_libdw" option.')
+endif
+
+if with_backtrace_on_exception and not with_libdw
+    error('Option "with_backtrace_on_exception" requires "with_libdw" option.')
+endif
 
 cpp = meson.get_compiler('cpp')
 cpp_args = []
@@ -18,18 +26,15 @@ cpp_linker_args = []
 pkgconfig = import('pkgconfig')
 suffix = ''
 
-if with_debug
+if with_backtrace_on_exception
     cpp_args += '-DUNISTDX_DEBUG'
+    cpp_args += '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE'
+    #cpp_args += '-DUNW_LOCAL_ONLY'
     suffix = '-debug'
 endif
 
-if with_debug or with_backtrace or with_tests
-    cpp_args += '-DUNISTDX_ENABLE_BACKTRACE'
-endif
-
-if with_debug or with_backtrace
-    cpp_args += '-DUNISTDX_ENABLE_BAD_CALL_BACKTRACE'
-    cpp_args += '-DUNW_LOCAL_ONLY'
+if with_libdw
+    cpp_args += '-DUNISTDX_WITH_LIBDW'
 endif
 
 foreach arg : [
