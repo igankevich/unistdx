@@ -163,6 +163,14 @@ foreach file : libunistdx_benchmarks
     )
 endforeach
 
+executable(
+    'colors',
+    sources: 'test/colors.cc',
+    include_directories: src,
+    implicit_include_directories: false,
+    dependencies: [unistdx],
+)
+
 if with_site
     subdir('doxygen')
     subdir('site')

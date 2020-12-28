@@ -29,13 +29,6 @@ executable(
     implicit_include_directories: false,
 )
 
-executable(
-    'colors',
-    sources: 'colors.cc',
-    include_directories: src,
-    implicit_include_directories: false,
-)
-
 # test coverage {{{
 coverage = configuration_data()
 lcov = find_program('lcov', required: false)
