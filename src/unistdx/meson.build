@@ -132,7 +132,7 @@ if with_tests
                 if args.length() != 0
                     tmp += '--' + '_'.join(args)
                 endif
-                test(tmp, exe, args: args, is_parallel: false)
+                test(tmp, exe, args: args + ['unshare='], is_parallel: false)
             endforeach
         endforeach
     endforeach

@@ -218,6 +218,9 @@ namespace sys {
             sys::event_poller _poller;
             std::mutex _mutex;
             duration _timeout = std::chrono::seconds(30);
+            sys::process::flags _process_flags =
+                sys::process::flags::fork | sys::process::flags::signal_parent |
+                sys::process::flags::unshare_users | sys::process::flags::unshare_network;
             bool _catch_errors = true;
 
         public:
@@ -230,6 +233,14 @@ namespace sys {
 
             inline bool catch_errors() const noexcept { return this->_catch_errors; }
             inline void catch_errors(bool rhs) noexcept { this->_catch_errors = rhs; }
+
+            inline sys::process::flags process_flags() const noexcept {
+                return this->_process_flags;
+            }
+
+            inline void process_flags(sys::process::flags rhs) noexcept {
+                this->_process_flags = rhs;
+            }
 
         };
 

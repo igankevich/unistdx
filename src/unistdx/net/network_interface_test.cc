@@ -41,10 +41,18 @@ For more information, please refer to <http://unlicense.org/>
 
 using namespace sys::test::lang;
 
-void unshare_network() {
+inline void unshare_network() {
     #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
     std::_Exit(77);
     #endif
+    using f = sys::unshare_flag;
+    try {
+        sys::this_process::unshare(f::network | f::users);
+    } catch (const sys::bad_call& err) {
+        if (err.errc() == std::errc::invalid_argument) {
+            std::_Exit(77);
+        }
+    }
 }
 
 void test_network_interface_flags() {

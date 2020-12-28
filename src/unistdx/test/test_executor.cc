@@ -191,16 +191,18 @@ int sys::test::Test_executor::run() {
                 stderr.out().unsetf(sys::open_flag::non_blocking);
                 sys::event_file_descriptor notifier;
                 notifier.unsetf(sys::open_flag::non_blocking);
-                using f = sys::process::flags;
                 this->_child_processes.emplace_back([this,&test,&stderr,&notifier]() noexcept {
-                    notifier.read();
+                    if (bool(this->_process_flags & sys::process::flags::unshare_users)) {
+                        notifier.read();
+                    }
                     notifier.close();
                     //using f = sys::unshare_flag;
                     //sys::this_process::unshare(f::network | f::users);
                     this->_poller.close();
-                    // TODO
-                    { sys::network_interface lo("lo");
-                        lo.setf(sys::network_interface::flag::up); }
+                    if (bool(this->_process_flags & sys::process::flags::unshare_network)) {
+                        sys::network_interface lo("lo");
+                        lo.setf(sys::network_interface::flag::up);
+                    }
                     current_test = &test;
                     stderr.in().close();
                     sys::fildes out(STDOUT_FILENO);
@@ -251,11 +253,12 @@ int sys::test::Test_executor::run() {
                         backtrace_thread.join();
                     }
                     return ret;
-                }, f::fork | f::signal_parent | f::unshare_users | f::unshare_network,
-                    4096*512);
+                }, this->_process_flags, 4096*512);
                 auto& process = this->_child_processes.back();
-                process.init_user_namespace();
-                notifier.write(1);
+                if (bool(this->_process_flags & sys::process::flags::unshare_users)) {
+                    process.init_user_namespace();
+                    notifier.write(1);
+                }
                 stderr.out().close();
                 this->_poller.emplace(stderr.in().fd(), sys::event::in);
                 process_by_fd[stderr.in().fd()] = process.id();
@@ -285,6 +288,7 @@ int sys::test::Test_executor::run() {
         while (first != last) {
             auto& process = *first;
             using f = sys::wait_flags;
+            // TODO non_blocking is not supported by qemu
             auto status = process.wait(f::exited | f::non_blocking);
             if (status.pid() == 0) {
                 ++first;
@@ -300,7 +304,7 @@ int sys::test::Test_executor::run() {
                              t.status(Test::Status::Killed);
                              break;
                 }
-                if (exit_code != 77) {
+                if (t.exit_code() != 77) {
                     exit_code |= t.exit_code();
                 }
                 {

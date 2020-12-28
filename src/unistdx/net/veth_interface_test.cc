@@ -43,6 +43,20 @@ For more information, please refer to <http://unlicense.org/>
 
 using namespace sys::test::lang;
 
+inline void unshare_network() {
+    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
+    std::_Exit(77);
+    #endif
+    using f = sys::unshare_flag;
+    try {
+        sys::this_process::unshare(f::network | f::users);
+    } catch (const sys::bad_call& err) {
+        if (err.errc() == std::errc::invalid_argument) {
+            std::_Exit(77);
+        }
+    }
+}
+
 template <class ... Args>
 inline void
 log(const Args& ... args) {
@@ -58,9 +72,7 @@ void print_network_interfaces() {
 
 #if defined(UNISTDX_TEST_HAVE_UNSHARE)
 void test_veth_up_down() {
-    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
-    std::exit(77);
-    #endif
+    unshare_network();
     {
         sys::veth_interface veth0("veth0", "veth1");
         using flags = sys::network_interface::flag;
@@ -90,9 +102,7 @@ void test_veth_up_down() {
 #endif
 
 void test_bare() {
-    #if !defined(UNISTDX_TEST_HAVE_UNSHARE)
-    std::exit(77);
-    #endif
+    unshare_network();
     std::vector<sys::veth_interface> veths;
     for (int i=0; i<10; ++i) {
         std::clog << "i=" << i << std::endl;

@@ -30,13 +30,62 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <unistdx/ipc/process>
 #include <unistdx/test/test_executor>
-
 
 using namespace sys::test;
 
+inline void trim_right(std::string& s) {
+    while (!s.empty() && std::isspace(s.back())) { s.pop_back(); }
+}
+
+inline void trim_left(std::string& s) {
+    std::string::size_type i = 0;
+    auto n = s.size();
+    for (; i<n && std::isspace(s[i]); ++i) {}
+    if (i != n) { s = s.substr(i); }
+}
+
+inline void trim_both(std::string& s) {
+    trim_right(s);
+    trim_left(s);
+}
+
+class Duration: public sys::test::Test_executor::duration {
+public:
+    using base_duration = std::chrono::system_clock::duration;
+    using base_duration::duration;
+    inline Duration(base_duration rhs): base_duration(rhs) {}
+};
+
+auto string_to_duration(std::string s) -> Duration;
+
+auto string_to_duration(std::string s) -> Duration {
+    using namespace std::chrono;
+    using d = Duration::base_duration;
+    using days = std::chrono::duration<Duration::rep,std::ratio<60*60*24>>;
+    trim_both(s);
+    std::size_t i = 0, n = s.size();
+    Duration::rep value = std::stoul(s, &i);
+    std::string suffix;
+    if (i != n) { suffix = s.substr(i); }
+    if (suffix == "ns") { return duration_cast<d>(nanoseconds(value)); }
+    if (suffix == "us") { return duration_cast<d>(microseconds(value)); }
+    if (suffix == "ms") { return duration_cast<d>(milliseconds(value)); }
+    if (suffix == "s" || suffix.empty()) { return duration_cast<d>(seconds(value)); }
+    if (suffix == "m") { return duration_cast<d>(minutes(value)); }
+    if (suffix == "h") { return duration_cast<d>(hours(value)); }
+    if (suffix == "d") { return duration_cast<d>(days(value)); }
+    std::stringstream tmp;
+    tmp << "unknown duration suffix \"" << suffix << "\"";
+    throw std::invalid_argument(tmp.str());
+}
+
 std::string prefix = "test_";
 bool catch_errors = true;
+sys::process::flags process_flags =
+    sys::process::flags::fork | sys::process::flags::signal_parent;
+sys::test::Test_executor::duration timeout = std::chrono::seconds(30);
 
 void arguments(int argc, char** argv) {
     for (int i=1; i<argc; ++i) {
@@ -51,8 +100,28 @@ void arguments(int argc, char** argv) {
             prefix = std::move(value);
         } else if (name == "catch-errors") {
             catch_errors = bool(std::stoi(value));
-        } else if (name == "filter") {
-            // TODO glob regex filter
+        } else if (name == "unshare") {
+            value += ',';
+            std::string subvalue;
+            for (auto ch : value) {
+                if (ch == ',') {
+                    if (subvalue == "network") {
+                        process_flags |= sys::process::flags::unshare_network;
+                    } else if (subvalue == "users") {
+                        process_flags |= sys::process::flags::unshare_users;
+                    } else if (subvalue.empty()) {
+                        process_flags = sys::process::flags::fork |
+                            sys::process::flags::signal_parent;
+                    } else {
+                        throw std::invalid_argument(arg);
+                    }
+                    subvalue.clear();
+                } else {
+                    subvalue += ch;
+                }
+            }
+        } else if (name == "timeout") {
+            timeout = string_to_duration(value);
         }
     }
 }
@@ -61,6 +130,7 @@ int main(int argc, char* argv[]) {
     arguments(argc, argv);
     sys::test::Test_executor tests;
     tests.catch_errors(catch_errors);
+    tests.process_flags(process_flags);
     dl::for_each_shared_object([&] (const elf::shared_object& obj, size_t nobjects) {
         sys::string buf(4096);
         for (const auto& prg : obj) {
