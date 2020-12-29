@@ -79,7 +79,7 @@ namespace sys {
             try {
                 dw::module mod(context, addr);
                 this->object = mod.name();
-                dw::line line(context, addr-4);
+                dw::line line(context, addr);
                 std::tie(this->filename, this->line) = line.location();
             } catch (...) {
                 // ignore the absense of line information

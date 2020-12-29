@@ -328,8 +328,8 @@ int sys::test::Test_executor::run() {
                     std::clog << reset();
                     std::clog << ' ' << t.symbol().short_name() << std::endl;
                 }
-                if (t.status() != Test::Status::Success &&
-                    t.status() != Test::Status::Skipped) {
+                if ((t.status() != Test::Status::Success &&
+                    t.status() != Test::Status::Skipped) || this->_verbose) {
                     std::clog << "======== Output ======== \n";
                     output.write_status(std::clog);
                     t.parent_write_status(std::clog);

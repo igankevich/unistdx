@@ -88,9 +88,13 @@ namespace dl {
         inline symbol(const void* address) noexcept: ::Dl_info{} { ::dladdr(address, this); }
 
         inline const char* filename() const noexcept { return this->dli_fname; }
-        inline void* load_address() const noexcept { return this->dli_fbase; }
+        inline void* base_address() const noexcept { return this->dli_fbase; }
         inline const char* name() const noexcept { return this->dli_sname; }
         inline void* address() const noexcept { return this->dli_saddr; }
+
+        inline uintptr_t offset() const noexcept {
+            return uintptr_t(address())-uintptr_t(base_address());
+        }
 
         inline explicit operator bool() const noexcept { return address() != nullptr; }
         inline bool operator !() const noexcept { return !this->operator bool(); }

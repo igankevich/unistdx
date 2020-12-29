@@ -82,7 +82,7 @@ auto string_to_duration(std::string s) -> Duration {
 }
 
 std::string prefix = "test_";
-bool catch_errors = true;
+bool catch_errors = true, verbose = false;
 sys::process::flags process_flags =
     sys::process::flags::fork | sys::process::flags::signal_parent;
 sys::test::Test_executor::duration timeout = std::chrono::seconds(30);
@@ -122,6 +122,10 @@ void arguments(int argc, char** argv) {
             }
         } else if (name == "timeout") {
             timeout = string_to_duration(value);
+        } else if (name == "verbose") {
+            verbose = true;
+        } else {
+            throw std::invalid_argument(name);
         }
     }
 }
@@ -130,6 +134,7 @@ int main(int argc, char* argv[]) {
     arguments(argc, argv);
     sys::test::Test_executor tests;
     tests.catch_errors(catch_errors);
+    tests.verbose(verbose);
     tests.process_flags(process_flags);
     dl::for_each_shared_object([&] (const elf::shared_object& obj, size_t nobjects) {
         sys::string buf(4096);
