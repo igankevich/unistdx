@@ -224,7 +224,9 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_CXXABI_H
 #mesondefine UNISTDX_HAVE_DLFCN_H
 #mesondefine UNISTDX_HAVE_IFADDRS_H
+#mesondefine UNISTDX_HAVE_LINUX_CAPABILITY_H
 #mesondefine UNISTDX_HAVE_LINUX_NETLINK_H
+#mesondefine UNISTDX_HAVE_LINUX_SECUREBITS_H
 #mesondefine UNISTDX_HAVE_LINUX_SOCKIOS_H
 #mesondefine UNISTDX_HAVE_NETDB_H
 #mesondefine UNISTDX_HAVE_NETINET_TCP_H

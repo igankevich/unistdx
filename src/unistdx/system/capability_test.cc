@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2020 Ivan Gankevich
+© 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,19 +30,30 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/base/bad_call>
-#include <unistdx/system/error>
-#include <unistdx/test/language>
+#include <iostream>
 
-void func() {
-    //throw sys::error("xyz");
-    throw sys::bad_call(std::errc::permission_denied);
+#include <unistdx/system/capability>
+
+void show_capabilities() {
+    using namespace sys::this_process;
+    std::clog << "Bounding set\n";
+    for (sys::u32 i=0; i<=37; ++i) {
+        std::clog << i << ": " << bounding_set_contains(sys::capabilities(i)) << '\n';
+    }
+    std::clog << "Ambient set\n";
+    for (sys::u32 i=0; i<=37; ++i) {
+        std::clog << i << ": " << ambient_set_contains(sys::capabilities(i)) << '\n';
+    }
+    std::clog << "Security bits: " << sys::u32(security_bits()) << '\n';
+    std::clog << "Keep capabilities: " << keep_capabilities() << '\n';
 }
 
-void test_error_try_catch() {
-    try {
-        func();
-    } catch (const std::exception& err) {
-        std::cerr << err.what() << std::endl;
-    }
+void test_capabilities() {
+    using namespace sys::this_process;
+    //using s = sys::security_bits;
+    show_capabilities();
+    //security_bits(s::keep);
+    //security_bits(s::no_root | s::no_root_locked);
+    //ambient_set_add(sys::capabilities::chown);
+    show_capabilities();
 }

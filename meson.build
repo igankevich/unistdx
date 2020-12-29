@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.57.0',
+    version: '0.58.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -267,7 +267,9 @@ foreach header : [
     'cxxabi.h',
     'dlfcn.h',
     'ifaddrs.h',
+    'linux/capability.h',
     'linux/netlink.h',
+    'linux/securebits.h',
     'linux/sockios.h',
     'netdb.h',
     'netinet/tcp.h',

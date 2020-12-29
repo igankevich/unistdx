@@ -10,8 +10,7 @@ if libdl.found()
 endif
 
 libunistdx_tests += [
-    [files('log_test.cc')],
-    [files('resource_test.cc')],
+    [files(['log_test.cc','resource_test.cc','capability_test.cc'])],
 ]
 
 libunistdx_tests += [
