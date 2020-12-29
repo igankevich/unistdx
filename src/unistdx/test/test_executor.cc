@@ -66,11 +66,11 @@ void sys::test::Backtrace_thread::run(Test* t) {
         current_test = t;
         std::unique_lock<std::mutex> lock(mutex);
         cv.wait(lock, [this] () -> bool {
-            if (num_addresses > 0) {
+            if (!backtrace.empty()) {
                 sys::string buf(4096);
                 std::stringstream tmp;
                 tmp << "caught signal " << signal;
-                sys::error err(tmp.str(), addresses, num_addresses);
+                sys::error err(tmp.str(), backtrace);
                 current_test->status(sys::test::Test::Status::Exception);
                 current_test->exception_text(err.what());
                 current_test->child_write_status(std::clog);
@@ -83,7 +83,7 @@ void sys::test::Backtrace_thread::run(Test* t) {
 
 void sys::test::Backtrace_thread::capture_backtrace(int sig) {
     mutex.lock();
-    num_addresses = ::backtrace(addresses, sizeof(addresses));
+    backtrace = sys::stack_trace();
     signal = sys::signal(sig);
     stopped = true;
     mutex.unlock();

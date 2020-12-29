@@ -82,15 +82,9 @@ void sys::backtrace(int fd) noexcept {
 }
 
 std::vector<sys::backtrace_symbol>
-sys::backtrace_symbols() noexcept {
-    const size_t size = 4096 / sizeof(void*);
-    void* addresses[size];
-    const int nptrs = ::backtrace(addresses, size);
-    return backtrace_symbols(addresses, nptrs);
-}
-
-std::vector<sys::backtrace_symbol>
-sys::backtrace_symbols(void** addresses, int nptrs) noexcept {
+sys::stack_trace::symbols() const noexcept {
+    auto addresses = data();
+    auto nptrs = size();
     #if defined(UNISTDX_HAVE_BACKTRACE)
     try {
         std::vector<backtrace_symbol> symb;
@@ -147,7 +141,7 @@ sys::backtrace_symbols(void** addresses, int nptrs) noexcept {
     #endif
 }
 
-void sys::error::init(const std::string& message) noexcept {
+void sys::error::init() const noexcept {
     try {
         char process_name[16] {};
         #if defined(UNISTDX_HAVE_PRCTL)
@@ -160,17 +154,18 @@ void sys::error::init(const std::string& message) noexcept {
         #else
         tmp << std::this_process::id();
         #endif
-        tmp << "\": " << message;
+        tmp << "\": " << this->_message;
         tmp << '\n';
-        int i = 0;
-        for (const auto& s : this->_symbols) { tmp << "    #" << i++ << ' ' << s << '\n'; }
+        tmp << this->_backtrace;
         this->_message = tmp.str();
     } catch (...) {
         // no message
     }
+    this->_init = true;
 }
 
 const char* sys::error::what() const noexcept {
+    if (!this->_init) { init(); }
     return this->_message.data();
 }
 
@@ -225,4 +220,11 @@ void sys::backtrace_on_signal(int sig) noexcept {
     ::write(STDERR_FILENO, "\"\n", 2);
     ::sys::backtrace(STDERR_FILENO);
     std::exit(sig);
+}
+
+std::ostream& sys::operator<<(std::ostream& out, const stack_trace& rhs) {
+    const auto& symbols = rhs.symbols();
+    int i = 0;
+    for (const auto& s : symbols) { out << "    #" << i++ << ' ' << s << '\n'; }
+    return out;
 }

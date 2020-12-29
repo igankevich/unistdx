@@ -108,13 +108,12 @@ namespace sys {
 
         class Backtrace_thread {
         public:
-            void* addresses[4096 / sizeof(void*)];
-            int num_addresses = 0;
             sys::signal signal{};
             std::mutex mutex;
             std::condition_variable cv;
             std::atomic<bool> stopped{false};
             std::thread thread;
+            sys::stack_trace backtrace{false};
 
             void run(Test* t);
             void capture_backtrace(int sig);
