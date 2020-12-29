@@ -38,9 +38,15 @@ For more information, please refer to <http://unlicense.org/>
 #include <iosfwd>
 
 #include <unistdx/base/check>
+#include <unistdx/base/flag>
 #include <unistdx/config>
+#include <unistdx/io/fd_type>
+#include <unistdx/system/call>
 
 namespace sys {
+
+    using pid_type = ::pid_t;
+    using uid_type = ::uid_t;
 
     /**
     \brief Alias for signal type.
@@ -150,71 +156,14 @@ namespace sys {
     operator<<(std::ostream& out, const signal rhs);
 
     /**
-    \brief Signal callback.
-    \date 2018-05-21
-    \ingroup ipc comm wrapper
-    */
-    class signal_action: public sigaction_type {
-    public:
-
-        inline signal_action() = default;
-
-        /// Construct signal action from old-style signal handler.
-        inline
-        signal_action(void (*func)(int)) noexcept: sigaction_type{} {
-            this->sa_handler = func;
-        }
-
-        /// Construct signal action from new-style signal handler.
-        inline
-        signal_action(void (*func)(int, siginfo_t*, void*)) noexcept: sigaction_type{} {
-            this->sa_sigaction = func;
-            this->sa_flags = SA_SIGINFO;
-        }
-
-    };
-
-    /// Routines implicitly applied to the currect process.
-    namespace this_process {
-
-        /**
-        \brief Set signal callback function.
-        \date 2018-05-21
-        \ingroup ipc
-        \throws bad_call
-        \see \man{sigaction,2}
-        */
-        inline void
-        bind_signal(signal sig, const signal_action& action) {
-            UNISTDX_CHECK(::sigaction(signal_type(sig), &action, 0));
-        }
-
-        /**
-        \brief Ignore specified signal
-        \date 2018-05-21
-        \ingroup ipc
-        \throws bad_call
-        \see \man{sigaction,2}
-        \details
-        By default any signal for which callback function
-        is not set may kill the process. This routine allows to ignore
-        specified signals.
-        */
-        inline void
-        ignore_signal(signal sig) {
-            bind_signal(sig, SIG_IGN);
-        }
-
-    }
-
-    #if !defined(__MACH__)
-    /**
     \brief Signal set.
     \date 2018-05-21
     \ingroup ipc comm wrapper
     */
     class signal_set: public ::sigset_t {
     public:
+
+        inline signal_set(::sigset_t rhs) noexcept: ::sigset_t{rhs} {}
 
         /**
         \brief Construct empty signal set.
@@ -255,6 +204,146 @@ namespace sys {
         }
 
     };
+
+    class signal_information: public ::siginfo_t {
+    public:
+        enum class codes: int {
+            #if defined(SI_ASYNCNL)
+            asyncnl=SI_ASYNCNL,
+            #endif
+            #if defined(SI_DETHREAD)
+            dethread=SI_DETHREAD,
+            #endif
+            #if defined(SI_TKILL)
+            tkill=SI_TKILL,
+            #endif
+            #if defined(SI_SIGIO)
+            io=SI_SIGIO,
+            #endif
+            #if defined(SI_ASYNCIO)
+            async_io=SI_ASYNCIO,
+            #endif
+            #if defined(SI_MESGQ)
+            message_queue=SI_MESGQ,
+            #endif
+            #if defined(SI_TIMER)
+            timer=SI_TIMER,
+            #endif
+            #if defined(SI_QUEUE)
+            queue=SI_QUEUE,
+            #endif
+            #if defined(SI_USER)
+            user=SI_USER,
+            #endif
+            #if defined(SI_KERNEL)
+            kernel=SI_KERNEL,
+            #endif
+        };
+    public:
+        inline std::errc error_condition() const noexcept { return std::errc(this->si_errno); }
+        inline ::sys::signal signal() const noexcept { return ::sys::signal(this->si_signo); }
+        inline pid_type process_id() const noexcept { return this->si_pid; }
+        inline uid_type user_id() const noexcept { return this->si_uid; }
+        inline clock_t user_cpu_time() const noexcept { return this->si_utime; }
+        inline clock_t system_cpu_time() const noexcept { return this->si_stime; }
+        inline int exit_code() const noexcept { return this->si_status; }
+        inline const void* address() const noexcept { return this->si_addr; }
+        inline void* address() noexcept { return this->si_addr; }
+        inline fd_type fd() const noexcept { return this->si_fd; }
+        inline calls call() const noexcept { return calls(this->si_syscall); }
+    };
+
+    /**
+    \brief Signal callback.
+    \date 2018-05-21
+    \ingroup ipc comm wrapper
+    */
+    class signal_action: public sigaction_type {
+
+    public:
+        enum class flag: unsigned int {
+            #if defined(SA_NOCLDSTOP)
+            no_child_stop=SA_NOCLDSTOP,
+            #endif
+            #if defined(SA_NOCLDWAIT)
+            no_child_wait=SA_NOCLDWAIT,
+            #endif
+            #if defined(SA_SIGINFO)
+            info=SA_SIGINFO,
+            #endif
+            #if defined(SA_ONSTACK)
+            on_stack=SA_ONSTACK,
+            #endif
+            #if defined(SA_RESTART)
+            restart=SA_RESTART,
+            #endif
+            #if defined(SA_NODEFER)
+            no_defer=SA_NODEFER,
+            #endif
+            #if defined(SA_RESETHAND)
+            reset=SA_RESETHAND,
+            #endif
+        };
+
+    public:
+
+        inline signal_action() = default;
+
+        /// Construct signal action from old-style signal handler.
+        inline
+        signal_action(void (*func)(int)) noexcept: sigaction_type{} {
+            this->sa_handler = func;
+        }
+
+        /// Construct signal action from new-style signal handler.
+        inline
+        signal_action(void (*func)(int, siginfo_t*, void*),
+                      flag flags=flag::info) noexcept: sigaction_type{} {
+            this->sa_sigaction = func;
+            this->sa_flags = int(flags);
+        }
+
+        inline flag flags() const noexcept { return flag(this->sa_flags); }
+        inline void flags(flag rhs) noexcept { this->sa_flags = int(rhs); }
+        inline signal_set mask() const noexcept { return signal_set(this->sa_mask); }
+        inline void mask(signal_set rhs) noexcept { this->sa_mask = rhs; }
+
+    };
+
+    UNISTDX_FLAGS(signal_action::flag);
+
+    /// Routines implicitly applied to the currect process.
+    namespace this_process {
+
+        /**
+        \brief Set signal callback function.
+        \date 2018-05-21
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigaction,2}
+        */
+        inline void
+        bind_signal(signal sig, const signal_action& action) {
+            UNISTDX_CHECK(::sigaction(signal_type(sig), &action, 0));
+        }
+
+        /**
+        \brief Ignore specified signal
+        \date 2018-05-21
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigaction,2}
+        \details
+        By default any signal for which callback function
+        is not set may kill the process. This routine allows to ignore
+        specified signals.
+        */
+        inline void
+        ignore_signal(signal sig) {
+            bind_signal(sig, SIG_IGN);
+        }
+
+    }
 
     namespace this_process {
 
@@ -338,7 +427,6 @@ namespace sys {
         }
 
     };
-    #endif // if !defined(__MACH__)
 
 }
 
