@@ -30,14 +30,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#ifndef UNISTDX_SYSTEM_CAPABILITY
-#define UNISTDX_SYSTEM_CAPABILITY
+#ifndef UNISTDX_SYSTEM_SECURITY
+#define UNISTDX_SYSTEM_SECURITY
 
 #include <unistdx/config>
 
+#if defined(UNISTDX_HAVE_PRCTL)
+#include <sys/prctl.h>
+#endif
+
 #if defined(UNISTDX_HAVE_LINUX_CAPABILITY_H) && defined(UNISTDX_HAVE_PRCTL)
 #include <linux/capability.h>
-#include <sys/prctl.h>
 
 #include <unistdx/base/check>
 #include <unistdx/base/types>
@@ -206,7 +209,6 @@ namespace sys {
 
 #if defined(UNISTDX_HAVE_LINUX_SECUREBITS_H) && defined(UNISTDX_HAVE_PRCTL)
 #include <linux/securebits.h>
-#include <sys/prctl.h>
 
 #include <unistdx/base/check>
 #include <unistdx/base/flag>
@@ -239,6 +241,47 @@ namespace sys {
 
     }
 
+}
+#endif
+
+#if defined(UNISTDX_HAVE_LINUX_SECCOMP_H)
+#include <linux/seccomp.h>
+
+namespace sys {
+
+    enum class secure_computing_modes {
+        #if defined(SECCOMP_MODE_DISABLED)
+        disabled=SECCOMP_MODE_DISABLED,
+        #endif
+        #if defined(SECCOMP_MODE_STRICT)
+        strict=SECCOMP_MODE_STRICT,
+        #endif
+        #if defined(SECCOMP_MODE_FILTER)
+        filter=SECCOMP_MODE_FILTER,
+        #endif
+    };
+
+    namespace this_process {
+
+        inline void no_new_privileges(bool value) {
+            check(::prctl(PR_SET_NO_NEW_PRIVS, static_cast<unsigned long>(value), 0,0,0));
+        }
+
+        inline bool no_new_privileges() {
+            int value = 0;
+            check(::prctl(PR_GET_NO_NEW_PRIVS, &value));
+            return value;
+        }
+
+        inline void secure_computing_mode(secure_computing_modes mode) {
+            check(::prctl(PR_SET_SECCOMP, static_cast<unsigned long>(mode), 0,0,0));
+        }
+
+        inline secure_computing_modes secure_computing_mode() {
+            return secure_computing_modes(check(::prctl(PR_GET_SECCOMP, 0,0,0,0)));
+        }
+
+    }
 }
 #endif
 

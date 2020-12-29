@@ -32,7 +32,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <iostream>
 
-#include <unistdx/system/capability>
+#include <unistdx/system/security>
 
 void show_capabilities() {
     using namespace sys::this_process;
