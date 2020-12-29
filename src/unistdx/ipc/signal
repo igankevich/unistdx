@@ -338,10 +338,16 @@ namespace sys {
         is not set may kill the process. This routine allows to ignore
         specified signals.
         */
-        inline void
-        ignore_signal(signal sig) {
-            bind_signal(sig, SIG_IGN);
-        }
+        inline void ignore_signal(signal s) { bind_signal(s, SIG_IGN); }
+
+        /**
+        \brief Use default action for the specified signal.
+        \date 2020-12-29
+        \ingroup ipc
+        \throws bad_call
+        \see \man{sigaction,2}
+        */
+        inline void default_action(signal s) { bind_signal(s, SIG_DFL); }
 
     }
 

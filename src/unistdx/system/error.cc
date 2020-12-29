@@ -39,6 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/ipc/process>
 #include <unistdx/system/error>
+#include <unistdx/system/resource>
 
 #include <unistdx/config>
 #if defined(UNISTDX_HAVE_BACKTRACE)
@@ -220,6 +221,13 @@ void sys::backtrace_on_signal(int sig) noexcept {
     ::write(STDERR_FILENO, "\"\n", 2);
     ::sys::backtrace(STDERR_FILENO);
     std::exit(sig);
+}
+
+void sys::dump_core() noexcept {
+    this_process::limit(resources::core_file_size,
+                        {resource_limit::infinity,resource_limit::infinity});
+    this_process::default_action(signal::abort);
+    this_process::send(signal::abort);
 }
 
 std::ostream& sys::operator<<(std::ostream& out, const stack_trace& rhs) {

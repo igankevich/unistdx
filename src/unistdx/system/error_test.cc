@@ -36,6 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 
 void func() {
     //throw sys::error("xyz");
+    sys::dump_core();
     throw sys::bad_call(std::errc::permission_denied);
 }
 

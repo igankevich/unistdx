@@ -66,6 +66,16 @@ namespace sys {
     void backtrace(int fd) noexcept;
     void backtrace_on_signal(int sig) noexcept;
 
+    /**
+    \brief Dump core.
+    \date 2020-12-29
+    \details
+    Provoke kernel to dump the core by resetting abort signal handler to the
+    default value and sending the signal to the process. Also raises resource
+    limits to infinity.
+    */
+    void dump_core() noexcept;
+
     const char* demangle(const char* symbol, string& buf);
 
     struct backtrace_symbol {

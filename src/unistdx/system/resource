@@ -1242,7 +1242,6 @@ namespace sys {
         inline resource_limit() noexcept: resource_limit_type{} {}
         inline resource_limit(value_type soft, value_type hard) noexcept:
         resource_limit_type{soft,hard} {}
-
         inline value_type soft() const noexcept { return this->rlim_cur; }
         inline value_type hard() const noexcept { return this->rlim_max; }
         inline void soft(value_type rhs) noexcept { this->rlim_cur = rhs; }
@@ -1253,7 +1252,6 @@ namespace sys {
         resource_limit& operator=(const resource_limit&) = default;
         resource_limit(resource_limit&&) = default;
         resource_limit& operator=(resource_limit&&) = default;
-
 
     };
 
