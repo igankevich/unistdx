@@ -2,6 +2,7 @@ libunistdx_src += files([
     'error.cc',
     'nss.cc',
     'resource.cc',
+    'security.cc',
 ])
 
 libdl = cpp.find_library('dl', required: false)

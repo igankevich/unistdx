@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -31,8 +31,12 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <iostream>
+#include <sstream>
 
 #include <unistdx/system/security>
+#include <unistdx/test/language>
+
+using namespace sys::test::lang;
 
 void show_capabilities() {
     using namespace sys::this_process;
@@ -56,4 +60,12 @@ void test_capabilities() {
     //security_bits(s::no_root | s::no_root_locked);
     //ambient_set_add(sys::capabilities::chown);
     show_capabilities();
+}
+
+void test_capabilities_io() {
+    std::stringstream tmp;
+    tmp << sys::capabilities::chown;
+    sys::capabilities actual{};
+    tmp >> actual;
+    expect(value(actual) == value(sys::capabilities::chown));
 }

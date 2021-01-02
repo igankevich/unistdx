@@ -40,6 +40,8 @@ For more information, please refer to <http://unlicense.org/>
 #endif
 
 #if defined(UNISTDX_HAVE_LINUX_CAPABILITY_H) && defined(UNISTDX_HAVE_PRCTL)
+#include <iosfwd>
+
 #include <linux/capability.h>
 
 #include <unistdx/base/check>
@@ -163,6 +165,11 @@ namespace sys {
         audit_read=CAP_AUDIT_READ,
         #endif
     };
+
+    const char* to_string(capabilities c) noexcept;
+    capabilities string_to_capability(const char* s) noexcept;
+    std::ostream& operator<<(std::ostream& out, capabilities rhs);
+    std::istream& operator>>(std::istream& in, capabilities& rhs);
 
     namespace this_process {
 
