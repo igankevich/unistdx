@@ -31,6 +31,7 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <cstring>
+#include <limits>
 #include <ostream>
 
 #include <unistdx/system/security>
@@ -126,7 +127,8 @@ sys::capabilities sys::string_to_capability(const char* s) noexcept {
     if (strcmp(s, "cap_wake_alarm") == 0) { return c::wake_alarm; }
     if (strcmp(s, "cap_block_suspend") == 0) { return c::block_suspend; }
     if (strcmp(s, "cap_audit_read") == 0) { return c::audit_read; }
-    return capabilities{};
+    using t = std::underlying_type<capabilities>::type;
+    return capabilities(std::numeric_limits<t>::max());
 }
 
 std::istream& sys::operator>>(std::istream& in, capabilities& rhs) {

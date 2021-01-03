@@ -33,12 +33,14 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_TEST_LANGUAGE
 #define UNISTDX_TEST_LANGUAGE
 
+#include <iostream>
 #include <set>
 #include <sstream>
 #include <typeinfo>
 #include <vector>
 
 #include <unistdx/system/error>
+#include <unistdx/test/arguments>
 #include <unistdx/test/test_executor>
 
 namespace std {
@@ -292,6 +294,21 @@ namespace sys {
             template <class Error,class E> inline
             typename std::enable_if<std::is_base_of<Expression,E>::value,Throw<E,Error>>::type
             throws(const E& e) { return Throw<E,Error>{e}; }
+
+            template <class Callback> inline void
+            for_each(Callback callback) { callback(); }
+
+            template <class Head, class ... Tail, class Callback> inline void
+            for_each(Head& variable, std::initializer_list<Head> values, Tail ... rest,
+                     Callback callback) {
+                for (auto& v : values) {
+                    variable = v;
+                    for_each(rest..., callback);
+                }
+            }
+
+            using sys::test::argument;
+            using sys::test::arguments;
 
         }
     }

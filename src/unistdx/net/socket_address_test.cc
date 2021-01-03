@@ -44,7 +44,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/language>
-#include <unistdx/test/make_types>
 #include <unistdx/test/operator>
 
 using namespace sys::test::lang;

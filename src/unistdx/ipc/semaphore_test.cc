@@ -43,7 +43,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/test/basic_mutex_test>
 #include <unistdx/test/language>
-#include <unistdx/test/make_types>
 #include <unistdx/test/semaphore_base>
 #include <unistdx/test/semaphore_wait_test>
 #include <unistdx/test/thread_mutex_test>

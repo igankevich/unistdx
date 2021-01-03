@@ -36,7 +36,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/config>
 #include <unistdx/net/interface_address>
-#include <unistdx/test/make_types>
 #include <unistdx/test/operator>
 
 using namespace sys::test::lang;

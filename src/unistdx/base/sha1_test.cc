@@ -44,31 +44,6 @@ For more information, please refer to <http://unlicense.org/>
 using namespace sys::test::lang;
 using sys::u32;
 
-typedef std::tuple<std::string, std::string> hash_tuple;
-
-const std::vector<std::tuple<std::string, std::string>> known_hashes = {
-    std::make_tuple(
-        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-        "c1c8bbdc 22796e28 c0e15163 d20899b6 5621d65a"
-    ),
-    std::make_tuple("",    "da39a3ee 5e6b4b0d 3255bfef 95601890 afd80709"),
-    std::make_tuple("sha", "d8f45903 20e1343a 915b6394 170650a8 f35d6926"),
-    std::make_tuple("Sha", "ba79baeb 9f10896a 46ae7471 5271b7f5 86e74640"),
-    std::make_tuple(
-        "The quick brown fox jumps over the lazy dog",
-        "2fd4e1c6 7a2d28fc ed849ee1 bb76e739 1b93eb12"
-    ),
-    std::make_tuple(
-        "The quick brown fox jumps over the lazy cog",
-        "de9f2c7f d25e1b3a fad3e85a 0bd17d9b 100db4b3"
-    ),
-    std::make_tuple("abc", "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"),
-    std::make_tuple(
-        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
-        "84983e44 1c3bd26e baae4aa1 f95129e5 e54670f1"
-    ),
-};
-
 const std::string SHA_OF_ONE_MILLION_OF_A = "34aa973c d4c4daa4 f61eeb2b dbad2731 6534016f";
 const std::string SHA_OF_64_OF_A = "0098ba82 4b5c1642 7bd7a112 2a5a442a 25ec644d";
 
@@ -117,20 +92,37 @@ std::string sha1_digest_to_string(const std::vector<char>& result) {
     return sha1_digest_to_string(result.data(), result.data() + result.size());
 }
 
-void test_sha1_known_hashes() {
-    for (const auto& pair : known_hashes) {
-        const std::string& input = std::get<0>(pair);
-        const std::string& expected_output = std::get<1>(pair);
-        std::vector<u32> result(5);
-        sys::sha1 sha;
-        sha.put(input.data(), input.size());
-        sha.compute();
-        sha.digest(result.data());
-        std::string output = sha1_digest_to_string(result);
-        if (!expect(value(expected_output) == value(output))) {
-            std::clog << "input=" << input;
-        }
-    }
+arguments<std::string,std::string> args_sha1_known_hashes = {
+    {
+        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "c1c8bbdc 22796e28 c0e15163 d20899b6 5621d65a"
+    },
+    {"",    "da39a3ee 5e6b4b0d 3255bfef 95601890 afd80709"},
+    {"sha", "d8f45903 20e1343a 915b6394 170650a8 f35d6926"},
+    {"Sha", "ba79baeb 9f10896a 46ae7471 5271b7f5 86e74640"},
+    {
+        "The quick brown fox jumps over the lazy dog",
+        "2fd4e1c6 7a2d28fc ed849ee1 bb76e739 1b93eb12"
+    },
+    {
+        "The quick brown fox jumps over the lazy cog",
+        "de9f2c7f d25e1b3a fad3e85a 0bd17d9b 100db4b3"
+    },
+    {"abc", "a9993e36 4706816a ba3e2571 7850c26c 9cd0d89d"},
+    {
+        "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+        "84983e44 1c3bd26e baae4aa1 f95129e5 e54670f1"
+    },
+};
+
+bool test_sha1_known_hashes(std::string* input, std::string* expected_output) {
+    std::vector<u32> result(5);
+    sys::sha1 sha;
+    sha.put(input->data(), input->size());
+    sha.compute();
+    sha.digest(result.data());
+    std::string output = sha1_digest_to_string(result);
+    return expect(value(*expected_output) == value(output));
 }
 
 void test_sha1_one_million_of_a() {

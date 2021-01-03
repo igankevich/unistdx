@@ -60,6 +60,7 @@ namespace sys {
         private:
             std::string _original_name;
             std::string _demangled_name;
+            std::string _short_name;
             void* _address{};
 
         public:
@@ -68,10 +69,7 @@ namespace sys {
                 this->_original_name = std::move(rhs);
             }
 
-            inline void demangled_name(std::string&& rhs) {
-                this->_demangled_name = std::move(rhs);
-            }
-
+            void demangled_name(std::string&& rhs);
             inline void address(void* rhs) noexcept { this->_address = rhs; }
             inline const void* address() const noexcept { return this->_address; }
             inline void* address() noexcept { return this->_address; }
@@ -84,16 +82,12 @@ namespace sys {
                 return this->_demangled_name;
             }
 
-            inline std::string short_name() const noexcept {
-                auto pos = this->_demangled_name.find('(');
-                return pos == std::string::npos ? this->_demangled_name
-                    : this->_demangled_name.substr(0,pos);
-            }
+            inline const std::string& short_name() const noexcept { return this->_short_name; }
 
             template <class ... Args>
-            void call(Args&& ... args) const {
-                auto func = reinterpret_cast<void(*)(...)>(address());
-                func(std::forward<Args>(args)...);
+            bool call(Args&& ... args) const {
+                auto func = reinterpret_cast<bool(*)(...)>(address());
+                return func(std::forward<Args>(args)...);
             }
 
             Symbol() = default;
@@ -145,7 +139,8 @@ namespace sys {
             };
 
         private:
-            Symbol _symbol;
+            Symbol _function;
+            Symbol _arguments;
             Status _status = Status::Success;
             sys::signal _signal{};
             std::string _exception_type;
@@ -153,9 +148,19 @@ namespace sys {
             int _exit_code = 0;
 
         public:
-            inline explicit Test(Symbol&& symbol): _symbol(std::move(symbol)) {}
+            inline explicit Test(Symbol&& function):
+            Test(std::move(function), {}) {}
 
-            inline const Symbol& symbol() const noexcept { return this->_symbol; }
+            inline explicit Test(Symbol&& function, Symbol&& arguments):
+            _function(std::move(function)), _arguments(std::move(arguments)) {}
+
+            inline const Symbol& symbol() const noexcept { return this->_function; }
+            inline const Symbol& arguments() const noexcept { return this->_arguments; }
+
+            inline void arguments(Symbol&& rhs) {
+                this->_arguments = std::move(rhs);
+            }
+
             inline Status status() const noexcept { return this->_status; }
             inline void status(Status rhs) noexcept { this->_status = rhs; }
             inline bool success() const noexcept { return status() == Status::Success; }
@@ -228,6 +233,8 @@ namespace sys {
             inline void emplace(Args&& ... args) {
                 this->_tests.emplace_back(std::forward<Args>(args)...);
             }
+
+            bool test_arguments(const std::string& test_name, Symbol&& arguments);
 
             int run();
 

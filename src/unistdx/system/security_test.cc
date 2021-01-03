@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2019, 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,7 +34,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <sstream>
 
 #include <unistdx/system/security>
+#include <unistdx/test/arguments>
 #include <unistdx/test/language>
+#include <unistdx/test/operator>
 
 using namespace sys::test::lang;
 
@@ -62,10 +64,48 @@ void test_capabilities() {
     show_capabilities();
 }
 
-void test_capabilities_io() {
-    std::stringstream tmp;
-    tmp << sys::capabilities::chown;
-    sys::capabilities actual{};
-    tmp >> actual;
-    expect(value(actual) == value(sys::capabilities::chown));
+arguments<sys::capabilities> args_capabilities_io = {
+    sys::capabilities::chown,
+    sys::capabilities::dac_override,
+    sys::capabilities::dac_read_search,
+    sys::capabilities::fowner,
+    sys::capabilities::fsetid,
+    sys::capabilities::kill,
+    sys::capabilities::setgid,
+    sys::capabilities::setuid,
+    sys::capabilities::setpcap,
+    sys::capabilities::linux_immutable,
+    sys::capabilities::net_bind_service,
+    sys::capabilities::net_broadcast,
+    sys::capabilities::net_admin,
+    sys::capabilities::net_raw,
+    sys::capabilities::ipc_lock,
+    sys::capabilities::ipc_owner,
+    sys::capabilities::sys_module,
+    sys::capabilities::sys_rawio,
+    sys::capabilities::sys_chroot,
+    sys::capabilities::sys_ptrace,
+    sys::capabilities::sys_pacct,
+    sys::capabilities::sys_admin,
+    sys::capabilities::sys_boot,
+    sys::capabilities::sys_nice,
+    sys::capabilities::sys_resource,
+    sys::capabilities::sys_time,
+    sys::capabilities::sys_tty_config,
+    sys::capabilities::mknod,
+    sys::capabilities::lease,
+    sys::capabilities::audit_write,
+    sys::capabilities::audit_control,
+    sys::capabilities::setfcap,
+    sys::capabilities::mac_override,
+    sys::capabilities::mac_admin,
+    sys::capabilities::syslog,
+    sys::capabilities::wake_alarm,
+    sys::capabilities::block_suspend,
+    sys::capabilities::audit_read,
+    sys::capabilities(-1),
+};
+
+bool test_capabilities_io(sys::capabilities* cap) {
+    return test::io_operators(*cap);
 }

@@ -30,6 +30,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <regex>
+
 #include <unistdx/ipc/process>
 #include <unistdx/test/test_executor>
 
@@ -81,7 +83,9 @@ auto string_to_duration(std::string s) -> Duration {
     throw std::invalid_argument(tmp.str());
 }
 
-std::string prefix = "test_";
+std::string test_prefix = "test_";
+std::string args_prefix = "args_";
+std::regex test_filter{".*", std::regex::ECMAScript | std::regex::optimize};
 bool catch_errors = true, verbose = false;
 sys::process::flags process_flags =
     sys::process::flags::fork | sys::process::flags::signal_parent;
@@ -96,8 +100,12 @@ void arguments(int argc, char** argv) {
         }
         std::string name = arg.substr(0,pos);
         std::string value = arg.substr(pos+1);
-        if (name == "prefix") {
-            prefix = std::move(value);
+        if (name == "prefix" || name == "test-prefix") {
+            test_prefix = std::move(value);
+        } else if (name == "prefix" || name == "args-prefix") {
+            args_prefix = std::move(value);
+        } else if (name == "filter") {
+            test_filter = std::regex{value, test_filter.flags()};
         } else if (name == "catch-errors") {
             catch_errors = bool(std::stoi(value));
         } else if (name == "unshare") {
@@ -123,7 +131,7 @@ void arguments(int argc, char** argv) {
         } else if (name == "timeout") {
             timeout = string_to_duration(value);
         } else if (name == "verbose") {
-            verbose = true;
+            verbose = bool(std::stoi(value));
         } else {
             throw std::invalid_argument(name);
         }
@@ -136,8 +144,8 @@ int main(int argc, char* argv[]) {
     tests.catch_errors(catch_errors);
     tests.verbose(verbose);
     tests.process_flags(process_flags);
+    sys::string buf{4096};
     dl::for_each_shared_object([&] (const elf::shared_object& obj, size_t nobjects) {
-        sys::string buf(4096);
         for (const auto& prg : obj) {
             if (prg.type() != elf::segment_types::dynamic) { continue; }
             auto dynamic_section = reinterpret_cast<elf::dynamic_section*>(
@@ -165,17 +173,38 @@ int main(int argc, char* argv[]) {
                 }
             }
             if (symbols && strings) {
+                // functions
                 for (elf::elf_word i=0; i<num_symbols; ++i) {
                     const auto& sym = symbols[i];
                     auto name = &strings[sym.name()];
                     if (*name == 0) { continue; }
                     std::string demangled_name = sys::demangle(name, buf);
-                    if (demangled_name.compare(0, prefix.size(), prefix) == 0) {
+                    if (demangled_name.compare(0, test_prefix.size(), test_prefix) == 0) {
                         sys::test::Symbol s;
-                        s.demangled_name(std::move(demangled_name));
                         s.original_name(std::string(name));
+                        s.demangled_name(std::move(demangled_name));
                         s.address(reinterpret_cast<void*>(sym.address()));
-                        tests.emplace(std::move(s));
+                        if (std::regex_search(s.short_name(), test_filter)) {
+                            tests.emplace(std::move(s));
+                        }
+                    }
+                }
+                // arguments
+                for (elf::elf_word i=0; i<num_symbols; ++i) {
+                    const auto& sym = symbols[i];
+                    auto name = &strings[sym.name()];
+                    if (*name == 0) { continue; }
+                    std::string demangled_name = sys::demangle(name, buf);
+                    if (demangled_name.compare(0, args_prefix.size(), args_prefix) == 0) {
+                        sys::test::Symbol s;
+                        s.original_name(std::string(name));
+                        s.demangled_name(std::move(demangled_name));
+                        s.address(reinterpret_cast<void*>(sym.address()));
+                        std::string test_name;
+                        test_name.reserve(test_prefix.size() + args_prefix.size());
+                        test_name += test_prefix;
+                        test_name += s.short_name().substr(args_prefix.size());
+                        tests.test_arguments(test_name, std::move(s));
                     }
                 }
             }

@@ -31,7 +31,6 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/ipc/semaphore>
-#include <unistdx/test/make_types>
 #include <unistdx/test/semaphore_base>
 #include <unistdx/test/semaphore_wait_test>
 

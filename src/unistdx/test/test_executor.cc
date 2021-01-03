@@ -38,6 +38,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/net/network_interface>
 #include <unistdx/system/error>
 #include <unistdx/system/resource>
+#include <unistdx/test/arguments>
 #include <unistdx/test/test_executor>
 
 #if defined(UNISTDX_HAVE_BACKTRACE)
@@ -58,6 +59,21 @@ namespace {
         backtrace_thread_ptr->capture_backtrace(sig);
     }
 
+}
+
+void sys::test::Symbol::demangled_name(std::string&& rhs) {
+    this->_demangled_name = std::move(rhs);
+    auto pos = this->_demangled_name.find('(');
+    if (pos != std::string::npos) {
+        this->_short_name = this->_demangled_name.substr(0,pos);
+    } else {
+        pos = this->_demangled_name.find('[');
+        if (pos != std::string::npos) {
+            this->_short_name = this->_demangled_name.substr(0,pos);
+        } else {
+            this->_short_name = this->_demangled_name;
+        }
+    }
 }
 
 void sys::test::Backtrace_thread::run(Test* t) {
@@ -92,7 +108,50 @@ void sys::test::Backtrace_thread::capture_backtrace(int sig) {
 }
 
 int sys::test::Test::run() {
-    this->_symbol.call(this);
+    if (this->_arguments.address()) {
+        auto& args =
+            *reinterpret_cast<::sys::test::arguments<void*>*>(this->_arguments.address());
+        int num_finished = 0;
+        auto& raw_data = args.raw_data();
+        int num_args = raw_data.size();
+        for (const auto& a : raw_data) {
+            bool success = false;
+            switch (a.size()) {
+                case 1: success = this->_function.call(a[0]); break;
+                case 2: success = this->_function.call(a[0],a[1]); break;
+                case 3: success = this->_function.call(a[0],a[1],a[2]); break;
+                case 4: success = this->_function.call(a[0],a[1],a[2],a[3]); break;
+                case 5: success = this->_function.call(a[0],a[1],a[2],a[3],a[4]); break;
+                case 6: success = this->_function.call(a[0],a[1],a[2],a[3],a[4],a[5]); break;
+                case 7: success = this->_function.call(a[0],a[1],a[2],a[3],a[4],a[5],a[6]); break;
+                default: success = false;
+            }
+            ++num_finished;
+            std::clog << '[' << num_finished << '/' << num_args << "] ";
+            using namespace sys::terminal;
+            std::clog << bold();
+            if (success) {
+                std::clog << color(colors::fg_green) << "ok";
+            } else {
+                std::clog << color(colors::fg_red) << "fail";
+            }
+            std::clog << reset();
+            std::clog << ' ' << this->_function.short_name() << '('
+                << this->_arguments.short_name() << '[' << num_finished-1 << "])";
+            std::clog << std::endl;
+        }
+    } else {
+        this->_function.call();
+        using namespace sys::terminal;
+        std::clog << bold();
+        if (this->_status == Status::Success) {
+            std::clog << color(colors::fg_green) << "ok";
+        } else {
+            std::clog << color(colors::fg_red) << "fail";
+        }
+        std::clog << reset();
+        std::clog << ' ' << this->_function.short_name() << std::endl;
+    }
     /*
     // serialise the result
     sys::byte_buffer buf;
@@ -124,7 +183,8 @@ void sys::test::Test::read(sys::byte_buffer& in) {
 }
 
 void sys::test::Test::child_write_status(std::ostream& out) const {
-    out << "Function: " << this->_symbol.short_name() << '\n';
+    out << "Function: " << this->_function.short_name() << '\n';
+    out << "Arguments: " << this->_arguments.short_name() << '\n';
     out << "Status: " << this->_status << '\n';
     switch (this->_status) {
         case Status::Success:
@@ -204,6 +264,7 @@ int sys::test::Test_executor::run() {
                         lo.setf(sys::network_interface::flag::up);
                     }
                     current_test = &test;
+                    std::clog.iword(0) = sys::is_a_terminal(STDERR_FILENO);
                     stderr.in().close();
                     sys::fildes out(STDOUT_FILENO);
                     out = stderr.out();
@@ -343,4 +404,12 @@ int sys::test::Test_executor::run() {
         //std::this_thread::sleep_for(std::chrono::milliseconds(99));
     }
     return exit_code;
+}
+
+bool sys::test::Test_executor::test_arguments(const std::string& test_name, Symbol&& arguments) {
+    auto result = std::find_if(this->_tests.begin(), this->_tests.end(),
+                 [&] (const Test& t) { return t.symbol().short_name() == test_name; });
+    if (result == this->_tests.end()) { return false; }
+    result->arguments(std::move(arguments));
+    return true;
 }

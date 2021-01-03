@@ -1,0 +1,157 @@
+/*
+UNISTDX — C++ library for Linux system calls.
+© 2021 Ivan Gankevich
+
+This file is part of UNISTDX.
+
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
+
+#ifndef UNISTDX_TEST_ARGUMENTS
+#define UNISTDX_TEST_ARGUMENTS
+
+#include <cstdint>
+#include <initializer_list>
+#include <memory>
+
+namespace sys {
+    namespace test {
+
+        template <class T>
+        class argument {
+        private:
+            void* _data{};
+        public:
+            inline argument(void* data) noexcept: _data(data) {}
+            inline T* get() noexcept { return reinterpret_cast<T*>(this->_data); }
+            inline const T* get() const noexcept { return reinterpret_cast<T*>(this->_data); }
+            inline T* operator->() noexcept { return get(); }
+            inline const T* operator->() const noexcept { return get(); }
+            inline T& operator*() noexcept { return *get(); }
+            inline const T& operator*() const noexcept { return *get(); }
+            inline operator T&() noexcept { return *get(); }
+            inline operator const T&() const noexcept { return *get(); }
+        };
+
+        template <class ... Elements>
+        class List;
+
+        template <>
+        class List<> {
+        public:
+            static constexpr inline size_t size() noexcept { return 0; }
+        };
+
+        template <class Head, class ... Tail>
+        class List<Head,Tail...> {
+        public:
+            using value_type = Head;
+        private:
+            Head _head;
+            List<Tail...> _tail;
+        public:
+            inline List(Head&& head, Tail&& ... tail):
+            _head{std::forward<Head>(head)}, _tail{std::forward<Tail>(tail)...} {}
+            const Head& head() const noexcept { return this->_head; }
+            Head& head() noexcept { return this->_head; }
+            Head* head_ptr() noexcept { return &this->_head; }
+            const Head* head_ptr() const noexcept { return &this->_head; }
+            const List<Tail...>& tail() const noexcept { return this->_tail; }
+            List<Tail...>& tail() noexcept { return this->_tail; }
+            static constexpr inline size_t size() noexcept { return 1+sizeof...(Tail); }
+
+            List() = default;
+            ~List() = default;
+            List(const List&) = default;
+            List& operator=(const List&) = default;
+            List(List&&) = default;
+            List& operator=(List&&) = default;
+        };
+
+        template <class ... T>
+        class arguments {
+
+        public:
+            using size_type = size_t;
+            using value_type = List<T...>;
+            using iterator = value_type*;
+            using const_iterator = const value_type*;
+            using address_array = std::vector<const void*>;
+            using address_matrix = std::vector<address_array>;
+
+        private:
+            using array_type = std::vector<value_type>;
+
+        private:
+            array_type _data;
+            address_matrix _raw_data;
+
+        public:
+
+            inline arguments(std::initializer_list<List<T...>> data) {
+                this->_data.reserve(data.size());
+                this->_raw_data.reserve(this->_data.size());
+                for (auto& value : data) {
+                    this->_data.emplace_back(value);
+                }
+                for (auto& value : this->_data) {
+                    this->_raw_data.emplace_back();
+                    init(this->_raw_data.back(), value);
+                }
+            }
+
+            inline iterator begin() noexcept { return this->_data.data(); }
+            inline const_iterator begin() const noexcept { return this->_data.data(); }
+            inline iterator end() noexcept { return begin() + size(); }
+            inline const_iterator end() const noexcept { return begin() + size(); }
+            inline size_type size() const noexcept { return this->_data.size(); }
+            inline iterator data() noexcept { return begin(); }
+            inline const_iterator data() const noexcept { return begin(); }
+            inline value_type& front() noexcept { return *data(); }
+            inline value_type& back() noexcept { return *(end()-1); }
+            inline const address_matrix& raw_data() const noexcept { return this->_raw_data; }
+
+            arguments() = default;
+            ~arguments() = default;
+            arguments(const arguments&) = default;
+            arguments& operator=(const arguments&) = default;
+            arguments(arguments&&) = default;
+            arguments& operator=(arguments&&) = default;
+
+        private:
+            inline void init(std::vector<const void*>& lhs, const List<>& value) {}
+            template <class ... Args, class Head, class ... Tail>
+            inline void init(std::vector<const void*>& lhs, const List<Head,Tail...>& value) {
+                lhs.emplace_back(&value.head());
+                init(lhs, value.tail());
+            }
+
+        };
+
+    }
+}
+
+#endif // vim:filetype=cpp

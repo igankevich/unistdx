@@ -234,6 +234,7 @@ namespace sys {
         }
 
         inline const_pointer data() const noexcept { return this->_data; }
+        inline void data(pointer rhs) noexcept { this->_data = rhs; }
         inline operator const_pointer() const noexcept { return this->_data; }
         inline operator pointer() noexcept { return this->_data; }
         inline size_type capacity() const noexcept { return this->_capacity; }
