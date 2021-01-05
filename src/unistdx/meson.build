@@ -171,6 +171,16 @@ executable(
     dependencies: [unistdx],
 )
 
+executable(
+    'pivot-root-test',
+    sources: 'test/pivot_root_test.cc',
+    include_directories: src,
+    implicit_include_directories: false,
+    dependencies: [unistdx],
+    cpp_args: cpp_args,
+    link_args: cpp_linker_args,
+)
+
 if with_site
     subdir('doxygen')
     subdir('site')

@@ -69,7 +69,7 @@ namespace sys {
 
         /// Construct directory entry output stream for path \p dir.
         inline explicit
-        basic_odirectory(const path& dir):
+        basic_odirectory(path_view dir):
         _dirpath(dir) {}
 
         /// Copy-constructor.

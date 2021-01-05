@@ -39,6 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/fs/directory_entry>
 #include <unistdx/fs/dirstream>
 #include <unistdx/fs/path_flag>
+#include <unistdx/fs/path_view>
 #include <unistdx/it/basic_istream_iterator>
 #include <unistdx/it/iterator_pair>
 
@@ -91,7 +92,7 @@ namespace sys {
 
         /// Construct directory entry input stream for directory \p path.
         inline explicit
-        basic_idirectory(const path& path) {
+        basic_idirectory(path_view path) {
             this->open(path);
         }
 
@@ -117,7 +118,7 @@ namespace sys {
         \see \man{opendir,3}
         */
         inline void
-        open(const path& p) {
+        open(path_view p) {
             this->close();
             this->_dirpath = p;
             this->_dir = ::opendir(p);

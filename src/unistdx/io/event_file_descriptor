@@ -74,6 +74,10 @@ namespace sys {
             if (ret != sizeof(value_type)) { UNISTDX_CHECK_IO(ret); }
         }
 
+        inline void notify_one() { write(1); }
+        inline void notify_all() { notify_one(); }
+        inline void wait() { read(); }
+
         ~event_file_descriptor() = default;
         event_file_descriptor(const event_file_descriptor&) = default;
         event_file_descriptor& operator=(const event_file_descriptor&) = default;

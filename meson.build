@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.62.0',
+    version: '0.63.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -231,6 +231,7 @@ foreach pair : [
     ['sys/mman.h', 'MAP_STACK'],
     ['sys/mman.h', 'MAP_UNINITIALIZED'],
     ['sys/mman.h', 'mmap'],
+    ['sys/mount.h', 'mount'],
     ['sys/prctl.h', 'PR_GET_NO_NEW_PRIVS'],
     ['sys/prctl.h', 'PR_SET_NO_NEW_PRIVS'],
     ['sys/prctl.h', 'prctl'],

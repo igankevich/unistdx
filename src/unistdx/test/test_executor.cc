@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -249,8 +249,8 @@ int sys::test::Test_executor::run() {
                 this->_tests.pop_front();
                 sys::pipe stderr;
                 stderr.out().unsetf(sys::open_flag::non_blocking);
-                sys::event_file_descriptor notifier;
-                notifier.unsetf(sys::open_flag::non_blocking);
+                sys::event_file_descriptor notifier(
+                    0, sys::event_file_descriptor::flag::close_on_exec);
                 this->_child_processes.emplace_back([this,&test,&stderr,&notifier]() noexcept {
                     if (bool(this->_process_flags & sys::process::flags::unshare_users)) {
                         notifier.read();

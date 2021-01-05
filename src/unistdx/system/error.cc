@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -222,6 +222,24 @@ void sys::backtrace_on_signal(int sig) noexcept {
     ::write(STDERR_FILENO, "\"\n", 2);
     ::sys::backtrace(STDERR_FILENO);
     std::exit(sig);
+}
+
+void sys::backtrace_on_terminate() {
+    if (auto ptr = std::current_exception()) {
+        try {
+            std::rethrow_exception(ptr);
+        } catch (const error& err) {
+            std::cerr << err.what();
+        } catch (const std::exception& err) {
+            std::cerr << error(err.what()).what();
+        } catch (...) {
+            std::cerr << error("Unknown uncaught exception").what();
+        }
+    } else {
+        std::cerr << error("No exception").what();
+    }
+    std::cerr << std::flush;
+    std::_Exit(1);
 }
 
 void sys::dump_core() noexcept {

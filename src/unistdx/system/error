@@ -65,6 +65,7 @@ namespace sys {
     */
     void backtrace(int fd) noexcept;
     void backtrace_on_signal(int sig) noexcept;
+    void backtrace_on_terminate();
 
     /**
     \brief Dump core.

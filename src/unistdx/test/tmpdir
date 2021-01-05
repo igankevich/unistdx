@@ -148,15 +148,9 @@ namespace test {
             expect(value(0) == value(status.exit_code()));
         }
 
-        inline
-        operator const sys::path&() const noexcept {
-            return _dirname;
-        }
-
-        inline const sys::path&
-        name() const noexcept {
-            return _dirname;
-        }
+        inline operator sys::path_view() const noexcept { return _dirname; }
+        inline operator const sys::path&() const noexcept { return _dirname; }
+        inline const sys::path& name() const noexcept { return _dirname; }
 
     private:
 

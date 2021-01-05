@@ -56,7 +56,7 @@ void test_idirtree_current_dir() {
     std::vector<std::string> files {"a", "b", "c"};
     test::tmpdir tdir(UNISTDX_TMPDIR, files.begin(), files.end());
     sys::idirtree tree(tdir);
-    expect(value(tree.current_dir()) == value(static_cast<const sys::path&>(tdir)));
+    expect(value(tree.current_dir()) == value(static_cast<sys::path_view>(tdir)));
 }
 
 void test_idirtree_iterator() {

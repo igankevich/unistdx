@@ -11,8 +11,6 @@
 - [ ] alarm
 - [ ] alloc_hugepages
 - [ ] arch_prctl
-- [X] arm_fadvise64_64
-- [X] arm_sync_file_range
 - [ ] atomic_barrier
 - [ ] atomic_cmpxchg_32
 - [ ] attrctl
@@ -126,7 +124,6 @@
 - [ ] lchown
 - [ ] lchown32
 - [ ] lgetxattr
-- [ ] link
 - [ ] linkat
 - [ ] llseek
 - [ ] lookup_dcookie
@@ -139,13 +136,11 @@
 - [ ] migrate_pages
 - [ ] mincore
 - [ ] mkdirat
-- [ ] mknod
 - [ ] mknodat
 - [ ] mlock2
 - [ ] mlockall
 - [ ] mmap2
 - [ ] modify_ldt
-- [ ] mount
 - [ ] move_mount
 - [ ] move_pages
 - [ ] mprotect
@@ -293,7 +288,6 @@
 - [ ] swapoff
 - [ ] swapon
 - [ ] switch_endian
-- [ ] symlink
 - [ ] symlinkat
 - [ ] sync_file_range
 - [ ] sync_file_range2
@@ -326,10 +320,7 @@
 - [ ] udftrap
 - [ ] ugetrlimit
 - [ ] umask
-- [ ] umount
-- [ ] umount2
 - [ ] uname
-- [ ] unlink
 - [ ] unlinkat
 - [ ] uselib
 - [ ] userfaultfd
@@ -352,6 +343,8 @@
 - [X] accept4
 - [X] access
 - [X] acct
+- [X] arm_fadvise64_64
+- [X] arm_sync_file_range
 - [X] bind
 - [X] chdir
 - [X] chmod
@@ -411,6 +404,7 @@
 - [X] getxattr
 - [X] ioctl
 - [X] kill
+- [X] link
 - [X] listen
 - [X] listxattr
 - [X] llistxattr
@@ -419,8 +413,10 @@
 - [X] lsetxattr
 - [X] madvise
 - [X] mkdir
+- [X] mknod
 - [X] mlock
 - [X] mmap
+- [X] mount
 - [X] mremap
 - [X] msync
 - [X] munlock
@@ -474,10 +470,14 @@
 - [X] splice
 - [X] stat
 - [X] stat64
+- [X] symlink
 - [X] sync
 - [X] syncfs
 - [X] syscall
 - [X] sysinfo
+- [X] umount
+- [X] umount2
+- [X] unlink
 - [X] unshare
 - [X] waitid
 - [X] waitpid

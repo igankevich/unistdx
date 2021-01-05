@@ -84,14 +84,14 @@ namespace sys {
         input directory \p starting_point.
         */
         inline explicit
-        basic_idirtree(const path& starting_point):
+        basic_idirtree(path_view starting_point):
         base_type(starting_point) {
             this->_dirs.emplace(starting_point);
         }
 
         /// Open path \p p as input directory.
         inline void
-        open(const path& p) {
+        open(path_view p) {
             while (!this->_dirs.empty()) {
                 this->_dirs.pop();
             }

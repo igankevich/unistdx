@@ -7,6 +7,7 @@ libunistdx_src += files([
     'mkdirs.cc',
     'odirtree.cc',
     'path.cc',
+    'path_view.cc',
     'temporary_file.cc',
 ])
 
