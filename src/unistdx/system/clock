@@ -125,6 +125,18 @@ namespace sys {
             UNISTDX_CHECK(::clock_settime(downcast(this->_id), &t));
         }
 
+        inline duration sleep_for(duration amount) {
+            time_spec t(amount);
+            time_spec t_remaining;
+            check(::clock_nanosleep(downcast(this->_id), 0, &t, &t_remaining));
+            return t_remaining.duration();
+        }
+
+        inline void sleep_until(time_point tp) {
+            time_spec t(tp);
+            check(::clock_nanosleep(downcast(this->_id), TIMER_ABSTIME, &t, nullptr));
+        }
+
         clock() = default;
         ~clock() = default;
         clock(const clock&) = default;

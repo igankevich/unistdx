@@ -38,7 +38,11 @@ For more information, please refer to <http://unlicense.org/>
 sys::fildes&
 sys::fildes::operator=(const fildes& rhs) {
     if (*this) {
+        #if defined(UNISTDX_HAVE_DUP3)
+        this->_fd = ::dup3(rhs._fd, this->_fd, O_CLOEXEC);
+        #else
         this->_fd = ::dup2(rhs._fd, this->_fd);
+        #endif
     } else {
         this->_fd = ::dup(rhs._fd);
     }

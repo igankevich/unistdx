@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.61.0',
+    version: '0.62.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -254,6 +254,7 @@ foreach pair : [
     ['unistd.h', 'SEEK_DATA'],
     ['unistd.h', 'SEEK_HOLE'],
     ['unistd.h', 'copy_file_range'],
+    ['unistd.h', 'dup3'],
     ['unistd.h', 'pipe2'],
 ]
     header = pair[0]

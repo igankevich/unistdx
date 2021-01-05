@@ -355,6 +355,8 @@ namespace sys {
             UNISTDX_CHECK(::chdir(wd));
         }
 
+        inline void root(const char* new_root) { check(::chroot(new_root)); }
+
         /**
         \brief Get process group ID of the calling process.
         \see \man{getpgrp,2}
@@ -396,13 +398,15 @@ namespace sys {
 
         fildes get_namespace(const char* proc_suffix);
 
-        inline void hostname(const std::string& name) {
+        inline void hostname(const_string name) {
             UNISTDX_CHECK(::sethostname(name.data(), name.size()));
         }
 
         std::string hostname();
 
         inline void yield() noexcept { ::sched_yield(); }
+
+        inline std::errc pause() { return std::errc(::pause()); }
 
     }
 
