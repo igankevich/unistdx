@@ -35,22 +35,23 @@ install_headers(
     subdir: join_paths(meson.project_name(), 'fs')
 )
 
-libunistdx_tests += [
+libunistdx_tests_with_stubs += [
     [files('copy_file_test.cc'),
-     [[],
-      [copy_file_range_stub],
-      [copy_file_range_stub, sendfile_stub]]],
-    [files([
-        'canonical_path_test.cc',
-        'file_attributes_test.cc',
-        'file_mode_test.cc',
-        'file_mutex_test.cc',
-        'file_status_test.cc',
-        'file_system_status_test.cc',
-        'file_type_test.cc',
-        'idirectory_test.cc',
-        'idirtree_test.cc',
-        'mkdirs_test.cc',
-        'path_test.cc',
-    ])],
+    [[],
+    [copy_file_range_stub],
+    [copy_file_range_stub, sendfile_stub]]],
 ]
+
+libunistdx_tests += files([
+    'canonical_path_test.cc',
+    'file_attributes_test.cc',
+    'file_mode_test.cc',
+    'file_mutex_test.cc',
+    'file_status_test.cc',
+    'file_system_status_test.cc',
+    'file_type_test.cc',
+    'idirectory_test.cc',
+    'idirtree_test.cc',
+    'mkdirs_test.cc',
+    'path_test.cc',
+    ])

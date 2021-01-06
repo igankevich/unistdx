@@ -76,7 +76,7 @@ std::ostream& operator<<(std::ostream& out, const process_exec_params& rhs) {
 }
 
 using f = sys::process_flag;
-std::vector<process_exec_params> all_params{
+std::vector<process_exec_params> process_exec_params{
     {f::fork, "non-existent-file", false},
     {f::wait_for_exec|f::signal_parent, "non-existent-file", false},
     {f::fork, UNISTDX_TEST_EMPTY_EXE_PATH, true},
@@ -84,7 +84,7 @@ std::vector<process_exec_params> all_params{
 };
 
 void test_process_exec_test_return_int() {
-    for (auto param : all_params) {
+    for (auto param : process_exec_params) {
         sys::process_flag flags = param.flags;
         std::string cmd = param.cmd;
         bool success = param.success;
@@ -107,7 +107,7 @@ void test_process_exec_test_return_int() {
 }
 
 void test_process_exec_test_return_void() {
-    for (auto param : all_params) {
+    for (auto param : process_exec_params) {
         sys::process_flag flags = param.flags;
         std::string cmd = param.cmd;
         bool success = param.success;

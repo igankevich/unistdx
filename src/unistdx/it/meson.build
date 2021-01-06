@@ -8,6 +8,4 @@ install_headers(
     subdir: join_paths(meson.project_name(), 'it')
 )
 
-libunistdx_tests += [
-    [files(['cstring_iterator_test.cc','field_iterator_test.cc'])],
-]
+libunistdx_tests += files(['cstring_iterator_test.cc','field_iterator_test.cc'])

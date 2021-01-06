@@ -10,18 +10,20 @@ if libdl.found()
     libunistdx_src += files(['linker.cc'])
 endif
 
-libunistdx_tests += [
-    [files(['log_test.cc','resource_test.cc','security_test.cc'])],
-]
+libunistdx_tests += files([
+    'log_test.cc',
+    'resource_test.cc',
+    'security_test.cc',
+    'clock_test.cc',
+    'error_test.cc'
+])
 
-libunistdx_tests += [
-    [files('clock_test.cc')],
-    [files('error_test.cc')],
+libunistdx_tests_with_stubs += [
     [files('users_test.cc'), [[], [sysconf_stub]]],
 ]
 
 if config.get('UNISTDX_HAVE_BACKTRACE', false)
-    libunistdx_tests += [
+    libunistdx_tests_with_stubs += [
         [files('backtrace_test.cc'),
          [[], [backtrace_symbols_stub], [backtrace_symbols_stub_2]]],
     ]

@@ -48,16 +48,16 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace std {
 
-    const char*
+    inline const char*
     to_string(std::cv_status rhs) {
         switch (rhs) {
-        case std::cv_status::timeout: return "timeout";
-        case std::cv_status::no_timeout: return "no_timeout";
-        default: return "<unknown>";
+            case std::cv_status::timeout: return "timeout";
+            case std::cv_status::no_timeout: return "no_timeout";
+            default: return "<unknown>";
         }
     }
 
-    std::ostream&
+    inline std::ostream&
     operator<<(std::ostream& out, std::cv_status rhs) {
         return out << to_string(rhs);
     }

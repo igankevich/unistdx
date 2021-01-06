@@ -13,6 +13,7 @@ install_headers('forward', subdir: meson.project_name())
 
 libunistdx_src = files()
 libunistdx_tests = files()
+libunistdx_tests_with_stubs = files()
 libunistdx_benchmarks = files()
 libunistdx_test_src = files()
 
@@ -97,7 +98,19 @@ unistdx_test = declare_dependency(
 )
 
 if with_tests
-    foreach tuple : libunistdx_tests
+    test(
+        'no-stubs',
+        executable(
+            'no-stubs',
+            sources: libunistdx_tests,
+            include_directories: src,
+            implicit_include_directories: false,
+            dependencies: [unistdx_test,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
+        ),
+        is_parallel: false,
+        args: ['unshare=']
+    )
+    foreach tuple : libunistdx_tests_with_stubs
         file = tuple[0]
         stubs = tuple.length() == 1 ? [[]] : tuple[1]
         arguments = tuple.length() <= 2 ? [[]] : tuple[2]

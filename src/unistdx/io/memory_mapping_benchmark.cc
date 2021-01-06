@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -40,6 +40,8 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/io/memory_mapping>
 #include <unistdx/test/random_string>
 #include <unistdx/test/temporary_file>
+
+std::default_random_engine test::rng;
 
 typedef std::chrono::high_resolution_clock clock_type;
 

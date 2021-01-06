@@ -47,23 +47,21 @@ install_headers(
     subdir: join_paths(meson.project_name(), 'net')
 )
 
-libunistdx_tests += [
-    [files([
-        'base64_test.cc',
-        'bit_count_test.cc',
-        'byte_swap_test.cc',
-        'bytes_test.cc',
-        'ethernet_address_test.cc',
-        'endian_test.cc',
-        'hosts_test.cc',
-        'family_test.cc',
-        'interface_address_test.cc',
-        'interface_socket_address_test.cc',
-        'ipv4_address_test.cc',
-        'netlink_poller_test.cc',
-        'network_interface_test.cc',
-        'socket_test.cc',
-        'socket_address_test.cc',
-        'veth_interface_test.cc',
-        ])],
-    ]
+libunistdx_tests += files([
+    'base64_test.cc',
+    'bit_count_test.cc',
+    'byte_swap_test.cc',
+    'bytes_test.cc',
+    'ethernet_address_test.cc',
+    'endian_test.cc',
+    'hosts_test.cc',
+    'family_test.cc',
+    'interface_address_test.cc',
+    'interface_socket_address_test.cc',
+    'ipv4_address_test.cc',
+    'netlink_poller_test.cc',
+    'network_interface_test.cc',
+    'socket_test.cc',
+    'socket_address_test.cc',
+    'veth_interface_test.cc',
+    ])

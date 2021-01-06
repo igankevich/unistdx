@@ -43,21 +43,11 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/kernelbuf>
 #include <unistdx/test/language>
 #include <unistdx/test/random_buffer>
+#include <unistdx/test/random_string>
 
 using namespace sys::test::lang;
 
-std::default_random_engine rng;
 std::vector<std::streamsize> _sizes = {1, 2, 3, 133, 4095, 4096, 4097};
-
-template <class Ch, class Tr>
-inline std::basic_string<Ch,Tr>
-random_string(std::streamsize n) {
-    using char_type = Ch;
-    std::uniform_int_distribution<char_type> dist('a', 'z');
-    std::basic_string<Ch,Tr> str(n, '_');
-    std::generate(str.begin(), str.end(), std::bind(dist, rng));
-    return str;
-}
 
 using TypeParam = sys::basic_fildesbuf<char, std::char_traits<char>, ::test::random_buffer>;
 
@@ -69,7 +59,7 @@ void test_fdstream() {
     typedef std::basic_string<char_type,traits_type> string_type;
     typedef std::basic_stringstream<char_type,traits_type> stringstream_type;
     for (std::streamsize k : _sizes) {
-        string_type expected_contents = random_string<char_type,traits_type>(k);
+        string_type expected_contents = test::random_string<char_type,traits_type>(k);
         stream_type s {fd_type {}};
         s << expected_contents;
         while (s.fdbuf().dirty()) {
@@ -96,7 +86,7 @@ void test_fildesbuf() {
     typedef std::basic_istream<char_type,traits_type> istream_type;
     for (std::streamsize k : _sizes) {
         std::clog << "Test size=" << k << std::endl;
-        string_type contents = random_string<char_type,traits_type>(k);
+        string_type contents = test::random_string<char_type,traits_type>(k);
         fildesbuf_type buf(fd_type {});
         ostream_type out(&buf);
         buf.begin_packet();

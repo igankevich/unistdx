@@ -113,5 +113,6 @@ endif
 libunistdx_test_src += files([
     'sanitize_file_descriptors.cc',
     'test_executor.cc',
+    'random_string.cc',
     'main.cc',
 ])

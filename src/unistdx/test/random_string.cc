@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,26 +30,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#ifndef UNISTDX_TEST_RANDOM_STRING
-#define UNISTDX_TEST_RANDOM_STRING
+#include <unistdx/test/random_string>
 
-#include <algorithm>
-#include <functional>
-#include <random>
-#include <string>
-
-namespace test {
-
-    extern std::default_random_engine rng;
-
-    template <class Ch, class Tr=std::char_traits<Ch>> inline std::basic_string<Ch,Tr>
-    random_string(size_t n) {
-        std::uniform_int_distribution<Ch> dist('a', 'z');
-        std::basic_string<Ch,Tr> str(n, '_');
-        std::generate(str.begin(), str.end(), std::bind(dist, rng));
-        return str;
-    }
-
-}
-
-#endif // vim:filetype=cpp
+std::default_random_engine test::rng;

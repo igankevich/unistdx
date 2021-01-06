@@ -38,21 +38,19 @@ install_headers(
     subdir: join_paths(meson.project_name(), 'base')
 )
 
-libunistdx_tests += [
-    [files([
-        'bad_call_test.cc',
-        'byte_buffer_test.cc',
-        'command_line_test.cc',
-        'delete_each_test.cc',
-        'flag_test.cc',
-        'log_message_test.cc',
-        'sha1_test.cc',
-        'sha2_test.cc',
-        'spin_mutex_test.cc',
-        'uint128_test.cc',
-        'websocket_test.cc',
-        ])],
-    ]
+libunistdx_tests += files([
+    'bad_call_test.cc',
+    'byte_buffer_test.cc',
+    'command_line_test.cc',
+    'delete_each_test.cc',
+    'flag_test.cc',
+    'log_message_test.cc',
+    'sha1_test.cc',
+    'sha2_test.cc',
+    'spin_mutex_test.cc',
+    'uint128_test.cc',
+    'websocket_test.cc',
+    ])
 
 libunistdx_benchmarks += files([
     'sha1_benchmark.cc',
