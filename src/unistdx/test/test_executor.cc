@@ -85,10 +85,9 @@ void sys::test::Backtrace_thread::run(Test* t) {
             if (!backtrace.empty()) {
                 sys::string buf(4096);
                 std::stringstream tmp;
-                tmp << "caught signal " << signal;
-                sys::error err(tmp.str(), backtrace);
+                sys::print(tmp, to_string(signal), backtrace);
                 current_test->status(sys::test::Test::Status::Exception);
-                current_test->exception_text(err.what());
+                current_test->exception_text(tmp.str());
                 current_test->child_write_status(std::clog);
                 std::_Exit(int(signal));
             }

@@ -51,6 +51,12 @@ For more information, please refer to <http://unlicense.org/>
 #include <cxxabi.h>
 #include <string>
 #endif
+
+#if defined(UNISTDX_WITH_LIBDW)
+#include <elfutils/libdwfl.h>
+#include <unistd.h>
+#endif
+
 #include <unistdx/system/linker>
 
 namespace {
@@ -92,21 +98,66 @@ sys::stack_trace::symbols() const noexcept {
         symb.reserve(nptrs);
         string buf(4096);
         #if defined(UNISTDX_WITH_LIBDW)
-        dw::context context;
-        context.report();
+        using dw_context = ::Dwfl*;
+        using dw_address = ::Dwarf_Addr;
+        ::Dwfl_Callbacks callbacks{};
+        callbacks.find_elf = ::dwfl_linux_proc_find_elf;
+        callbacks.find_debuginfo = ::dwfl_standard_find_debuginfo;
+        #else
+        using dw_context = void*;
+        using dw_address = void*;
+        using int_function = int (*)(...);
+        using ptr_function = void* (*)(...);
+        using void_function = void (*)(...);
+        dl::object libdw{"libdw.so", dl::object::modes::lazy};
+        if (!libdw) { return {}; }
+        struct { void* a[4]; } callbacks {};
+        callbacks.a[0] = libdw.symbol_address("dwfl_linux_proc_find_elf");
+        callbacks.a[1] = libdw.symbol_address("dwfl_standard_find_debuginfo");
+        if (!callbacks.a[0] || !callbacks.a[1]) { return {}; }
+        auto dwfl_begin = libdw.function<ptr_function>("dwfl_begin");
+        auto dwfl_end = libdw.function<void_function>("dwfl_end");
+        auto dwfl_linux_proc_report =
+            libdw.function<int_function>("dwfl_linux_proc_report");
+        auto dwfl_report_end = libdw.function<int_function>("dwfl_report_end");
+        auto dwfl_addrmodule = libdw.function<ptr_function>("dwfl_addrmodule");
+        auto dwfl_module_info = libdw.function<ptr_function>("dwfl_module_info");
+        auto dwfl_getsrc = libdw.function<ptr_function>("dwfl_getsrc");
+        auto dwfl_lineinfo = libdw.function<ptr_function>("dwfl_lineinfo");
+        if (!dwfl_begin || !dwfl_end || !dwfl_linux_proc_report || !dwfl_report_end ||
+            !dwfl_addrmodule || !dwfl_module_info || !dwfl_getsrc || !dwfl_lineinfo) {
+            return {};
+        }
         #endif
+        dw_context context = dwfl_begin(&callbacks);
+        if (!context) { return {}; }
+        if (dwfl_linux_proc_report(context, ::getpid()) == -1) { return {}; }
+        if (dwfl_report_end(context, nullptr, nullptr) == -1) { return {}; }
         #if defined(UNISTDX_HAVE_DLADDR)
         for (int i=0; i<nptrs; ++i) {
             dl::symbol sym(addresses[i]);
             if (!sym) { continue; }
             auto demangled_name = demangle(sym.name(), buf);
-            #if defined(UNISTDX_WITH_LIBDW)
-            symb.emplace_back(demangled_name, context, dw::address(addresses[i]));
-            #else
-            symb.emplace_back(sym.filename(), demangled_name, 0);
-            #endif
+            auto module = dwfl_addrmodule(context, dw_address(addresses[i]));
+            backtrace_symbol s;
+            s.address = uintptr_t(addresses[i]);
+            s.name = demangled_name;
+            if (module) {
+                if (auto name = dwfl_module_info(module, 0,0,0,0,0,0,0)) {
+                    s.object = reinterpret_cast<const char*>(name);
+                }
+            }
+            if (auto src = dwfl_getsrc(context, dw_address(addresses[i]))) {
+                int line = 0;
+                if (auto filename = dwfl_lineinfo(src, 0, &line, 0,0,0)) {
+                    s.filename = reinterpret_cast<const char*>(filename);
+                    s.line = line;
+                }
+            }
+            symb.emplace_back(std::move(s));
         }
         #else
+        symb.emplace_back("", "-", 0, 0);
         if (char** symbols = ::backtrace_symbols(addresses, nptrs)) {
             for (int i=0; i<nptrs; ++i) {
                 const char* name = symbols[i];
@@ -125,9 +176,9 @@ sys::stack_trace::symbols() const noexcept {
                     }
                     std::string func = line.substr(pos0+1, pos1-pos0-1);
                     auto demangled_name = demangle(func.data(), buf);
-                    symb.emplace_back(line.substr(0, pos0), demangled_name, 0);
+                    symb.emplace_back(line.substr(0, pos0), demangled_name, 0, uintptr_t(addresses[i]));
                 } catch (...) {
-                    symb.emplace_back("", name, 0);
+                    symb.emplace_back("", name, 0, uintptr_t(addresses[i]));
                 }
             }
             std::free(symbols);
@@ -142,22 +193,30 @@ sys::stack_trace::symbols() const noexcept {
     #endif
 }
 
+void sys::print(std::ostream& out, const char* message, const stack_trace& trace) noexcept {
+    char process_name[16] {};
+    #if defined(UNISTDX_HAVE_PRCTL)
+    ::prctl(PR_GET_NAME, process_name);
+    #endif
+    try {
+        out << "Exception in process \"";
+        #if defined(UNISTDX_HAVE_PRCTL)
+        out << process_name;
+        #else
+        out << std::this_process::id();
+        #endif
+        out << "\": " << message;
+        out << '\n';
+        out << trace;
+    } catch (...) {
+        // no message
+    }
+}
+
 void sys::error::init() const noexcept {
     try {
-        char process_name[16] {};
-        #if defined(UNISTDX_HAVE_PRCTL)
-        ::prctl(PR_GET_NAME, process_name);
-        #endif
         std::stringstream tmp;
-        tmp << "Exception in process \"";
-        #if defined(UNISTDX_HAVE_PRCTL)
-        tmp << process_name;
-        #else
-        tmp << std::this_process::id();
-        #endif
-        tmp << "\": " << this->_message;
-        tmp << '\n';
-        tmp << this->_backtrace;
+        print(tmp, this->_message.data(), this->_backtrace);
         this->_message = tmp.str();
     } catch (...) {
         // no message
@@ -253,5 +312,8 @@ std::ostream& sys::operator<<(std::ostream& out, const stack_trace& rhs) {
     const auto& symbols = rhs.symbols();
     int i = 0;
     for (const auto& s : symbols) { out << "    #" << i++ << ' ' << s << '\n'; }
+    out << "Backtrace:";
+    for (auto address : rhs) { out << ' ' << address; }
+    out << '\n';
     return out;
 }

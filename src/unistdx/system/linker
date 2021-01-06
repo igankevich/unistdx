@@ -152,6 +152,20 @@ namespace dl {
             return call(::dlsym(this->_ptr, name));
         }
 
+        inline ::dl::symbol symbol(const char* name) const {
+            return ::dl::symbol{symbol_address(name)};
+        }
+
+        template <class Function>
+        inline Function function(const char* name) const {
+            return reinterpret_cast<Function>(symbol_address(name));
+        }
+
+        inline void* get() noexcept { return this->_ptr; }
+        inline const void* get() const noexcept { return this->_ptr; }
+        inline explicit operator bool() const noexcept { return this->_ptr != nullptr; }
+        inline bool operator !() const noexcept { return !operator bool(); }
+
         object(const object&) = default;
         object& operator=(const object&) = default;
         object(object&&) = default;

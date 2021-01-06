@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.63.1',
+    version: '0.64.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -11,14 +11,6 @@ with_tests = get_option('with_tests')
 with_site = get_option('with_site')
 with_backtrace_on_exception = get_option('with_backtrace_on_exception')
 with_libdw = get_option('with_libdw')
-
-if with_tests and not with_libdw
-    error('Option "with_tests" requires "with_libdw" option.')
-endif
-
-if with_backtrace_on_exception and not with_libdw
-    error('Option "with_backtrace_on_exception" requires "with_libdw" option.')
-endif
 
 cpp = meson.get_compiler('cpp')
 cpp_args = []

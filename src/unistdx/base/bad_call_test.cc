@@ -44,6 +44,6 @@ void test_bad_call_throw_error() {
         expect(value(-1) == value(ret));
         throw sys::bad_call();
     } catch (const sys::bad_call& err) {
-        expect(value(std::errc::no_such_file_or_directory) == value(err.errc()));
+        expect(value(std::errc::no_such_file_or_directory) == value(err.code()));
     }
 }

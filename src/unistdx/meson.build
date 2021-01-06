@@ -32,7 +32,7 @@ subdir('test')
 unistdx_deps = []
 unistdx_libs = []
 if with_libdw
-    unistdx_libs += dwx
+    unistdx_deps += dependency('libdw')
 endif
 if libdl.found()
     unistdx_libs += libdl
@@ -67,7 +67,7 @@ unistdx = declare_dependency(
 )
 
 unistdx_test_deps = [threads]
-unistdx_test_libs = [unistdx,dwx]
+unistdx_test_libs = [unistdx]
 
 unistdx_test_lib = library(
     'unistdx-test',

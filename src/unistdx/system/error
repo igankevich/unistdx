@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -43,11 +43,6 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/string>
 #include <unistdx/config>
 
-#if defined(UNISTDX_WITH_LIBDW)
-#include <dwx/dw>
-#include <unistd.h>
-#endif
-
 #if defined(UNISTDX_HAVE_BACKTRACE)
 #include <execinfo.h>
 #endif
@@ -87,22 +82,11 @@ namespace sys {
         int line{};
         uintptr_t address{};
 
-        inline backtrace_symbol(std::string&& filename, std::string&& name, int line):
-        filename(filename), name(name), line(line) {}
+        backtrace_symbol() = default;
 
-        #if defined(UNISTDX_WITH_LIBDW)
-        inline backtrace_symbol(std::string&& name, dw::context& context, dw::address addr):
-        name(std::move(name)), address(addr) {
-            try {
-                dw::module mod(context, addr);
-                this->object = mod.name();
-                dw::line line(context, addr);
-                std::tie(this->filename, this->line) = line.location();
-            } catch (...) {
-                // ignore the absense of line information
-            }
-        }
-        #endif
+        inline backtrace_symbol(std::string&& filename, std::string&& name, int line,
+                                uintptr_t address):
+        filename(filename), name(name), line(line), address(address) {}
 
     };
 
@@ -146,6 +130,8 @@ namespace sys {
 
     std::ostream& operator<<(std::ostream& out, const stack_trace& rhs);
 
+    void print(std::ostream& out, const char* message, const stack_trace& trace) noexcept;
+
     class error: public std::exception {
 
     private:
@@ -155,10 +141,10 @@ namespace sys {
 
     public:
         inline explicit error(const std::string& message) noexcept: _message(message) {}
-        inline explicit error(const std::string& message, const stack_trace& backtrace) noexcept:
-        _backtrace(backtrace), _message(message) {}
-        const char* what() const noexcept override;
+        inline explicit error(std::string&& message) noexcept: _message(std::move(message)) {}
         inline const stack_trace& backtrace() const noexcept { return this->_backtrace; }
+
+        const char* what() const noexcept override;
 
         error() = default;
         ~error() = default;
