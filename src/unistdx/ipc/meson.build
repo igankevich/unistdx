@@ -9,6 +9,7 @@ libunistdx_src += files([
 install_headers(
     'argstream',
     'execute',
+    'futex',
     'identity',
     'process',
     'process_group',
