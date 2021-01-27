@@ -42,8 +42,8 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/uint128>
 #include <unistdx/config>
 #include <unistdx/net/bit_count>
+#include <unistdx/net/bstream>
 #include <unistdx/net/ipaddr_traits>
-#include <unistdx/net/pstream>
 
 namespace sys {
 

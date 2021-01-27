@@ -38,7 +38,6 @@ install_headers(
     'netlink_socket',
     'netlink_socket_address',
     'network_interface',
-    'pstream',
     'socket',
     'socket_address',
     'subnet_iterator',

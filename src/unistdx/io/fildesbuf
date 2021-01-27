@@ -33,9 +33,10 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_IO_FILDESBUF
 #define UNISTDX_IO_FILDESBUF
 
+#include <streambuf>
+
 #include <unistdx/base/byte_buffer>
 #include <unistdx/base/contracts>
-#include <unistdx/base/packetbuf>
 #include <unistdx/base/streambuf_traits>
 #include <unistdx/bits/no_copy_and_move>
 #include <unistdx/io/fildes>
@@ -58,10 +59,10 @@ namespace sys {
     \arg Does not flush its contents when closed.
     */
     template<class Ch, class Tr=std::char_traits<Ch>, class Fd=sys::fildes>
-    class basic_fildesbuf: public virtual basic_packetbuf<Ch,Tr> {
+    class basic_fildesbuf: public virtual std::basic_streambuf<Ch,Tr> {
 
     private:
-        typedef basic_packetbuf<Ch,Tr> base_type;
+        typedef std::basic_streambuf<Ch,Tr> base_type;
         typedef streambuf_traits<Fd> straits_type;
         typedef std::ios_base::openmode openmode;
         typedef std::ios_base::seekdir seekdir;
@@ -79,10 +80,6 @@ namespace sys {
         using base_type::setp;
         using base_type::gbump;
         using base_type::pbump;
-
-    public:
-        using base_type::available;
-        using base_type::remaining;
 
     public:
         using typename base_type::char_type;
@@ -248,6 +245,24 @@ namespace sys {
             swap(this->_fd, rhs._fd);
             this->_gbuf.swap(rhs._gbuf);
             this->_pbuf.swap(rhs._pbuf);
+        }
+
+        /// Returns true, if put buffer is non-empty.
+        inline bool
+        dirty() const noexcept {
+            return this->pptr() != this->pbase();
+        }
+
+        /// Returns the number of remaining bytes in put buffer.
+        inline std::streamsize
+        remaining() const noexcept {
+            return this->pptr() - this->pbase();
+        }
+
+        /// Returns the number of available bytes in get buffer.
+        inline std::streamsize
+        available() const noexcept {
+            return this->egptr() - this->gptr();
         }
 
     private:

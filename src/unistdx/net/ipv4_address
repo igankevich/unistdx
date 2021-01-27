@@ -38,9 +38,10 @@ For more information, please refer to <http://unlicense.org/>
 #include <functional>
 #include <iosfwd>
 
+#include <unistdx/base/types>
 #include <unistdx/net/bit_count>
+#include <unistdx/net/bstream>
 #include <unistdx/net/ipaddr_traits>
-#include <unistdx/net/pstream>
 
 namespace sys {
 

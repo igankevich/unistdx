@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2016, 2017, 2018, 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -38,7 +38,6 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/io/fdstream>
 #include <unistdx/io/fildesbuf>
 #include <unistdx/net/bytes>
-#include <unistdx/net/pstream>
 #include <unistdx/test/datum>
 #include <unistdx/test/kernelbuf>
 #include <unistdx/test/language>
@@ -89,9 +88,7 @@ void test_fildesbuf() {
         string_type contents = test::random_string<char_type,traits_type>(k);
         fildesbuf_type buf(fd_type {});
         ostream_type out(&buf);
-        buf.begin_packet();
         out << contents;
-        buf.end_packet();
         while (buf.dirty()) {
             buf.pubflush();
         }
@@ -103,60 +100,5 @@ void test_fildesbuf() {
         } while (nread < k);
         in.read(&result[0], k);
         expect(value(result) == value(contents));
-    }
-}
-
-void test_pstream() {
-
-    typedef typename TypeParam::char_type char_type;
-    typedef typename TypeParam::fd_type fd_type;
-    typedef TypeParam fildesbuf_type;
-    typedef typename fildesbuf_type::ipacket_guard ipacket_guard;
-    typedef test::basic_kernelbuf<fildesbuf_type> kernelbuf;
-
-    for (std::streamsize size : _sizes) {
-
-        std::vector<Datum> input(size);
-        std::vector<Datum> output(size);
-
-        kernelbuf buf;
-        buf.setfd(fd_type());
-        sys::basic_pstream<char_type> str(&buf);
-
-        expect(buf.handshake());
-
-        std::for_each(
-            input.begin(),
-            input.end(),
-            [&str] (const Datum& rhs) {
-                str.begin_packet();
-                str << rhs;
-                str.end_packet();
-            }
-        );
-        while (buf.dirty()) {
-            buf.pubflush();
-        }
-
-        int i = 1;
-        std::for_each(
-            output.begin(),
-            output.end(),
-            [&] (Datum& rhs) {
-                while (!buf.read_packet()) {
-                    buf.pubfill();
-                }
-                ipacket_guard g(&buf);
-                str >> rhs;
-                ++i;
-            }
-        );
-
-        for (size_t j=0; j<input.size(); ++j) {
-            if (!expect(value(sys::make_bytes(input[j])) ==
-                        value(sys::make_bytes(output[j])))) {
-                std::clog << "packet #" << (j+1);
-            }
-        }
     }
 }
