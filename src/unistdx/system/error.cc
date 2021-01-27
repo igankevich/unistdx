@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <sys/prctl.h>
 #endif
 
+#include <iostream>
 #include <ostream>
 #include <sstream>
 
