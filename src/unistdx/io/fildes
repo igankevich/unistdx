@@ -279,6 +279,31 @@ namespace sys {
 
         /**
         \brief
+        Rename file descriptor number of \p rhs to \c this->fd()
+        by duplicating it with \man{dup2,2} system call.
+        \throws bad_call
+        \see \man{dup2,2}
+        */
+        inline
+        fildes(fildes&& old_fd, const fildes& new_fd,
+               open_flag flags=open_flag::close_on_exec):
+        _fd(old_fd._fd) {
+            old_fd._fd = bad;
+            #if defined(UNISTDX_HAVE_DUP3)
+            this->_fd = ::dup3(new_fd._fd, this->_fd, int(flags));
+            #else
+            this->_fd = ::dup2(new_fd._fd, this->_fd);
+            #endif
+            UNISTDX_CHECK(this->_fd);
+        }
+
+        inline
+        fildes(fd_type old_fd, const fildes& new_fd,
+               open_flag flags=open_flag::close_on_exec):
+        fildes{fildes{old_fd}, new_fd, flags} {}
+
+        /**
+        \brief
         Change file descriptor number of \p rhs to \c this->fd()
         by duplicating it with \man{dup2,2} system call.
         \throws bad_call
@@ -646,6 +671,23 @@ namespace sys {
             int ret;
             UNISTDX_CHECK(ret = ::fcntl(this->_fd, which, val));
             return ret;
+        }
+
+        /**
+        \brief
+        Replace file descriptor \p new_fd with \p old_fd using \man{dup2,2} system call.
+        \throws bad_call
+        \see \man{dup2,2}
+        */
+        friend void
+        replace(const fildes& new_fd, fildes& old_fd, open_flag flags=open_flag{}) {
+            if (old_fd == new_fd) { return; }
+            #if defined(UNISTDX_HAVE_DUP3)
+            old_fd._fd = ::dup3(new_fd._fd, old_fd._fd, int(flags));
+            #else
+            old_fd._fd = ::dup2(new_fd._fd, old_fd._fd);
+            #endif
+            UNISTDX_CHECK(old_fd._fd);
         }
 
     };
