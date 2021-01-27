@@ -33,8 +33,6 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_BITS_PROCESS
 #define UNISTDX_BITS_PROCESS
 
-#define UNISTDX_DEGUG_PROCESS
-
 namespace sys {
 
     namespace bits {
@@ -48,34 +46,14 @@ namespace sys {
             template <class Function>
             inline static int
             call(Function f) noexcept {
-                #if defined(UNISTDX_DEGUG_PROCESS)
                 return f();
-                #else
-                int ret;
-                try {
-                    ret = f();
-                } catch (...) {
-                    ret = 1;
-                }
-                return ret;
-                #endif
             }
 
             template <class F>
             static int
             child_main(void* arg) noexcept {
                 F* func = reinterpret_cast<F*>(arg);
-                #if defined(UNISTDX_DEGUG_PROCESS)
                 return (*func)();
-                #else
-                int ret;
-                try {
-                    ret = (*func)();
-                } catch (...) {
-                    ret = 1;
-                }
-                return ret;
-                #endif
             }
 
         };
@@ -87,36 +65,16 @@ namespace sys {
             template <class Function>
             inline static int
             call(Function f) noexcept {
-                #if defined(UNISTDX_DEGUG_PROCESS)
                 f();
                 return 0;
-                #else
-                int ret = 0;
-                try {
-                    f();
-                } catch (...) {
-                    ret = 1;
-                }
-                return ret;
-                #endif
             }
 
             template <class F>
             static int
             child_main(void* arg) noexcept {
                 F* func = reinterpret_cast<F*>(arg);
-                #if defined(UNISTDX_DEGUG_PROCESS)
                 (*func)();
                 return 0;
-                #else
-                int ret = 0;
-                try {
-                    (*func)();
-                } catch (...) {
-                    ret = 1;
-                }
-                return ret;
-                #endif
             }
 
         };

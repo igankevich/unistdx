@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2016, 2017, 2018, 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -204,27 +204,3 @@ void test_process_as_thread() {
     expect(value(0) == value(status.exit_code()));
 }
 #endif
-
-/*
-TEST(Process, LogMessage) {
-    sys::process child {
-        [] () {
-            for (int i=0; i<1000; ++i) {
-                sys::log_message("child", "message a=_, b=_, c=_", i, i, i);
-            }
-            return 0;
-        }
-    };
-    std::thread thr([] () {
-        for (int i=0; i<1000; ++i) {
-            sys::log_message("thread", "message a=_, b=_, c=_", i, i, i);
-        }
-    });
-    for (int i=0; i<1000; ++i) {
-        sys::log_message("parent", "message a=_, b=_, c=_", i, i, i);
-    }
-    thr.join();
-    sys::process_status status = child.wait();
-    EXPECT_EQ(0, status.exit_code());
-}
-*/
