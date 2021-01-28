@@ -64,10 +64,8 @@ void test_file_attributes() {
         expect(value(std::string("2")) == value(file.attribute("user.unistdx.x").data()));
         expect(value(std::string("user.unistdx.x")) == value(attrs.front()));
         expect(value(1) == value(std::distance(attrs.begin(), attrs.end())));
-    } catch (const std::system_error& err) {
-        if (std::errc(err.code().value()) == std::errc::not_supported) {
-            std::exit(77);
-        }
+    } catch (const sys::bad_call& err) {
+        if (err.errc() == std::errc::not_supported) { std::exit(77); }
         throw;
     }
 }

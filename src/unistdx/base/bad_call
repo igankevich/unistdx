@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2019, 2020 Ivan Gankevich
+© 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -35,7 +35,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <exception>
 #include <iosfwd>
-#include <system_error>
 
 #include <errno.h>
 
@@ -451,9 +450,7 @@ namespace sys {
     inline bool operator!=(errors b, std::errc a) noexcept { return !operator==(a,b); }
 
     /**
-    \brief
-    A \link std::system_error \endlink that records file, line and function where
-    the exception was thrown.
+    \brief An exception that is thrown when a system call returns -1.
     \date 2018-05-21
     */
     class bad_call: public std::exception {
