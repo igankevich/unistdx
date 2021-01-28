@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -33,6 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_IPC_PROCESS
 #define UNISTDX_IPC_PROCESS
 
+#include <iosfwd>
 #include <memory>
 
 #include <unistdx/config>
@@ -194,25 +195,50 @@ namespace sys {
 
     public:
         inline cpu_set() noexcept { clear(); }
+        inline cpu_set(std::initializer_list<int> cpus) noexcept {
+            clear(); for (auto i : cpus) { set(i); }
+        }
         ~cpu_set() = default;
         cpu_set(const cpu_set&) = default;
         cpu_set& operator=(const cpu_set&) = default;
         cpu_set(cpu_set&&) = default;
         cpu_set& operator=(cpu_set&&) = default;
 
-        inline size_t size() const noexcept { return CPU_COUNT(this); }
+        inline static constexpr int max_size() noexcept { return sizeof(cpu_set_t)*8; }
+
+        inline int count() const noexcept { return CPU_COUNT(this); }
+        inline size_t size_in_bytes() const noexcept { return sizeof(cpu_set_t); }
         inline void set(int cpu) noexcept { CPU_SET(cpu, this); }
         inline void unset(int cpu) noexcept { CPU_CLR(cpu, this); }
         inline bool isset(int cpu) const noexcept { return CPU_ISSET(cpu, this); }
         inline void clear() noexcept { CPU_ZERO(this); }
+        inline bool operator[](int cpu) const noexcept { return isset(cpu); }
 
         inline bool operator==(const cpu_set& rhs) const noexcept {
-            return CPU_EQUAL(this, &rhs) == 0;
+            return CPU_EQUAL(this, &rhs) != 0;
         }
 
         inline bool operator!=(const cpu_set& rhs) const noexcept {
             return !this->operator==(rhs);
         }
+
+        inline cpu_set& operator&=(const cpu_set& rhs) noexcept {
+            CPU_AND(this, this, &rhs);
+            return *this;
+        }
+
+        inline cpu_set& operator|=(const cpu_set& rhs) noexcept {
+            CPU_OR(this, this, &rhs);
+            return *this;
+        }
+
+        inline cpu_set& operator^=(const cpu_set& rhs) noexcept {
+            CPU_XOR(this, this, &rhs);
+            return *this;
+        }
+
+        inline cpu_set* get() noexcept { return this; }
+        inline const cpu_set* get() const noexcept { return this; }
 
     };
 
@@ -233,6 +259,9 @@ namespace sys {
         CPU_XOR(&result, &a, &b);
         return result;
     }
+
+    std::ostream& operator<<(std::ostream& out, const cpu_set& rhs);
+    std::istream& operator>>(std::istream& in, cpu_set& rhs);
 
     class dynamic_cpu_set {
 
@@ -266,6 +295,8 @@ namespace sys {
             return CPU_COUNT_S(this->_size, this->_ptr.get());
         }
 
+        inline size_t size_in_bytes() const noexcept { return this->_size; }
+
         inline void set(int cpu) noexcept { CPU_SET_S(cpu, this->_size, this->_ptr.get()); }
         inline void unset(int cpu) noexcept { CPU_CLR_S(cpu, this->_size, this->_ptr.get()); }
 
@@ -276,7 +307,7 @@ namespace sys {
         inline void clear() noexcept { CPU_ZERO_S(this->_size, this->_ptr.get()); }
 
         inline bool operator==(const dynamic_cpu_set& rhs) const noexcept {
-            return CPU_EQUAL_S(this->_size, this->_ptr.get(), rhs._ptr.get()) == 0;
+            return CPU_EQUAL_S(this->_size, this->_ptr.get(), rhs._ptr.get()) != 0;
         }
 
         inline bool operator!=(const dynamic_cpu_set& rhs) const noexcept {
@@ -645,12 +676,12 @@ namespace sys {
         }
         */
 
-        inline dynamic_cpu_set cpu_affinity() const {
+        inline dynamic_cpu_set dynamic_cpu_affinity() const {
             size_t size = 1024;
             dynamic_cpu_set mask(size);
             int ret;
             do {
-                ret = ::sched_getaffinity(this->_pid, mask.size(), mask.get());
+                ret = ::sched_getaffinity(this->_pid, mask.size_in_bytes(), mask.get());
                 if (ret == EINVAL) {
                     size *= 2;
                     mask.resize(size);
@@ -660,12 +691,18 @@ namespace sys {
             return mask;
         }
 
+        inline cpu_set cpu_affinity() const {
+            cpu_set mask;
+            check(::sched_getaffinity(this->_pid, mask.size_in_bytes(), &mask));
+            return mask;
+        }
+
         inline void cpu_affinity(const dynamic_cpu_set& mask) {
-            UNISTDX_CHECK(::sched_setaffinity(this->_pid, mask.size(), mask.get()));
+            UNISTDX_CHECK(::sched_setaffinity(this->_pid, mask.size_in_bytes(), mask.get()));
         }
 
         inline void cpu_affinity(const cpu_set& mask) {
-            UNISTDX_CHECK(::sched_setaffinity(this->_pid, mask.size(), &mask));
+            UNISTDX_CHECK(::sched_setaffinity(this->_pid, mask.size_in_bytes(), &mask));
         }
 
     protected:
@@ -798,7 +835,11 @@ namespace sys {
             process_view(0).scheduling_parameters(params);
         }
 
-        inline dynamic_cpu_set cpu_affinity() {
+        inline dynamic_cpu_set dynamic_cpu_affinity() {
+            return process_view(0).dynamic_cpu_affinity();
+        }
+
+        inline cpu_set cpu_affinity() {
             return process_view(0).cpu_affinity();
         }
 

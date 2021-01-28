@@ -40,6 +40,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/ipc/process>
 #include <unistdx/test/config>
 #include <unistdx/test/language>
+#include <unistdx/test/operator>
 #include <valgrind/config>
 
 using namespace sys::test::lang;
@@ -204,3 +205,25 @@ void test_process_as_thread() {
     expect(value(0) == value(status.exit_code()));
 }
 #endif
+
+void test_cpu_set() {
+    expect(value("") == value(test::stream_insert(sys::cpu_set{})));
+    expect(value("0") == value(test::stream_insert(sys::cpu_set{0})));
+    expect(value("10") == value(test::stream_insert(sys::cpu_set{10})));
+    expect(value("1-2") == value(test::stream_insert(sys::cpu_set{1,2})));
+    expect(value("1-3") == value(test::stream_insert(sys::cpu_set{1,2,3})));
+    expect(value("1,3") == value(test::stream_insert(sys::cpu_set{1,3})));
+    expect(value("1,3-4") == value(test::stream_insert(sys::cpu_set{1,3,4})));
+    expect(value(sys::cpu_set{}) == value(sys::cpu_set{}));
+    expect(value(sys::cpu_set{1}) == value(sys::cpu_set{1}));
+    expect(value(sys::cpu_set{1,2}) == value(sys::cpu_set{1,2}));
+    expect(value(sys::cpu_set{}) == value(test::stream_extract<sys::cpu_set>("")));
+    expect(value(sys::cpu_set{1}) == value(test::stream_extract<sys::cpu_set>("1")));
+    expect(value(sys::cpu_set{1,2}) == value(test::stream_extract<sys::cpu_set>("1,2")));
+    expect(value(sys::cpu_set{1,2,3}) == value(test::stream_extract<sys::cpu_set>("1,2,3")));
+    expect(value(sys::cpu_set{1,2,3}) == value(test::stream_extract<sys::cpu_set>("1-3")));
+    expect(value(sys::cpu_set{1,2,4,5}) == value(test::stream_extract<sys::cpu_set>("1-2,4-5")));
+    expect(value(sys::cpu_set{1,2,4,5,10}) == value(test::stream_extract<sys::cpu_set>("1-2,4-5,10")));
+    expect(value(sys::cpu_set{1,2,4,5}) == value(test::stream_extract<sys::cpu_set>("2-1,4-5")));
+    expect(value(sys::cpu_set{4}) == value(sys::cpu_set{4}&sys::cpu_set{1,2,4,5,10}));
+}

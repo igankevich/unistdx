@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -98,6 +98,16 @@ namespace test {
         T actual_value{};
         tmp >> actual_value;
         expect(value(expected_value) == value(actual_value));
+    }
+
+    template <class T> inline T
+    stream_extract(const std::string& string_representation) {
+        using namespace sys::test::lang;
+        std::stringstream tmp;
+        tmp << string_representation;
+        T actual_value{};
+        tmp >> actual_value;
+        return actual_value;
     }
 
 }

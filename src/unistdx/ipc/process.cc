@@ -73,3 +73,64 @@ void sys::process_view::init_user_namespace() {
     out.write(buf, n);
     out.close();
 }
+
+std::ostream& sys::operator<<(std::ostream& out, const cpu_set& rhs) {
+    const auto count = rhs.count();
+    bool first = true;
+    int prev_set = 0;
+    for (int i=0, j=0; j<count; ++i) {
+        if (rhs[i]) {
+            if (prev_set == 0) {
+                if (!first) { out.put(','); }
+                else { first = false; }
+                out << i;
+            }
+            ++j;
+            if (j == count && prev_set > 0) {
+                out.put('-');
+                out << i;
+            }
+            ++prev_set;
+        } else {
+            if (prev_set > 1) {
+                out.put('-');
+                out << (i-1);
+            }
+            prev_set = 0;
+        }
+    }
+    return out;
+}
+
+std::istream& sys::operator>>(std::istream& in, cpu_set& rhs) {
+    rhs.clear();
+    int i = 0, i_prev = 0;
+    bool dash = false;
+    while (in >> i) {
+        if (i < 0 || i >= cpu_set::max_size()) {
+            in.setstate(std::ios::failbit);
+            break;
+        }
+        if (dash) {
+            if (i < i_prev) { std::swap(i, i_prev); }
+            for (int j=i_prev; j<=i; ++j) { rhs.set(j); }
+        } else {
+            rhs.set(i);
+            i_prev = i;
+        }
+        auto ch = in.peek();
+        if (ch == ',') {
+            in.get();
+            dash = false;
+        } else if (ch == '-') {
+            in.get();
+            dash = true;
+        } else {
+            if (dash) {
+                if (i < i_prev) { std::swap(i, i_prev); }
+                for (int j=i_prev; j<=i; ++j) { rhs.set(j); }
+            }
+        }
+    }
+    return in;
+}

@@ -314,9 +314,11 @@ namespace sys {
         #endif
         #if defined(_SC_NPROCESSORS_CONF)
         nprocessors_conf=_SC_NPROCESSORS_CONF,
+        num_processors_configured=_SC_NPROCESSORS_CONF,
         #endif
         #if defined(_SC_NPROCESSORS_ONLN)
         nprocessors_onln=_SC_NPROCESSORS_ONLN,
+        num_processors_online=_SC_NPROCESSORS_ONLN,
         #endif
         #if defined(_SC_PHYS_PAGES)
         phys_pages=_SC_PHYS_PAGES,
