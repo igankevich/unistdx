@@ -39,6 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 
 using namespace sys::test::lang;
 
+/*
 void test_process_status_exit() {
     sys::process child {
         [] () {
@@ -73,6 +74,7 @@ void test_process_status_abort() {
 //	EXPECT_STREQ("core_dumped", status.status_string());
     test::stream_insert_contains("signal=abort", status);
 }
+*/
 
 void
 print(const char* str, int si_code) {
