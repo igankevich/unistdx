@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2019, 2020 Ivan Gankevich
+© 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -39,7 +39,6 @@ For more information, please refer to <http://unlicense.org/>
 
 using namespace sys::test::lang;
 
-/*
 void test_process_status_exit() {
     sys::process child {
         [] () {
@@ -68,13 +67,11 @@ void test_process_status_abort() {
     expect(!value(status.exited()));
     expect(!value(status.stopped()));
     expect(value(status.killed()) || value(status.core_dumped()));
-    expect(!value(status.core_dumped()));
     expect(!value(status.trapped()));
     expect(value(sys::signal::abort) == value(status.term_signal()));
 //	EXPECT_STREQ("core_dumped", status.status_string());
     test::stream_insert_contains("signal=abort", status);
 }
-*/
 
 void
 print(const char* str, int si_code) {

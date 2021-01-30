@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2020 Ivan Gankevich
+© 2017, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -133,4 +133,13 @@ std::istream& sys::operator>>(std::istream& in, cpu_set& rhs) {
         }
     }
     return in;
+}
+
+sys::cpu_set sys::operator~(const cpu_set& rhs) noexcept {
+    sys::cpu_set result;
+    const auto n = rhs.size();
+    for (int i=0; i<n; ++i) {
+        if (rhs[i]) { result.set(i); }
+    }
+    return result;
 }

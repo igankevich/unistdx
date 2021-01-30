@@ -173,9 +173,12 @@ namespace sys {
         inline c_string canonical_name() const noexcept { return this->ai_canonname; }
         inline ::sys::socket socket() const { return ::sys::socket(family(), socket_type(), protocol()); }
         inline socket_length_type socket_address_size() const noexcept { return this->ai_addrlen; }
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wcast-align"
         inline const ::sys::socket_address& socket_address() const noexcept {
             return reinterpret_cast<const ::sys::socket_address&>(*this->ai_addr);
         }
+        #pragma GCC diagnostic pop
         inline host* next() const noexcept { return static_cast<host*>(this->ai_next); }
 
     };

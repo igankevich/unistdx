@@ -50,9 +50,10 @@ backtrace_symbols(void *const *, int n) throw () {
     // each entry occupies 4 bytes (3 characters and 1 null terminator)
     // at the beginning of the array we store the pointers to these entries
     // (align)
-    char* buf = static_cast<char*>(
+    char** ppbuf = static_cast<char**>(
         std::malloc((sizeof(Bytes)*n + sizeof(char)*entry_size*n) | sizeof(Bytes))
     );
+    char* buf = *ppbuf;
     if (!buf) { std::terminate(); }
     // skip pointers area
     char* pbuf = buf + sizeof(Bytes)*n;
@@ -73,5 +74,5 @@ backtrace_symbols(void *const *, int n) throw () {
         std::copy_n(bytes.chars, sizeof(bytes.chars), pbuf);
         pbuf += sizeof(bytes.chars);
     }
-    return reinterpret_cast<char**>(buf);
+    return ppbuf;
 }

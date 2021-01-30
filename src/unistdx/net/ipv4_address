@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2019, 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -122,8 +122,8 @@ namespace sys {
         _octets{o1,o2,o3,o4} {}
 
         /// Construct IPv4 address from \c sockaddr system type.
-        inline ipv4_address(const socket_address_type &rhs) noexcept:
-        _address(reinterpret_cast<const sockinet4_type&>(rhs).sin_addr)
+        inline ipv4_address(const sockinet4_type& rhs) noexcept:
+        _address(rhs.sin_addr)
         {}
 
         explicit ipv4_address(const char* rhs);

@@ -33,8 +33,8 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_NET_SOCKET_ADDRESS
 #define UNISTDX_NET_SOCKET_ADDRESS
 
-#include <netinet/in.h>
 #include <sys/types.h>
+#include <netinet/in.h>
 
 #include <functional>
 #include <iosfwd>
@@ -251,8 +251,8 @@ namespace sys {
 
     private:
 
-        template <class T> inline T* ptr() noexcept { return reinterpret_cast<T*>(this->_bytes); }
-        template <class T> inline const T* ptr() const noexcept { return reinterpret_cast<const T*>(this->_bytes); }
+        template <class T> inline T* ptr() noexcept { return reinterpret_cast<T*>(this); }
+        template <class T> inline const T* ptr() const noexcept { return reinterpret_cast<const T*>(this); }
         template <class T> inline T& ref() noexcept { return *this->ptr<T>(); }
         template <class T> inline const T& ref() const noexcept { return *this->ptr<T>(); }
 

@@ -32,6 +32,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <algorithm>
 #include <cstring>
+#include <stdexcept>
 
 #include <unistdx/base/contracts>
 #include <unistdx/base/sha2>

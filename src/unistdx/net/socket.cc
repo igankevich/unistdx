@@ -128,8 +128,7 @@ sys::socket::send_fds(const sys::fd_type* data, size_t n) {
     h.msg_iovlen = 1;
     h.msg_name = nullptr;
     h.msg_namelen = 0;
-    sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
-    std::copy_n(data, n, fds);
+    std::memcpy(CMSG_DATA(&m.h), data, n*sizeof(fd_type));
     this->send(h);
 }
 
@@ -154,8 +153,7 @@ sys::socket::receive_fds(sys::fd_type* data, size_t n) {
     h.msg_namelen = 0;
     this->receive(h);
     if (m.h.cmsg_level == SOL_SOCKET && m.h.cmsg_type == SCM_RIGHTS) {
-        sys::fd_type* fds = reinterpret_cast<sys::fd_type*>(CMSG_DATA(&m.h));
-        std::copy_n(fds, n, data);
+        std::memcpy(data, CMSG_DATA(&m.h), n*sizeof(fd_type));
     }
 }
 #endif

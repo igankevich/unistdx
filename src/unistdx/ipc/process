@@ -53,6 +53,7 @@ For more information, please refer to <http://unlicense.org/>
 #endif
 
 #include <unistdx/base/check>
+#include <unistdx/base/contracts>
 #include <unistdx/base/flag>
 #include <unistdx/bits/macros>
 #include <unistdx/bits/process>
@@ -205,12 +206,21 @@ namespace sys {
         cpu_set& operator=(cpu_set&&) = default;
 
         inline static constexpr int max_size() noexcept { return sizeof(cpu_set_t)*8; }
-
+        inline int size() const noexcept { return max_size(); }
         inline int count() const noexcept { return CPU_COUNT(this); }
         inline size_t size_in_bytes() const noexcept { return sizeof(cpu_set_t); }
-        inline void set(int cpu) noexcept { CPU_SET(cpu, this); }
-        inline void unset(int cpu) noexcept { CPU_CLR(cpu, this); }
-        inline bool isset(int cpu) const noexcept { return CPU_ISSET(cpu, this); }
+        inline void set(int cpu) noexcept {
+            UNISTDX_PRECONDITION(0 <= cpu && cpu < max_size());
+            CPU_SET(cpu, this);
+        }
+        inline void unset(int cpu) noexcept {
+            UNISTDX_PRECONDITION(0 <= cpu && cpu < max_size());
+            CPU_CLR(cpu, this);
+        }
+        inline bool isset(int cpu) const noexcept {
+            UNISTDX_PRECONDITION(0 <= cpu && cpu < max_size());
+            return CPU_ISSET(cpu, this);
+        }
         inline void clear() noexcept { CPU_ZERO(this); }
         inline bool operator[](int cpu) const noexcept { return isset(cpu); }
 
@@ -241,6 +251,8 @@ namespace sys {
         inline const cpu_set* get() const noexcept { return this; }
 
     };
+
+    cpu_set operator~(const cpu_set& rhs) noexcept;
 
     inline cpu_set operator&(const cpu_set& a, const cpu_set& b) noexcept {
         cpu_set result;
