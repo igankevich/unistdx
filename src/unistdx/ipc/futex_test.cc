@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,28 +30,32 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#ifndef UNISTDX_TEST_BASIC_MUTEX_TEST
-#define UNISTDX_TEST_BASIC_MUTEX_TEST
-
-#include <thread>
-
-#include <unistdx/base/types>
+#include <unistdx/ipc/futex>
 #include <unistdx/test/language>
+#include <unistdx/test/mutex>
+#include <unistdx/test/semaphore>
 
-template <class Func>
-void mutex_test(Func func) {
-    const unsigned _minthreads = 2;
-    const sys::u64 _maxpower = 10;
-    using sys::u64;
-    const unsigned max_threads = std::max(
-        std::thread::hardware_concurrency(),
-        2*_minthreads
-    );
-    for (unsigned j=_minthreads; j<=max_threads; ++j) {
-        for (u64 i=0; i<=_maxpower; ++i) {
-            func(j, u64(1) << i);
-        }
-    }
+void test_futex() {
+    using namespace sys::test::lang;
+    sys::futex mutex{1};
+    expect(value(mutex.try_lock()) == value(true));
+    sys::futex semaphore{0};
+    expect(value(semaphore.try_lock()) == value(false));
 }
 
-#endif // vim:filetype=cpp
+void test_futex_as_mutex() {
+    struct futex_mutex: public sys::futex {
+        futex_mutex(): sys::futex{1} {}
+    };
+    test_thread<futex_mutex>();
+    test_thread_counter<futex_mutex>();
+}
+
+void test_futex_as_condition_variable() {
+    struct futex_condition_variable: public sys::futex {
+        futex_condition_variable(): sys::futex{0} {}
+    };
+    test_semaphore<futex_condition_variable>();
+    test_semaphore_producer_consumer_thread<futex_condition_variable>();
+    test_semaphore_wait_until<futex_condition_variable>();
+}

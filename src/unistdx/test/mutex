@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,8 +30,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#ifndef UNISTDX_TEST_THREAD_MUTEX_TEST
-#define UNISTDX_TEST_THREAD_MUTEX_TEST
+#ifndef UNISTDX_TEST_MUTEX
+#define UNISTDX_TEST_MUTEX
 
 #include <chrono>
 #include <condition_variable>
@@ -39,7 +39,49 @@ For more information, please refer to <http://unlicense.org/>
 #include <mutex>
 #include <thread>
 
+#include <unistdx/base/types>
 #include <unistdx/test/language>
+
+template <class Func>
+void mutex_test(Func func) {
+    const unsigned _minthreads = 2;
+    const sys::u64 _maxpower = 10;
+    using sys::u64;
+    const unsigned max_threads = std::max(
+        std::thread::hardware_concurrency(),
+        2*_minthreads
+    );
+    for (unsigned j=_minthreads; j<=max_threads; ++j) {
+        for (u64 i=0; i<=_maxpower; ++i) {
+            func(j, u64(1) << i);
+        }
+    }
+}
+
+template <class Mutex>
+void test_thread_counter() {
+    using namespace sys::test::lang;
+    mutex_test(
+        [&] (unsigned nthreads, sys::u64 increment) {
+            volatile unsigned counter = 0;
+            Mutex m;
+            std::vector<std::thread> threads;
+            for (unsigned i=0; i<nthreads; ++i) {
+                threads.emplace_back(
+                    [&counter, increment, &m] () {
+                        for (unsigned j=0; j<increment; ++j) {
+                            std::lock_guard<Mutex> lock(m);
+                            ++counter;
+                        }
+                    }
+                );
+            }
+            for (std::thread& t : threads) { t.join(); }
+            unsigned good_counter = nthreads*increment;
+            expect(value(counter) == value(good_counter));
+        }
+    );
+}
 
 template <class Mutex>
 void test_thread() {

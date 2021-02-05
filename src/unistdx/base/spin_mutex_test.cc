@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -30,42 +30,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
-#include <unistdx/test/basic_mutex_test>
-#include <unistdx/test/language>
-#include <unistdx/test/thread_mutex_test>
-
-#include <mutex>
 #include <unistdx/base/recursive_spin_mutex>
 #include <unistdx/base/spin_mutex>
+#include <unistdx/test/language>
+#include <unistdx/test/mutex>
 
 using namespace sys::test::lang;
 
 using sys::u64;
 
 void test_spin_mutex() {
-    using Mutex = sys::spin_mutex;
-    mutex_test(
-        [&] (unsigned nthreads, u64 increment) {
-            volatile unsigned counter = 0;
-            Mutex m;
-            std::vector<std::thread> threads;
-            for (unsigned i=0; i<nthreads; ++i) {
-                threads.emplace_back(
-                    [&counter, increment, &m] () {
-                        for (unsigned j=0; j<increment; ++j) {
-                            std::lock_guard<Mutex> lock(m);
-                            ++counter;
-                        }
-                    }
-                );
-            }
-            for (std::thread& t : threads) {
-                t.join();
-            }
-            unsigned good_counter = nthreads*increment;
-            expect(value(counter) == value(good_counter));
-        }
-    );
+    test_thread_counter<sys::spin_mutex>();
 }
 
 void test_spin_mutex_thread() {

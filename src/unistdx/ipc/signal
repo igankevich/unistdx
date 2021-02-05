@@ -303,6 +303,12 @@ namespace sys {
             this->sa_flags = int(flags);
         }
 
+        inline
+        signal_action(void (*func)(int, signal_information*, void*),
+                      flag flags=flag::info) noexcept: sigaction_type{} {
+            this->sa_sigaction = reinterpret_cast<void (*)(int, siginfo_t*, void*)>(func);
+            this->sa_flags = int(flags);
+        }
         inline flag flags() const noexcept { return flag(this->sa_flags); }
         inline void flags(flag rhs) noexcept { this->sa_flags = int(rhs); }
         inline signal_set mask() const noexcept { return signal_set(this->sa_mask); }

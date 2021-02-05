@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 #define UNISTDX_SYSTEM_CALL
 
 #include <sys/syscall.h>
+#include <unistd.h>
 
 namespace sys {
 

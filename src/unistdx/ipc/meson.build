@@ -25,9 +25,10 @@ install_headers(
 
 libunistdx_tests += files([
     'execute_test.cc',
-    'process_test.cc',
+    'futex_test.cc',
     'process_group_test.cc',
     'process_status_test.cc',
+    'process_test.cc',
     'semaphore_test.cc',
     'shared_memory_segment_test.cc',
     'signal_test.cc',

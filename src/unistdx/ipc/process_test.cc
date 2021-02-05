@@ -226,4 +226,6 @@ void test_cpu_set() {
     expect(value(sys::cpu_set{1,2,4,5,10}) == value(test::stream_extract<sys::cpu_set>("1-2,4-5,10")));
     expect(value(sys::cpu_set{1,2,4,5}) == value(test::stream_extract<sys::cpu_set>("2-1,4-5")));
     expect(value(sys::cpu_set{4}) == value(sys::cpu_set{4}&sys::cpu_set{1,2,4,5,10}));
+    expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set{1}) == value(sys::cpu_set{0,2}));
+    expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set::all()) == value(sys::cpu_set{}));
 }

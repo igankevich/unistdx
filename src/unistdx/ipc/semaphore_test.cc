@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2016, 2017, 2018, 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -41,11 +41,9 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/ipc/semaphore>
 
-#include <unistdx/test/basic_mutex_test>
 #include <unistdx/test/language>
-#include <unistdx/test/semaphore_base>
-#include <unistdx/test/semaphore_wait_test>
-#include <unistdx/test/thread_mutex_test>
+#include <unistdx/test/mutex>
+#include <unistdx/test/semaphore>
 
 using namespace sys::test::lang;
 
@@ -75,17 +73,17 @@ void test_posix_process_semaphore() {
 }
 
 void test_semaphore_wait_until() {
-    test_wait_until<std::condition_variable>();
+    test_semaphore_wait_until<std::condition_variable>();
 }
 
 void test_semaphore_producer_consumer() {
-    test_producer_consumer_thread<std::condition_variable>();
+    test_semaphore_producer_consumer_thread<std::condition_variable>();
 }
 
 void test_posix_thread_semaphore() {
     #if defined(UNISTDX_HAVE_SEMAPHORE_H)
     test_semaphore_is_available<posix_thread_semaphore>();
-    test_producer_consumer_thread<posix_thread_semaphore>();
-    test_wait_until<posix_thread_semaphore>();
+    test_semaphore_producer_consumer_thread<posix_thread_semaphore>();
+    test_semaphore_wait_until<posix_thread_semaphore>();
     #endif
 }

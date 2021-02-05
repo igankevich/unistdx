@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -31,8 +31,7 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/ipc/semaphore>
-#include <unistdx/test/semaphore_base>
-#include <unistdx/test/semaphore_wait_test>
+#include <unistdx/test/semaphore>
 
 #if defined(UNISTDX_HAVE_SYS_SEM_H)
 void test_sysv_semaphore() {
@@ -41,12 +40,12 @@ void test_sysv_semaphore() {
 
 void test_sysv_semaphore_wait_until() {
     test_semaphore_is_available<sys::sysv_semaphore>();
-    test_wait_until<sys::sysv_semaphore>();
+    test_semaphore_wait_until<sys::sysv_semaphore>();
 }
 
 void test_sysv_semaphore_producer_consumer_thread() {
     test_semaphore_is_available<sys::sysv_semaphore>();
-    test_producer_consumer_thread<sys::sysv_semaphore>();
+    test_semaphore_producer_consumer_thread<sys::sysv_semaphore>();
 }
 
 void test_sysv_semaphore_producer_consumer_process() {

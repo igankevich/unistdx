@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -32,7 +32,9 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <regex>
 
+#include <unistdx/base/log_message>
 #include <unistdx/ipc/process>
+#include <unistdx/ipc/signal>
 #include <unistdx/test/test_executor>
 
 using namespace sys::test;
@@ -90,6 +92,7 @@ bool catch_errors = true, verbose = false;
 sys::process::flags process_flags =
     sys::process::flags::fork | sys::process::flags::signal_parent;
 sys::test::Test_executor::duration timeout = std::chrono::seconds(30);
+sys::test::Test_executor tests;
 
 void arguments(int argc, char** argv) {
     for (int i=1; i<argc; ++i) {
@@ -138,9 +141,29 @@ void arguments(int argc, char** argv) {
     }
 }
 
+void parent_signal_handlers() {
+    using namespace sys::this_process;
+    auto on_terminate = sys::signal_action([](int sig) {
+        try {
+            tests.send(sys::signal(sig));
+        } catch (const std::exception& err) {
+            const char* msg = "error in parent signal handler";
+            ::write(2, msg, std::string::traits_type::length(msg));
+            ::write(2, err.what(), std::string::traits_type::length(err.what()));
+        }
+        tests.wait();
+        std::exit(sig);
+    });
+    using s = sys::signal;
+    ignore_signal(s::broken_pipe);
+    bind_signal(s::keyboard_interrupt, on_terminate);
+    bind_signal(s::terminate, on_terminate);
+    bind_signal(s::quit, on_terminate);
+    bind_signal(s::hang_up, on_terminate);
+}
+
 int main(int argc, char* argv[]) {
     arguments(argc, argv);
-    sys::test::Test_executor tests;
     tests.catch_errors(catch_errors);
     tests.verbose(verbose);
     tests.process_flags(process_flags);
@@ -211,5 +234,6 @@ int main(int argc, char* argv[]) {
         }
         return 1;
     });
+    parent_signal_handlers();
     return tests.run();
 }

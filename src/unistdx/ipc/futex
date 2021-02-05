@@ -35,6 +35,10 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <linux/futex.h>
 
+#include <atomic>
+#include <condition_variable>
+
+#include <unistdx/base/check>
 #include <unistdx/base/unlock_guard>
 #include <unistdx/system/call>
 #include <unistdx/system/time>
@@ -54,33 +58,41 @@ namespace sys {
         };
 
     private:
-        int _futex = 0;
+        std::atomic<int> _value{0};
 
     public:
-        inline explicit futex(int value) noexcept: _futex{value} {}
+        inline explicit futex(int value) noexcept: _value{value} {}
 
         inline void wait() {
             while (true) {
-                const int one = 1;
-                if (atomic_compare_exchange_strong(&this->_value, &one, 0)) {
+                int one = 1;
+                if (std::atomic_compare_exchange_strong(&this->_value, &one, 0)) {
                     break;
                 }
                 auto ret = run(FUTEX_WAIT, 0);
                 if (ret == -1 && errno != EAGAIN) {
-                    throw bad_call()
+                    throw bad_call();
                 }
             }
         }
 
-        inline void notify_one(int count) {
-            const int nought = 0;
-            if (atomic_compare_exchange_strong(&this->_value, &nought, 1)) {
+        inline void notify(int count) {
+            int nought = 0;
+            if (std::atomic_compare_exchange_strong(&this->_value, &nought, 1)) {
                 check(run(FUTEX_WAKE, count));
             }
         }
 
         inline void notify_one() { notify(1); }
         inline void notify_all() { notify(std::numeric_limits<int>::max()); }
+
+        inline void lock() { wait(); }
+        inline void unlock() { notify_one(); }
+
+        inline bool try_lock() noexcept {
+            int one = 1;
+            return std::atomic_compare_exchange_strong(&this->_value, &one, 0);
+        }
 
         template <class Lock>
         inline void wait(Lock& lock) {
@@ -103,14 +115,14 @@ namespace sys {
             const time_spec timeout{d};
             unlock_guard<Lock> unlock(lock);
             while (true) {
-                const int one = 1;
-                if (atomic_compare_exchange_strong(&this->_value, &one, 0)) {
+                int one = 1;
+                if (std::atomic_compare_exchange_strong(&this->_value, &one, 0)) {
                     break;
                 }
                 auto ret = run_for(FUTEX_WAIT, 0, &timeout);
                 if (ret == -1) {
                     if (errno == ETIMEDOUT) { return std::cv_status::timeout; }
-                    if (errno != EAGAIN) { throw bad_call() }
+                    if (errno != EAGAIN) { throw bad_call(); }
                 }
             }
             return std::cv_status::no_timeout;
@@ -130,17 +142,22 @@ namespace sys {
         template <class Lock, class Clock, class Duration>
         inline std::cv_status
         wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp) {
-            const time_spec timeout{tp.time_since_epoch()};
+            return wait_for(lock, tp-Clock::now());
+        }
+
+        template <class Lock>
+        inline std::cv_status
+        wait_until(Lock& lock, time_spec timeout) {
             unlock_guard<Lock> unlock(lock);
             while (true) {
-                const int one = 1;
-                if (atomic_compare_exchange_strong(&this->_value, &one, 0)) {
+                int one = 1;
+                if (std::atomic_compare_exchange_strong(&this->_value, &one, 0)) {
                     break;
                 }
-                auto ret = run_until(FUTEX_WAIT, 0, &timeout);
+                auto ret = run_until(0, &timeout);
                 if (ret == -1) {
                     if (errno == ETIMEDOUT) { return std::cv_status::timeout; }
-                    if (errno != EAGAIN) { throw bad_call() }
+                    if (errno != EAGAIN) { throw bad_call(); }
                 }
             }
             return std::cv_status::no_timeout;
@@ -149,12 +166,7 @@ namespace sys {
         template <class Lock, class Clock, class Duration, class Pred>
         inline bool
         wait_until(Lock& lock, const std::chrono::time_point<Clock,Duration>& tp, Pred pred) {
-            while (!pred()) {
-                if (this->wait_until(lock, tp) == std::cv_status::timeout) {
-                    return pred();
-                }
-            }
-            return true;
+            return wait_for(lock, tp-Clock::now(), pred);
         }
 
         futex() = default;
@@ -167,16 +179,16 @@ namespace sys {
     private:
 
         inline int run(int operation, int value) {
-            call(calls::futex, &this->_value, operation, value, nullptr, nullptr, 0);
+            return call(calls::futex, &this->_value, operation, value, nullptr, nullptr, 0);
         }
 
         inline int run_for(int operation, int value, const time_spec* timeout) {
-            call(calls::futex, &this->_value, operation, value, timeout, nullptr, 0);
+            return call(calls::futex, &this->_value, operation, value, timeout, nullptr, 0);
         }
 
         inline int run_until(int value, const time_spec* timepoint) {
-            call(calls::futex, &this->_value, FUTEX_WAIT_BITSET, value, timepoint, nullptr,
-                 FUTEX_BITSET_MATCH_ANY);
+            return call(calls::futex, &this->_value, FUTEX_WAIT_BITSET, value, timepoint,
+                        nullptr, FUTEX_BITSET_MATCH_ANY);
         }
 
     };

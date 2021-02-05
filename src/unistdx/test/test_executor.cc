@@ -51,12 +51,16 @@ namespace {
 
     sys::test::Backtrace_thread* backtrace_thread_ptr{};
 
-    void backtrace_on_signal_static(int sig) noexcept {
-        if (!backtrace_thread_ptr) {
-            sys::backtrace_on_signal(sig);
-            std::_Exit(sig);
+    void backtrace_on_signal_static(int sig, sys::signal_information* info, void*) noexcept {
+        if (info->process_id() != sys::this_process::id()) {
+            sys::print(std::cerr, to_string(sys::signal(sig)), sys::stack_trace());
+        } else {
+            if (!backtrace_thread_ptr) {
+                sys::backtrace_on_signal(sig);
+                std::_Exit(sig);
+            }
+            backtrace_thread_ptr->capture_backtrace(sig);
         }
-        backtrace_thread_ptr->capture_backtrace(sig);
     }
 
 }
@@ -81,7 +85,7 @@ void sys::test::Backtrace_thread::run(Test* t) {
         using sys::test::current_test;
         current_test = t;
         std::unique_lock<std::mutex> lock(mutex);
-        cv.wait(lock, [this] () -> bool {
+        cv.wait(lock, [this,&lock] () -> bool {
             if (!backtrace.empty()) {
                 sys::string buf(4096);
                 std::stringstream tmp;
@@ -89,6 +93,7 @@ void sys::test::Backtrace_thread::run(Test* t) {
                 current_test->status(sys::test::Test::Status::Exception);
                 current_test->exception_text(tmp.str());
                 current_test->child_write_status(std::clog);
+                lock.unlock();
                 std::_Exit(int(signal));
             }
             return stopped;
@@ -266,9 +271,9 @@ int sys::test::Test_executor::run() {
                     std::clog.iword(0) = sys::is_a_terminal(STDERR_FILENO);
                     stderr.in().close();
                     sys::fildes out(STDOUT_FILENO);
-                    out = stderr.out();
+                    //out = stderr.out();
                     sys::fildes err(STDERR_FILENO);
-                    err = stderr.out();
+                    //err = stderr.out();
                     Backtrace_thread backtrace_thread;
                     if (catch_errors()) {
                         using sys::this_process::bind_signal;

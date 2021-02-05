@@ -31,12 +31,12 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/io/poller>
-#include <unistdx/test/semaphore_wait_test>
+#include <unistdx/test/semaphore>
 
 void test_event_poller_wait_until() {
-    test_wait_until<sys::event_poller>();
+    test_semaphore_wait_until<sys::event_poller>();
 }
 
 void test_event_poller_producer_consumer() {
-    test_producer_consumer_thread<sys::event_poller>();
+    test_semaphore_producer_consumer_thread<sys::event_poller>();
 }
