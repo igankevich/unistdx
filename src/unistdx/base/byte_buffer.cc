@@ -40,45 +40,44 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace {
 
-    inline void init_pages(void* addr, size_t n) {
-        // LCOV_EXCL_START
-        UNISTDX_CHECK(::madvise(addr, n, MADV_DONTFORK));
-        UNISTDX_CHECK(::madvise(addr, n, MADV_DONTDUMP));
-        // LCOV_EXCL_STOP
-    }
-
     inline void* do_mmap(size_t size) {
         void* ptr = ::mmap(
             nullptr,
             size,
             PROT_READ | PROT_WRITE,
-            MAP_PRIVATE| MAP_ANONYMOUS,
+            MAP_PRIVATE | MAP_ANONYMOUS,
             -1,
             0
         );
-        UNISTDX_CHECK2(ptr, MAP_FAILED);
+        sys::check(ptr, MAP_FAILED);
         return ptr;
     }
 
     inline void do_unmap(void* ptr, size_t size) {
-        if (ptr) { UNISTDX_CHECK(::munmap(ptr, size)); }
+        if (ptr && size) { sys::check(::munmap(ptr, size)); }
     }
 
     inline void* do_mremap(void* ptr, size_t old_size, size_t new_size) {
         ptr = ::mremap(ptr, old_size, new_size, MREMAP_MAYMOVE);
-        UNISTDX_CHECK2(ptr, MAP_FAILED);
+        sys::check(ptr, MAP_FAILED);
         return ptr;
     }
 
 }
 
-sys::byte_buffer::byte_buffer(const byte_buffer& rhs):
-_size(rhs._size), _position(rhs._position), _limit(rhs._limit), _order(rhs._order) {
-    if (size() > 0) {
-        this->_data = static_cast<value_type*>(do_mmap(size())),
-        init_pages(data(), size());
-        std::memcpy(data(), rhs.data(), size());
+sys::byte_buffer::byte_buffer(const byte_buffer& rhs, allocator_ptr&& alloc):
+_allocator(std::move(alloc)) {
+    if (this->_allocator) {
+        this->_data = this->_allocator->reallocate(nullptr, 0, rhs._size);
+    } else {
+        allocator a;
+        this->_data = a.reallocate(nullptr, 0, rhs._size);
     }
+    this->_size = rhs._size;
+    this->_position = rhs._position;
+    this->_limit = rhs._limit;
+    this->_order = rhs._order;
+    if (size() != 0) { std::memcpy(data(), rhs.data(), size()); }
 }
 
 sys::byte_buffer& sys::byte_buffer::operator=(const byte_buffer& rhs) {
@@ -91,38 +90,38 @@ sys::byte_buffer& sys::byte_buffer::operator=(const byte_buffer& rhs) {
     return *this;
 }
 
-sys::byte_buffer::byte_buffer(size_type size):
-_size(size), _limit(size) {
-    if (size > 0) {
-        this->_data = static_cast<value_type*>(do_mmap(size)),
-        init_pages(this->_data, this->_size);
+sys::byte_buffer::byte_buffer(size_type size, allocator_ptr&& alloc):
+_allocator{std::move(alloc)} {
+    if (this->_allocator) {
+        this->_data = this->_allocator->reallocate(nullptr, 0, size);
+    } else {
+        allocator a;
+        this->_data = a.reallocate(nullptr, 0, size);
     }
+    this->_size = size;
+    this->_limit = size;
 }
 
 sys::byte_buffer::~byte_buffer() noexcept {
-    if (this->_data) {
-        int ret = ::munmap(this->_data, this->_size);
-        if (ret == -1) { std::terminate(); }
+    if (this->_allocator) {
+        this->_allocator->reallocate(this->_data, this->_size, 0);
+    } else {
+        allocator a;
+        a.reallocate(this->_data, this->_size, 0);
     }
 }
 
 void
 sys::byte_buffer::resize(size_type new_size) {
-    if (new_size == 0) {
-        do_unmap(this->_data, this->_size);
-        this->_data = nullptr;
-        this->_size = 0;
-        this->_limit = 0;
-        return;
-    }
-    if (this->_size == 0) {
-        this->_data = static_cast<value_type*>(do_mmap(new_size));
+    if (this->_allocator) {
+        this->_data = this->_allocator->reallocate(this->_data, this->_size, new_size);
     } else {
-        this->_data = static_cast<value_type*>(do_mremap(this->_data, this->_size, new_size));
+        allocator a;
+        this->_data = a.reallocate(this->_data, this->_size, new_size);
     }
     this->_size = new_size;
+    if (this->_position >= new_size) { this->_position = new_size; }
     this->_limit = new_size;
-    init_pages(this->_data, this->_size);
 }
 
 void
@@ -176,4 +175,17 @@ sys::byte_buffer::clear() noexcept {
     this->_position = 0;
     this->_limit = size();
     std::memset(data(), 0, size());
+}
+
+auto sys::byte_buffer::allocator::reallocate(value_type* data, size_type old_size,
+                                             size_type new_size) -> value_type* {
+    value_type* result = nullptr;
+    if (new_size == 0) {
+        do_unmap(data, old_size);
+    } else if (old_size == 0) {
+        result = static_cast<value_type*>(do_mmap(new_size));
+    } else {
+        result = static_cast<value_type*>(do_mremap(data, old_size, new_size));
+    }
+    return result;
 }

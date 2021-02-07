@@ -35,6 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <chrono>
 #include <limits>
+#include <memory>
 #include <stdexcept>
 #include <type_traits>
 
@@ -94,23 +95,37 @@ namespace sys {
         using pointer = void*;
         using const_pointer = const void*;
 
-    private:
+    public:
+        class allocator {
+        public:
+            using value_type = ::sys::byte_buffer::value_type;
+            using size_type = ::sys::byte_buffer::size_type;
+            virtual ~allocator() = default;
+            virtual value_type*
+            reallocate(value_type* data, size_type old_size, size_type new_size);
+        };
+        using allocator_ptr = std::unique_ptr<allocator>;
+
+    protected:
         value_type* _data = nullptr;
         size_type _size = 0;
         size_type _position = 0;
         size_type _limit = 0;
+        allocator_ptr _allocator;
         byte_order _order = native_byte_order();
 
     public:
 
         byte_buffer() = default;
-        byte_buffer(const byte_buffer& rhs);
+        byte_buffer(const byte_buffer& rhs, allocator_ptr&& allocator);
         byte_buffer& operator=(const byte_buffer& rhs);
+
+        inline byte_buffer(const byte_buffer& rhs): byte_buffer{rhs, allocator_ptr{}} {}
 
         /// Move-constructor.
         inline byte_buffer(byte_buffer&& rhs) noexcept:
         _data(rhs._data), _size(rhs._size), _position(rhs._position), _limit(rhs._limit),
-        _order(rhs._order) {
+        _allocator(std::move(rhs._allocator)), _order(rhs._order) {
             rhs._data = nullptr;
             rhs._size = 0;
             rhs._position = 0;
@@ -126,7 +141,7 @@ namespace sys {
         If \p size is nought, unusable buffer is created
         and no memory is allocated.
         */
-        explicit byte_buffer(size_type size);
+        explicit byte_buffer(size_type size, allocator_ptr&& allocator={});
 
         ~byte_buffer() noexcept;
 
@@ -183,17 +198,22 @@ namespace sys {
         /// Swap with \p rhs.
         inline void
         swap(byte_buffer& rhs) noexcept {
-            std::swap(this->_data, rhs._data);
-            std::swap(this->_size, rhs._size);
-            std::swap(this->_position, rhs._position);
-            std::swap(this->_limit, rhs._limit);
-            std::swap(this->_order, rhs._order);
+            using std::swap;
+            swap(this->_data, rhs._data);
+            swap(this->_size, rhs._size);
+            swap(this->_position, rhs._position);
+            swap(this->_limit, rhs._limit);
+            swap(this->_allocator, rhs._allocator);
+            swap(this->_order, rhs._order);
         }
 
         inline size_type position() const noexcept { return this->_position; }
         inline size_type limit() const noexcept { return this->_limit; }
         inline size_type remaining() const noexcept { return this->_limit - this->_position; }
         inline byte_order order() const noexcept { return this->_order; }
+        inline allocator* get_allocator() noexcept { return this->_allocator.get(); }
+        inline const allocator* get_allocator() const noexcept { return this->_allocator.get(); }
+
         inline void position(size_type rhs) noexcept { this->_position = rhs; }
         inline void limit(size_type rhs) noexcept { this->_limit = rhs; }
         inline void order(byte_order rhs) noexcept { this->_order = rhs; }

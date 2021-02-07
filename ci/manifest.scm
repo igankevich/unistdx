@@ -25,8 +25,8 @@
         (@ (gnu packages llvm) libcxx)
         (@ (gnu packages llvm) clang-toolchain))
       (list
-        (list (@ (gnu packages gcc) gcc) "lib")
-        (@ (gnu packages commencement) gcc-toolchain)))
+        (list (@ (gnu packages gcc) gcc-10) "lib")
+        (@ (gnu packages commencement) gcc-toolchain-10)))
     (if-enabled "site"
       (list (@ (gnu packages curl) curl)
             (@ (gnu packages graphviz) graphviz)

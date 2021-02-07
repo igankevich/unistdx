@@ -3,6 +3,7 @@ libunistdx_src += files([
     'fildes.cc',
     'pipe.cc',
     'poll_event.cc',
+    'shared_byte_buffer.cc',
     'two_way_pipe.cc',
 ])
 
@@ -19,6 +20,7 @@ install_headers(
     'pipe',
     'poll_event',
     'poller',
+    'shared_byte_buffer',
     'sysstream',
     'two_way_pipe',
     subdir: join_paths(meson.project_name(), 'io')
@@ -32,6 +34,7 @@ libunistdx_tests += files([
     'pipe_test.cc',
     'poll_event_test.cc',
     'poller_test.cc',
+    'shared_byte_buffer_test.cc',
     'two_way_pipe_test.cc',
     ])
 

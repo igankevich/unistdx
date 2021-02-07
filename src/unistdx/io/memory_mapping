@@ -162,6 +162,17 @@ namespace sys {
         #endif
     };
 
+    enum class remap_flags: int {
+        #if defined(MREMAP_MAYMOVE)
+        may_move=MREMAP_MAYMOVE,
+        #endif
+        #if defined(MREMAP_FIXED)
+        fixed=MREMAP_FIXED,
+        #endif
+    };
+
+    UNISTDX_FLAGS(remap_flags);
+
     /**
     \brief Memory mapping for files.
     \date 2018-10-21
@@ -189,6 +200,11 @@ namespace sys {
         size_type _size = 0;
 
     public:
+
+        memory_mapping() = default;
+
+        inline memory_mapping(T* data, size_type size) noexcept:
+        _data{data}, _size{size} {}
 
         /**
         \brief Construct memory mapping for file descriptor \p fd.
@@ -326,6 +342,14 @@ namespace sys {
                     std::terminate();
                 }
             }
+        }
+
+        inline void unmap() { check(::munmap(this->_data, this->_size*sizeof(T))); }
+
+        inline void resize(size_type new_size, remap_flags flags={}) {
+            this->_data = static_cast<char*>(
+                sys::check(::mremap(this->_data, this->_size*sizeof(T),
+                                    new_size*sizeof(T), int(flags)), MAP_FAILED));
         }
 
         /**
@@ -594,6 +618,232 @@ namespace sys {
         return !(lhs < rhs);
     }
     /// \}
+
+    template <class T>
+    struct memory_view {
+        using value_type = T;
+        using size_type = std::size_t;
+        value_type* data;
+        size_type size;
+        inline uintptr_t address() const noexcept { return reinterpret_cast<uintptr_t>(data); }
+        inline size_type size_in_bytes() const noexcept { return size*sizeof(T); }
+
+        // smart pointer interface
+        inline T* get() noexcept { return this->data; }
+        inline const T* get() const noexcept { return this->data; }
+        inline T* operator&() noexcept { return get(); }
+        inline const T* operator&() const noexcept { return get(); }
+        inline T* operator->() noexcept { return get(); }
+        inline const T* operator->() const noexcept { return get(); }
+        inline T& operator*() noexcept { return *get(); }
+        inline const T& operator*() const noexcept { return *get(); }
+        inline operator bool() const noexcept { return get() != nullptr; }
+        inline bool operator!() const noexcept { return get() == nullptr; }
+    };
+
+    enum class no_init {};
+
+    template <class T>
+    class memory_ptr {
+
+    public:
+        using value_type = T;
+        using size_type = std::size_t;
+
+    private:
+        T* _data{};
+        size_type _size{};
+
+    public:
+        memory_ptr() = default;
+        memory_ptr(const memory_ptr&) = delete;
+        memory_ptr& operator=(const memory_ptr&) = delete;
+
+        inline memory_ptr(memory_ptr&& rhs) noexcept { swap(rhs); }
+        inline memory_ptr& operator=(memory_ptr&& rhs) noexcept { swap(rhs); return *this; }
+        inline explicit memory_ptr(memory_view<T> m) noexcept: _data{m.data}, _size{m.size} {}
+
+        inline
+        memory_ptr(no_init, fd_type fd, offset_type offset, size_type count,
+                   page_flag page_flags, map_flag map_flags) {
+            this->_data = static_cast<T*>(check(::mmap(
+                nullptr, count*sizeof(T),
+                static_cast<int>(page_flags), static_cast<int>(map_flags),
+                fd, offset*sizeof(T)
+            ), MAP_FAILED));
+            this->_size = count;
+        }
+
+        template <class ... Args> inline
+        memory_ptr(fd_type fd, offset_type offset, size_type count,
+                   page_flag page_flags, map_flag map_flags, Args&& ... args):
+        memory_ptr{no_init{}, fd, offset, count, page_flags, map_flags} {
+            emplace(std::forward<Args>(args)...);
+        }
+
+        template <class ... Args> inline
+        memory_ptr(fd_type fd, page_flag page_flags, map_flag map_flags, Args&& ... args):
+        memory_ptr{fd, 0, static_cast<size_type>(file_status{fd}.size()),
+                   page_flags, map_flags, std::forward<Args>(args)...} {}
+
+        inline
+        memory_ptr(no_init, fd_type fd, page_flag page_flags, map_flag map_flags):
+        memory_ptr{no_init{}, fd, 0, static_cast<size_type>(file_status{fd}.size()),
+                   page_flags, map_flags} {}
+
+        template <class ... Args> inline
+        memory_ptr(size_type count, page_flag page_flags, map_flag map_flags, Args&& ... args):
+        memory_ptr{-1, 0, count, page_flags, map_flags, std::forward<Args>(args)...} {}
+
+        template <class ... Args> inline
+        memory_ptr(page_flag page_flags, map_flag map_flags, Args&& ... args):
+        memory_ptr{-1, 0, 1, page_flags, map_flags, std::forward<Args>(args)...} {}
+
+        inline ~memory_ptr() noexcept { unmap(); }
+
+        template <class ... Args>
+        inline void emplace(Args&& ... args) {
+            if (this->_data) { this->_data->~T(); }
+            new (this->_data) T(std::forward<Args>(args)...);
+        }
+
+        // smart pointer interface
+        inline T* get() noexcept { return this->_data; }
+        inline const T* get() const noexcept { return this->_data; }
+        inline T* operator&() noexcept { return get(); }
+        inline const T* operator&() const noexcept { return get(); }
+        inline T* operator->() noexcept { return get(); }
+        inline const T* operator->() const noexcept { return get(); }
+        inline T& operator*() noexcept { return *get(); }
+        inline const T& operator*() const noexcept { return *get(); }
+        inline operator bool() const noexcept { return get() != nullptr; }
+        inline bool operator!() const noexcept { return get() == nullptr; }
+
+        inline bool operator==(const memory_ptr& rhs) const noexcept {
+            return this->_data == rhs._data;
+        }
+
+        inline bool operator!=(const memory_ptr& rhs) const noexcept {
+            return !this->operator==(rhs);
+        }
+
+        inline bool operator<(const memory_ptr& rhs) const noexcept {
+            return this->_data < rhs._data;
+        }
+
+        inline bool operator<=(const memory_ptr& rhs) const noexcept {
+            return this->operator<(rhs) || this->operator==(rhs);
+        }
+
+        inline bool operator>(const memory_ptr& rhs) const noexcept {
+            return !this->operator<(rhs) && !this->operator==(rhs);
+        }
+
+        inline bool operator>=(const memory_ptr& rhs) const noexcept {
+            return !this->operator<(rhs);
+        }
+
+        inline void reset(memory_view<T> m) {
+            unmap();
+            this->_data = m.data, this->_size = m.size;
+        }
+
+        inline memory_view<T> release() noexcept {
+            memory_view<T> m{this->_data, this->_size};
+            this->_data = nullptr, this->_size = 0;
+            return m;
+        }
+
+        inline memory_view<T> view() noexcept {
+            return memory_view<T>{this->_data, this->_size};
+        }
+
+        inline memory_view<T> view() const noexcept {
+            return memory_view<T>{const_cast<T*>(this->_data), this->_size};
+        }
+
+        inline void swap(memory_ptr& rhs) noexcept {
+            using std::swap;
+            swap(this->_data, rhs._data);
+            swap(this->_size, rhs._size);
+        }
+
+        // container interface
+        inline size_type size() const noexcept { return this->_size; }
+        inline size_type size_in_bytes() const noexcept { return size()*sizeof(T); }
+
+        // OS interface
+
+        inline void unmap() {
+            if (!this->_data) { return; }
+            this->_data->~T();
+            check(::munmap(this->_data, this->_size*sizeof(T)));
+            this->_data = nullptr, this->_size = 0;
+        }
+
+        /**
+        \brief
+        Flush dirty pages to disk.
+        \throws bad_call
+        \see \man{msync,2}
+        */
+        inline void
+        sync(sync_flag flags = sync_flag::blocking) {
+            check(::msync(this->_data, this->_size, static_cast<int>(flags)));
+        }
+
+        /**
+        \brief
+        Lock memory pages to prevent swapping.
+        \throws bad_call
+        \see \man{mlock,2}
+        */
+        inline void lock() { check(::mlock(this->_data, this->_size)); }
+
+        /**
+        \brief
+        Unlock memory pages to allow swapping.
+        \throws bad_call
+        \see \man{mlock,2}
+        */
+        inline void unlock() { check(::munlock(this->_data, this->_size)); }
+
+        /**
+        \brief
+        Set memory mapping options and perform actions.
+        \throws bad_call
+        \see \man{madvise,2}
+        */
+        inline void
+        advise(advise_type adv) {
+            check(::madvise(this->_data, this->_size, adv));
+        }
+
+        #if defined(UNISTDX_HAVE_MADV_FREE)
+        /**
+        \brief
+        Mark memory mapping as free. Kernel may free it any time, unless
+        the programme writes to it.
+        \throws bad_call
+        \see \man{madvise,2}
+        */
+        inline void mark_free() { this->advise(advise_type::free); }
+        #endif
+
+        #if defined(UNISTDX_HAVE_MADV_REMOVE)
+        /**
+        \brief
+        Fill memory mapping with noughts.
+        \throws bad_call
+        \see \man{madvise,2}
+        */
+        inline void nullify() { this->advise(advise_type::nullify); }
+        #endif
+
+    };
+
+    template <class T>
+    inline void swap(memory_ptr<T>& a, memory_ptr<T>& b) noexcept { a.swap(b); }
 
 }
 

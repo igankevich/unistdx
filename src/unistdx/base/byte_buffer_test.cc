@@ -40,7 +40,12 @@ void test_byte_buffer_resize() {
     const size_t max0 = sys::byte_buffer::max_size();
     sys::byte_buffer buf(4096);
     expect(throws(call([&] () { buf.resize(max0); })));
-    expect(throws(call([&] () { sys::byte_buffer b(max0); })));
+    //expect(throws(call([&] () { sys::byte_buffer b(max0); })));
+    try {
+        sys::byte_buffer b(max0);
+    } catch (const sys::bad_call& err) {
+        expect(value(err.error()) == value(sys::errors::out_of_memmory));
+    }
 }
 
 void test_byte_buffer_resize_empty() {
