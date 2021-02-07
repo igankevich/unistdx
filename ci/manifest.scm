@@ -19,7 +19,8 @@
       (@ (gnu packages elf) elfutils)
       (@ (gnu packages compression) xz)
       (list (@ (gnu packages llvm) clang-10) "extra") ;; clang-tidy
-      (@ (gnu packages valgrind) valgrind))
+      (@ (gnu packages valgrind) valgrind)
+      (@ (gnu packages guile) guile-3.0))
     (if-enabled "clang"
       (list
         (@ (gnu packages llvm) libcxx)
@@ -33,7 +34,6 @@
             (@ (gnu packages documentation) doxygen)
             (@ (gnu packages perl) perl)
             (@ (gnu packages tex) texlive-bin)
-            (@ (gnu packages guile) guile-3.0)
             (@ (gnu packages guile-xyz) haunt)
             (@ (gnu packages guile-xyz) guile-syntax-highlight)
             (@ (gnu packages groff) groff)
