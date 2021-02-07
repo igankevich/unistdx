@@ -36,7 +36,7 @@ excluded_files = [
 ]
 doxyfile.set('EXCLUDE', ' '.join(excluded_files))
 doxyfile.set('EXCLUDE_PATTERNS', ' '.join(['*.css', '*.scm', '*_test.cc', 'meson.build',
-                                           '*~', '.*']))
+                                           '*~', '.*', '*_benchmark.cc']))
 doxyfile.set('EXCLUDE_SYMBOLS', ' '.join(['bits']))
 input_files = [join_paths(meson.source_root(), 'src', 'unistdx')]
 doxyfile.set('INPUT', ' '.join(input_files))

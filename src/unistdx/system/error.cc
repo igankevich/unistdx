@@ -303,10 +303,24 @@ void sys::backtrace_on_terminate() {
 }
 
 void sys::dump_core() noexcept {
-    this_process::limit(resources::core_file_size,
-                        {resource_limit::infinity,resource_limit::infinity});
-    this_process::default_action(signal::abort);
-    this_process::send(signal::abort);
+    try {
+        this_process::limit(resources::core_file_size,
+                            {resource_limit::infinity,resource_limit::infinity});
+        this_process::default_action(signal::abort);
+        this_process::send(signal::abort);
+    } catch (const std::exception& err) {
+        using t = std::string::traits_type;
+        auto msg = "failed to dump core: ";
+        ::write(STDERR_FILENO, msg, t::length(msg));
+        msg = err.what();
+        ::write(STDERR_FILENO, msg, t::length(msg));
+        std::_Exit(1);
+    } catch (...) {
+        using t = std::string::traits_type;
+        auto msg = "failed to dump core: unknown error";
+        ::write(STDERR_FILENO, msg, t::length(msg));
+        std::_Exit(1);
+    }
 }
 
 std::ostream& sys::operator<<(std::ostream& out, const stack_trace& rhs) {

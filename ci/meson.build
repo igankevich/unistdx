@@ -7,6 +7,7 @@ if clang_tidy.found() and guix.found()
         'bugprone-*',
         '-bugprone-unused-raii',
         '-bugprone-narrowing-conversions',
+        '-bugprone-exception-escape',
         'cppcoreguidelines-avoid-goto',
         'cppcoreguidelines-slicing',
         'cppcoreguidelines-special-member-functions',

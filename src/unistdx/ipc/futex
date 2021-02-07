@@ -116,7 +116,7 @@ namespace sys {
 
         template <class Clock, class Duration> inline bool
         try_lock_until(const std::chrono::time_point<Clock,Duration>& tp) {
-            return try_lock_for(lock, tp-Clock::now());
+            return try_lock_for(tp-Clock::now());
         }
 
         template <class Lock>

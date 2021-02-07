@@ -26,7 +26,7 @@
   (string-trim-both
     (with-output-to-string
       (lambda ()
-        (guix-build "-e" "(@ (gnu packages llvm) clang)")))))
+        (guix-build "-e" "(@ (gnu packages llvm) clang-10)")))))
 (ftw clang-directory
      (lambda (filename statinfo flag)
        (if (member (basename filename) '("stddef.h" "limits.h"))

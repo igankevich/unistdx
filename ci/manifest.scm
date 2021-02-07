@@ -23,7 +23,7 @@
     (if-enabled "clang"
       (list
         (@ (gnu packages llvm) libcxx)
-        (@ (gnu packages llvm) clang-toolchain))
+        (@ (gnu packages llvm) clang-toolchain-10))
       (list
         (list (@ (gnu packages gcc) gcc-10) "lib")
         (@ (gnu packages commencement) gcc-toolchain-10)))
