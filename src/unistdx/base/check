@@ -49,6 +49,12 @@ namespace sys {
         return ret;
     }
 
+    template <class T>
+    inline T check(T ret, T bad_ret) {
+        if (ret == bad_ret) { throw bad_call(); }
+        return ret;
+    }
+
 }
 
 /**

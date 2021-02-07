@@ -139,7 +139,14 @@ sys::cpu_set sys::operator~(const cpu_set& rhs) noexcept {
     sys::cpu_set result;
     const auto n = rhs.size();
     for (int i=0; i<n; ++i) {
-        if (rhs[i]) { result.set(i); }
+        if (!rhs[i]) { result.set(i); }
     }
+    return result;
+}
+
+sys::cpu_set sys::cpu_set::all() noexcept {
+    sys::cpu_set result;
+    const auto n = result.size();
+    for (int i=0; i<n; ++i) { result.set(i); }
     return result;
 }

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -309,6 +309,26 @@ namespace sys {
 
             using sys::test::argument;
             using sys::test::arguments;
+
+            template <class Head> inline void
+            do_tell(std::ostream& out, Head&& head) {
+                out << head;
+            }
+
+            template <class Head, class ... Tail> inline void
+            do_tell(std::ostream& out, Head&& head, Tail&& ... tail) {
+                out << head;
+                do_tell(out, std::forward<Tail>(tail)...);
+            }
+
+            template <class Head, class ... Tail> inline void
+            tell(std::ostream& out, Head&& head, Tail&& ... tail) {
+                std::stringstream tmp;
+                do_tell(tmp, std::forward<Head>(head), std::forward<Tail>(tail)...);
+                tmp << '\n';
+                out << tmp.str();
+                out.flush();
+            }
 
         }
     }

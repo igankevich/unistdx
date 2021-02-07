@@ -131,30 +131,34 @@ int sys::test::Test::run() {
                 default: success = false;
             }
             ++num_finished;
-            std::clog << '[' << num_finished << '/' << num_args << "] ";
+            std::stringstream message;
+            message << '[' << num_finished << '/' << num_args << "] ";
             using namespace sys::terminal;
-            std::clog << bold();
+            message << bold();
             if (success) {
-                std::clog << color(colors::fg_green) << "ok";
+                message << color(colors::fg_green) << "ok";
             } else {
-                std::clog << color(colors::fg_red) << "fail";
+                message << color(colors::fg_red) << "fail";
             }
-            std::clog << reset();
-            std::clog << ' ' << this->_function.short_name() << '('
+            message << reset();
+            message << ' ' << this->_function.short_name() << '('
                 << this->_arguments.short_name() << '[' << num_finished-1 << "])";
-            std::clog << std::endl;
+            message << '\n';
+            std::clog << message.str() << std::flush;
         }
     } else {
         this->_function.call();
         using namespace sys::terminal;
-        std::clog << bold();
+        std::stringstream message;
+        message << bold();
         if (this->_status == Status::Success) {
-            std::clog << color(colors::fg_green) << "ok";
+            message << color(colors::fg_green) << "ok";
         } else {
-            std::clog << color(colors::fg_red) << "fail";
+            message << color(colors::fg_red) << "fail";
         }
-        std::clog << reset();
-        std::clog << ' ' << this->_function.short_name() << std::endl;
+        message << reset();
+        message << ' ' << this->_function.short_name() << '\n';
+        std::clog << message.str() << std::flush;
     }
     /*
     // serialise the result
@@ -241,7 +245,7 @@ int sys::test::Test_executor::run() {
     tests_by_process.reserve(this->_tests.size());
     auto t0 = Clock::now();
     int exit_code = 0;
-    const auto max_threads = sys::thread_concurrency();
+    const auto max_threads = 1;//sys::thread_concurrency();
     for (auto t=Clock::now();
          (!this->_child_processes.empty() || !this->_tests.empty()) && t-t0<this->_timeout;
          t=Clock::now()) {
@@ -271,9 +275,9 @@ int sys::test::Test_executor::run() {
                     std::clog.iword(0) = sys::is_a_terminal(STDERR_FILENO);
                     stderr.in().close();
                     sys::fildes out(STDOUT_FILENO);
-                    //out = stderr.out();
+                    if (redirect()) { out = stderr.out(); }
                     sys::fildes err(STDERR_FILENO);
-                    //err = stderr.out();
+                    if (redirect()) { err = stderr.out(); }
                     Backtrace_thread backtrace_thread;
                     if (catch_errors()) {
                         using sys::this_process::bind_signal;
@@ -375,30 +379,34 @@ int sys::test::Test_executor::run() {
                 {
                     ++num_finished;
                     using namespace sys::terminal;
-                    std::clog.iword(0) = sys::is_a_terminal(STDERR_FILENO);
-                    std::clog << '[' << num_finished << '/' << num_tests << "] ";
-                    std::clog << bold();
+                    std::stringstream message;
+                    message.iword(0) = sys::is_a_terminal(STDERR_FILENO);
+                    message << '[' << num_finished << '/' << num_tests << "] ";
+                    message << bold();
                     switch (t.status()) {
                         case Test::Status::Success:
-                            std::clog << color(colors::fg_green);
+                            message << color(colors::fg_green);
                             break;
                         case Test::Status::Skipped:
-                            std::clog << color(colors::fg_yellow);
+                            message << color(colors::fg_yellow);
                             break;
                         default:
-                            std::clog << color(colors::fg_red);
+                            message << color(colors::fg_red);
                             break;
                     }
-                    std::clog << t.status();
-                    std::clog << reset();
-                    std::clog << ' ' << t.symbol().short_name() << std::endl;
+                    message << t.status();
+                    message << reset();
+                    message << ' ' << t.symbol().short_name() << '\n';
+                    std::clog << message.str() << std::flush;
                 }
                 if ((t.status() != Test::Status::Success &&
                     t.status() != Test::Status::Skipped) || this->_verbose) {
-                    std::clog << "======== Output ======== \n";
-                    output.write_status(std::clog);
-                    t.parent_write_status(std::clog);
-                    std::clog << "========  End   ======== \n";
+                    std::stringstream message;
+                    message << "======== Output ======== \n";
+                    output.write_status(message);
+                    t.parent_write_status(message);
+                    message << "========  End   ======== \n";
+                    std::clog << message.str() << std::flush;
                 }
                 tests_by_process.erase(process.id());
                 first = this->_child_processes.erase(first);

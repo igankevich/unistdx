@@ -253,8 +253,8 @@ const char* sys::demangle(const char* symbol, string& buf) {
         size_t size = buf.capacity();
         int status = 0;
         auto ptr = abi::__cxa_demangle(symbol, buf.data(), &size, &status);
-        buf.data(ptr);
         if (status == 0) {
+            buf.data(ptr);
             buf.capacity(size);
             return buf.data();
         }

@@ -88,13 +88,12 @@ auto string_to_duration(std::string s) -> Duration {
 std::string test_prefix = "test_";
 std::string args_prefix = "args_";
 std::regex test_filter{".*", std::regex::ECMAScript | std::regex::optimize};
-bool catch_errors = true, verbose = false;
-sys::process::flags process_flags =
-    sys::process::flags::fork | sys::process::flags::signal_parent;
 sys::test::Test_executor::duration timeout = std::chrono::seconds(30);
 sys::test::Test_executor tests;
 
 void arguments(int argc, char** argv) {
+    sys::process::flags process_flags =
+        sys::process::flags::fork | sys::process::flags::signal_parent;
     for (int i=1; i<argc; ++i) {
         std::string arg(argv[i]);
         auto pos = arg.find('=');
@@ -110,7 +109,7 @@ void arguments(int argc, char** argv) {
         } else if (name == "filter") {
             test_filter = std::regex{value, test_filter.flags()};
         } else if (name == "catch-errors") {
-            catch_errors = bool(std::stoi(value));
+            tests.catch_errors(bool(std::stoi(value)));
         } else if (name == "unshare") {
             value += ',';
             std::string subvalue;
@@ -134,11 +133,14 @@ void arguments(int argc, char** argv) {
         } else if (name == "timeout") {
             timeout = string_to_duration(value);
         } else if (name == "verbose") {
-            verbose = bool(std::stoi(value));
+            tests.verbose(bool(std::stoi(value)));
+        } else if (name == "redirect") {
+            tests.redirect(bool(std::stoi(value)));
         } else {
             throw std::invalid_argument(name);
         }
     }
+    tests.process_flags(process_flags);
 }
 
 void parent_signal_handlers() {
@@ -152,7 +154,7 @@ void parent_signal_handlers() {
             ::write(2, err.what(), std::string::traits_type::length(err.what()));
         }
         tests.wait();
-        std::exit(sig);
+        std::_Exit(sig);
     });
     using s = sys::signal;
     ignore_signal(s::broken_pipe);
@@ -164,9 +166,6 @@ void parent_signal_handlers() {
 
 int main(int argc, char* argv[]) {
     arguments(argc, argv);
-    tests.catch_errors(catch_errors);
-    tests.verbose(verbose);
-    tests.process_flags(process_flags);
     sys::string buf{4096};
     dl::for_each_shared_object([&] (const elf::shared_object& obj, size_t nobjects) {
         for (const auto& prg : obj) {

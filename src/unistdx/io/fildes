@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2016, 2017, 2018, 2019, 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -455,10 +455,10 @@ namespace sys {
         inline void sync_file_system() { UNISTDX_CHECK(::syncfs(this->_fd)); }
 
         /// Get bare file descriptor.
-        inline fd_type
-        fd() const noexcept {
-            return this->_fd;
-        }
+        inline fd_type fd() const noexcept { return this->_fd; }
+
+        /// Get bare file descriptor.
+        inline fd_type get() const noexcept { return this->_fd; }
 
         /**
         \brief Get file descriptor open flags.

@@ -205,8 +205,9 @@ namespace sys {
         cpu_set(cpu_set&&) = default;
         cpu_set& operator=(cpu_set&&) = default;
 
+        static cpu_set all() noexcept;
         inline static constexpr int max_size() noexcept { return sizeof(cpu_set_t)*8; }
-        inline int size() const noexcept { return max_size(); }
+        inline constexpr int size() const noexcept { return max_size(); }
         inline int count() const noexcept { return CPU_COUNT(this); }
         inline size_t size_in_bytes() const noexcept { return sizeof(cpu_set_t); }
         inline void set(int cpu) noexcept {
