@@ -63,6 +63,8 @@ namespace sys {
     public:
         inline explicit futex(int value) noexcept: _value{value} {}
 
+        inline int value() const noexcept { return this->_value; }
+
         inline void wait() {
             while (true) {
                 int one = 1;
@@ -94,6 +96,29 @@ namespace sys {
             return std::atomic_compare_exchange_strong(&this->_value, &one, 0);
         }
 
+        template <class Rep, class Period> inline bool
+        try_lock_for(const std::chrono::duration<Rep,Period>& dur) {
+            using namespace std::chrono;
+            const time_spec timeout{std::max(duration<Rep,Period>::zero(), dur)};
+            while (true) {
+                int one = 1;
+                if (std::atomic_compare_exchange_strong(&this->_value, &one, 0)) {
+                    break;
+                }
+                auto ret = run_for(FUTEX_WAIT, 0, &timeout);
+                if (ret == -1) {
+                    if (errno == ETIMEDOUT) { return false; }
+                    if (errno != EAGAIN) { throw bad_call(); }
+                }
+            }
+            return true;
+        }
+
+        template <class Clock, class Duration> inline bool
+        try_lock_until(const std::chrono::time_point<Clock,Duration>& tp) {
+            return try_lock_for(lock, tp-Clock::now());
+        }
+
         template <class Lock>
         inline void wait(Lock& lock) {
             unlock_guard<Lock> unlock(lock);
@@ -110,10 +135,11 @@ namespace sys {
         template <class Lock, class Rep, class Period>
         inline std::cv_status
         wait_for(Lock& lock, const std::chrono::duration<Rep,Period>& dur) {
+            unlock_guard<Lock> unlock(lock);
+            /*
             using namespace std::chrono;
             const auto d = std::max(duration<Rep,Period>::zero(), dur);
             const time_spec timeout{d};
-            unlock_guard<Lock> unlock(lock);
             while (true) {
                 int one = 1;
                 if (std::atomic_compare_exchange_strong(&this->_value, &one, 0)) {
@@ -126,6 +152,8 @@ namespace sys {
                 }
             }
             return std::cv_status::no_timeout;
+            */
+            return try_lock_for(dur) ? std::cv_status::no_timeout : std::cv_status::timeout;
         }
 
         template <class Lock, class Rep, class Period, class Pred>
@@ -190,6 +218,30 @@ namespace sys {
             return call(calls::futex, &this->_value, FUTEX_WAIT_BITSET, value, timepoint,
                         nullptr, FUTEX_BITSET_MATCH_ANY);
         }
+
+    };
+
+    class mutex: public futex {
+
+    public:
+        inline mutex() noexcept: futex{1} {}
+        ~mutex() = default;
+        mutex(const mutex&) = delete;
+        mutex& operator=(const mutex&) = delete;
+        mutex(mutex&&) = delete;
+        mutex& operator=(mutex&&) = delete;
+
+    };
+
+    class condition_variable: public futex {
+
+    public:
+        inline condition_variable() noexcept: futex{0} {}
+        ~condition_variable() = default;
+        condition_variable(const condition_variable&) = delete;
+        condition_variable& operator=(const condition_variable&) = delete;
+        condition_variable(condition_variable&&) = delete;
+        condition_variable& operator=(condition_variable&&) = delete;
 
     };
 
