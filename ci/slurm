@@ -13,7 +13,18 @@
 
 (define branch (getenv "CI_BUILD_BRANCH"))
 
-(define* (make-job system . rest)
+(define (environment-wrap! job environment-variables)
+  (define lines (string-split (job-script job) #\newline))
+  (define env-lines (list (format #f "export ~a" environment-variables)))
+  (define all-lines
+    (cond
+      ((and (not (null? lines)) (string-prefix? "#!" (car lines)))
+       (append (list "#!/bin/sh") env-lines (cdr lines)))
+      (else (append (list "#!/bin/sh") env-lines lines))))
+  (set! (job-script job) (string-join all-lines "\n"))
+  job)
+
+(define* (make-job system environment-variables . rest)
   (define job (apply make (cons <job> rest)))
   (set! (job-partitions job) '("ci"))
   (guix-environment-wrap!
@@ -21,8 +32,8 @@
           #:channels "ci/channels.scm"
           #:manifest "ci/manifest.scm"
           #:system system))
-  (gitbucket-wrap!
-    job (make <gitbucket-build>)))
+  (gitbucket-wrap! job (make <gitbucket-build>))
+  (environment-wrap! job environment-variables))
 
 (define (make-jobs system)
   (append
@@ -30,7 +41,7 @@
       (lambda (lst)
         (define name (car lst))
         (define meson-arguments (cdr lst))
-        (make-job system
+        (make-job system "UNISTDX_MANIFEST=ci"
           #:script (string-join
                      (list
                        "#!/bin/sh"
@@ -43,7 +54,6 @@
                        "meson test --verbose --timeout-multiplier 2"
                        "rm -rf --one-file-system --preserve-root $d")
                      "\n")
-          #:environment '("UNISTDX_MANIFEST=ci")
           #:name name))
       `(("sanitize-none" "-Db_sanitize=none")
         ,@(if (string=? system "x86_64-linux")
@@ -53,7 +63,7 @@
             '(("arch-native" "-Dbuildtype=release" "-Dcpp_args=-march=native"))
             '())))
     (list
-      (make-job system
+      (make-job system "UNISTDX_MANIFEST=ci,site"
         #:script (string-join
                    (list
                      "#!/bin/sh"
@@ -69,9 +79,8 @@
                      (format #f "rsync -acv --delete lcov/ /fennec/home/gitbucket/.sites/unistdx/~a-coverage/" system)
                      "rm -rf --one-file-system --preserve-root $d")
                    "\n")
-        #:environment '("UNISTDX_MANIFEST=ci,site")
         #:name "coverage")
-      (make-job system
+      (make-job system "UNISTDX_MANIFEST=ci,clang"
         #:script (string-join
                    (list
                      "#!/bin/sh"
@@ -84,11 +93,10 @@
                      "ninja -v clang-tidy"
                      "rm -rf --one-file-system --preserve-root $d")
                    "\n")
-        #:environment '("UNISTDX_MANIFEST=ci,clang")
         #:name "static-checks"))
     (if (string=? system "x86_64-linux")
       (list
-        (make-job "x86_64-linux"
+        (make-job "x86_64-linux" "UNISTDX_MANIFEST=ci"
           #:name "valgrind"
           #:script (string-join
                      (list
@@ -101,14 +109,13 @@
                        "ninja -v valgrind"
                        "rm -rf --one-file-system --preserve-root $d")
                      "\n")
-          #:environment '("UNISTDX_MANIFEST=ci")
           ))
       '())
     (if (and branch
              (string=? branch "master")
              (string=? system "x86_64-linux"))
       (list
-        (make-job "x86_64-linux"
+        (make-job "x86_64-linux" "UNISTDX_MANIFEST=ci,site"
           #:name "site"
           #:script (string-join
                      (list
@@ -124,10 +131,9 @@
                        "rsync -acv --exclude coverage --delete src/unistdx/site/ /fennec/home/gitbucket/.sites/unistdx/"
                        "rm -rf $d")
                      "\n")
-          #:environment '("UNISTDX_MANIFEST=ci,site")))
+          ))
       '())))
 
-(setenv "UNISTDX_MANIFEST" "ci,site")
 (exit (gitbucket-run
         (append-map make-jobs '("x86_64-linux" "i686-linux" "aarch64-linux"))))
 
