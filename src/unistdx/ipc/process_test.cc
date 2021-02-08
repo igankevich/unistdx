@@ -198,9 +198,23 @@ void test_clone_users() {
 
 void test_process_as_thread() {
     using pf = sys::process_flag;
-    sys::process t{[] () -> int {
+    std::mutex mtx;
+    std::condition_variable cv;
+    std::clog << "parent mutex    = " << &mtx << std::endl;
+    std::clog << "parent cv       = " << &cv << std::endl;
+    bool stopped = false;
+    sys::process t{[&] () -> int {
+        std::clog << "child mutex     = " << std::addressof(mtx) << std::endl;
+        std::clog << "child cv        = " << std::addressof(cv) << std::endl;
+        std::unique_lock<std::mutex> lock(mtx);
+        cv.wait(lock, [&stopped] () { return stopped; });
         return 0;
     }, pf::signal_parent | pf::share_memory};
+    {
+        std::unique_lock<std::mutex> lock(mtx);
+        stopped = true;
+        cv.notify_one();
+    }
     auto status = t.wait();
     expect(value(0) == value(status.exit_code()));
 }

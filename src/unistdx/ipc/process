@@ -751,7 +751,7 @@ namespace sys {
         */
         template<class F>
         inline explicit
-        process(F f, process_flag flags=process_flag::fork, size_t stack_size=4096*8) {
+        process(F&& f, process_flag flags=process_flag::fork, size_t stack_size=4096*8) {
             typedef bits::call_traits<decltype(f())> traits_type;
             if (flags == process_flag::fork) {
                 this->_pid = this_process::fork();
@@ -765,7 +765,7 @@ namespace sys {
                     &traits_type::template child_main<F>,
                     this->_stack.get() + stack_size,
                     static_cast<int>(flags),
-                    &f
+                    std::addressof(f)
                 );
                 // do not delete the stack for threads
                 if (!(flags & process_flag::share_memory)) { this->_stack.reset(); }
