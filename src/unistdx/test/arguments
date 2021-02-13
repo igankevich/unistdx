@@ -36,6 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <cstdint>
 #include <initializer_list>
 #include <memory>
+#include <random>
 #include <vector>
 
 namespace sys {
@@ -68,11 +69,16 @@ namespace sys {
 
         template <class Head, class ... Tail>
         class List<Head,Tail...> {
+
         public:
             using value_type = Head;
+            using head_type = Head;
+            using tail_type = List<Tail...>;
+
         private:
-            Head _head;
-            List<Tail...> _tail;
+            head_type _head;
+            tail_type _tail;
+
         public:
             inline List(Head&& head, Tail&& ... tail):
             _head{std::forward<Head>(head)}, _tail{std::forward<Tail>(tail)...} {}
@@ -92,6 +98,28 @@ namespace sys {
             List& operator=(List&&) = default;
         };
 
+        template <size_t i, class List>
+        struct List_element {
+            using type = typename List_element<i-1,typename List::tail_type>::type;
+            static inline type& get(List& list) noexcept { return type::get(list.tail()); }
+            static inline const type& get(const List& list) noexcept { return type::get(list.tail()); }
+        };
+
+        template <class List>
+        struct List_element<0,List> {
+            using type = typename List::head_type;
+            static inline type& get(List& list) noexcept { return list.head(); }
+            static inline const type& get(const List& list) noexcept { return list.head(); }
+        };
+
+        template <size_t i, class ... Args>
+        inline typename List_element<i,List<Args...>>::type&
+        element(List<Args...>& list) noexcept { return List_element<i,List<Args...>>::get(list); }
+
+        template <size_t i, class ... Args>
+        inline const typename List_element<i,List<Args...>>::type&
+        element(const List<Args...>& list) noexcept { return List_element<i,List<Args...>>::get(list); }
+
         template <class ... T>
         class arguments {
 
@@ -105,14 +133,17 @@ namespace sys {
 
         private:
             using array_type = std::vector<value_type>;
+            using destructor_ptr = void (arguments<T...>::*)();
 
         private:
             array_type _data;
             address_matrix _raw_data;
+            destructor_ptr _destructor{};
 
         public:
 
             inline arguments(std::initializer_list<List<T...>> data) {
+                this->_destructor = &arguments<T...>::call_destructor;
                 this->_data.reserve(data.size());
                 this->_raw_data.reserve(this->_data.size());
                 for (auto& value : data) {
@@ -134,6 +165,9 @@ namespace sys {
             inline value_type& front() noexcept { return *data(); }
             inline value_type& back() noexcept { return *(end()-1); }
             inline const address_matrix& raw_data() const noexcept { return this->_raw_data; }
+            inline const void* destructor_address() const noexcept {
+                return reinterpret_cast<void*>(this->_destructor);
+            }
 
             arguments() = default;
             ~arguments() = default;
@@ -142,6 +176,8 @@ namespace sys {
             arguments(arguments&&) = default;
             arguments& operator=(arguments&&) = default;
 
+            inline void destroy() { (this->*_destructor)(); }
+
         private:
             inline void init(std::vector<const void*>& lhs, const List<>& value) {}
             template <class ... Args, class Head, class ... Tail>
@@ -149,6 +185,26 @@ namespace sys {
                 lhs.emplace_back(&value.head());
                 init(lhs, value.tail());
             }
+
+            inline void call_destructor() noexcept { this->~arguments(); }
+
+        };
+
+        class random_engine {
+
+        public:
+            using result_type = std::default_random_engine::result_type;
+
+        private:
+            std::default_random_engine _prng;
+
+        public:
+            inline explicit random_engine(std::seed_seq& seq):
+            _prng{seq} {}
+
+            inline result_type operator()() { return this->_prng(); }
+            inline result_type min() { return this->_prng.min(); }
+            inline result_type max() { return this->_prng.max(); }
 
         };
 

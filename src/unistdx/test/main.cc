@@ -206,6 +206,7 @@ int main(int argc, char* argv[]) {
                         s.original_name(std::string(name));
                         s.demangled_name(std::move(demangled_name));
                         s.address(reinterpret_cast<void*>(sym.address()));
+                        s.type(sym.type());
                         if (std::regex_search(s.short_name(), test_filter)) {
                             tests.emplace(std::move(s));
                         }
@@ -222,6 +223,7 @@ int main(int argc, char* argv[]) {
                         s.original_name(std::string(name));
                         s.demangled_name(std::move(demangled_name));
                         s.address(reinterpret_cast<void*>(sym.address()));
+                        s.type(sym.type());
                         std::string test_name;
                         test_name.reserve(test_prefix.size() + args_prefix.size());
                         test_name += test_prefix;

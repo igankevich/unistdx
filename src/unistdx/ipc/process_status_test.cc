@@ -60,6 +60,7 @@ void test_process_status_exit() {
 void test_process_status_abort() {
     sys::process child {
         [] () -> int {
+            sys::this_process::bind_signal(sys::signal::abort, SIG_DFL);
             std::abort();
         }
     };

@@ -30,6 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <random>
 #include <unordered_set>
 
 #include <unistdx/base/base64>
@@ -69,6 +70,10 @@ std::vector<pair_type> encode_pairs{
     {"foob", "Zm9vYg=="},
     {"fooba", "Zm9vYmE="},
     {"foobar", "Zm9vYmFy"},
+    // binary data
+    {{"\0",1}, "AA=="},
+    {{"\0\0",2}, "AAA="},
+    {{"\0\0\0",3}, "AAAA"},
 };
 
 std::vector<pair_type> decode_pairs = encode_pairs;
@@ -195,4 +200,58 @@ void test_base64_invalid_argument() {
             static_cast<char*>(nullptr)
         );
     })));
+}
+
+arguments<std::string>* args_base64_symmetry(random_engine* prng) {
+    std::uniform_int_distribution<char> dist_char(
+        std::numeric_limits<char>::min(), std::numeric_limits<char>::max());
+    std::uniform_int_distribution<size_t> dist_size(0, 4097);
+    auto size = dist_size(*prng);
+    std::string input;
+    input.reserve(size);
+    for (size_t i=0; i<size; ++i) { input += dist_char(*prng); }
+    return new arguments<std::string>{
+        {std::move(input)}
+    };
+}
+
+bool test_base64_symmetry(std::string* s) {
+    auto& input = *s;
+    std::string encoded(base64_encoded_size(input.size()), '_');
+    sys::base64_encode(input.data(), input.size(), &encoded[0]);
+    std::string decoded(base64_max_decoded_size(encoded.size()), '_');
+    auto actual_size = sys::base64_decode(encoded.data(), encoded.size(), &decoded[0]);
+    decoded.resize(actual_size);
+    return expect(value(input) == value(decoded));
+}
+
+const unsigned char base64_alphabet[64] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b',
+    'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+    'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2', '3',
+    '4', '5', '6', '7', '8', '9', '+', '/'
+};
+
+arguments<std::string>* args_base64_symmetry_decode_encode(random_engine* prng) {
+    std::uniform_int_distribution<size_t> dist_index(0, 63);
+    std::uniform_int_distribution<size_t> dist_size(0, 4097);
+    auto size = dist_size(*prng);
+    if (size%4 != 0) { size += 4-size%4; }
+    std::string input;
+    input.reserve(size);
+    for (size_t i=0; i<size; ++i) { input += base64_alphabet[dist_index(*prng)]; }
+    return new arguments<std::string>{
+        {std::move(input)}
+    };
+}
+
+bool test_base64_symmetry_decode_encode(std::string* s) {
+    auto& input = *s;
+    std::string decoded(base64_max_decoded_size(input.size()), '_');
+    auto actual_size = sys::base64_decode(input.data(), input.size(), &decoded[0]);
+    decoded.resize(actual_size);
+    std::string encoded(base64_encoded_size(decoded.size()), '_');
+    sys::base64_encode(decoded.data(), decoded.size(), &encoded[0]);
+    return expect(value(input) == value(encoded));
 }

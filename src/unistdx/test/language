@@ -309,6 +309,7 @@ namespace sys {
 
             using sys::test::argument;
             using sys::test::arguments;
+            using sys::test::random_engine;
 
             template <class Head> inline void
             do_tell(std::ostream& out, Head&& head) {

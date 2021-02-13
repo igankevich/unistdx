@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -36,6 +36,8 @@ For more information, please refer to <http://unlicense.org/>
 #include <cstring>
 #include <ostream>
 #include <string>
+
+#include <unistdx/base/array_view>
 
 namespace sys {
 
@@ -259,6 +261,38 @@ namespace sys {
     };
 
     inline std::ostream& operator<<(std::ostream& out, const string& rhs) { return out << rhs.data(); }
+
+    class c_string_array_view: public array_view<char*> {
+
+    public:
+        inline explicit c_string_array_view(value_type* data) noexcept:
+        array_view<char*>{data, count(data)} {}
+
+        inline c_string_array_view(value_type* data, size_type size) noexcept:
+        array_view<char*>{data, size} {}
+
+        inline char** argv() noexcept { return data(); }
+        inline char* const* argv() const noexcept { return data(); }
+        inline int argc() const noexcept { return static_cast<int>(size()); }
+
+        c_string_array_view() = default;
+        ~c_string_array_view() = default;
+        c_string_array_view(const c_string_array_view&) = default;
+        c_string_array_view& operator=(const c_string_array_view&) = default;
+        c_string_array_view(c_string_array_view&&) = default;
+        c_string_array_view& operator=(c_string_array_view&&) = default;
+
+    private:
+        static inline size_type count(value_type* data) noexcept {
+            auto first = data;
+            if (!first) { return 0; }
+            while (*first) { ++first; }
+            return first-data;
+        }
+
+    };
+
+    std::ostream& operator<<(std::ostream& out, const c_string_array_view& rhs);
 
 }
 

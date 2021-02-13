@@ -50,8 +50,11 @@ thread_local sys::test::Test* sys::test::current_test{};
 namespace {
 
     sys::test::Backtrace_thread* backtrace_thread_ptr{};
+    std::atomic_flag entered{ATOMIC_FLAG_INIT};
 
     void backtrace_on_signal_static(int sig, sys::signal_information* info, void*) noexcept {
+        // prevent recursive calls
+        if (entered.test_and_set()) { return; }
         if (info->process_id() != sys::this_process::id()) {
             sys::print(std::cerr, to_string(sys::signal(sig)), sys::stack_trace());
         } else {
@@ -61,23 +64,25 @@ namespace {
             }
             backtrace_thread_ptr->capture_backtrace(sig);
         }
+        entered.clear();
     }
 
 }
 
 void sys::test::Symbol::demangled_name(std::string&& rhs) {
     this->_demangled_name = std::move(rhs);
-    auto pos = this->_demangled_name.find('(');
-    if (pos != std::string::npos) {
-        this->_short_name = this->_demangled_name.substr(0,pos);
-    } else {
-        pos = this->_demangled_name.find('[');
-        if (pos != std::string::npos) {
-            this->_short_name = this->_demangled_name.substr(0,pos);
-        } else {
-            this->_short_name = this->_demangled_name;
-        }
+    auto pos1 = this->_demangled_name.find('(');
+    auto pos2 = this->_demangled_name.find('[');
+    auto pos = std::string::npos;
+    if (pos1 != std::string::npos && pos2 != std::string::npos) {
+        pos = std::min(pos1,pos2);
+        this->_short_name = this->_demangled_name.substr(0,std::min(pos1,pos2));
+    } else if (pos1 != std::string::npos) {
+        pos = pos1;
+    } else if (pos2 != std::string::npos) {
+        pos = pos2;
     }
+    this->_short_name = this->_demangled_name.substr(0,pos);
 }
 
 void sys::test::Backtrace_thread::run(Test* t) {
@@ -109,45 +114,69 @@ void sys::test::Backtrace_thread::capture_backtrace(int sig) {
     mutex.unlock();
     cv.notify_one();
     join();
+    std::_Exit(sig);
 }
 
 int sys::test::Test::run() {
     if (this->_arguments.address()) {
-        auto& args =
-            *reinterpret_cast<::sys::test::arguments<void*>*>(this->_arguments.address());
-        int num_finished = 0;
-        auto& raw_data = args.raw_data();
-        int num_args = raw_data.size();
-        for (const auto& a : raw_data) {
-            bool success = false;
-            switch (a.size()) {
-                case 1: success = this->_function.call(a[0]); break;
-                case 2: success = this->_function.call(a[0],a[1]); break;
-                case 3: success = this->_function.call(a[0],a[1],a[2]); break;
-                case 4: success = this->_function.call(a[0],a[1],a[2],a[3]); break;
-                case 5: success = this->_function.call(a[0],a[1],a[2],a[3],a[4]); break;
-                case 6: success = this->_function.call(a[0],a[1],a[2],a[3],a[4],a[5]); break;
-                case 7: success = this->_function.call(a[0],a[1],a[2],a[3],a[4],a[5],a[6]); break;
-                default: success = false;
+        using argument_array = ::sys::test::arguments<void*>;
+        if (this->_arguments.type() == elf::symbol_types::code) {
+            std::seed_seq seq(this->_seeds.begin(), this->_seeds.end());
+            random_engine prng(seq);
+            int num_finished = 0;
+            for (size_t i=0; i<this->_num_evaluations; ++i) {
+                argument_array* args = this->_arguments.call<argument_array*>(&prng);
+                auto& raw_data = args->raw_data();
+                auto old_num_errors = this->_num_errors;
+                for (const auto& a : raw_data) {
+                    this->_function.apply<bool>(a);
+                }
+                if (this->_arguments.type() == elf::symbol_types::code) {
+                    args->destroy();
+                }
+                ++num_finished;
+                std::stringstream message;
+                message << '[' << num_finished << '/' << this->_num_evaluations << "] ";
+                using namespace sys::terminal;
+                message << bold();
+                if (this->_num_errors == old_num_errors) {
+                    message << color(colors::fg_green) << "ok";
+                } else {
+                    message << color(colors::fg_red) << "fail";
+                }
+                message << reset();
+                message << ' ' << this->_function.short_name() << '('
+                    << this->_arguments.short_name() << "(prng))";
+                message << '\n';
+                std::clog << message.str() << std::flush;
             }
-            ++num_finished;
-            std::stringstream message;
-            message << '[' << num_finished << '/' << num_args << "] ";
-            using namespace sys::terminal;
-            message << bold();
-            if (success) {
-                message << color(colors::fg_green) << "ok";
-            } else {
-                message << color(colors::fg_red) << "fail";
+        } else {
+            argument_array* args =
+                reinterpret_cast<argument_array*>(this->_arguments.address());
+            int num_finished = 0;
+            auto& raw_data = args->raw_data();
+            int num_args = raw_data.size();
+            for (const auto& a : raw_data) {
+                bool success = this->_function.apply<bool>(a);
+                ++num_finished;
+                std::stringstream message;
+                message << '[' << num_finished << '/' << num_args << "] ";
+                using namespace sys::terminal;
+                message << bold();
+                if (success) {
+                    message << color(colors::fg_green) << "ok";
+                } else {
+                    message << color(colors::fg_red) << "fail";
+                }
+                message << reset();
+                message << ' ' << this->_function.short_name() << '('
+                    << this->_arguments.short_name() << '[' << num_finished-1 << "])";
+                message << '\n';
+                std::clog << message.str() << std::flush;
             }
-            message << reset();
-            message << ' ' << this->_function.short_name() << '('
-                << this->_arguments.short_name() << '[' << num_finished-1 << "])";
-            message << '\n';
-            std::clog << message.str() << std::flush;
         }
     } else {
-        this->_function.call();
+        this->_function.call<bool>();
         using namespace sys::terminal;
         std::stringstream message;
         message << bold();
@@ -175,6 +204,7 @@ int sys::test::Test::run() {
 
 void sys::test::Test::record_error(error err) {
     this->_status = Status::Exception;
+    ++this->_num_errors;
     std::clog << err.what();
 }
 
@@ -207,6 +237,11 @@ void sys::test::Test::child_write_status(std::ostream& out) const {
             break;
         default:
             break;
+    }
+    if (this->_arguments.type() == elf::symbol_types::code) {
+        out << "Seeds:";
+        for (auto seed : this->_seeds) { out << ' ' << seed; }
+        out << '\n';
     }
 }
 

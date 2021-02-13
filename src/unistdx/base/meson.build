@@ -5,12 +5,14 @@ libunistdx_src += files([
     'command_line.cc',
     'sha1.cc',
     'sha2.cc',
+    'string.cc',
     'uint128.cc',
     'websocketbuf.cc',
     'websocket.cc',
 ])
 
 install_headers(
+    'array_view',
     'bad_call',
     'base64',
     'byte_buffer',
@@ -48,6 +50,7 @@ libunistdx_tests += files([
     'sha1_test.cc',
     'sha2_test.cc',
     'spin_mutex_test.cc',
+    'string_test.cc',
     'uint128_test.cc',
     'websocket_test.cc',
     ])

@@ -39,6 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <iomanip>
 #include <iosfwd>
 #include <mutex>
+#include <random>
 #include <sstream>
 #include <thread>
 #include <typeindex>
@@ -60,6 +61,7 @@ namespace sys {
             std::string _original_name;
             std::string _demangled_name;
             std::string _short_name;
+            elf::symbol_types _type{};
             void* _address{};
 
         public:
@@ -82,11 +84,31 @@ namespace sys {
             }
 
             inline const std::string& short_name() const noexcept { return this->_short_name; }
+            inline elf::symbol_types type() const noexcept { return this->_type; }
+            inline void type(elf::symbol_types rhs) noexcept { this->_type = rhs; }
 
-            template <class ... Args>
-            bool call(Args&& ... args) const {
-                auto func = reinterpret_cast<bool(*)(...)>(address());
+            template <class Return, class ... Args>
+            Return call(Args&& ... args) const {
+                auto func = reinterpret_cast<Return(*)(...)>(address());
                 return func(std::forward<Args>(args)...);
+            }
+
+            template <class Return>
+            Return apply(const std::vector<const void*>& a) const {
+                switch (a.size()) {
+                    case 0: return call<Return>(); break;
+                    case 1: return call<Return>(a[0]); break;
+                    case 2: return call<Return>(a[0],a[1]); break;
+                    case 3: return call<Return>(a[0],a[1],a[2]); break;
+                    case 4: return call<Return>(a[0],a[1],a[2],a[3]); break;
+                    case 5: return call<Return>(a[0],a[1],a[2],a[3],a[4]); break;
+                    case 6: return call<Return>(a[0],a[1],a[2],a[3],a[4],a[5]); break;
+                    case 7: return call<Return>(a[0],a[1],a[2],a[3],a[4],a[5],a[6]); break;
+                    case 8: return call<Return>(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7]); break;
+                    case 9: return call<Return>(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8]); break;
+                    case 10: return call<Return>(a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9]); break;
+                    default: throw std::invalid_argument("apply: bad no. of arguments");
+                }
             }
 
             Symbol() = default;
@@ -140,10 +162,16 @@ namespace sys {
         private:
             Symbol _function;
             Symbol _arguments;
+            std::vector<size_t> _seeds{
+                size_t(std::chrono::steady_clock::now().time_since_epoch().count()),
+                size_t(std::random_device{}()),
+            };
+            size_t _num_evaluations = 100;
             Status _status = Status::Success;
             sys::signal _signal{};
             std::string _exception_type;
             std::string _exception_text;
+            int _num_errors = 0;
             int _exit_code = 0;
 
         public:
@@ -160,6 +188,8 @@ namespace sys {
                 this->_arguments = std::move(rhs);
             }
 
+            inline size_t num_evaluations() const noexcept { return this->_num_evaluations; }
+            inline void num_evaluations(size_t rhs) noexcept { this->_num_evaluations = rhs; }
             inline Status status() const noexcept { return this->_status; }
             inline void status(Status rhs) noexcept { this->_status = rhs; }
             inline bool success() const noexcept { return status() == Status::Success; }

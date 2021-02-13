@@ -243,3 +243,51 @@ void test_cpu_set() {
     expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set{1}) == value(sys::cpu_set{0,2}));
     expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set::all()) == value(sys::cpu_set{}));
 }
+
+arguments<sys::cpu_set,sys::cpu_set>*
+args_cpu_set_identities(random_engine* prng) {
+    sys::cpu_set a, b;
+    std::bernoulli_distribution dist;
+    for (int i=0; i<a.size(); ++i) {
+        if (dist(*prng)) { a.set(i); }
+    }
+    for (int i=0; i<b.size(); ++i) {
+        if (dist(*prng)) { b.set(i); }
+    }
+    sys::cpu_set c(b), d(a);
+    return new arguments<sys::cpu_set,sys::cpu_set>{
+        {std::move(a), std::move(b)},
+        {std::move(c), std::move(d)},
+    };
+}
+
+void test_cpu_set_identities(sys::cpu_set* aa, sys::cpu_set* bb) {
+    auto& a = *aa;
+    auto& b = *bb;
+    expect(value(~(a & b)) == value(~a | ~b));
+    expect(value(a ^ b) == value((a | b) & ~(a & b)));
+    expect(value(a ^ b) == value((a & ~b) | (~a & b)));
+    expect(value(a & b) == value(~(~a | ~b)));
+    expect(value(a) == value(~(~a)));
+}
+
+arguments<sys::cpu_set>*
+args_cpu_set_io(random_engine* prng) {
+    sys::cpu_set a;
+    std::bernoulli_distribution dist;
+    for (int i=0; i<a.size(); ++i) {
+        if (dist(*prng)) { a.set(i); }
+    }
+    return new arguments<sys::cpu_set>{
+        {std::move(a)},
+    };
+}
+
+void test_cpu_set_io(sys::cpu_set* aa) {
+    auto& a = *aa;
+    std::stringstream tmp;
+    tmp << a;
+    sys::cpu_set b;
+    tmp >> b;
+    expect(value(a) == value(b));
+}
