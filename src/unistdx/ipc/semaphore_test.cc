@@ -62,28 +62,28 @@ struct posix_thread_semaphore: public sys::posix_semaphore {
 };
 
 void test_semaphore() {
-    test_semaphore<std::condition_variable>();
+    test::semaphore<std::condition_variable>();
 }
 
 void test_posix_process_semaphore() {
-    test_semaphore_is_available<posix_process_semaphore>();
+    test::semaphore_is_available<posix_process_semaphore>();
     #if defined(UNISTDX_HAVE_SEMAPHORE_H)
-    test_semaphore<posix_process_semaphore>();
+    test::semaphore<posix_process_semaphore>();
     #endif
 }
 
 void test_semaphore_wait_until() {
-    test_semaphore_wait_until<std::condition_variable>();
+    test::semaphore_wait_until<std::condition_variable>();
 }
 
 void test_semaphore_producer_consumer() {
-    test_semaphore_producer_consumer_thread<std::condition_variable>();
+    test::semaphore_producer_consumer_thread<std::condition_variable>();
 }
 
 void test_posix_thread_semaphore() {
     #if defined(UNISTDX_HAVE_SEMAPHORE_H)
-    test_semaphore_is_available<posix_thread_semaphore>();
-    test_semaphore_producer_consumer_thread<posix_thread_semaphore>();
-    test_semaphore_wait_until<posix_thread_semaphore>();
+    test::semaphore_is_available<posix_thread_semaphore>();
+    test::semaphore_producer_consumer_thread<posix_thread_semaphore>();
+    test::semaphore_wait_until<posix_thread_semaphore>();
     #endif
 }

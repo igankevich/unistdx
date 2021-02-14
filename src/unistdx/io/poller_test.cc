@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2016, 2017, 2018, 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -34,9 +34,9 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/semaphore>
 
 void test_event_poller_wait_until() {
-    test_semaphore_wait_until<sys::event_poller>();
+    test::semaphore_wait_until<sys::event_poller>();
 }
 
 void test_event_poller_producer_consumer() {
-    test_semaphore_producer_consumer_thread<sys::event_poller>();
+    test::semaphore_producer_consumer_thread<sys::event_poller>();
 }

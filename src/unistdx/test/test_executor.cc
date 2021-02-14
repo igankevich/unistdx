@@ -263,6 +263,23 @@ int sys::test::Test_executor::run() {
     auto t0 = Clock::now();
     int exit_code = 0;
     const auto max_threads = 1;//sys::thread_concurrency();
+    /*
+    {
+        auto n = this->_tests.size();
+        for (size_t i=0; i<n; ++i) {
+            Test test = std::move(this->_tests.front());
+            this->_tests.pop_front();
+            current_test = &test;
+            std::clog << "test.symbol().short_name()=" << test.symbol().short_name() << std::endl;
+            try {
+                test.run();
+            } catch (const std::exception& err) {
+                std::clog << "err=" << err.what() << std::endl;
+            }
+        }
+    }
+    return 0;
+    */
     for (auto t=Clock::now();
          (!this->_child_processes.empty() || !this->_tests.empty()) && t-t0<this->_timeout;
          t=Clock::now()) {
@@ -338,6 +355,7 @@ int sys::test::Test_executor::run() {
                         backtrace_thread.stop();
                         backtrace_thread.join();
                     }
+                    //std::exit(ret);
                     return ret;
                 }, this->_process_flags, 4096*512);
                 auto& process = this->_child_processes.back();

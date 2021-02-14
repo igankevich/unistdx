@@ -15,6 +15,7 @@
       (@ (gnu packages pre-commit) python-pre-commit)
       (@ (gnu packages python-xyz) python-chardet)
       (@ (gnu packages code) lcov)
+      (@ (gnu packages code) kcov)
       (@ (gnu packages gcovr) python-gcovr)
       (@ (gnu packages elf) elfutils)
       (@ (gnu packages compression) xz)

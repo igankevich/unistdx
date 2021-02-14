@@ -7,6 +7,7 @@ genhtml="@genhtml_path@ @genhtml_options@ $lcovrc_options"
 set -ex
 cd "$MESON_BUILD_ROOT"
 tmp="coverage.info"
+find "$MESON_BUILD_ROOT" -name '*.gcda' -delete
 ninja test
 "@lcov_path@" --version
 "@gcov@" --version
@@ -16,11 +17,13 @@ $lcov --capture \
     --initial \
     --base-directory "$MESON_BUILD_ROOT" \
     --directory "$MESON_BUILD_ROOT" \
+    --external \
     --output-file $tmp.initial \
     --quiet
 $lcov --capture \
     --base-directory "$MESON_BUILD_ROOT" \
     --directory "$MESON_BUILD_ROOT" \
+    --external \
     --output-file $tmp.actual \
     --quiet
 $lcov -a $tmp.initial -a $tmp.actual -o $tmp.total --quiet
@@ -28,7 +31,8 @@ for pattern in \
     /gnu/store/\* \
     $HOME/.guix-profile/\* \
     /usr/\* \
-    \*test\*
+    \*test\* \
+    \*benchmark\*
 do
     $lcov --remove $tmp.total "$pattern" --output-file $tmp.new --quiet
     mv $tmp.new $tmp.total

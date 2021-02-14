@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2020 Ivan Gankevich
+© 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -53,7 +53,8 @@ namespace sys {
             static int
             child_main(void* arg) noexcept {
                 F* func = reinterpret_cast<F*>(arg);
-                return (*func)();
+                std::exit((*func)());
+                return 1;
             }
 
         };
@@ -74,7 +75,8 @@ namespace sys {
             child_main(void* arg) noexcept {
                 F* func = reinterpret_cast<F*>(arg);
                 (*func)();
-                return 0;
+                std::exit(0);
+                return 1;
             }
 
         };

@@ -73,7 +73,7 @@ struct PRNG {
 };
 
 template <class T>
-void test_socket_address_write_read_multiple() {
+void do_test_socket_address_write_read_multiple() {
     PRNG<T> prng;
     std::vector<sys::socket_address> addrs(10);
     std::generate(addrs.begin(), addrs.end(),
@@ -90,8 +90,8 @@ void test_socket_address_write_read_multiple() {
 }
 
 void test_socket_address_write_read_multiple() {
-    test_socket_address_write_read_multiple<sys::ipv4_address>();
-    test_socket_address_write_read_multiple<sys::ipv6_address>();
+    do_test_socket_address_write_read_multiple<sys::ipv4_address>();
+    do_test_socket_address_write_read_multiple<sys::ipv6_address>();
 }
 
 void test_socket_address_ipv4_all() {

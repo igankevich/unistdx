@@ -35,21 +35,21 @@ For more information, please refer to <http://unlicense.org/>
 
 #if defined(UNISTDX_HAVE_SYS_SEM_H)
 void test_sysv_semaphore() {
-    test_semaphore<sys::sysv_semaphore>();
+    test::semaphore<sys::sysv_semaphore>();
 }
 
 void test_sysv_semaphore_wait_until() {
-    test_semaphore_is_available<sys::sysv_semaphore>();
-    test_semaphore_wait_until<sys::sysv_semaphore>();
+    test::semaphore_is_available<sys::sysv_semaphore>();
+    test::semaphore_wait_until<sys::sysv_semaphore>();
 }
 
 void test_sysv_semaphore_producer_consumer_thread() {
-    test_semaphore_is_available<sys::sysv_semaphore>();
-    test_semaphore_producer_consumer_thread<sys::sysv_semaphore>();
+    test::semaphore_is_available<sys::sysv_semaphore>();
+    test::semaphore_producer_consumer_thread<sys::sysv_semaphore>();
 }
 
 void test_sysv_semaphore_producer_consumer_process() {
-    test_semaphore_is_available<sys::sysv_semaphore>();
-    test_producer_consumer_process<sys::sysv_semaphore>();
+    test::semaphore_is_available<sys::sysv_semaphore>();
+    test::producer_consumer_process<sys::sysv_semaphore>();
 }
 #endif

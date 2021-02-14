@@ -40,12 +40,12 @@ using namespace sys::test::lang;
 using sys::u64;
 
 void test_spin_mutex() {
-    test_thread_counter<sys::spin_mutex>();
+    test::thread_counter<sys::spin_mutex>();
 }
 
 void test_spin_mutex_thread() {
-    test_thread<std::mutex>();
-    test_thread<sys::spin_mutex>();
+    test::thread<std::mutex>();
+    test::thread<sys::spin_mutex>();
 }
 
 void test_recursive_spin_mutex_lock_lock() {

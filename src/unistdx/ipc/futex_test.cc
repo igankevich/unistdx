@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2021 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -47,15 +47,15 @@ void test_futex_as_mutex() {
     struct futex_mutex: public sys::futex {
         futex_mutex(): sys::futex{1} {}
     };
-    test_thread<futex_mutex>();
-    test_thread_counter<futex_mutex>();
+    test::thread<futex_mutex>();
+    test::thread_counter<futex_mutex>();
 }
 
 void test_futex_as_condition_variable() {
     struct futex_condition_variable: public sys::futex {
         futex_condition_variable(): sys::futex{0} {}
     };
-    test_semaphore<futex_condition_variable>();
-    test_semaphore_producer_consumer_thread<futex_condition_variable>();
-    test_semaphore_wait_until<futex_condition_variable>();
+    test::semaphore<futex_condition_variable>();
+    test::semaphore_producer_consumer_thread<futex_condition_variable>();
+    test::semaphore_wait_until<futex_condition_variable>();
 }

@@ -103,7 +103,7 @@ void test_base64_big_sizes() {
 }
 
 template<class T>
-void test_base64(size_t k, T spoil) {
+void do_test_base64(size_t k, T spoil) {
     typedef std::basic_string<T> string;
     string text = test::random_string<T>(k);
     string encoded(base64_encoded_size(k), '_');
@@ -147,17 +147,17 @@ void test_base64(size_t k, T spoil) {
 
 void test_base64_encode_decode_small_sizes() {
     for (auto k : small_sizes) {
-        test_base64<char>(k, 0);
-        test_base64<char>(k, '|');
-        test_base64<char>(k, 128);
+        do_test_base64<char>(k, 0);
+        do_test_base64<char>(k, '|');
+        do_test_base64<char>(k, 128);
     }
 }
 
 void test_base64_encode_decode_big_sizes() {
     for (auto k : big_sizes) {
-        expect(throws<std::length_error>(call([&] () { test_base64<char>(k, 0); })));
-        expect(throws<std::length_error>(call([&] () { test_base64<char>(k, '|'); })));
-        expect(throws<std::length_error>(call([&] () { test_base64<char>(k, 128); })));
+        expect(throws<std::length_error>(call([&] () { do_test_base64<char>(k, 0); })));
+        expect(throws<std::length_error>(call([&] () { do_test_base64<char>(k, '|'); })));
+        expect(throws<std::length_error>(call([&] () { do_test_base64<char>(k, 128); })));
     }
 }
 

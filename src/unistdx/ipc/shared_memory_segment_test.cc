@@ -90,7 +90,7 @@ void test_shared_memory_segment() {
 }
 
 template <class T>
-void test_shmembuf_producer_consumer() {
+void do_test_shmembuf_producer_consumer() {
     typedef typename sys::shared_memory_segment<T> shmem;
     typedef typename sys::basic_shmembuf<T> shmembuf;
     typedef std::lock_guard<shmembuf> shmembuf_guard;
@@ -138,8 +138,8 @@ void test_shmembuf_producer_consumer() {
 }
 
 void test_shmembuf_producer_consumer() {
-    test_shmembuf_producer_consumer<char>();
-    test_shmembuf_producer_consumer<unsigned char>();
+    do_test_shmembuf_producer_consumer<char>();
+    do_test_shmembuf_producer_consumer<unsigned char>();
 }
 
 void test_shmembuf_errors() {

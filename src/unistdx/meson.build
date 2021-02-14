@@ -106,6 +106,7 @@ if with_tests
             include_directories: src,
             implicit_include_directories: false,
             dependencies: [unistdx_test,threads] + (valgrind_dep.found() ? [valgrind_dep] : []) + unistdx_deps + unistdx_libs,
+            link_with: [unistdx_test_lib,unistdx_lib],
         ),
         is_parallel: false,
         args: ['unshare=']

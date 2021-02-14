@@ -85,9 +85,9 @@ auto string_to_duration(std::string s) -> Duration {
     throw std::invalid_argument(tmp.str());
 }
 
-std::string test_prefix = "test_";
+std::string symbol_prefix = "test_";
 std::string args_prefix = "args_";
-std::regex test_filter{".*", std::regex::ECMAScript | std::regex::optimize};
+std::regex symbol_filter{".*", std::regex::ECMAScript | std::regex::optimize};
 sys::test::Test_executor::duration timeout = std::chrono::seconds(30);
 sys::test::Test_executor tests;
 
@@ -103,11 +103,11 @@ void arguments(int argc, char** argv) {
         std::string name = arg.substr(0,pos);
         std::string value = arg.substr(pos+1);
         if (name == "prefix" || name == "test-prefix") {
-            test_prefix = std::move(value);
+            symbol_prefix = std::move(value);
         } else if (name == "prefix" || name == "args-prefix") {
             args_prefix = std::move(value);
         } else if (name == "filter") {
-            test_filter = std::regex{value, test_filter.flags()};
+            symbol_filter = std::regex{value, symbol_filter.flags()};
         } else if (name == "catch-errors") {
             tests.catch_errors(bool(std::stoi(value)));
         } else if (name == "unshare") {
@@ -201,13 +201,13 @@ int main(int argc, char* argv[]) {
                     auto name = &strings[sym.name()];
                     if (*name == 0) { continue; }
                     std::string demangled_name = sys::demangle(name, buf);
-                    if (demangled_name.compare(0, test_prefix.size(), test_prefix) == 0) {
+                    if (demangled_name.compare(0, symbol_prefix.size(), symbol_prefix) == 0) {
                         sys::test::Symbol s;
                         s.original_name(std::string(name));
                         s.demangled_name(std::move(demangled_name));
                         s.address(reinterpret_cast<void*>(sym.address()));
                         s.type(sym.type());
-                        if (std::regex_search(s.short_name(), test_filter)) {
+                        if (std::regex_search(s.short_name(), symbol_filter)) {
                             tests.emplace(std::move(s));
                         }
                     }
@@ -225,8 +225,8 @@ int main(int argc, char* argv[]) {
                         s.address(reinterpret_cast<void*>(sym.address()));
                         s.type(sym.type());
                         std::string test_name;
-                        test_name.reserve(test_prefix.size() + args_prefix.size());
-                        test_name += test_prefix;
+                        test_name.reserve(symbol_prefix.size() + args_prefix.size());
+                        test_name += symbol_prefix;
                         test_name += s.short_name().substr(args_prefix.size());
                         tests.test_arguments(test_name, std::move(s));
                     }

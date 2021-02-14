@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.68.1',
+    version: '0.68.2',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -35,7 +35,8 @@ foreach arg : [
     '-Werror=cast-align',
     '-Wcast-align=strict',
     '-Wno-terminate',
-    '-fvisibility-inlines-hidden']
+    '-fvisibility-inlines-hidden',
+]
     if cpp.has_argument(arg)
         add_global_arguments(arg, language: 'cpp')
     endif
