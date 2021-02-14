@@ -76,10 +76,7 @@ if gcov.found()
         configuration: gcov_tool
     )
     if lcov.found() and genhtml.found()
-        run_target(
-            'test-lcov',
-            command: join_paths(meson.current_build_dir(), 'coverage')
-        )
+        run_target('lcov', command: join_paths(meson.current_build_dir(), 'coverage'))
     endif
 endif
 # }}}
@@ -87,7 +84,7 @@ endif
 gcovr = find_program('gcovr', required: false)
 if gcovr.found()
     run_target(
-        'test-gcovr',
+        'gcovr',
         command: [
             gcovr,
             '--branches',

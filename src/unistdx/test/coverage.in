@@ -7,8 +7,6 @@ genhtml="@genhtml_path@ @genhtml_options@ $lcovrc_options"
 set -ex
 cd "$MESON_BUILD_ROOT"
 tmp="coverage.info"
-find "$MESON_BUILD_ROOT" -name '*.gcda' -delete
-ninja test
 "@lcov_path@" --version
 "@gcov@" --version
 g++ --version
