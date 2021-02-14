@@ -54,9 +54,10 @@ namespace {
 
     void backtrace_on_signal_static(int sig, sys::signal_information* info, void*) noexcept {
         // prevent recursive calls
-        if (entered.test_and_set()) { return; }
+        if (entered.test_and_set()) { std::_Exit(sig); }
         if (info->process_id() != sys::this_process::id()) {
             sys::print(std::cerr, to_string(sys::signal(sig)), sys::stack_trace());
+            std::_Exit(sig);
         } else {
             if (!backtrace_thread_ptr) {
                 sys::backtrace_on_signal(sig);
@@ -120,60 +121,41 @@ void sys::test::Backtrace_thread::capture_backtrace(int sig) {
 int sys::test::Test::run() {
     if (this->_arguments.address()) {
         using argument_array = ::sys::test::arguments<void*>;
-        if (this->_arguments.type() == elf::symbol_types::code) {
-            std::seed_seq seq(this->_seeds.begin(), this->_seeds.end());
-            random_engine prng(seq);
-            int num_finished = 0;
-            for (size_t i=0; i<this->_num_evaluations; ++i) {
-                argument_array* args = this->_arguments.call<argument_array*>(&prng);
-                auto& raw_data = args->raw_data();
-                auto old_num_errors = this->_num_errors;
-                for (const auto& a : raw_data) {
-                    this->_function.apply<bool>(a);
-                }
-                if (this->_arguments.type() == elf::symbol_types::code) {
-                    args->destroy();
-                }
-                ++num_finished;
-                std::stringstream message;
-                message << '[' << num_finished << '/' << this->_num_evaluations << "] ";
-                using namespace sys::terminal;
-                message << bold();
-                if (this->_num_errors == old_num_errors) {
-                    message << color(colors::fg_green) << "ok";
-                } else {
-                    message << color(colors::fg_red) << "fail";
-                }
-                message << reset();
-                message << ' ' << this->_function.short_name() << '('
-                    << this->_arguments.short_name() << "(prng))";
-                message << '\n';
-                std::clog << message.str() << std::flush;
+        argument_array* args{};
+        switch (this->_arguments.type()) {
+            case elf::symbol_types::code:
+                args = this->_arguments.call<argument_array*>();
+                break;
+            case elf::symbol_types::data:
+                args = reinterpret_cast<argument_array*>(this->_arguments.address());
+                break;
+            default:
+                throw std::invalid_argument("unknown args type");
+                break;
+        }
+        if (!args) {
+            throw std::invalid_argument("unable to find arguments");
+        }
+        int num_finished = 0;
+        auto& raw_data = args->raw_data();
+        int num_args = raw_data.size();
+        for (const auto& a : raw_data) {
+            bool success = this->_function.apply<bool>(a);
+            ++num_finished;
+            std::stringstream message;
+            message << '[' << num_finished << '/' << num_args << "] ";
+            using namespace sys::terminal;
+            message << bold();
+            if (success) {
+                message << color(colors::fg_green) << "ok";
+            } else {
+                message << color(colors::fg_red) << "fail";
             }
-        } else {
-            argument_array* args =
-                reinterpret_cast<argument_array*>(this->_arguments.address());
-            int num_finished = 0;
-            auto& raw_data = args->raw_data();
-            int num_args = raw_data.size();
-            for (const auto& a : raw_data) {
-                bool success = this->_function.apply<bool>(a);
-                ++num_finished;
-                std::stringstream message;
-                message << '[' << num_finished << '/' << num_args << "] ";
-                using namespace sys::terminal;
-                message << bold();
-                if (success) {
-                    message << color(colors::fg_green) << "ok";
-                } else {
-                    message << color(colors::fg_red) << "fail";
-                }
-                message << reset();
-                message << ' ' << this->_function.short_name() << '('
-                    << this->_arguments.short_name() << '[' << num_finished-1 << "])";
-                message << '\n';
-                std::clog << message.str() << std::flush;
-            }
+            message << reset();
+            message << ' ' << this->_function.short_name() << '('
+                << this->_arguments.short_name() << '[' << num_finished-1 << "])";
+            message << '\n';
+            std::clog << message.str() << std::flush;
         }
     } else {
         this->_function.call<bool>();

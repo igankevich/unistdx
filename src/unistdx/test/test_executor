@@ -166,7 +166,6 @@ namespace sys {
                 size_t(std::chrono::steady_clock::now().time_since_epoch().count()),
                 size_t(std::random_device{}()),
             };
-            size_t _num_evaluations = 100;
             Status _status = Status::Success;
             sys::signal _signal{};
             std::string _exception_type;
@@ -188,8 +187,12 @@ namespace sys {
                 this->_arguments = std::move(rhs);
             }
 
-            inline size_t num_evaluations() const noexcept { return this->_num_evaluations; }
-            inline void num_evaluations(size_t rhs) noexcept { this->_num_evaluations = rhs; }
+            inline std::default_random_engine prng() const {
+                std::seed_seq seq(this->_seeds.begin(), this->_seeds.end());
+                return std::default_random_engine(seq);
+            }
+
+            inline int num_errors() const noexcept { return this->_num_errors; }
             inline Status status() const noexcept { return this->_status; }
             inline void status(Status rhs) noexcept { this->_status = rhs; }
             inline bool success() const noexcept { return status() == Status::Success; }

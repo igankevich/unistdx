@@ -161,17 +161,23 @@ namespace sys {
     public:
         const_string() noexcept = default;
 
-        inline
+        inline constexpr
         const_string(const_pointer data, size_type size) noexcept:
         _data(data), _size(size) {}
 
+        /*
         inline
         const_string(const_pointer data) noexcept:
         const_string(data, std::char_traits<char>::length(data)) {}
+        */
 
         template <class Tr, class Alloc> inline
         const_string(const std::basic_string<char,Tr,Alloc>& str) noexcept:
         const_string(str.data(), str.size()) {}
+
+        template <size_t N> constexpr inline
+        const_string(const char (&data)[N]) noexcept:
+        const_string(data, N-1) {}
 
         inline const_pointer data() const noexcept { return this->_data; }
         inline operator const_pointer() const noexcept { return this->_data; }

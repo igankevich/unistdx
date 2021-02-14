@@ -49,3 +49,60 @@ void test_interface_socket_address() {
     test::stream_insert_equals("127.0.0.1/24:33333", isa);
     test::io_operators(isa);
 }
+
+template <class T>
+void do_test_interface_socket_address_properties() {
+    using namespace sys::test;
+    using rep = typename T::rep_type;
+    falsify(
+        [] (const Argument_array<6>& params) {
+            sys::interface_socket_address<T> a{
+                T{rep(params[0])},
+                sys::prefix_type(params[1]),
+                sys::port_type(params[2])
+            };
+            sys::interface_socket_address<T> b{
+                T{rep(params[2])},
+                sys::prefix_type(params[3]),
+                sys::port_type(params[4])
+            };
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8),
+        make_parameter<sys::port_type>(),
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8),
+        make_parameter<sys::port_type>());
+    falsify(
+        [] (const Argument_array<3>& params) {
+            sys::interface_socket_address<T> a{
+                T{rep(params[0])},
+                sys::prefix_type(params[1]),
+                sys::port_type(params[2])
+            };
+            test::io_operators(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8),
+        make_parameter<sys::port_type>());
+    falsify(
+        [] (const Argument_array<3>& params) {
+            sys::interface_socket_address<T> a{
+                T{rep(params[0])},
+                sys::prefix_type(params[1]),
+                sys::port_type(params[2])
+            };
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8),
+        make_parameter<sys::port_type>());
+}
+
+void test_interface_socket_address_properties() {
+    do_test_interface_socket_address_properties<sys::ipv4_address>();
+    do_test_interface_socket_address_properties<sys::ipv6_address>();
+}

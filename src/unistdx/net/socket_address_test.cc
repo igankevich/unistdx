@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2019, 2020 Ivan Gankevich
+© 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -42,7 +42,6 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/net/socket_address>
 
-#include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/language>
 #include <unistdx/test/operator>
 
@@ -72,22 +71,6 @@ struct PRNG {
     inline sa random_address() { return sa{T{generator()}, 0}; }
 
 };
-
-template <class T>
-void test_socket_address_write_read_single() {
-    PRNG<T> prng;
-    sys::socket_address addr1 = prng.random_address();
-    sys::socket_address addr2;
-    std::stringstream s;
-    s << addr1;
-    s >> addr2;
-    expect(value(addr1) == value(addr2));
-}
-
-void test_socket_address_write_read_single() {
-    test_socket_address_write_read_single<sys::ipv4_address>();
-    test_socket_address_write_read_single<sys::ipv6_address>();
-}
 
 template <class T>
 void test_socket_address_write_read_multiple() {
@@ -269,15 +252,6 @@ void test_socket_address_unix_domain() {
     expect(!value(sys::socket_address()));
 }
 
-void test_socket_address_bstream_insert_extract() {
-    for (const auto& sa : {sys::socket_address(),
-        sys::socket_address(sys::ipv4_socket_address{{192,168,0,1},1000}),
-        sys::socket_address(sys::ipv6_socket_address{{0,0,0,0,0,0,0,1},1000}),
-    }) {
-        test::bstream_insert_extract(sa);
-    }
-}
-
 #if defined(UNISTDX_HAVE_LINUX_NETLINK_H)
 void test_socket_address_netlink() {
     expect(value(sys::socket_address_family::netlink) ==
@@ -314,4 +288,150 @@ void test_ipv6_socket_address_port() {
     sys::ipv6_socket_address sa{{0,0,0,0,0,0,0,0},1234};
     expect(value(1234u) == value(sa.port()));
     expect(value(1234u) == value(t::port(sa)));
+}
+
+template <class Address, class T>
+void do_test_socket_address_properties() {
+    using namespace sys::test;
+    using rep = typename T::rep_type;
+    falsify(
+        [] (const Argument_array<4>& params) {
+            sys::socket_address a{Address{T{rep(params[0])}, sys::port_type(params[1])}};
+            sys::socket_address b{Address{T{rep(params[2])}, sys::port_type(params[3])}};
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>(),
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>());
+    falsify(
+        [] (const Argument_array<2>& params) {
+            sys::socket_address a{Address{T{rep(params[0])}, sys::port_type(params[1])}};
+            test::io_operators(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>());
+    falsify(
+        [] (const Argument_array<2>& params) {
+            sys::socket_address a{Address{T{rep(params[0])}, sys::port_type(params[1])}};
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>());
+}
+
+void test_socket_address_properties() {
+    do_test_socket_address_properties<sys::ipv4_socket_address,sys::ipv4_address>();
+    do_test_socket_address_properties<sys::ipv6_socket_address,sys::ipv6_address>();
+}
+
+template <class Address, class T>
+void do_test_ip_socket_address_properties() {
+    using namespace sys::test;
+    using rep = typename T::rep_type;
+    falsify(
+        [] (const Argument_array<4>& params) {
+            Address a{T{rep(params[0])}, sys::port_type(params[1])};
+            Address b{T{rep(params[2])}, sys::port_type(params[3])};
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>(),
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>());
+    falsify(
+        [] (const Argument_array<2>& params) {
+            Address a{T{rep(params[0])}, sys::port_type(params[1])};
+            test::io_operators(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>());
+    falsify(
+        [] (const Argument_array<2>& params) {
+            Address a{T{rep(params[0])}, sys::port_type(params[1])};
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::port_type>());
+}
+
+void test_ip_socket_address_properties() {
+    do_test_ip_socket_address_properties<sys::ipv4_socket_address,sys::ipv4_address>();
+    do_test_ip_socket_address_properties<sys::ipv6_socket_address,sys::ipv6_address>();
+}
+
+void test_unix_socket_address_properties() {
+    using namespace sys::test;
+    auto prng = current_test->prng();
+    falsify(
+        [&prng] (const Argument_array<2>& params) {
+            std::uniform_int_distribution<char> dist('a','z');
+            std::string name;
+            auto size = params[0];
+            name.reserve(size);
+            for (size_t i=0; i<size; ++i) { name += dist(prng); }
+            sys::unix_socket_address a(name.data());
+            name.clear();
+            size = params[1];
+            name.reserve(size);
+            for (size_t i=0; i<size; ++i) { name += dist(prng); }
+            sys::unix_socket_address b(name.data());
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<size_t>(0, sys::unix_socket_address::max_length()),
+        make_parameter<size_t>(0, sys::unix_socket_address::max_length()));
+    falsify(
+        [&prng] (const Argument_array<1>& params) {
+            auto size = params[0];
+            std::string name;
+            name.reserve(size);
+            std::uniform_int_distribution<char> dist('a','z');
+            for (size_t i=0; i<size; ++i) { name += dist(prng); }
+            sys::unix_socket_address a(name.data());
+            test::io_operators(a);
+        },
+        make_parameter<size_t>(0, sys::unix_socket_address::max_length()));
+    falsify(
+        [&prng] (const Argument_array<1>& params) {
+            auto size = params[0];
+            std::string name;
+            name.reserve(size);
+            std::uniform_int_distribution<char> dist('a','z');
+            for (size_t i=0; i<size; ++i) { name += dist(prng); }
+            sys::unix_socket_address a(name.data());
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<size_t>(0, sys::unix_socket_address::max_length()));
+}
+
+void test_netlink_socket_address_properties() {
+    using namespace sys::test;
+    falsify(
+        [] (const Argument_array<2>& params) {
+            sys::netlink_socket_address a{sys::pid_type(params[0])};
+            sys::netlink_socket_address b{sys::pid_type(params[1])};
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<sys::pid_type>(),
+        make_parameter<sys::pid_type>());
+    falsify(
+        [] (const Argument_array<1>& params) {
+            sys::netlink_socket_address a{sys::pid_type(params[0])};
+            test::io_operators(a);
+        },
+        make_parameter<sys::pid_type>());
+    falsify(
+        [] (const Argument_array<1>& params) {
+            sys::netlink_socket_address a{sys::pid_type(params[0])};
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<sys::pid_type>());
 }

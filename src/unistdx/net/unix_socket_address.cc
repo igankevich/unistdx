@@ -45,10 +45,6 @@ namespace {
 
 }
 
-sys::socket_length_type sys::unix_socket_address::size() const noexcept {
-    return sizeof(sa_family_t) + path_length();
-}
-
 sys::socket_length_type sys::unix_socket_address::path_length() const noexcept {
     return ::path_length(path());
 }

@@ -42,22 +42,6 @@ For more information, please refer to <http://unlicense.org/>
 namespace sys {
     namespace test {
 
-        template <class T>
-        class argument {
-        private:
-            void* _data{};
-        public:
-            inline argument(void* data) noexcept: _data(data) {}
-            inline T* get() noexcept { return reinterpret_cast<T*>(this->_data); }
-            inline const T* get() const noexcept { return reinterpret_cast<T*>(this->_data); }
-            inline T* operator->() noexcept { return get(); }
-            inline const T* operator->() const noexcept { return get(); }
-            inline T& operator*() noexcept { return *get(); }
-            inline const T& operator*() const noexcept { return *get(); }
-            inline operator T&() noexcept { return *get(); }
-            inline operator const T&() const noexcept { return *get(); }
-        };
-
         template <class ... Elements>
         class List;
 
@@ -82,6 +66,8 @@ namespace sys {
         public:
             inline List(Head&& head, Tail&& ... tail):
             _head{std::forward<Head>(head)}, _tail{std::forward<Tail>(tail)...} {}
+            inline List(const Head& head, const Tail& ... tail):
+            _head{head}, _tail{tail...} {}
             const Head& head() const noexcept { return this->_head; }
             Head& head() noexcept { return this->_head; }
             Head* head_ptr() noexcept { return &this->_head; }

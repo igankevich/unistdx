@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -36,25 +36,11 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/config>
 #include <unistdx/net/interface_address>
+#include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/operator>
+#include <unistdx/test/properties>
 
 using namespace sys::test::lang;
-
-std::default_random_engine rng;
-
-template <class T>
-T
-genrandom() {
-    std::uniform_int_distribution<T> dist(0, std::numeric_limits<T>::max());
-    return dist(rng);
-}
-
-template <class Addr>
-sys::interface_address<Addr>
-random_ifaddr() {
-    typedef typename Addr::rep_type rep;
-    return sys::interface_address<Addr>(Addr(genrandom<rep>()), genrandom<sys::prefix_type>());
-}
 
 void test_interface_address_localhost_ipv6() {
     typedef sys::interface_address<sys::ipv6_address> ifaddr_type;
@@ -79,34 +65,53 @@ void test_interface_address_input_output_operators_localhost() {
 }
 
 template <class T>
-void test_interface_address_input_output_operators_random() {
-    for (int i=0; i<100; ++i) {
-        test::io_operators(random_ifaddr<T>());
-    }
+void do_test_interface_address_properties() {
+    using namespace sys::test;
+    using rep = typename T::rep_type;
+    falsify(
+        [] (const Argument_array<4>& params) {
+            sys::interface_address<T> a{T{rep(params[0])}, sys::prefix_type(params[1])};
+            sys::interface_address<T> b{T{rep(params[2])}, sys::prefix_type(params[3])};
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8),
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8));
+    falsify(
+        [] (const Argument_array<2>& params) {
+            sys::interface_address<T> a{T{rep(params[0])}, sys::prefix_type(params[1])};
+            test::io_operators(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8));
+    falsify(
+        [] (const Argument_array<2>& params) {
+            sys::interface_address<T> a{T{rep(params[0])}, sys::prefix_type(params[1])};
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<rep>(),
+        make_parameter<sys::prefix_type>(0, sizeof(rep)*8));
+    falsify(
+        [] (const Argument_array<1>& params) {
+            using t = sys::ipaddr_traits<T>;
+            expect(sys::interface_address<T>(T{rep(params[0])}, t::widearea_mask()).is_widearea());
+        },
+        make_parameter<rep>());
 }
 
-void test_interface_address_input_output_operators_random() {
-    test_interface_address_input_output_operators_random<sys::ipv4_address>();
-    test_interface_address_input_output_operators_random<sys::ipv6_address>();
+void test_interface_address_properties() {
+    do_test_interface_address_properties<sys::ipv4_address>();
+    do_test_interface_address_properties<sys::ipv6_address>();
 }
 
 template <class T>
 void test_interface_address_loopback() {
-    typedef typename T::rep_type rep;
-    typedef sys::interface_address<T> ifaddr_type;
-    typedef sys::ipaddr_traits<T> traits_type;
-    expect(
-        ifaddr_type(
-            traits_type::localhost(),
-            traits_type::loopback_mask()
-        ).is_loopback()
-    );
-    expect(
-        ifaddr_type(
-            T(genrandom<rep>()),
-            traits_type::widearea_mask()
-        ).is_widearea()
-    );
+    using ifaddr_type = sys::interface_address<T>;
+    using t = sys::ipaddr_traits<T>;
+    expect(ifaddr_type(t::localhost(), t::loopback_mask()).is_loopback());
 }
 
 void test_interface_address_loopback() {

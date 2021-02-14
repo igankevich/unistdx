@@ -100,7 +100,7 @@ sys::operator>>(bstream& in, socket_address_family& rhs) {
 }
 
 const char*
-sys::to_string(socket_address_family rhs) {
+sys::to_string(socket_address_family rhs) noexcept {
     switch (rhs) {
     case socket_address_family::unspecified: return "unspecified";
     case socket_address_family::inet: return "inet";

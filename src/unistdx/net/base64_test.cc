@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2019, 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -36,6 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/base/base64>
 #include <unistdx/base/log_message>
 #include <unistdx/test/language>
+#include <unistdx/test/properties>
 #include <unistdx/test/random_string>
 
 using namespace sys::test::lang;
@@ -202,27 +203,25 @@ void test_base64_invalid_argument() {
     })));
 }
 
-arguments<std::string>* args_base64_symmetry(random_engine* prng) {
-    std::uniform_int_distribution<char> dist_char(
-        std::numeric_limits<char>::min(), std::numeric_limits<char>::max());
-    std::uniform_int_distribution<size_t> dist_size(0, 4097);
-    auto size = dist_size(*prng);
-    std::string input;
-    input.reserve(size);
-    for (size_t i=0; i<size; ++i) { input += dist_char(*prng); }
-    return new arguments<std::string>{
-        {std::move(input)}
-    };
-}
-
-bool test_base64_symmetry(std::string* s) {
-    auto& input = *s;
-    std::string encoded(base64_encoded_size(input.size()), '_');
-    sys::base64_encode(input.data(), input.size(), &encoded[0]);
-    std::string decoded(base64_max_decoded_size(encoded.size()), '_');
-    auto actual_size = sys::base64_decode(encoded.data(), encoded.size(), &decoded[0]);
-    decoded.resize(actual_size);
-    return expect(value(input) == value(decoded));
+void test_base64_symmetry_encode_decode() {
+    using namespace sys::test;
+    auto prng = current_test->prng();
+    falsify(
+        [&prng] (const Argument_array<1>& params) {
+            auto size = params[0];
+            std::string input;
+            input.reserve(size);
+            std::uniform_int_distribution<char> dist_char(
+                std::numeric_limits<char>::min(), std::numeric_limits<char>::max());
+            for (size_t i=0; i<size; ++i) { input += dist_char(prng); }
+            std::string encoded(base64_encoded_size(input.size()), '_');
+            sys::base64_encode(input.data(), input.size(), &encoded[0]);
+            std::string decoded(base64_max_decoded_size(encoded.size()), '_');
+            auto actual_size = sys::base64_decode(encoded.data(), encoded.size(), &decoded[0]);
+            decoded.resize(actual_size);
+            return expect(value(input) == value(decoded));
+        },
+        make_parameter<size_t>(0,4097));
 }
 
 const unsigned char base64_alphabet[64] = {
@@ -233,25 +232,27 @@ const unsigned char base64_alphabet[64] = {
     '4', '5', '6', '7', '8', '9', '+', '/'
 };
 
-arguments<std::string>* args_base64_symmetry_decode_encode(random_engine* prng) {
-    std::uniform_int_distribution<size_t> dist_index(0, 63);
-    std::uniform_int_distribution<size_t> dist_size(0, 4097);
-    auto size = dist_size(*prng);
-    if (size%4 != 0) { size += 4-size%4; }
-    std::string input;
-    input.reserve(size);
-    for (size_t i=0; i<size; ++i) { input += base64_alphabet[dist_index(*prng)]; }
-    return new arguments<std::string>{
-        {std::move(input)}
-    };
-}
-
-bool test_base64_symmetry_decode_encode(std::string* s) {
-    auto& input = *s;
-    std::string decoded(base64_max_decoded_size(input.size()), '_');
-    auto actual_size = sys::base64_decode(input.data(), input.size(), &decoded[0]);
-    decoded.resize(actual_size);
-    std::string encoded(base64_encoded_size(decoded.size()), '_');
-    sys::base64_encode(decoded.data(), decoded.size(), &encoded[0]);
-    return expect(value(input) == value(encoded));
+void test_base64_symmetry_decode_encode() {
+    using namespace sys::test;
+    auto prng = current_test->prng();
+    falsify(
+        [&prng] (const Argument_array<2>& params) {
+            auto size = params[0];
+            auto padding = params[1];
+            if (size%4 != 0) { size += 4-size%4; }
+            size += 4-padding;
+            std::string input;
+            input.reserve(size);
+            std::uniform_int_distribution<size_t> dist_index(0,63);
+            for (size_t i=0; i<size; ++i) { input += base64_alphabet[dist_index(prng)]; }
+            for (size_t i=0; i<padding; ++i) { input += '='; }
+            std::string decoded(base64_max_decoded_size(input.size()), '_');
+            auto actual_size = sys::base64_decode(input.data(), input.size(), &decoded[0]);
+            decoded.resize(actual_size);
+            std::string encoded(base64_encoded_size(decoded.size()), '_');
+            sys::base64_encode(decoded.data(), decoded.size(), &encoded[0]);
+            expect(value(input) == value(encoded));
+        },
+        make_parameter<size_t>(0,4097),
+        make_parameter<size_t>(0,0));
 }

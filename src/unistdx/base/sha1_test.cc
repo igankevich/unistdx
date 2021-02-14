@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2019, 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -115,14 +115,14 @@ arguments<std::string,std::string> args_sha1_known_hashes = {
     },
 };
 
-bool test_sha1_known_hashes(std::string* input, std::string* expected_output) {
+void test_sha1_known_hashes(std::string* input, std::string* expected_output) {
     std::vector<u32> result(5);
     sys::sha1 sha;
     sha.put(input->data(), input->size());
     sha.compute();
     sha.digest(result.data());
     std::string output = sha1_digest_to_string(result);
-    return expect(value(*expected_output) == value(output));
+    expect(value(*expected_output) == value(output));
 }
 
 void test_sha1_one_million_of_a() {

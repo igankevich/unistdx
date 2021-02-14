@@ -89,3 +89,36 @@ void test_ipv6_address_ordering() {
     expect(value(sys::ipv6_address("10::1")) < value(sys::ipv6_address("10::2")));
     expect(value(sys::ipv6_address("10::2")) >= value(sys::ipv6_address("10::1")));
 }
+
+template <class T>
+void do_test_ip_address_properties() {
+    using namespace sys::test;
+    using rep = typename T::rep_type;
+    falsify(
+        [] (const Argument_array<2>& params) {
+            T a{rep(params[0])};
+            T b{rep(params[1])};
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<rep>(),
+        make_parameter<rep>());
+    falsify(
+        [] (const Argument_array<1>& params) {
+            T a{rep(params[0])};
+            test::io_operators(a);
+        },
+        make_parameter<rep>());
+    falsify(
+        [] (const Argument_array<1>& params) {
+            T a{rep(params[0])};
+            test::bstream_insert_extract(a);
+        },
+        make_parameter<rep>());
+}
+
+void test_ip_address_properties() {
+    do_test_ip_address_properties<sys::ipv4_address>();
+    do_test_ip_address_properties<sys::ipv6_address>();
+}

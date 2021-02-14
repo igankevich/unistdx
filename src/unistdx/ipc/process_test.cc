@@ -30,6 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <bitset>
 #include <thread>
 
 #include <unistdx/base/log_message>
@@ -41,6 +42,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <unistdx/test/config>
 #include <unistdx/test/language>
 #include <unistdx/test/operator>
+#include <unistdx/test/properties>
 #include <valgrind/config>
 
 using namespace sys::test::lang;
@@ -196,18 +198,19 @@ void test_clone_users() {
     expect(value(0) == value(status.exit_code()));
 }
 
+std::mutex mtx;
+std::condition_variable cv;
+bool stopped = false;
+
 void test_process_as_thread() {
     using pf = sys::process_flag;
-    std::mutex mtx;
-    std::condition_variable cv;
     std::clog << "parent mutex    = " << &mtx << std::endl;
     std::clog << "parent cv       = " << &cv << std::endl;
-    bool stopped = false;
-    sys::process t{[&] () -> int {
+    sys::process t{[] () -> int {
         std::clog << "child mutex     = " << std::addressof(mtx) << std::endl;
         std::clog << "child cv        = " << std::addressof(cv) << std::endl;
         std::unique_lock<std::mutex> lock(mtx);
-        cv.wait(lock, [&stopped] () { return stopped; });
+        cv.wait(lock, [] () { return stopped; });
         return 0;
     }, pf::signal_parent | pf::share_memory};
     {
@@ -244,50 +247,80 @@ void test_cpu_set() {
     expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set::all()) == value(sys::cpu_set{}));
 }
 
-arguments<sys::cpu_set,sys::cpu_set>*
-args_cpu_set_identities(random_engine* prng) {
-    sys::cpu_set a, b;
-    std::bernoulli_distribution dist;
-    for (int i=0; i<a.size(); ++i) {
-        if (dist(*prng)) { a.set(i); }
-    }
-    for (int i=0; i<b.size(); ++i) {
-        if (dist(*prng)) { b.set(i); }
-    }
-    sys::cpu_set c(b), d(a);
-    return new arguments<sys::cpu_set,sys::cpu_set>{
-        {std::move(a), std::move(b)},
-        {std::move(c), std::move(d)},
-    };
+void test_cpu_set_identities() {
+    using namespace sys::test;
+    falsify(
+        [] (const Argument_array<32>& params) {
+            sys::cpu_set aa, bb;
+            for (size_t i=0; i<16; ++i) {
+                std::bitset<64> bits(params[i]);
+                for (size_t j=0; j<bits.size(); ++j) {
+                    if (bits[j]) { aa.set(i*bits.size() + j); }
+                }
+            }
+            for (size_t i=16; i<32; ++i) {
+                std::bitset<64> bits(params[i]);
+                for (size_t j=0; j<bits.size(); ++j) {
+                    if (bits[j]) { bb.set(i*bits.size() + j); }
+                }
+            }
+            for (auto pair : {std::make_pair(&aa,&bb),
+                              std::make_pair(&aa,&aa),
+                              std::make_pair(&bb,&bb)}) {
+                auto& a = *pair.first;
+                auto& b = *pair.second;
+                expect(value(~(a & b)) == value(~a | ~b));
+                expect(value(a ^ b) == value((a | b) & ~(a & b)));
+                expect(value(a ^ b) == value((a & ~b) | (~a & b)));
+                expect(value(a & b) == value(~(~a | ~b)));
+                expect(value(a) == value(~(~a)));
+            }
+        },
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(), make_parameter<uint64_t>());
 }
 
-void test_cpu_set_identities(sys::cpu_set* aa, sys::cpu_set* bb) {
-    auto& a = *aa;
-    auto& b = *bb;
-    expect(value(~(a & b)) == value(~a | ~b));
-    expect(value(a ^ b) == value((a | b) & ~(a & b)));
-    expect(value(a ^ b) == value((a & ~b) | (~a & b)));
-    expect(value(a & b) == value(~(~a | ~b)));
-    expect(value(a) == value(~(~a)));
-}
-
-arguments<sys::cpu_set>*
-args_cpu_set_io(random_engine* prng) {
-    sys::cpu_set a;
-    std::bernoulli_distribution dist;
-    for (int i=0; i<a.size(); ++i) {
-        if (dist(*prng)) { a.set(i); }
-    }
-    return new arguments<sys::cpu_set>{
-        {std::move(a)},
-    };
-}
-
-void test_cpu_set_io(sys::cpu_set* aa) {
-    auto& a = *aa;
-    std::stringstream tmp;
-    tmp << a;
-    sys::cpu_set b;
-    tmp >> b;
-    expect(value(a) == value(b));
+void test_cpu_set_io() {
+    using namespace sys::test;
+    falsify(
+        [] (const Argument_array<16>& params) {
+            sys::cpu_set a;
+            for (size_t i=0; i<params.size(); ++i) {
+                std::bitset<64> bits(params[i]);
+                for (size_t j=0; j<bits.size(); ++j) {
+                    if (bits[j]) { a.set(i*bits.size() + j); }
+                }
+            }
+            test::stream_insert_extract(a);
+        },
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>(),
+        make_parameter<uint64_t>());
 }

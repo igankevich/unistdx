@@ -31,23 +31,29 @@ For more information, please refer to <http://unlicense.org/>
 */
 
 #include <unistdx/net/ethernet_address>
+#include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/operator>
+#include <unistdx/test/properties>
 
 using namespace sys::test::lang;
 
 void test_ethernet_address_calculus() {
-    using namespace sys;
-    expect(value(ethernet_address{}) == value(ethernet_address{}));
-    expect(
-        value(ethernet_address{})
-        !=
-        value(ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff))
-    );
-    expect(
-        value(ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff))
-        ==
-        value(ethernet_address(0xff,0xff,0xff,0xff,0xff,0xff))
-    );
+    using namespace sys::test;
+    using octet = sys::ethernet_address::value_type;
+    falsify(
+        [] (const Argument_array<12>& params) {
+            sys::ethernet_address a(params[0], params[1], params[2],
+                params[3], params[4], params[5]);
+            sys::ethernet_address b(params[6], params[7], params[8],
+                params[9], params[10], params[11]);
+            test::equality_and_hash(a, b);
+            test::equality_and_hash(a, a);
+            test::equality_and_hash(b, b);
+        },
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>(),
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>(),
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>(),
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>());
 }
 
 typedef decltype(std::right) manipulator;
@@ -74,5 +80,22 @@ void test_ethernet_address_print_padding() {
 }
 
 void test_ethernet_address_io() {
-    test::io_operators(sys::ethernet_address{0xff,0xff,0xff,0xff,0xff,0xff});
+    using namespace sys::test;
+    using octet = sys::ethernet_address::value_type;
+    falsify(
+        [] (const Argument_array<6>& params) {
+            sys::ethernet_address addr(params[0], params[1], params[2],
+                params[3], params[4], params[5]);
+            test::io_operators(addr);
+        },
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>(),
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>());
+    falsify(
+        [] (const Argument_array<6>& params) {
+            sys::ethernet_address addr(params[0], params[1], params[2],
+                params[3], params[4], params[5]);
+            test::bstream_insert_extract(addr);
+        },
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>(),
+        make_parameter<octet>(), make_parameter<octet>(), make_parameter<octet>());
 }

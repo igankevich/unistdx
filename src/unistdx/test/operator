@@ -33,6 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #ifndef UNISTDX_TEST_OPERATOR
 #define UNISTDX_TEST_OPERATOR
 
+#include <unistdx/test/bstream_insert_extract>
 #include <unistdx/test/language>
 
 #include <iostream>
@@ -41,16 +42,26 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace test {
 
-    template<class T> bool
+    template <class Stream=std::stringstream, class T> bool
     io_operators(const T& expected) {
         using namespace sys::test::lang;
         T actual;
-        std::stringstream s;
+        Stream s;
         expect(s.good());
         s << expected;
         expect(s.good());
         s >> actual;
         expect(!s.fail());
+        return expect(value(expected) == value(actual));
+    }
+
+    template <class Stream=std::stringstream, class T> bool
+    stream_insert_extract(const T& expected) {
+        using namespace sys::test::lang;
+        T actual;
+        Stream s;
+        s << expected;
+        s >> actual;
         return expect(value(expected) == value(actual));
     }
 
@@ -108,6 +119,15 @@ namespace test {
         T actual_value{};
         tmp >> actual_value;
         return actual_value;
+    }
+
+    template <class T>
+    void equality_and_hash(const T& a, const T& b) {
+        using namespace sys::test::lang;
+        std::hash<T> hash;
+        expect((value(a) == value(b)) ^ (value(a) != value(b)));
+        expect((value(a) == value(b)) <= (value(hash(a)) == value(hash(b))));
+        expect((value(hash(a)) != value(hash(b))) <= (value(a) != value(b)));
     }
 
 }

@@ -82,7 +82,7 @@ namespace sys {
 
     /// Get family name.
     const char*
-    to_string(socket_address_family rhs);
+    to_string(socket_address_family rhs) noexcept;
 
     /// Print family name for debugging.
     std::ostream&
