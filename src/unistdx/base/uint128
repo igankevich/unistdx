@@ -81,10 +81,20 @@ namespace sys {
         u128& operator=(u128&&) = default;
         ~u128() = default;
 
-        inline constexpr explicit
-        operator u64 () const noexcept {
-            return this->_b;
-        }
+        #define UNISTDX_INTERNAL_CAST(TYPE) \
+            inline constexpr explicit operator TYPE () const noexcept { \
+                return static_cast<TYPE>(this->_b); \
+            }
+
+        UNISTDX_INTERNAL_CAST(u8)
+        UNISTDX_INTERNAL_CAST(u16)
+        UNISTDX_INTERNAL_CAST(u32)
+        UNISTDX_INTERNAL_CAST(u64)
+        UNISTDX_INTERNAL_CAST(i8)
+        UNISTDX_INTERNAL_CAST(i16)
+        UNISTDX_INTERNAL_CAST(i32)
+        UNISTDX_INTERNAL_CAST(i64)
+        #undef UNISTDX_INTERNAL_CAST
 
         inline constexpr explicit
         operator bool () const noexcept {

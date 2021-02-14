@@ -36,6 +36,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <thread>
 
 #include <unistdx/fs/file_mutex>
+#include <unistdx/io/event_file_descriptor>
 #include <unistdx/ipc/process>
 #include <unistdx/test/language>
 #include <unistdx/test/temporary_file>
@@ -48,15 +49,16 @@ void test_file_mutex_check() {
     test::temporary_file tmp(UNISTDX_TMPFILE);
     mutex_type mtx(tmp.path(), 0600);
     expect(static_cast<bool>(mtx));
-    sys::process child([&tmp] () {
+    sys::event_file_descriptor notifier(
+        0, sys::event_file_descriptor::flag::close_on_exec);
+    sys::process child([&tmp,&notifier] () {
         mutex_type mtx2(tmp.path(), 0600);
         lock_type lock(mtx2);
+        notifier.write(1);
         ::pause();
         return 0;
     });
-    using namespace std::chrono;
-    using namespace std::this_thread;
-    sleep_for(milliseconds(500));
+    notifier.read();
     expect(!mtx.try_lock());
     child.terminate();
     child.join();

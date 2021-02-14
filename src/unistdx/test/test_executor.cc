@@ -393,7 +393,8 @@ int sys::test::Test_executor::run() {
             auto& process = *first;
             using f = sys::wait_flags;
             // TODO non_blocking is not supported by qemu
-            auto status = process.wait(f::exited | f::non_blocking);
+            //auto status = process.wait(f::exited | f::non_blocking);
+            auto status = process.wait(f::exited);
             if (status.pid() == 0) {
                 ++first;
             } else {
