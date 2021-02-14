@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2019, 2020 Ivan Gankevich
+© 2017, 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -128,7 +128,6 @@ void do_test_shmembuf_producer_consumer() {
         return success ? EXIT_SUCCESS : EXIT_FAILURE;
     });
     for (size_t i=0; i<ninputs; ++i) {
-        //sleep(1);
         const std::vector<T>& input = inputs[i];
         shmembuf_guard lock(buf1);
         buf1.sputn(input.data(), input.size());

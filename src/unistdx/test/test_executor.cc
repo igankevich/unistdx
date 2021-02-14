@@ -432,7 +432,12 @@ int sys::test::Test_executor::run() {
                     }
                     message << t.status();
                     message << reset();
-                    message << ' ' << t.symbol().short_name() << '\n';
+                    message << ' ' << t.symbol().short_name();
+                    if (!this->_tests.empty()) {
+                        message << " (next is " << this->_tests.front().symbol().short_name()
+                            << ')';
+                    }
+                    message << '\n';
                     std::clog << message.str() << std::flush;
                 }
                 if ((t.status() != Test::Status::Success &&
@@ -449,7 +454,6 @@ int sys::test::Test_executor::run() {
                 last = this->_child_processes.end();
             }
         }
-        //std::this_thread::sleep_for(std::chrono::milliseconds(99));
     }
     return exit_code;
 }

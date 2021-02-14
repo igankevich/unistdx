@@ -30,6 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <unistdx/io/event_file_descriptor>
 #include <unistdx/io/shared_byte_buffer>
 #include <unistdx/ipc/process>
 #include <unistdx/test/language>
@@ -47,6 +48,8 @@ void test_shared_byte_buffer_grow() {
     expect(value(1) == value(buffer.child()->mutex.value()));
     expect(value(0) == value(buffer.child()->semaphore.value()));
     buffer.get_respresentation().copy_to_environment("FDS");
+    sys::event_file_descriptor notifier(
+        0, sys::event_file_descriptor::flag::close_on_exec);
     sys::process child{[&] () -> int {
         sys::shared_byte_buffer::representation fds("FDS");
         auto parent = sys::shared_byte_buffer::make_parent_page(fds.parent);
@@ -54,6 +57,7 @@ void test_shared_byte_buffer_grow() {
         //sys::shared_byte_buffer buffer{parent, fds};
         auto& mtx = buffer.child()->mutex;
         auto& cv = buffer.child()->semaphore;
+        notifier.write(1);
         std::clog << "child wait" << std::endl;
         cv.wait();
         std::clog << "child lock" << std::endl;
@@ -63,7 +67,7 @@ void test_shared_byte_buffer_grow() {
         return buffer.size() == 2*4096 ? 0 : 1;
     }};
     {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        notifier.read();
         auto& mtx = buffer.child()->mutex;
         auto& cv = buffer.child()->semaphore;
         std::clog << "parent lock" << std::endl;
@@ -173,19 +177,20 @@ void test_shared_byte_buffer__parent_writes_child_reads() {
     auto parent = sys::shared_byte_buffer::make_parent_page();
     sys::shared_byte_buffer buffer{parent.view(), 4096};
     buffer.get_respresentation().copy_to_environment("FDS");
+    sys::event_file_descriptor notifier(
+        0, sys::event_file_descriptor::flag::close_on_exec);
     sys::process child{[&] () -> int {
         sys::shared_byte_buffer::representation fds("FDS");
         auto parent_page = sys::shared_byte_buffer::make_parent_page(fds.parent);
         sys::shared_byte_buffer buffer{fds};
+        notifier.write(1);
         //sys::shared_byte_buffer buffer{parent, fds};
         reader_main(buffer, data);
         using namespace sys::test;
         return current_test->status() == Test::Status::Success ? 0 : 1;
     }};
-    {
-        //std::this_thread::sleep_for(std::chrono::seconds(1));
-        writer_main(buffer, data);
-    }
+    notifier.read();
+    writer_main(buffer, data);
     auto status = child.wait();
     //expect(value(buffer.size()) == value(2u*4096u));
     expect(value(status.exited()) == value(true));
@@ -210,19 +215,20 @@ void test_shared_byte_buffer__child_writes_parent_reads() {
     auto parent = sys::shared_byte_buffer::make_parent_page();
     sys::shared_byte_buffer buffer{parent.view(), 4096};
     buffer.get_respresentation().copy_to_environment("FDS");
+    sys::event_file_descriptor notifier(
+        0, sys::event_file_descriptor::flag::close_on_exec);
     sys::process child{[&] () -> int {
         sys::shared_byte_buffer::representation fds("FDS");
         auto parent_page = sys::shared_byte_buffer::make_parent_page(fds.parent);
         sys::shared_byte_buffer buffer{fds};
         //sys::shared_byte_buffer buffer{parent, fds};
+        notifier.write(1);
         writer_main(buffer, data);
         using namespace sys::test;
         return current_test->status() == Test::Status::Success ? 0 : 1;
     }};
-    {
-        //std::this_thread::sleep_for(std::chrono::seconds(1));
-        reader_main(buffer, data);
-    }
+    notifier.read();
+    reader_main(buffer, data);
     auto status = child.wait();
     //expect(value(buffer.size()) == value(2u*4096u));
     expect(value(status.exited()) == value(true));

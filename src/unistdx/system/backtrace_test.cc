@@ -148,9 +148,6 @@ void do_test_backtrace(Test_type type) {
         if (t.joinable()) {
             t.join();
         }
-        using namespace std::this_thread;
-        using namespace std::chrono;
-        sleep_for(milliseconds(123));
     } else {
         func1(type);
     }

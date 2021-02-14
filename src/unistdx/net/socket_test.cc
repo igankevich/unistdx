@@ -57,7 +57,6 @@ void test_socket_get_credentials() {
         s.connect(e);
         return 0;
     });
-    usleep(100000);
     sys::socket_address client_end;
     sys::socket client;
     sock.accept(client, client_end);
@@ -96,7 +95,6 @@ void test_socket_send_file_descriptors() {
         }
         return ret;
     });
-    usleep(100000);
     sys::socket_address client_end;
     sys::socket client;
     sock.accept(client, client_end);

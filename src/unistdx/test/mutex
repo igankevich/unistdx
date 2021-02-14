@@ -40,6 +40,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <thread>
 
 #include <unistdx/base/types>
+#include <unistdx/io/event_file_descriptor>
 #include <unistdx/test/language>
 
 namespace test {
@@ -93,14 +94,15 @@ namespace test {
         std::condition_variable cnd;
         std::mutex orig_mtx;
         mutex_type mtx;
+        sys::event_file_descriptor notifier(
+            0, sys::event_file_descriptor::flag::close_on_exec);
         std::thread child([&] () {
             lock_type lock(mtx);
             std::unique_lock<std::mutex> orig_lock(orig_mtx);
+            notifier.write(1);
             cnd.wait(orig_lock);
         });
-        using namespace std::chrono;
-        using namespace std::this_thread;
-        sleep_for(milliseconds(100));
+        notifier.read();
         expect(!mtx.try_lock());
         cnd.notify_one();
         child.join();

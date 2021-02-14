@@ -41,6 +41,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <vector>
 
 #include <unistdx/base/types>
+#include <unistdx/io/event_file_descriptor>
 #include <unistdx/test/language>
 #include <unistdx/test/mutex>
 
@@ -270,16 +271,20 @@ namespace test {
     producer_consumer_process() {
         using namespace sys::test::lang;
         using semaphore_type = Semaphore;
-        using namespace std::chrono;
+        semaphore_type mtx;
         semaphore_type sem;
-        sys::process child([&sem] () {
+        sys::event_file_descriptor notifier(
+            0, sys::event_file_descriptor::flag::close_on_exec);
+        sys::process child([&sem,&mtx,&notifier] () {
+            semaphore_type mtx_child(mtx.id());
             semaphore_type sem_child(sem.id());
-            std::mutex mtx;
-            sem_child.wait(mtx);
+            mtx_child.lock();
+            notifier.write(1);
+            sem_child.wait(mtx_child);
+            mtx_child.unlock();
         });
-        using namespace std::this_thread;
+        notifier.read();
         sem.notify_one();
-        sleep_for(milliseconds(100));
         if (child) { child.terminate(); }
         sys::process_status status = child.wait();
         expect(status.exited());
