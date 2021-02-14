@@ -49,7 +49,16 @@ void test_sysv_semaphore_producer_consumer_thread() {
 }
 
 void test_sysv_semaphore_producer_consumer_process() {
+    using namespace sys::test::lang;
     test::semaphore_is_available<sys::sysv_semaphore>();
-    test::producer_consumer_process<sys::sysv_semaphore>();
+    sys::sysv_semaphore sem;
+    sys::process child([&sem] () {
+        sys::sysv_semaphore sem_child(sem.id());
+        sem_child.wait();
+    });
+    sem.notify_one();
+    sys::process_status status = child.wait();
+    expect(status.exited());
+    expect(value(EXIT_SUCCESS) == value(status.exit_code()));
 }
 #endif
