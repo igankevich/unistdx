@@ -252,12 +252,7 @@ namespace std {
 
     /// Specialisation of \link std::hash \endlink for \link sys::ethernet_address \endlink.
     template<>
-    struct hash<sys::ethernet_address>:
-        public hash<sys::ethernet_address::value_type> {
-
-    private:
-        using base_type = hash<sys::ethernet_address::value_type>;
-        using size_type = ::sys::ethernet_address::size_type;
+    struct hash<sys::ethernet_address>: public hash<sys::u64> {
 
     public:
         /// Hash function return value type.
@@ -265,14 +260,14 @@ namespace std {
         /// Hash function argument type.
         using argument_type = ::sys::ethernet_address;
 
-        /// Compute hash by XOR-ing hashes of each octet.
+        /// Compute hash by computing hash of the ethernet address as the 48-bit number.
         inline result_type
         operator()(const argument_type& rhs) const noexcept {
-            auto result = this->base_type::operator()(rhs.front());
-            for (size_type i=1; i<rhs.size(); ++i) {
-                result ^= this->base_type::operator()(rhs[i] << i);
-            }
-            return result;
+            using sys::u64;
+            return this->hash<u64>::operator()(
+                (u64(rhs[0]) << UINT64_C(0)) | (u64(rhs[1]) << UINT64_C(8)) |
+                (u64(rhs[2]) << UINT64_C(16)) | (u64(rhs[3]) << UINT64_C(24)) |
+                (u64(rhs[4]) << UINT64_C(32)) | (u64(rhs[5]) << UINT64_C(40)));
         }
 
     };

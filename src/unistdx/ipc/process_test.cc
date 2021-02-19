@@ -223,46 +223,49 @@ void test_process_as_thread() {
 }
 #endif
 
+template <class Set>
+void do_test_cpu_set() {
+    expect(value("") == value(test::stream_insert(Set{})));
+    expect(value("0") == value(test::stream_insert(Set{0})));
+    expect(value("10") == value(test::stream_insert(Set{10})));
+    expect(value("1-2") == value(test::stream_insert(Set{1,2})));
+    expect(value("1-3") == value(test::stream_insert(Set{1,2,3})));
+    expect(value("1,3") == value(test::stream_insert(Set{1,3})));
+    expect(value("1,3-4") == value(test::stream_insert(Set{1,3,4})));
+    expect(value(Set{}) == value(Set{}));
+    expect(value(Set{1}) == value(Set{1}));
+    expect(value(Set{1,2}) == value(Set{1,2}));
+    expect(value(Set{}) == value(test::stream_extract<Set>("")));
+    expect(value(Set{1}) == value(test::stream_extract<Set>("1")));
+    expect(value(Set{1,2}) == value(test::stream_extract<Set>("1,2")));
+    expect(value(Set{1,2,3}) == value(test::stream_extract<Set>("1,2,3")));
+    expect(value(Set{1,2,3}) == value(test::stream_extract<Set>("1-3")));
+    expect(value(Set{1,2,4,5}) == value(test::stream_extract<Set>("1-2,4-5")));
+    expect(value(Set{1,2,4,5,10}) == value(test::stream_extract<Set>("1-2,4-5,10")));
+    expect(value(Set{1,2,4,5}) == value(test::stream_extract<Set>("2-1,4-5")));
+    expect(value(Set{4}) == value(Set{4}&Set{1,2,4,5,10}));
+    expect(value(Set{0,1,2} & ~Set{1}) == value(Set{0,2}));
+    auto all = ~Set();
+    expect(value(Set{0,1,2} & ~all) == value(Set{}));
+}
+
 void test_cpu_set() {
-    expect(value("") == value(test::stream_insert(sys::cpu_set{})));
-    expect(value("0") == value(test::stream_insert(sys::cpu_set{0})));
-    expect(value("10") == value(test::stream_insert(sys::cpu_set{10})));
-    expect(value("1-2") == value(test::stream_insert(sys::cpu_set{1,2})));
-    expect(value("1-3") == value(test::stream_insert(sys::cpu_set{1,2,3})));
-    expect(value("1,3") == value(test::stream_insert(sys::cpu_set{1,3})));
-    expect(value("1,3-4") == value(test::stream_insert(sys::cpu_set{1,3,4})));
-    expect(value(sys::cpu_set{}) == value(sys::cpu_set{}));
-    expect(value(sys::cpu_set{1}) == value(sys::cpu_set{1}));
-    expect(value(sys::cpu_set{1,2}) == value(sys::cpu_set{1,2}));
-    expect(value(sys::cpu_set{}) == value(test::stream_extract<sys::cpu_set>("")));
-    expect(value(sys::cpu_set{1}) == value(test::stream_extract<sys::cpu_set>("1")));
-    expect(value(sys::cpu_set{1,2}) == value(test::stream_extract<sys::cpu_set>("1,2")));
-    expect(value(sys::cpu_set{1,2,3}) == value(test::stream_extract<sys::cpu_set>("1,2,3")));
-    expect(value(sys::cpu_set{1,2,3}) == value(test::stream_extract<sys::cpu_set>("1-3")));
-    expect(value(sys::cpu_set{1,2,4,5}) == value(test::stream_extract<sys::cpu_set>("1-2,4-5")));
-    expect(value(sys::cpu_set{1,2,4,5,10}) == value(test::stream_extract<sys::cpu_set>("1-2,4-5,10")));
-    expect(value(sys::cpu_set{1,2,4,5}) == value(test::stream_extract<sys::cpu_set>("2-1,4-5")));
-    expect(value(sys::cpu_set{4}) == value(sys::cpu_set{4}&sys::cpu_set{1,2,4,5,10}));
-    expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set{1}) == value(sys::cpu_set{0,2}));
-    expect(value(sys::cpu_set{0,1,2} & ~sys::cpu_set::all()) == value(sys::cpu_set{}));
+    do_test_cpu_set<sys::static_cpu_set>();
+    do_test_cpu_set<sys::dynamic_cpu_set>();
 }
 
 void test_cpu_set_identities() {
     using namespace sys::test;
+    auto prng = current_test->prng();
     falsify(
-        [] (const Argument_array<32>& params) {
-            sys::cpu_set aa, bb;
-            for (size_t i=0; i<16; ++i) {
-                std::bitset<64> bits(params[i]);
-                for (size_t j=0; j<bits.size(); ++j) {
-                    if (bits[j]) { aa.set(i*bits.size() + j); }
-                }
+        [&prng] (const Argument_array<1>&) {
+            std::bernoulli_distribution dist;
+            sys::static_cpu_set aa, bb;
+            for (int i=0; i<aa.size(); ++i) {
+                if (dist(prng)) { aa.set(i); }
             }
-            for (size_t i=16; i<32; ++i) {
-                std::bitset<64> bits(params[i]);
-                for (size_t j=0; j<bits.size(); ++j) {
-                    if (bits[j]) { bb.set(i*bits.size() + j); }
-                }
+            for (int i=0; i<bb.size(); ++i) {
+                if (dist(prng)) { bb.set(i); }
             }
             for (auto pair : {std::make_pair(&aa,&bb),
                               std::make_pair(&aa,&aa),
@@ -276,29 +279,14 @@ void test_cpu_set_identities() {
                 expect(value(a) == value(~(~a)));
             }
         },
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>(),
-        make_parameter<uint64_t>(), make_parameter<uint64_t>());
+        make_parameter<int>(0,sys::static_cpu_set::max_size()));
 }
 
 void test_cpu_set_io() {
     using namespace sys::test;
     falsify(
         [] (const Argument_array<16>& params) {
-            sys::cpu_set a;
+            sys::static_cpu_set a;
             for (size_t i=0; i<params.size(); ++i) {
                 std::bitset<64> bits(params[i]);
                 for (size_t j=0; j<bits.size(); ++j) {
@@ -323,4 +311,49 @@ void test_cpu_set_io() {
         make_parameter<uint64_t>(),
         make_parameter<uint64_t>(),
         make_parameter<uint64_t>());
+}
+
+void test_dynamic_cpu_set_identities() {
+    using namespace sys::test;
+    auto prng = current_test->prng();
+    falsify(
+        [&prng] (const Argument_array<1>& params) {
+            std::bernoulli_distribution dist;
+            sys::dynamic_cpu_set aa(params[0]), bb(params[0]);
+            for (size_t i=0; i<aa.size(); ++i) {
+                if (dist(prng)) { aa.set(i); }
+            }
+            for (size_t i=0; i<bb.size(); ++i) {
+                if (dist(prng)) { bb.set(i); }
+            }
+            for (auto pair : {std::make_pair(&aa,&bb),
+                              std::make_pair(&aa,&aa),
+                              std::make_pair(&bb,&bb)}) {
+                auto& a = *pair.first;
+                auto& b = *pair.second;
+                expect(value(~(a & b)) == value(~a | ~b));
+                expect(value(a ^ b) == value((a | b) & ~(a & b)));
+                expect(value(a ^ b) == value((a & ~b) | (~a & b)));
+                expect(value(a & b) == value(~(~a | ~b)));
+                expect(value(a) == value(~(~a)));
+            }
+        },
+        make_parameter<int>(0, 4097));
+}
+
+void test_dynamic_cpu_set_io() {
+    using namespace sys::test;
+    auto prng = current_test->prng();
+    falsify(
+        [&prng] (const Argument_array<1>& params) {
+            std::bernoulli_distribution dist;
+            auto size = params[0];
+            sys::dynamic_cpu_set a(size);
+            expect(value(size) <= value(a.size()));
+            for (size_t i=0; i<size; ++i) {
+                if (dist(prng)) { a.set(i); }
+            }
+            test::stream_insert_extract(a);
+        },
+        make_parameter<int>(0, 4097));
 }

@@ -126,8 +126,8 @@ namespace test {
         using namespace sys::test::lang;
         std::hash<T> hash;
         expect((value(a) == value(b)) ^ (value(a) != value(b)));
-        expect((value(a) == value(b)) <= (value(hash(a)) == value(hash(b))));
-        expect((value(hash(a)) != value(hash(b))) <= (value(a) != value(b)));
+        expect(imply(value(a) == value(b), value(hash(a)) == value(hash(b))));
+        expect(imply(value(hash(a)) != value(hash(b)), value(a) != value(b)));
     }
 
 }

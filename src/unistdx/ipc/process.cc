@@ -34,6 +34,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/ipc/identity>
 #include <unistdx/ipc/process>
+#include <unistdx/system/resource>
 
 sys::fildes sys::this_process::get_namespace(const char* suffix) {
     char path[100];
@@ -50,7 +51,7 @@ sys::fildes sys::process_view::get_namespace(const char* suffix) {
 std::string sys::this_process::hostname() {
     std::string name;
     name.resize(HOST_NAME_MAX);
-    UNISTDX_CHECK(::gethostname(&name[0], HOST_NAME_MAX));
+    check(::gethostname(&name[0], HOST_NAME_MAX));
     name[HOST_NAME_MAX-1] = 0;
     name.resize(std::string::traits_type::length(name.data()));
     return name;
@@ -74,79 +75,17 @@ void sys::process_view::init_user_namespace() {
     out.close();
 }
 
-std::ostream& sys::operator<<(std::ostream& out, const cpu_set& rhs) {
-    const auto count = rhs.count();
-    bool first = true;
-    int prev_set = 0;
-    for (int i=0, j=0; j<count; ++i) {
-        if (rhs[i]) {
-            if (prev_set == 0) {
-                if (!first) { out.put(','); }
-                else { first = false; }
-                out << i;
-            }
-            ++j;
-            if (j == count && prev_set > 0) {
-                out.put('-');
-                out << i;
-            }
-            ++prev_set;
-        } else {
-            if (prev_set > 1) {
-                out.put('-');
-                out << (i-1);
-            }
-            prev_set = 0;
+sys::dynamic_cpu_set sys::process_view::cpus() const {
+    auto size = dynamic_cpu_set::min_size();
+    dynamic_cpu_set mask(size);
+    int ret;
+    do {
+        ret = ::sched_getaffinity(this->_pid, mask.size_in_bytes(), mask.get());
+        if (ret == EINVAL) {
+            size *= 2;
+            mask = dynamic_cpu_set(size);
         }
-    }
-    return out;
-}
-
-std::istream& sys::operator>>(std::istream& in, cpu_set& rhs) {
-    rhs.clear();
-    int i = 0, i_prev = 0;
-    bool dash = false;
-    while (in >> i) {
-        if (i < 0 || i >= cpu_set::max_size()) {
-            in.setstate(std::ios::failbit);
-            break;
-        }
-        if (dash) {
-            if (i < i_prev) { std::swap(i, i_prev); }
-            for (int j=i_prev; j<=i; ++j) { rhs.set(j); }
-        } else {
-            rhs.set(i);
-            i_prev = i;
-        }
-        auto ch = in.peek();
-        if (ch == ',') {
-            in.get();
-            dash = false;
-        } else if (ch == '-') {
-            in.get();
-            dash = true;
-        } else {
-            if (dash) {
-                if (i < i_prev) { std::swap(i, i_prev); }
-                for (int j=i_prev; j<=i; ++j) { rhs.set(j); }
-            }
-        }
-    }
-    return in;
-}
-
-sys::cpu_set sys::operator~(const cpu_set& rhs) noexcept {
-    sys::cpu_set result;
-    const auto n = rhs.size();
-    for (int i=0; i<n; ++i) {
-        if (!rhs[i]) { result.set(i); }
-    }
-    return result;
-}
-
-sys::cpu_set sys::cpu_set::all() noexcept {
-    sys::cpu_set result;
-    const auto n = result.size();
-    for (int i=0; i<n; ++i) { result.set(i); }
-    return result;
+    } while (ret == EINVAL);
+    check(ret);
+    return mask;
 }

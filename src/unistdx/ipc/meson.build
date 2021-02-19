@@ -1,4 +1,5 @@
 libunistdx_src += files([
+    'cpu_set.cc',
     'identity.cc',
     'process.cc',
     'process_group.cc',
@@ -8,6 +9,7 @@ libunistdx_src += files([
 
 install_headers(
     'argstream',
+    'cpu_set',
     'execute',
     'futex',
     'identity',
