@@ -273,29 +273,26 @@ int sys::test::Test_executor::run() {
     std::unordered_map<sys::pid_type,Test_output> tests_by_process;
     std::unordered_map<sys::fd_type,sys::pid_type> process_by_fd;
     tests_by_process.reserve(this->_tests.size());
-    auto t0 = Clock::now();
     int exit_code = 0;
     const auto max_threads = 1;//sys::thread_concurrency();
     /*
-    {
-        auto n = this->_tests.size();
-        for (size_t i=0; i<n; ++i) {
-            Test test = std::move(this->_tests.front());
-            this->_tests.pop_front();
-            current_test = &test;
-            std::clog << "test.symbol().short_name()=" << test.symbol().short_name() << std::endl;
-            try {
-                test.run();
-            } catch (const std::exception& err) {
-                std::clog << "err=" << err.what() << std::endl;
-            }
-        }
-    }
-    return 0;
-    */
-    for (auto t=Clock::now();
-         (!this->_child_processes.empty() || !this->_tests.empty()) && t-t0<this->_timeout;
-         t=Clock::now()) {
+       {
+       auto n = this->_tests.size();
+       for (size_t i=0; i<n; ++i) {
+       Test test = std::move(this->_tests.front());
+       this->_tests.pop_front();
+       current_test = &test;
+       std::clog << "test.symbol().short_name()=" << test.symbol().short_name() << std::endl;
+       try {
+       test.run();
+       } catch (const std::exception& err) {
+       std::clog << "err=" << err.what() << std::endl;
+       }
+       }
+       }
+       return 0;
+       */
+    for (; (!this->_child_processes.empty() || !this->_tests.empty()); ) {
         if (this->_child_processes.size() < max_threads && !this->_tests.empty()) {
             auto n = std::min(max_threads - this->_child_processes.size(),
                               this->_tests.size());
@@ -386,33 +383,44 @@ int sys::test::Test_executor::run() {
                 this->_poller.emplace(stderr.in().fd(), sys::event::in);
                 process_by_fd[stderr.in().fd()] = process.id();
                 tests_by_process[process.id()] =
-                    Test_output{std::move(test),std::move(stderr.in())};
+                    Test_output{Clock::now(), std::move(test),std::move(stderr.in())};
             }
         }
-        this->_poller.wait(this->_mutex, [&] () {
-            bool finished = false;
-            for (const auto& event : this->_poller) {
-                if (event.fd() == this->_poller.pipe_in()) { continue; }
-                auto result = process_by_fd.find(event.fd());
-                if (result == process_by_fd.end()) { continue; }
-                auto process_id = result->second;
-                auto result2 = tests_by_process.find(process_id);
-                if (result2 == tests_by_process.end()) { continue; }
-                auto& output = result2->second;
-                if (event.in()) {
-                    auto fd = event.fd();
-                    output.output.fill(fd);
+        using namespace std::chrono;
+        bool finished = false;
+        while (!finished) {
+            this->_poller.wait_for(this->_mutex, milliseconds(99), [&] () {
+                finished = false;
+                for (const auto& event : this->_poller) {
+                    if (event.fd() == this->_poller.pipe_in()) { continue; }
+                    auto result = process_by_fd.find(event.fd());
+                    if (result == process_by_fd.end()) { continue; }
+                    auto process_id = result->second;
+                    auto result2 = tests_by_process.find(process_id);
+                    if (result2 == tests_by_process.end()) { continue; }
+                    auto& output = result2->second;
+                    if (event.in()) {
+                        auto fd = event.fd();
+                        output.output.fill(fd);
+                    }
+                    if (!event) {
+                        exit_code |= print_child_process_status(
+                            process_id, output, num_finished, num_tests);
+                        process_by_fd.erase(result);
+                        // TODO uncommenting this somehow affects pipe descriptor
+                        //tests_by_process.erase(result2);
+                        finished = true;
+                    }
                 }
-                if (!event) {
-                    exit_code |= print_child_process_status(process_id, output, num_finished,
-                                                            num_tests);
-                    process_by_fd.erase(result);
-                    tests_by_process.erase(result2);
-                    finished = true;
+                for (auto& child : this->_child_processes) {
+                    const auto& output = tests_by_process[child.id()];
+                    if (this->_timeout < Clock::now()-output.start_time) {
+                        child.terminate();
+                    }
                 }
-            }
-            return finished;
-        });
+                return finished;
+            });
+        }
     }
     return exit_code;
 }

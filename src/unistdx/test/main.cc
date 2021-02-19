@@ -33,6 +33,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <regex>
 
 #include <unistdx/base/log_message>
+#include <unistdx/config>
 #include <unistdx/ipc/process>
 #include <unistdx/ipc/signal>
 #include <unistdx/test/test_executor>
@@ -85,61 +86,185 @@ auto string_to_duration(std::string s) -> Duration {
     throw std::invalid_argument(tmp.str());
 }
 
+bool string_to_bool(std::string s) {
+    trim_both(s);
+    for (auto& ch : s) { ch = std::tolower(ch); }
+    if (s == "1" || s == "yes" || s == "on" || s == "true") { return true; }
+    if (s == "0" || s == "no" || s == "off" || s == "false") { return false; }
+    throw std::invalid_argument("bad boolean");
+}
+
+
 std::string symbol_prefix = "test_";
 std::string args_prefix = "args_";
 std::regex symbol_filter{".*", std::regex::ECMAScript | std::regex::optimize};
-sys::test::Test_executor::duration timeout = std::chrono::seconds(30);
 sys::test::Test_executor tests;
 
-void arguments(int argc, char** argv) {
-    sys::process::flags process_flags =
-        sys::process::flags::fork | sys::process::flags::signal_parent;
+template <class Function>
+struct Argument {
+    std::initializer_list<const char*> names;
+    std::string default_value;
+    const char* description;
+    Function callback;
+};
+
+template <class Function>
+Argument<Function> make_argument(std::initializer_list<const char*> names,
+                                 std::string default_value,
+                                 const char* description, Function&& callback) {
+    return {names, std::move(default_value), description, callback};
+}
+
+size_t do_compute_width() { return 0; }
+
+template <class Head, class ... Tail>
+size_t do_compute_width(Head& arg, Tail& ... rest) {
+    using t = std::string::traits_type;
+    size_t width = 0;
+    for (const char* name : arg.names) {width += t::length(name);}
+    if (arg.names.size() != 0) { width += 2*(arg.names.size()-1); }
+    width += (1+arg.default_value.size())*arg.names.size();
+    width += 4;
+    return std::max(width, do_compute_width(rest...));
+}
+
+void do_usage(std::ostream& out, size_t width) {}
+
+template <class Head, class ... Tail>
+void do_usage(std::ostream& out, size_t width, Head&& arg, Tail&& ... rest) {
+    using t = std::string::traits_type;
+    auto first = arg.names.begin(), last = arg.names.end();
+    size_t w = 0;
+    out << "  ";
+    if (first != last) {
+        w += t::length(*first) + 1 + arg.default_value.size();
+        out << *first++ << '=' << arg.default_value;
+    }
+    while (first != last) {
+        w += t::length(*first) + 1 + arg.default_value.size();
+        w += 2;
+        out << ", " << *first++ << '=' << arg.default_value;
+    }
+    for (size_t i=0; i<width-w; ++i) { out.put(' '); }
+    out << arg.description;
+    do_usage(out, width, std::forward<Tail>(rest)...);
+}
+
+template <class ... Args>
+void usage(const char* name, std::ostream& out, size_t width, Args&& ... args) {
+    out << name << " [-h] [--help] [--version] [key=value] ...\n";
+    do_usage(out, width, std::forward<Args>(args)...);
+}
+
+inline void do_parse_arguments(const std::string& name, std::string&) {
+    throw std::invalid_argument(name);
+}
+
+template <class Head, class ... Tail>
+inline void do_parse_arguments(const std::string& name, std::string& value,
+                               Head& arg, Tail& ... rest) {
+    for (const char* arg_name : arg.names) {
+        if (name == arg_name) {
+            arg.callback(std::move(value));
+            return;
+        }
+    }
+    do_parse_arguments(name, value, rest...);
+}
+
+template <class ... Args>
+void parse_arguments(int argc, char** argv, Args&& ... args) {
     for (int i=1; i<argc; ++i) {
         std::string arg(argv[i]);
         auto pos = arg.find('=');
         if (pos == std::string::npos) {
-            throw std::invalid_argument(arg);
+            if (arg == "--help" || arg == "-h") {
+                auto width = do_compute_width(static_cast<Args&>(args)...);
+                usage(argv[0], std::cout, width, std::forward<Args>(args)...);
+                std::exit(0);
+            } else if (arg == "--version") {
+                std::cout << UNISTDX_VERSION "\n";
+                std::exit(0);
+            } else {
+                throw std::invalid_argument(arg);
+            }
         }
         std::string name = arg.substr(0,pos);
         std::string value = arg.substr(pos+1);
-        if (name == "prefix" || name == "test-prefix") {
-            symbol_prefix = std::move(value);
-        } else if (name == "prefix" || name == "args-prefix") {
-            args_prefix = std::move(value);
-        } else if (name == "filter") {
-            symbol_filter = std::regex{value, symbol_filter.flags()};
-        } else if (name == "catch-errors") {
-            tests.catch_errors(bool(std::stoi(value)));
-        } else if (name == "unshare") {
-            value += ',';
-            std::string subvalue;
-            for (auto ch : value) {
-                if (ch == ',') {
-                    if (subvalue == "network") {
-                        process_flags |= sys::process::flags::unshare_network;
-                    } else if (subvalue == "users") {
-                        process_flags |= sys::process::flags::unshare_users;
-                    } else if (subvalue.empty()) {
-                        process_flags = sys::process::flags::fork |
-                            sys::process::flags::signal_parent;
-                    } else {
-                        throw std::invalid_argument(arg);
-                    }
-                    subvalue.clear();
-                } else {
-                    subvalue += ch;
-                }
-            }
-        } else if (name == "timeout") {
-            timeout = string_to_duration(value);
-        } else if (name == "verbose") {
-            tests.verbose(bool(std::stoi(value)));
-        } else if (name == "redirect") {
-            tests.redirect(bool(std::stoi(value)));
-        } else {
-            throw std::invalid_argument(name);
-        }
+        do_parse_arguments(name, value, static_cast<Args&>(args)...);
     }
+}
+
+void arguments(int argc, char** argv) {
+    sys::process::flags process_flags =
+        sys::process::flags::fork | sys::process::flags::signal_parent;
+    parse_arguments(
+        argc, argv,
+        make_argument(
+            {"prefix"},
+            "test_",
+            "The prefix of the symbols that will be called as unit test main functions.\n",
+            [&] (std::string&& value) { symbol_prefix = std::move(value); }),
+        make_argument(
+            {"args-prefix"},
+            "args_",
+            "The prefix of the symbols that will be used as unit test arguments.\n",
+            [&] (std::string&& value) { args_prefix = std::move(value); }),
+        make_argument(
+            {"filter"},
+            ".*",
+            "Regular expression that is used to filter unit tests found in the executable.\n",
+            [&] (std::string&& value) {
+                symbol_filter = std::regex{std::move(value), symbol_filter.flags()};
+            }),
+        make_argument(
+            {"catch-errors"},
+            "yes",
+            "Catch unexpected exceptions and process signals in unit tests. In rare cases disabling this option allows to see the error.\n",
+            [&] (std::string&& value) {
+                tests.catch_errors(string_to_bool(std::move(value)));
+            }),
+        make_argument(
+            {"verbose"},
+            "no",
+            "Always print unit test output. By default only output of failed unit tests is printed.\n",
+            [&] (std::string&& value) { tests.verbose(string_to_bool(std::move(value))); }),
+        make_argument(
+            {"redirect"},
+            "yes",
+            "Capture unit test output and print it only when the test failed.\n",
+            [&] (std::string&& value) { tests.redirect(string_to_bool(std::move(value))); }),
+        make_argument(
+            {"timeout"},
+            "30s",
+            "Timeout for each test.\n",
+            [&] (std::string&& value) { tests.timeout(string_to_duration(std::move(value))); }),
+        make_argument(
+            {"unshare"},
+            "",
+            "Comma-separated list of namespaces to unshare before running unit tests. Possible values: network, users.\n",
+            [&] (std::string&& value) {
+                using f = sys::process::flags;
+                value += ',';
+                std::string subvalue;
+                for (auto ch : value) {
+                    if (ch == ',') {
+                        if (subvalue == "network") {
+                            process_flags |= f::unshare_network;
+                        } else if (subvalue == "users") {
+                            process_flags |= f::unshare_users;
+                        } else if (subvalue.empty()) {
+                            process_flags = f::fork | f::signal_parent;
+                        } else {
+                            throw std::invalid_argument("unshare");
+                        }
+                        subvalue.clear();
+                    } else {
+                        subvalue += ch;
+                    }
+                }
+            })
+    );
     tests.process_flags(process_flags);
 }
 

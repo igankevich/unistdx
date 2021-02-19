@@ -342,6 +342,7 @@ void test_dynamic_cpu_set_identities() {
 }
 
 void test_dynamic_cpu_set_io() {
+    sys::clock().sleep_for(std::chrono::seconds(30));
     using namespace sys::test;
     auto prng = current_test->prng();
     falsify(

@@ -243,7 +243,14 @@ namespace sys {
         extern thread_local Test* current_test;
 
         class Test_output {
+
         public:
+            using Clock = std::chrono::steady_clock;
+            using time_point = Clock::time_point;
+            using duration = Clock::duration;
+
+        public:
+            time_point start_time;
             Test test;
             sys::fildes fd;
             sys::byte_buffer output;
@@ -287,6 +294,7 @@ namespace sys {
             inline void verbose(bool rhs) noexcept { this->_verbose = rhs; }
             inline bool redirect() const noexcept { return this->_redirect; }
             inline void redirect(bool rhs) noexcept { this->_redirect = rhs; }
+            inline void timeout(duration rhs) noexcept { this->_timeout = rhs; }
 
             inline sys::process::flags process_flags() const noexcept {
                 return this->_process_flags;
