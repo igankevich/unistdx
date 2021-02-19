@@ -364,6 +364,12 @@ namespace sys {
         }
 
         /**
+        \brief Release and return raw file descriptor.
+        \details After the release you have to manually close the file descriptor.
+        */
+        inline fd_type release() { auto fd = this->_fd; this->_fd = bad; return fd; }
+
+        /**
         \brief Read \p n bytes from file descriptor and store them in the array
         pointed by \p buf.
         \throws_bad_call_non_blocking

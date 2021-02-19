@@ -221,6 +221,7 @@ namespace sys {
             int run();
 
             void record_error(error err);
+            void record_process_status(sys::process_status status);
 
             void child_write_status(std::ostream& out) const;
             void parent_write_status(std::ostream& out) const;
@@ -240,6 +241,15 @@ namespace sys {
         std::ostream& operator<<(std::ostream& out, Test::Status rhs);
 
         extern thread_local Test* current_test;
+
+        class Test_output {
+        public:
+            Test test;
+            sys::fildes fd;
+            sys::byte_buffer output;
+
+            void write_status(std::ostream& out) const;
+        };
 
         class Test_executor {
 
@@ -294,15 +304,12 @@ namespace sys {
                 for (auto& p : this->_child_processes) { p.wait(); }
             }
 
-        };
+        private:
+            int print_child_process_status(sys::pid_type process_id,
+                                           Test_output& output,
+                                           size_t& num_finished,
+                                           size_t num_tests);
 
-        class Test_output {
-        public:
-            Test test;
-            sys::fildes fd;
-            sys::byte_buffer output;
-
-            void write_status(std::ostream& out) const;
         };
 
 

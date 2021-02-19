@@ -471,7 +471,7 @@ namespace sys {
         inline explicit
         operator bool() const { return this->_pid > 0 && do_kill(sys::signal{}) != -1; }
 
-        /// Check if process is alive by sending nought signal to it.
+        /// Check if process is not alive by sending nought signal to it.
         inline bool operator !() const { return !this->operator bool(); }
 
         /// Always returns true to be compatible with \link std::thread \endlink.

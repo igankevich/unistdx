@@ -187,7 +187,19 @@ int sys::test::Test::run() {
 void sys::test::Test::record_error(error err) {
     this->_status = Status::Exception;
     ++this->_num_errors;
-    std::clog << err.what();
+    std::clog << err.what() << std::flush;
+}
+
+void sys::test::Test::record_process_status(sys::process_status ps) {
+    exit_code(ps.exit_code());
+    switch (ps.exit_code()) {
+        case 0: status(Test::Status::Success); break;
+        case 1: status(Test::Status::Exception); break;
+        case 77: status(Test::Status::Skipped); break;
+        default: signal(ps.term_signal());
+                 status(Test::Status::Killed);
+                 break;
+    }
 }
 
 void sys::test::Test::write(sys::byte_buffer& out) const {
@@ -225,6 +237,7 @@ void sys::test::Test::child_write_status(std::ostream& out) const {
         for (auto seed : this->_seeds) { out << ' ' << seed; }
         out << '\n';
     }
+    out.flush();
 }
 
 void sys::test::Test::parent_write_status(std::ostream& out) const {
@@ -308,19 +321,26 @@ int sys::test::Test_executor::run() {
                     current_test = &test;
                     std::clog.iword(0) = sys::is_a_terminal(STDERR_FILENO);
                     stderr.in().close();
-                    sys::fildes out(STDOUT_FILENO);
-                    if (redirect()) { out = stderr.out(); }
-                    sys::fildes err(STDERR_FILENO);
-                    if (redirect()) { err = stderr.out(); }
+                    if (redirect()) {
+                        sys::fildes out(STDOUT_FILENO);
+                        out = stderr.out();
+                        out.release();
+                    }
+                    if (redirect()) {
+                        sys::fildes err(STDERR_FILENO);
+                        err = stderr.out();
+                        err.release();
+                    }
                     Backtrace_thread backtrace_thread;
                     if (catch_errors()) {
                         using sys::this_process::bind_signal;
                         using sys::this_process::ignore_signal;
-                        bind_signal(sys::signal::segmentation_fault, backtrace_on_signal_static);
-                        bind_signal(sys::signal::bad_memory_access, backtrace_on_signal_static);
-                        bind_signal(sys::signal::keyboard_interrupt, backtrace_on_signal_static);
-                        bind_signal(sys::signal::abort, backtrace_on_signal_static);
-                        ignore_signal(sys::signal::broken_pipe);
+                        using s = sys::signal;
+                        bind_signal(s::segmentation_fault, backtrace_on_signal_static);
+                        bind_signal(s::bad_memory_access, backtrace_on_signal_static);
+                        bind_signal(s::keyboard_interrupt, backtrace_on_signal_static);
+                        bind_signal(s::abort, backtrace_on_signal_static);
+                        ignore_signal(s::broken_pipe);
                         std::set_terminate([] () {
                             if (auto ptr = std::current_exception()) {
                                 sys::string buf(4096);
@@ -355,7 +375,6 @@ int sys::test::Test_executor::run() {
                         backtrace_thread.stop();
                         backtrace_thread.join();
                     }
-                    //std::exit(ret);
                     return ret;
                 }, this->_process_flags, 4096*512);
                 auto& process = this->_child_processes.back();
@@ -370,91 +389,85 @@ int sys::test::Test_executor::run() {
                     Test_output{std::move(test),std::move(stderr.in())};
             }
         }
-        this->_poller.wait_for(this->_mutex, std::chrono::milliseconds(99));
-        for (const auto& event : this->_poller) {
-            if (event.fd() == this->_poller.pipe_in()) { continue; }
-            auto result = process_by_fd.find(event.fd());
-            if (result == process_by_fd.end()) { continue; }
-            auto process_id = result->second;
-            auto result2 = tests_by_process.find(process_id);
-            if (result2 == tests_by_process.end()) { continue; }
-            auto& output = result2->second;
-            if (event.in()) {
-                auto fd = event.fd();
-                output.output.fill(fd);
+        this->_poller.wait(this->_mutex, [&] () {
+            bool finished = false;
+            for (const auto& event : this->_poller) {
+                if (event.fd() == this->_poller.pipe_in()) { continue; }
+                auto result = process_by_fd.find(event.fd());
+                if (result == process_by_fd.end()) { continue; }
+                auto process_id = result->second;
+                auto result2 = tests_by_process.find(process_id);
+                if (result2 == tests_by_process.end()) { continue; }
+                auto& output = result2->second;
+                if (event.in()) {
+                    auto fd = event.fd();
+                    output.output.fill(fd);
+                }
+                if (!event) {
+                    exit_code |= print_child_process_status(process_id, output, num_finished,
+                                                            num_tests);
+                    process_by_fd.erase(result);
+                    tests_by_process.erase(result2);
+                    finished = true;
+                }
             }
-            if (!event) {
-                process_by_fd.erase(result);
-            }
-        }
-        auto first = this->_child_processes.begin();
-        auto last = this->_child_processes.end();
-        while (first != last) {
-            auto& process = *first;
-            using f = sys::wait_flags;
-            // TODO non_blocking is not supported by qemu
-            //auto status = process.wait(f::exited | f::non_blocking);
-            auto status = process.wait(f::exited);
-            if (status.pid() == 0) {
-                ++first;
-            } else {
-                auto& output = tests_by_process[process.id()];
-                auto& t = output.test;
-                t.exit_code(status.exit_code());
-                switch (status.exit_code()) {
-                    case 0: t.status(Test::Status::Success); break;
-                    case 1: t.status(Test::Status::Exception); break;
-                    case 77: t.status(Test::Status::Skipped); break;
-                    default: t.signal(status.term_signal());
-                             t.status(Test::Status::Killed);
-                             break;
-                }
-                if (t.exit_code() != 77) {
-                    exit_code |= t.exit_code();
-                }
-                {
-                    ++num_finished;
-                    using namespace sys::terminal;
-                    std::stringstream message;
-                    message.iword(0) = sys::is_a_terminal(STDERR_FILENO);
-                    message << '[' << num_finished << '/' << num_tests << "] ";
-                    message << bold();
-                    switch (t.status()) {
-                        case Test::Status::Success:
-                            message << color(colors::fg_green);
-                            break;
-                        case Test::Status::Skipped:
-                            message << color(colors::fg_yellow);
-                            break;
-                        default:
-                            message << color(colors::fg_red);
-                            break;
-                    }
-                    message << t.status();
-                    message << reset();
-                    message << ' ' << t.symbol().short_name();
-                    if (!this->_tests.empty()) {
-                        message << " (next is " << this->_tests.front().symbol().short_name()
-                            << ')';
-                    }
-                    message << '\n';
-                    std::clog << message.str() << std::flush;
-                }
-                if ((t.status() != Test::Status::Success &&
-                    t.status() != Test::Status::Skipped) || this->_verbose) {
-                    std::stringstream message;
-                    message << "======== Output ======== \n";
-                    output.write_status(message);
-                    t.parent_write_status(message);
-                    message << "========  End   ======== \n";
-                    std::clog << message.str() << std::flush;
-                }
-                tests_by_process.erase(process.id());
-                first = this->_child_processes.erase(first);
-                last = this->_child_processes.end();
-            }
-        }
+            return finished;
+        });
     }
+    return exit_code;
+}
+
+int sys::test::Test_executor::print_child_process_status(sys::pid_type process_id,
+                                                         Test_output& output,
+                                                         size_t& num_finished,
+                                                         size_t num_tests) {
+    int exit_code = 0;
+    auto result = std::find_if(
+        this->_child_processes.begin(), this->_child_processes.end(),
+        [process_id] (const sys::process& p) { return process_id == p.id(); });
+    auto& process = *result;
+    auto status = process.wait();
+    auto& t = output.test;
+    t.record_process_status(status);
+    if (status.exit_code() != 77) { exit_code |= status.exit_code(); }
+    {
+        ++num_finished;
+        using namespace sys::terminal;
+        std::stringstream message;
+        message.iword(0) = sys::is_a_terminal(STDERR_FILENO);
+        message << '[' << num_finished << '/' << num_tests << "] ";
+        message << bold();
+        switch (t.status()) {
+            case Test::Status::Success:
+                message << color(colors::fg_green);
+                break;
+            case Test::Status::Skipped:
+                message << color(colors::fg_yellow);
+                break;
+            default:
+                message << color(colors::fg_red);
+                break;
+        }
+        message << t.status();
+        message << reset();
+        message << ' ' << t.symbol().short_name();
+        if (!this->_tests.empty()) {
+            message << " (next is " << this->_tests.front().symbol().short_name()
+                << ')';
+        }
+        message << '\n';
+        std::clog << message.str() << std::flush;
+    }
+    if ((t.status() != Test::Status::Success &&
+        t.status() != Test::Status::Skipped) || this->_verbose) {
+        std::stringstream message;
+        message << "======== Output ======== \n";
+        output.write_status(message);
+        t.parent_write_status(message);
+        message << "========  End   ======== \n";
+        std::clog << message.str() << std::flush;
+    }
+    this->_child_processes.erase(result);
     return exit_code;
 }
 
