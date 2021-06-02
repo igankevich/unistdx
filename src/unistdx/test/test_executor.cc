@@ -30,6 +30,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <http://unlicense.org/>
 */
 
+#include <iostream>
 #include <unordered_map>
 
 #include <unistdx/io/event_file_descriptor>
