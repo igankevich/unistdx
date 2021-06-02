@@ -142,10 +142,11 @@ void test_sha1_one_million_of_a() {
 
 void test_sha1_big_inputs() {
     sys::sha1 sha;
-    expect(throws(call([&] () { sha.put("", std::numeric_limits<size_t>::max()); })));
+    std::string tmp;
+    expect(throws(call([&] () { sha.put(tmp.data(), std::numeric_limits<size_t>::max()); })));
     sha.reset();
     sha.put("a", 1);
-    expect(throws(call([&] () { sha.put("", std::numeric_limits<size_t>::max()/8-1); })));
+    expect(throws(call([&] () { sha.put(tmp.data(), std::numeric_limits<size_t>::max()/8-1); })));
 }
 
 void test_sha1_repeating_compute() {

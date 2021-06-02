@@ -264,16 +264,17 @@ namespace sys {
 
             template <class A, class B>
             struct Implication: public Expression {
-                const Or<Not<A>,B> arg0;
-                inline explicit Implication(const A& a, const B& b): arg0(Not<A>(a),b) {}
-                inline auto evaluate() const -> decltype(arg0.evaluate()) {
-                    return arg0.evaluate();
+                const A& arg0;
+                const B& arg1;
+                inline explicit Implication(const A& a, const B& b): arg0(a), arg1(b) {}
+                inline auto evaluate() const -> decltype(!arg0.evaluate() || arg1.evaluate()) {
+                    return !arg0.evaluate() || arg1.evaluate();
                 }
                 void display(std::ostream& out) const {
                     out << "(=> ";
-                    arg0.arg0.arg0.display(out);
+                    arg0.display(out);
                     out.put(' ');
-                    arg0.arg1.display(out);
+                    arg1.display(out);
                     out.put(')');
                 }
             };

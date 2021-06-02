@@ -36,8 +36,10 @@ For more information, please refer to <http://unlicense.org/>
 using namespace sys::test::lang;
 
 void test_log_message_bad_number_of_arguments() {
-    expect(no_throw(call([] () { sys::log_message("tst", "_", 1, 2); })));
-    expect(no_throw(call([] () { sys::log_message("tst", "no arguments", 1); })));
+    std::string msg1 = "_";
+    expect(no_throw(call([&] () { sys::log_message("tst", msg1.data(), 1, 2); })));
+    std::string msg2 = "no arguments";
+    expect(no_throw(call([&] () { sys::log_message("tst", msg2.data(), 1); })));
 }
 
 void test_log_message_manual_output() {
