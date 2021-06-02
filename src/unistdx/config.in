@@ -242,6 +242,7 @@ For more information, please refer to <http://unlicense.org/>
 #mesondefine UNISTDX_HAVE_SYS_SEM_H
 #mesondefine UNISTDX_HAVE_SYS_TIME_H
 #mesondefine UNISTDX_HAVE_SYS_XATTR_H
+#mesondefine UNISTDX_HAVE_UCONTEXT_H
 // }}}
 
 // old definitions {{{

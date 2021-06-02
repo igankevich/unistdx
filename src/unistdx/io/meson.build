@@ -22,6 +22,7 @@ install_headers(
     'poller',
     'shared_byte_buffer',
     'sysstream',
+    'terminal',
     'two_way_pipe',
     subdir: join_paths(meson.project_name(), 'io')
 )

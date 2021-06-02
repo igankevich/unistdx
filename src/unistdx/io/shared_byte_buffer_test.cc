@@ -47,7 +47,7 @@ void test_shared_byte_buffer_grow() {
     expect(value(0) == value(buffer.parent()->semaphore.value()));
     expect(value(1) == value(buffer.child()->mutex.value()));
     expect(value(0) == value(buffer.child()->semaphore.value()));
-    buffer.get_respresentation().copy_to_environment("FDS");
+    buffer.get_representation().copy_to_environment("FDS");
     sys::event_file_descriptor notifier(
         0, sys::event_file_descriptor::flag::close_on_exec);
     sys::process child{[&] () -> int {
@@ -176,7 +176,7 @@ void test_shared_byte_buffer__parent_writes_child_reads() {
     }
     auto parent = sys::shared_byte_buffer::make_parent_page();
     sys::shared_byte_buffer buffer{parent.view(), 4096};
-    buffer.get_respresentation().copy_to_environment("FDS");
+    buffer.get_representation().copy_to_environment("FDS");
     sys::event_file_descriptor notifier(
         0, sys::event_file_descriptor::flag::close_on_exec);
     sys::process child{[&] () -> int {
@@ -214,7 +214,7 @@ void test_shared_byte_buffer__child_writes_parent_reads() {
     }
     auto parent = sys::shared_byte_buffer::make_parent_page();
     sys::shared_byte_buffer buffer{parent.view(), 4096};
-    buffer.get_respresentation().copy_to_environment("FDS");
+    buffer.get_representation().copy_to_environment("FDS");
     sys::event_file_descriptor notifier(
         0, sys::event_file_descriptor::flag::close_on_exec);
     sys::process child{[&] () -> int {

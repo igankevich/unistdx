@@ -175,7 +175,7 @@ namespace sys {
             return a->file_descriptor();
         }
 
-        inline representation get_respresentation() const noexcept {
+        inline representation get_representation() const noexcept {
             return {this->_parent, this->_child.view(), data_file_descriptor().get()};
         }
 

@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2020 Ivan Gankevich
+© 2016, 2017, 2018, 2020 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -118,9 +118,9 @@ std::cout << std::setw(40 + 31) << std::setfill('-')
 
 unsigned int
 posix_support(support s) {
-    return 100u
+    return static_cast<unsigned int>(100.f
         * (float(s.num_supported)
-        / float(s.num_supported + s.num_unsupported + s.num_semisupported));
+        / float(s.num_supported + s.num_unsupported + s.num_semisupported)));
 }
 
 void

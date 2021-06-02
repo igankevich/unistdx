@@ -1,7 +1,7 @@
 project(
     'unistdx',
     'cpp',
-    version: '0.69.2',
+    version: '0.70.0',
     meson_version: '>=0.47',
     default_options: ['cpp_std=c++11'],
     license: ['Public domain']
@@ -35,6 +35,8 @@ foreach arg : [
     '-Werror=cast-align',
     '-Wcast-align=strict',
     '-Wno-terminate',
+    '-Wfloat-conversion',
+    '-Werror=float-conversion',
     '-fvisibility-inlines-hidden',
 ]
     if cpp.has_argument(arg)
@@ -278,6 +280,7 @@ foreach header : [
     'sys/time.h',
     'sys/xattr.h',
     'syslog.h',
+    'ucontext.h',
 ]
     all_defines += 'UNISTDX_HAVE_' + header.underscorify().to_upper()
     if cpp.has_header(header)

@@ -38,6 +38,10 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <unistdx/config>
 
+#if defined(UNISTDX_HAVE_UCONTEXT_H)
+#include <ucontext.h>
+#endif
+
 #include <unistd.h>
 #if defined(UNISTDX_HAVE_SCHED_H)
 #include <sched.h>
@@ -721,6 +725,44 @@ namespace sys {
 
     inline void enable_process_accounting(c_string path) { check(::acct(path.data())); }
     inline void disable_process_accounting() { check(::acct(nullptr)); }
+
+    /**
+    \brief Process context to be used for user-space context switching.
+    */
+    class user_context: ::ucontext_t {
+
+    public:
+        using function_type = void (*)();
+
+    private:
+        std::unique_ptr<char[]> _stack;
+
+    public:
+        template <class Function, class ... Args> inline void
+        make(Function func, int argc, Args&& ... argv) noexcept {
+            ::makecontext(this, reinterpret_cast<function_type>(func),
+                          argc, std::forward<Args>(argv)...);
+        }
+        inline void stack(size_t n) {
+            this->_stack.reset(new char[n]);
+            this->uc_stack.ss_sp = this->_stack.get();
+            this->uc_stack.ss_size = n;
+        }
+        inline void link(user_context& parent) noexcept { this->uc_link = &parent; }
+        inline void save() { check(::getcontext(this)); }
+        inline void restore() const { check(::setcontext(this)); }
+        inline void swap(const user_context& other) {
+            check(::swapcontext(this, &other));
+        }
+
+        inline user_context() noexcept: ::ucontext_t{} {}
+        ~user_context() = default;
+        user_context(const user_context&) = delete;
+        user_context& operator=(const user_context&) = delete;
+        user_context(user_context&&) = default;
+        user_context& operator=(user_context&&) = default;
+
+    };
 
 }
 
