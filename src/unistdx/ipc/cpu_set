@@ -42,13 +42,20 @@ For more information, please refer to <http://unlicense.org/>
 
 namespace sys {
 
+    class dynamic_cpu_set;
+    class static_cpu_set;
+
     class static_cpu_set: public ::cpu_set_t {
+
+    public:
+        using size_type = int;
 
     public:
         inline static_cpu_set() noexcept { clear(); }
         inline static_cpu_set(std::initializer_list<int> cpus) noexcept {
             clear(); for (auto i : cpus) { set(i); }
         }
+        inline explicit static_cpu_set(const dynamic_cpu_set& other) noexcept;
         ~static_cpu_set() = default;
         static_cpu_set(const static_cpu_set&) = default;
         static_cpu_set& operator=(const static_cpu_set&) = default;
@@ -56,8 +63,8 @@ namespace sys {
         static_cpu_set& operator=(static_cpu_set&&) = default;
 
         static static_cpu_set all() noexcept;
-        inline static constexpr int max_size() noexcept { return sizeof(cpu_set_t)*8; }
-        inline constexpr int size() const noexcept { return max_size(); }
+        inline static constexpr size_type max_size() noexcept { return sizeof(cpu_set_t)*8; }
+        inline constexpr size_type size() const noexcept { return max_size(); }
         inline int count() const noexcept { return CPU_COUNT(this); }
         inline size_t size_in_bytes() const noexcept { return sizeof(cpu_set_t); }
         inline void set(int cpu) noexcept {
@@ -162,6 +169,7 @@ namespace sys {
         dynamic_cpu_set(bits_to_size(nbits),false) {}
 
         dynamic_cpu_set(std::initializer_list<size_type> cpus);
+        inline dynamic_cpu_set(const static_cpu_set& other);
 
         inline ~dynamic_cpu_set() noexcept { delete[] this->_data; }
 
@@ -392,6 +400,22 @@ namespace sys {
 
     std::ostream& operator<<(std::ostream& out, const dynamic_cpu_set& rhs);
     std::istream& operator>>(std::istream& in, dynamic_cpu_set& rhs);
+
+    inline static_cpu_set::static_cpu_set(const dynamic_cpu_set& other) noexcept {
+        UNISTDX_PRECONDITION(other.size() <= size_t(size()));
+        const auto size = other.size();
+        for (dynamic_cpu_set::size_type i=0; i<size; ++i) {
+            if (other[i]) { set(i); }
+        }
+    }
+
+    inline dynamic_cpu_set::dynamic_cpu_set(const static_cpu_set& other):
+    dynamic_cpu_set(bits_to_size(other.size()), false) {
+        const auto size = other.size();
+        for (static_cpu_set::size_type i=0; i<size; ++i) {
+            if (other[i]) { set(i); }
+        }
+    }
 
     /// Use dynamic set by default, since it consumes less memory.
     using cpu_set = dynamic_cpu_set;
