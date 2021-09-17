@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -86,7 +86,11 @@ bool
 sys::socket::accept(socket& sock, socket_address& addr) {
     auto client_fd = safe_accept(this->_fd, addr);
     if (client_fd == -1) {
+        #if EAGAIN == EWOULDBLOCK
+        if (errno == EAGAIN) { return false; }
+        #else
         if (errno == EAGAIN || errno == EWOULDBLOCK) { return false; }
+        #endif
         throw bad_call();
     }
     sock.close();

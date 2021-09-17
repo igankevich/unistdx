@@ -135,5 +135,5 @@ void test_interface_address_count_ipv4() {
     typedef sys::interface_address<sys::ipv4_address> ifaddr_type;
     typedef sys::ipaddr_traits<sys::ipv4_address> traits_type;
     ifaddr_type ifa(traits_type::localhost(), traits_type::loopback_mask());
-    expect(value(std::pow(2, 24)-2) == value(ifa.count()));
+    expect(value((1u<<24)-2u) == value(ifa.count()));
 }

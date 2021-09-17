@@ -12,11 +12,11 @@
       (@ (stables packages ninja) ninja/lfs)
       (@ (gnu packages check) googletest)
       (@ (gnu packages pkg-config) pkg-config)
-      (@ (gnu packages pre-commit) python-pre-commit)
+      (@ (gnu packages version-control) pre-commit)
       (@ (gnu packages python-xyz) python-chardet)
       (@ (gnu packages code) lcov)
       (@ (gnu packages code) kcov)
-      (@ (gnu packages gcovr) python-gcovr)
+      (@ (gnu packages python-xyz) python-gcovr)
       (@ (gnu packages elf) elfutils)
       (@ (gnu packages compression) xz)
       (list (@ (gnu packages llvm) clang-10) "extra") ;; clang-tidy
