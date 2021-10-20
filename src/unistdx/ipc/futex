@@ -56,6 +56,7 @@ namespace sys {
             realtime_clock=FUTEX_CLOCK_REALTIME,
             #endif
         };
+        using bitset_type = uint32_t;
 
     private:
         std::atomic<int> _value{0};
@@ -64,6 +65,19 @@ namespace sys {
         inline explicit futex(int value) noexcept: _value{value} {}
 
         inline int value() const noexcept { return this->_value; }
+
+        inline void wait(bitset_type mask) {
+            while (true) {
+                int one = 1;
+                if (std::atomic_compare_exchange_strong(&this->_value, &one, 0)) {
+                    break;
+                }
+                auto ret = run(FUTEX_WAIT_BITSET, 0, mask);
+                if (ret == -1 && errno != EAGAIN) {
+                    throw bad_call();
+                }
+            }
+        }
 
         inline void wait() {
             while (true) {
@@ -82,6 +96,13 @@ namespace sys {
             int nought = 0;
             if (std::atomic_compare_exchange_strong(&this->_value, &nought, 1)) {
                 check(run(FUTEX_WAKE, count));
+            }
+        }
+
+        inline void notify_some(bitset_type mask) {
+            int nought = 0;
+            if (std::atomic_compare_exchange_strong(&this->_value, &nought, 1)) {
+                check(run(FUTEX_WAKE_BITSET, 1, mask));
             }
         }
 
@@ -208,6 +229,10 @@ namespace sys {
 
         inline int run(int operation, int value) {
             return call(calls::futex, &this->_value, operation, value, nullptr, nullptr, 0);
+        }
+
+        inline int run(int operation, int value, int mask) {
+            return call(calls::futex, &this->_value, operation, value, mask, nullptr, 0);
         }
 
         inline int run_for(int operation, int value, const time_spec* timeout) {

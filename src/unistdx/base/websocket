@@ -67,11 +67,12 @@ namespace sys {
 
     public:
         /// 4-byte mask type.
-        typedef u32 mask_type;
+        using mask_type = u32;
         /// 2-byte length type.
-        typedef u16 length16_type;
+        using length16_type = u16;
         /// 8-byte length type.
-        typedef u64 length64_type;
+        using length64_type = u64;
+        using opcodes = ::sys::opcode_type;
 
     private:
         struct {
