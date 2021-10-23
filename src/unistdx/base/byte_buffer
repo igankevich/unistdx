@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2017, 2018, 2020 Ivan Gankevich
+© 2017, 2018, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -131,6 +131,7 @@ namespace sys {
             rhs._position = 0;
             rhs._limit = 0;
         }
+        // TODO punch holes in the buffers and read/write data using io_vectors
 
         /**
         \brief Construct byte buffer with size \p size.
