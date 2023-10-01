@@ -1,6 +1,6 @@
 /*
 UNISTDX — C++ library for Linux system calls.
-© 2018, 2019, 2020 Ivan Gankevich
+© 2018, 2019, 2020, 2021 Ivan Gankevich
 
 This file is part of UNISTDX.
 
@@ -35,6 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 #include <algorithm>
 #include <cassert>
 #include <cstdlib>
+#include <exception>
 #include <new>
 #include <vector>
 
