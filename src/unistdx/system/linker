@@ -39,6 +39,7 @@ For more information, please refer to <http://unlicense.org/>
 
 #include <dlfcn.h>
 
+#include <cstdint>
 #include <system_error>
 
 #include <unistdx/base/flag>
