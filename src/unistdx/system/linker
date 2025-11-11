@@ -37,6 +37,8 @@ For more information, please refer to <http://unlicense.org/>
 
 #if defined(UNISTDX_HAVE_DLFCN_H)
 
+#include <cstdint>
+
 #include <dlfcn.h>
 
 #include <system_error>
@@ -92,8 +94,8 @@ namespace dl {
         inline const char* name() const noexcept { return this->dli_sname; }
         inline void* address() const noexcept { return this->dli_saddr; }
 
-        inline uintptr_t offset() const noexcept {
-            return uintptr_t(address())-uintptr_t(base_address());
+        inline std::uintptr_t offset() const noexcept {
+            return std::uintptr_t(address())-std::uintptr_t(base_address());
         }
 
         inline explicit operator bool() const noexcept { return address() != nullptr; }
