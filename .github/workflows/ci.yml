@@ -1,0 +1,31 @@
+---
+name: CI
+on: [push]
+jobs:
+  # https://mesonbuild.com/Continuous-Integration.html
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: |
+          python -m pip install meson==1.9.1 ninja
+          apt-get update && apt-get install -y ${{ matrix.compiler }}
+          ${{ matrix.compiler }} --version
+      - name: Configure
+        run: meson setup build
+        env:
+          CC: ${{ matrix.compiler }}
+      - name: Run tests
+        run: meson test -C build -v
+      - name: Show test log
+        if: failure()
+        run: cat build/meson-logs/testlog.txt
