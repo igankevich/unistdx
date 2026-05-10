@@ -62,20 +62,6 @@ namespace {
     using sys::u8;
     using sys::u32;
 
-    union bits24 {
-        struct {
-            u32 i3 : 6;
-            u32 i2 : 6;
-            u32 i1 : 6;
-            u32 i0 : 6;
-            u8 : 0;
-        };
-        struct {
-            unsigned char bytes[4];
-        };
-    };
-
-    static_assert(sizeof(bits24) >= 3, "bad 24-bit group size");
 
     inline unsigned char
     char_to_index(unsigned char ch) {
@@ -96,30 +82,36 @@ sys::base64_encode(const char* first, size_t n, char* result) noexcept {
     const size_t rem = n%3;
     const size_t m = (rem == 0) ? n : (n-rem);
     for (size_t i=0; i<m; i+=3) {
-        bits24 bits{};
-        bits.bytes[2] = *first;
-        bits.bytes[1] = *++first;
-        bits.bytes[0] = *++first;
-        *result++ = base64_alphabet[bits.i0];
-        *result++ = base64_alphabet[bits.i1];
-        *result++ = base64_alphabet[bits.i2];
-        *result++ = base64_alphabet[bits.i3];
+        auto b0 = *first;
+        auto b1 = *++first;
+        auto b2 = *++first;
+        auto i3 = ((b0 >> 2) & 0x3f);
+        auto i2 = ((b1 >> 4) & 0xf) | ((b0 & 0x3) << 4);
+        auto i1 = ((b2 >> 6) & 0x3) | ((b1 & 0xf) << 2);
+        auto i0 = b2 & 0x3f;
+        *result++ = base64_alphabet[i3];
+        *result++ = base64_alphabet[i2];
+        *result++ = base64_alphabet[i1];
+        *result++ = base64_alphabet[i0];
         ++first;
     }
     if (rem == 1) {
-        bits24 bits{};
-        bits.bytes[2] = *first;
-        *result++ = base64_alphabet[bits.i0];
-        *result++ = base64_alphabet[bits.i1];
+        auto b0 = *first;
+        auto i3 = (b0 >> 2) & 0x3f;
+        auto i2 = (b0 & 0x3) << 4;
+        *result++ = base64_alphabet[i3];
+        *result++ = base64_alphabet[i2];
         *result++ = pad_character;
         *result++ = pad_character;
     } else if (rem == 2) {
-        bits24 bits{};
-        bits.bytes[2] = *first;
-        bits.bytes[1] = *++first;
-        *result++ = base64_alphabet[bits.i0];
-        *result++ = base64_alphabet[bits.i1];
-        *result++ = base64_alphabet[bits.i2];
+        auto b0 = *first;
+        auto b1 = *++first;
+        auto i3 = ((b0 >> 2) & 0x3f);
+        auto i2 = ((b1 >> 4) & 0xf) | ((b0 & 0x3) << 4);
+        auto i1 = (b1 & 0xf) << 2;
+        *result++ = base64_alphabet[i3];
+        *result++ = base64_alphabet[i2];
+        *result++ = base64_alphabet[i1];
         *result++ = pad_character;
     }
 }
@@ -131,38 +123,34 @@ sys::base64_decode(const char* first, size_t n, char* result) {
     if (n == 0) { return 0; }
     n -= 4;
     for (size_t i=0; i<n; i+=4) {
-        bits24 bits{};
-        bits.i0 = char_to_index(*first);
-        bits.i1 = char_to_index(*++first);
-        bits.i2 = char_to_index(*++first);
-        bits.i3 = char_to_index(*++first);
-        *result++ = bits.bytes[2];
-        *result++ = bits.bytes[1];
-        *result++ = bits.bytes[0];
+        auto i3 = char_to_index(*first);
+        auto i2 = char_to_index(*++first);
+        auto i1 = char_to_index(*++first);
+        auto i0 = char_to_index(*++first);
+        *result++ = ((i2 >> 4) & 0x3) | ((i3 & 0x3f) << 2);
+        *result++ = ((i1 >> 2) & 0xf) | ((i2 & 0xf) << 4);
+        *result++ = (i0 & 0x3f) | ((i1 & 0x3) << 6);
         ++first;
     }
     // process last four bytes
     if (first[2] == pad_character && first[3] == pad_character) {
-        bits24 bits{};
-        bits.i0 = char_to_index(*first);
-        bits.i1 = char_to_index(*++first);
-        *result++ = bits.bytes[2];
+        auto i3 = char_to_index(*first);
+        auto i2 = char_to_index(*++first);
+        *result++ = ((i2 >> 4) & 0x3) | ((i3 & 0x3f) << 2);
     } else if (first[3] == pad_character) {
-        bits24 bits{};
-        bits.i0 = char_to_index(*first);
-        bits.i1 = char_to_index(*++first);
-        bits.i2 = char_to_index(*++first);
-        *result++ = bits.bytes[2];
-        *result++ = bits.bytes[1];
+        auto i3 = char_to_index(*first);
+        auto i2 = char_to_index(*++first);
+        auto i1 = char_to_index(*++first);
+        *result++ = ((i2 >> 4) & 0x3) | ((i3 & 0x3f) << 2);
+        *result++ = ((i1 >> 2) & 0xf) | ((i2 & 0xf) << 4);
     } else {
-        bits24 bits{};
-        bits.i0 = char_to_index(*first);
-        bits.i1 = char_to_index(*++first);
-        bits.i2 = char_to_index(*++first);
-        bits.i3 = char_to_index(*++first);
-        *result++ = bits.bytes[2];
-        *result++ = bits.bytes[1];
-        *result++ = bits.bytes[0];
+        auto i3 = char_to_index(*first);
+        auto i2 = char_to_index(*++first);
+        auto i1 = char_to_index(*++first);
+        auto i0 = char_to_index(*++first);
+        *result++ = ((i2 >> 4) & 0x3) | ((i3 & 0x3f) << 2);
+        *result++ = ((i1 >> 2) & 0xf) | ((i2 & 0xf) << 4);
+        *result++ = (i0 & 0x3f) | ((i1 & 0x3) << 6);
     }
     return result - old;
 }
